@@ -1,4 +1,8 @@
-.Root {
+.GridWrapper {
+  position: relative;
+}
+
+.Grid {
   display: grid;
   grid-template: auto / repeat(4, 1fr);
   gap: 30px;
@@ -6,81 +10,16 @@
   margin: 50px;
   max-width: 1300px;
   margin: 0 auto;
+  transition: 400ms all ease-in;
 }
 
-@keyframes appear {
-  from {
-    opacity: 0;
-    scale: 0.9;
-  }
-
-  to {
-    opacity: 1;
-    scale: 1;
-  }
+.lol {
+  position: absolute;
+  /* top: 20px;
+  left: 20px; */
 }
 
-.Item {
-  --animationDuration: 400ms;
-
-  padding: 15px;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  flex-shrink: 0;
-  cursor: pointer;
-  overflow: hidden;
-  background: linear-gradient(0deg, #9f5aff20, #fe481a20, #9f5aff20);
-  background-size: 100% 200%;
-  transition: var(--animationDuration) all;
-  animation: appear 300ms ease-in-out forwards;
-  opacity: 0;
-
-  h2 {
-    text-align: center;
-    margin: 15px 0 0px 0;
-    text-transform: uppercase;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-  }
-
-  img {
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 10px;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 6px; /* border thickness */
-    border-radius: inherit;
-    background: linear-gradient(
-      180deg,
-      rgba(159, 90, 255, 0.35) 0%,
-      rgba(254, 72, 26, 0.35) 33%,
-      rgba(254, 72, 26, 1) 66%,
-      rgba(159, 90, 255, 1) 100%
-    );
-
-    background-size: 100% 300%;
-    background-position: 0 0;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    transition: var(--animationDuration) all linear;
-  }
-
-  &:hover {
-    transform: scale(1.03) translateY(-15px);
-    background-position: 0 100%;
-
-    &::before {
-      background-position: 0 100%;
-    }
-  }
+.Fading {
+  scale: 0.95;
+  opacity: 0.3;
 }

@@ -1,0 +1,99 @@
+.SketchTile {
+  --animationDuration: 300ms;
+
+  padding: 15px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  overflow: hidden;
+  background: linear-gradient(
+    0deg,
+    hsl(var(--secondaryColor) / 12.5%),
+    hsl(var(--primaryColor) / 12.5%),
+    hsl(var(--secondaryColor) / 12.5%)
+  );
+  background-size: 100% 200%;
+  color: var(--fontColor);
+  /* box-shadow: 0px 1px 0px 0px #00feff; */
+
+  h2 {
+    text-align: center;
+    margin: 15px 0 0px 0;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+
+  img {
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  &::before {
+    /* visibility: hidden; */
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 4px;
+    border-radius: inherit;
+    background: linear-gradient(
+      180deg,
+      hsl(var(--secondaryColorFaded)) 0%,
+      hsl(var(--primaryColorFaded)) 33%,
+      hsl(var(--primaryColor)) 66%,
+      hsl(var(--secondaryColor)) 100%
+    );
+    background-size: 100% 300%;
+    background-position: 0 0;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+.Hovered,
+.Hovered::before,
+.Interactive:hover,
+.Interactive:hover::before {
+  background-position: 0 100%;
+  box-shadow: none;
+}
+
+.Interactive {
+  &:hover {
+    transform: scale(1.03) translateY(-15px);
+    color: var(--fontColorAccent);
+  }
+
+  &::before {
+    transition: var(--animationDuration) all linear;
+  }
+
+  opacity: 0;
+  transition: var(--animationDuration) all linear;
+  animation: appear 300ms ease-in-out forwards;
+}
+
+.Hidden {
+  opacity: 0 !important;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    /* scale: 0.97; */
+    translate: 0 15px;
+  }
+
+  to {
+    opacity: 1;
+    /* scale: 1; */
+    translate: 0px 0;
+  }
+}

@@ -1,0 +1,20 @@
+.SketchOverlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  /* background-color: var(--bgColor); */
+  /* animation: blur-out 200ms ease-out forwards; */
+}
+
+@keyframes blur-out {
+  from {
+    background-color: var(--bgColorTransparent);
+    /* opacity: 0;  */
+  }
+  to {
+    background-color: var(--bgColor);
+    /* opacity: 1;  */
+  }
+}

@@ -1,9 +1,19 @@
 body {
   --gridCrossHalfSize: 25px;
   --gridCellSize: 60px;
-  --bgColor: rgb(20, 20, 20);
+  --bgColor: rgba(20, 20, 20, 1);
+  --bgColorTransparent: rgba(20, 20, 20), 0;
   --gridCrossColor: #1d1d1d;
   --gridWidth: 1px;
+  --primaryColorBase: 176 99%;
+  --secondaryColorBase: 265 100%;
+  --primaryColor: var(--primaryColorBase) 55%;
+  --secondaryColor: var(--secondaryColorBase) 68%;
+  --primaryColorFaded: var(--primaryColor) / 35%;
+  --secondaryColorFaded: var(--secondaryColor) / 35%;
+  --fontColorAccent: hsl(var(--secondaryColorBase) 88%);
+  --fontColor: hsl(var(--primaryColorBase) 88% / 80%);
+  /* color: hsl(175, 34%, 72%); */
 
   background-color: var(--bgColor);
   background-image: linear-gradient(
@@ -40,5 +50,14 @@ body {
   font-size: 20px;
   padding-bottom: 100px;
   padding-top: 100px;
-  color: rgb(189, 165, 243);
+  color: var(--fontColor);
+}
+
+a {
+  text-decoration: underline;
+  transition: 200ms all;
+
+  &:hover {
+    color: var(--fontColorAccent);
+  }
 }

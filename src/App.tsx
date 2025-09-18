@@ -1,8 +1,7 @@
 import type { ISketch } from "./models";
 import { SketchGrid } from "./SketchGrid";
 import styles from "./App.module.css";
-import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { sketch } from "./sketches/spiral";
+import { Header } from "./Header";
 
 const items: ISketch[] = [
   {
@@ -40,9 +39,8 @@ const items: ISketch[] = [
 function App() {
   return (
     <div className={styles.Container}>
-      <h1 className={styles.Header}>My experiments with p5.js</h1>
+      <Header />
       <SketchGrid items={items} />
-      <ReactP5Wrapper sketch={sketch} />
     </div>
   );
 }
