@@ -25,6 +25,8 @@ export const SketchTile = forwardRef<
     },
     ref
   ) => {
+    const imgSrc = `./${sketch.id}.png`;
+    // const imgSrc = `./${sketch.id}_full.png`;
     return (
       <div
         ref={ref}
@@ -32,7 +34,7 @@ export const SketchTile = forwardRef<
           styles.SketchTile,
           {
             [styles.Interactive]: interactive,
-            [styles.Hovered]: !interactive,
+            [styles.Copy]: !interactive,
             [styles.Hidden]: invisible,
           },
           className
@@ -42,7 +44,7 @@ export const SketchTile = forwardRef<
           animationDelay: animationDelay + "ms",
         }}
       >
-        <img src={sketch.img} alt={sketch.name} />
+        <img src={imgSrc} alt={sketch.name} />
         <h2>{sketch.name}</h2>
       </div>
     );

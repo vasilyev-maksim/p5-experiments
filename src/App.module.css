@@ -2,4 +2,25 @@
   max-width: 1300px;
   margin: 0 auto;
   padding: 0 20px;
+  transition: 400ms all ease-in;
+}
+
+.GridWrapper {
+  position: relative;
+}
+
+.Grid {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 30px;
+  row-gap: 50px;
+  margin: 50px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.InBackground {
+  scale: 0.95;
+  opacity: 0.3;
 }
