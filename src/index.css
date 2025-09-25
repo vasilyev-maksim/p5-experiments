@@ -11,7 +11,7 @@ body {
   --secondaryColor: hsl(var(--secondaryColorH) 100 68);
   --primaryColorFaded: hsl(var(--primaryColorH) 38 29);
   --secondaryColorFaded: hsl(var(--secondaryColorH) 38 29);
-  --fontColorAccent: hsl(var(--secondaryColorH) 100 88);
+  --fontColorAccent: hsl(var(--secondaryColorH) 100 85);
   --fontColor: hsl(var(--primaryColorH) 100 88 / 80%);
 
   background-color: var(--bgColor);

@@ -2,7 +2,7 @@
   max-width: 1300px;
   margin: 0 auto;
   padding: 0 20px;
-  transition: 400ms all ease-in;
+  transition: 400ms all ease-in-out;
 }
 
 .GridWrapper {

@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import type { ISketch } from "./models";
 import styles from "./SketchTile.module.css";
 import classNames from "classnames";
+import { useViewport } from "./hooks";
 
 export const SketchTile = forwardRef<
   HTMLDivElement,
@@ -25,8 +26,10 @@ export const SketchTile = forwardRef<
     },
     ref
   ) => {
-    const imgSrc = `./${sketch.id}.png`;
-    // const imgSrc = `./${sketch.id}_full.png`;
+    const { tileWidth, tileHeight } = useViewport();
+    // const imgSrc = `./${sketch.id}.png`;
+    const imgSrc = `./${sketch.id}_full.png`;
+
     return (
       <div
         ref={ref}
@@ -42,10 +45,19 @@ export const SketchTile = forwardRef<
         onClick={onSelect}
         style={{
           animationDelay: animationDelay + "ms",
+          width: tileWidth,
+          height: tileHeight,
         }}
       >
-        <img src={imgSrc} alt={sketch.name} />
-        <h2>{sketch.name}</h2>
+        <div
+          className={styles.ImgWrapper}
+          style={{
+            backgroundImage: `url(${imgSrc})`,
+            backgroundSize: `auto 150%`,
+            backgroundPosition: "center",
+          }}
+        ></div>
+        <h2 className={styles.Title}>{sketch.name}</h2>
       </div>
     );
   }

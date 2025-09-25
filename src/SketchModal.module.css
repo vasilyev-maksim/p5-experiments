@@ -1,0 +1,112 @@
+.SketchOverlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+@keyframes blur-out {
+  from {
+    background-color: var(--bgColorTransparent);
+  }
+  to {
+    background-color: var(--bgColor);
+  }
+}
+
+.SketchModal {
+  --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
+  --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
+  --scale: 1.03;
+
+  /* padding: 15px; */
+  border-radius: 20px;
+  position: relative;
+  background: linear-gradient(
+    0deg,
+    var(--bgPrimaryColor),
+    var(--bgSecondaryColor),
+    var(--bgPrimaryColor)
+  );
+  background-size: 100% 200%;
+  color: var(--fontColorAccent);
+  transform: scale(var(--scale));
+  transform-origin: top left;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 4px;
+    border-radius: inherit;
+    background: linear-gradient(
+      180deg,
+      var(--primaryColor),
+      var(--secondaryColor)
+    );
+    background-position: 0 0;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+.Title {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.ImgWrapper {
+  max-height: 100%;
+  max-width: 100%;
+  width: 100%;
+  aspect-ratio: 1/1;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+  /* height: 100%; */
+}
+
+.Horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 100%;
+}
+
+.Vertical {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.Right {
+  /* aspect-ratio: 1; */
+  flex: 1;
+}
+
+.RightTop {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  /* flex: 1000; */
+  height: 100%;
+
+  & canvas {
+    border-radius: 10px;
+  }
+}
+
+.RightBottom {
+  flex-shrink: 1;
+}
+
+.Left {
+}

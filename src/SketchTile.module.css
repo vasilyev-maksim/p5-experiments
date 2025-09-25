@@ -3,17 +3,14 @@
   --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
   --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
   --scale: 1.03;
-  /* --bgSecondaryColor: hsl(var(--secondaryColorH) 23 16);
-  --bgPrimaryColor: hsl(var(--primaryColorH) 29 15); */
 
   padding: 15px;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   position: relative;
-  flex-shrink: 0;
   cursor: pointer;
-  overflow: hidden;
   background: linear-gradient(
     0deg,
     var(--bgSecondaryColor),
@@ -22,26 +19,9 @@
   );
   background-size: 100% 200%;
   color: var(--fontColor);
-  /* box-shadow: 0px 1px 0px 0px #00feff; */
-  transition: var(--animationDuration) all ease-in-out;
-  width: 292px;
-
-  h2 {
-    text-align: center;
-    margin: 15px 0 0px 0;
-    text-transform: uppercase;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-  }
-
-  img {
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 10px;
-  }
+  overflow: hidden;
 
   &::before {
-    /* visibility: hidden; */
     content: "";
     position: absolute;
     inset: 0;
@@ -64,13 +44,29 @@
   }
 }
 
+.Title {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.ImgWrapper {
+  aspect-ratio: 1/1;
+  max-height: 100%;
+  max-width: 100%;
+  width: 100%;
+  border-radius: 10px;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .Copy,
 .Copy::before,
 .Interactive:hover,
 .Interactive:hover::before {
   background-position: 0 100%;
   color: var(--fontColorAccent);
-  /* box-shadow: none; */
 }
 
 .Copy {
@@ -89,6 +85,7 @@
 
   opacity: 0;
   animation: appear 300ms ease-in-out forwards;
+  transition: var(--animationDuration) all ease-in-out;
 }
 
 .Hidden {
@@ -98,13 +95,11 @@
 @keyframes appear {
   from {
     opacity: 0;
-    /* scale: 0.97; */
     translate: 0 15px;
   }
 
   to {
     opacity: 1;
-    /* scale: 1; */
     translate: 0px 0;
   }
 }
