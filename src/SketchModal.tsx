@@ -4,11 +4,10 @@ import { animated, useChain, useSpring, useSpringRef } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import { easings } from "@react-spring/web";
 import classNames from "classnames";
+import { useMemo, useRef, useState } from "react";
+// import { SketchCanvas } from "./SketchCanvas";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { sketchFactory } from "./sketches/spiral";
-import { useMemo, useRef, useState } from "react";
-
-const MODAL_PADDING = 15;
 
 export const SketchModal = ({
   sketch,
@@ -19,23 +18,20 @@ export const SketchModal = ({
   left?: number;
   top?: number;
 }) => {
-  const { tileWidth, tileHeight } = useViewport();
+  const {
+    tileWidth,
+    tileHeight,
+    modalMargin,
+    modalPadding,
+    modalLeftSideWidth,
+    modalCanvasWidth,
+    modalCanvasHeight,
+  } = useViewport();
+
+  console.log({ modalCanvasWidth, modalCanvasHeight });
 
   const [showSketch, setShowSketch] = useState(false);
   const sketchContainerRef = useRef<HTMLDivElement>(null);
-
-  const x1Ref = useSpringRef();
-  const { x } = useSpring({
-    from: { x: 0 },
-    to: { x: 1 },
-    config: { duration: 500, easing: easings.easeInOutCubic },
-    // delay: 500000,
-    delay: 500,
-    ref: x1Ref,
-    onResolve: () => {
-      setShowSketch(true);
-    },
-  });
 
   const p5Sketch = useMemo(() => {
     if (showSketch && sketchContainerRef?.current) {
@@ -45,6 +41,16 @@ export const SketchModal = ({
     }
   }, [showSketch]);
 
+  const x1Ref = useSpringRef();
+  const { x } = useSpring({
+    from: { x: 0 },
+    to: { x: 1 },
+    config: { duration: 500, easing: easings.easeInOutCubic },
+    // delay: 500000,
+    delay: 500,
+    ref: x1Ref,
+  });
+
   const x2Ref = useSpringRef();
   const { x2 } = useSpring({
     from: { x2: 0 },
@@ -53,6 +59,9 @@ export const SketchModal = ({
     // delay: 500000,
     onRest: () => {},
     ref: x2Ref,
+    onResolve: () => {
+      setShowSketch(true);
+    },
   });
 
   useChain([x1Ref, x2Ref]);
@@ -72,25 +81,22 @@ export const SketchModal = ({
       <animated.div
         className={styles.SketchModal}
         style={{
-          width: x.to(
-            [0, 1],
-            [tileWidth, window.innerWidth - MODAL_PADDING * 2]
-          ),
+          width: x.to([0, 1], [tileWidth, window.innerWidth - modalMargin * 2]),
           height: x.to(
             [0, 1],
-            [tileHeight, window.innerHeight - MODAL_PADDING * 2]
+            [tileHeight, window.innerHeight - modalMargin * 2]
           ),
-          left: x.to([0, 1], [left, MODAL_PADDING]),
-          top: x.to([0, 1], [top, MODAL_PADDING]),
+          left: x.to([0, 1], [left, modalMargin]),
+          top: x.to([0, 1], [top, modalMargin]),
           scale: x.to([0, 1], [1.03, 1]),
-          padding: x.to([0, 1], [15, 30]),
+          padding: x.to([0, 1], [15, modalPadding]),
         }}
       >
         <div className={styles.Horizontal}>
           <animated.div
             className={styles.Left}
             style={{
-              width: x.to([0, 1], [0, 300]),
+              width: x.to([0, 1], [0, modalLeftSideWidth]),
               opacity: x2.to([0, 1], [0, 1]),
               translateY: x2.to([0, 1], [-15, 0]),
             }}
@@ -120,6 +126,7 @@ export const SketchModal = ({
           <div className={classNames(styles.Vertical, styles.Right)}>
             <div ref={sketchContainerRef} className={styles.RightTop}>
               {showSketch ? (
+                // <SketchCanvas sketch={sketch} />
                 <ReactP5Wrapper sketch={p5Sketch} n={n} t={t} />
               ) : (
                 <animated.div

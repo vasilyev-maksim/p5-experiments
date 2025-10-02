@@ -10,9 +10,26 @@ export const ViewportContext = createContext<{
 
 export function useViewport() {
   const ctx = useContext(ViewportContext);
+  const tileWidth = 292;
+  const tileHeight = 335;
+  const tilePadding = 15;
+  const modalMargin = 15;
+  const modalPadding = 30;
+  const modalLeftSideWidth = 300;
+  const modalCanvasWidth =
+    ctx.viewportWidth - modalLeftSideWidth - 2 * (modalPadding + modalMargin);
+  const modalCanvasHeight =
+    ctx.viewportHeight - 2 * (modalPadding + modalMargin);
+
   return {
     ...ctx,
-    tileWidth: 292,
-    tileHeight: 335,
+    tileWidth,
+    tileHeight,
+    modalMargin,
+    modalPadding,
+    modalLeftSideWidth,
+    modalCanvasWidth,
+    modalCanvasHeight,
+    tilePadding,
   };
 }

@@ -3,6 +3,7 @@ import type { ISketch } from "./models";
 import styles from "./SketchTile.module.css";
 import classNames from "classnames";
 import { useViewport } from "./hooks";
+import { SketchCanvas } from "./SketchCanvas";
 
 export const SketchTile = forwardRef<
   HTMLDivElement,
@@ -49,6 +50,7 @@ export const SketchTile = forwardRef<
           height: tileHeight,
         }}
       >
+        {/* <SketchCanvas sketch={sketch} /> */}
         <div
           className={styles.ImgWrapper}
           style={{
@@ -56,7 +58,7 @@ export const SketchTile = forwardRef<
             backgroundSize: `auto 150%`,
             backgroundPosition: "center",
           }}
-        ></div>
+        />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>
     );

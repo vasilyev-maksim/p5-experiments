@@ -27,7 +27,6 @@ export const sketchFactory =
     };
 
     p.setup = () => {
-      console.log(1);
       p.createCanvas(WIDTH, HEIGHT);
       p.background("black");
       p.fill(255, 0, 0, 10);

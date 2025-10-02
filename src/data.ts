@@ -6,16 +6,16 @@ export const sketchList: ISketch[] = [
     name: "lungs",
   },
   {
+    id: "spiral",
+    name: "spiral",
+  },
+  {
     id: "diamond",
     name: "diamond",
   },
   {
     id: "pulse",
     name: "pulse",
-  },
-  {
-    id: "spiral",
-    name: "spiral",
   },
   {
     id: "pillars",
