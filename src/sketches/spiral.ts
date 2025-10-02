@@ -1,10 +1,9 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 
 export const sketchFactory =
-  (WIDTH: number, HEIGHT: number) => (p: P5CanvasInstance) => {
-    const // WIDTH = window.innerWidth,
-      //   HEIGHT = window.innerHeight,
-      ANGULAR_SPEED = 2,
+  (WIDTH: number, HEIGHT: number) =>
+  (p: P5CanvasInstance<{ playing: boolean; n: number; t: number }>) => {
+    const ANGULAR_SPEED = 2,
       BRUSH_SPEED = 2;
 
     let N = 3,
@@ -18,14 +17,14 @@ export const sketchFactory =
 
     p.updateWithProps = (props) => {
       if (props.n) {
-        N = props.n as number;
+        N = props.n;
       }
 
       if (props.t) {
-        THICKNESS = props.t as number;
+        THICKNESS = props.t;
       }
 
-      if (props.p) {
+      if (props.playing) {
         p.loop();
       } else {
         p.noLoop();

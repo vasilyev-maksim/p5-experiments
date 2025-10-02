@@ -15,25 +15,23 @@ export function useViewport() {
   const tilePadding = 15;
   const modalMargin = 15;
   const modalPadding = 30;
-  const modalLeftSideWidth = 300;
-  const modalCanvasWidth =
-    ctx.viewportWidth - modalLeftSideWidth - 2 * (modalPadding + modalMargin);
-  const modalCanvasHeight =
+  const modalSidebarWidth = 300;
+  const canvasModalWidth =
+    ctx.viewportWidth - modalSidebarWidth - 2 * (modalPadding + modalMargin);
+  const canvasModalHeight =
     ctx.viewportHeight - 2 * (modalPadding + modalMargin);
-  const tileCanvasWidth = tileWidth - tilePadding * 2;
-  const tileCanvasHeight = tileCanvasWidth;
+  const canvasTileSize = tileWidth - tilePadding * 2;
 
   return {
     ...ctx,
     tileWidth,
     tileHeight,
+    tilePadding,
     modalMargin,
     modalPadding,
-    modalLeftSideWidth,
-    modalCanvasWidth,
-    modalCanvasHeight,
-    tilePadding,
-    tileCanvasHeight,
-    tileCanvasWidth,
+    modalSidebarWidth,
+    canvasModalWidth,
+    canvasModalHeight,
+    canvasTileSize,
   };
 }

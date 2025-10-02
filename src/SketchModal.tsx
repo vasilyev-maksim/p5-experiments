@@ -6,8 +6,6 @@ import { easings } from "@react-spring/web";
 import classNames from "classnames";
 import { useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
-// import { ReactP5Wrapper } from "@p5-wrapper/react";
-// import { sketchFactory } from "./sketches/spiral";
 
 export const SketchModal = ({
   sketch,
@@ -23,36 +21,21 @@ export const SketchModal = ({
     tileHeight,
     modalMargin,
     modalPadding,
-    modalLeftSideWidth,
-    modalCanvasWidth,
-    modalCanvasHeight,
-    tileCanvasHeight,
-    tileCanvasWidth,
+    modalSidebarWidth,
   } = useViewport();
 
-  // console.log({ modalCanvasWidth, modalCanvasHeight });
-
-  const [size, setSize] = useState<"preview" | "expanded">("preview");
+  const [size, setSize] = useState<"tile" | "modal">("tile");
   const [playing, setPlaying] = useState(false);
   const sketchContainerRef = useRef<HTMLDivElement>(null);
-
-  // const p5Sketch = useMemo(() => {
-  //   if (showSketch && sketchContainerRef?.current) {
-  //     const { width, height } =
-  //       sketchContainerRef.current.getBoundingClientRect();
-  //     return sketchFactory(width, height);
-  //   }
-  // }, [showSketch]);
 
   const x1Ref = useSpringRef();
   const { x } = useSpring({
     from: { x: 0 },
     to: { x: 1 },
     config: { duration: 500, easing: easings.easeInOutCubic },
-    // delay: 500000,
     delay: 500,
     onStart: () => {
-      setSize("expanded");
+      setSize("modal");
     },
     ref: x1Ref,
   });
@@ -62,7 +45,6 @@ export const SketchModal = ({
     from: { x2: 0 },
     to: { x2: 1 },
     config: { duration: 400, easing: easings.easeInOutCubic },
-    // delay: 500000,
     onRest: () => {},
     ref: x2Ref,
     onResolve: () => {
@@ -71,8 +53,6 @@ export const SketchModal = ({
   });
 
   useChain([x1Ref, x2Ref]);
-
-  const imgSrc = `./${sketch.id}_full.png`;
 
   const [n, setN] = useState(3);
   const [t, setT] = useState(4);
@@ -102,7 +82,7 @@ export const SketchModal = ({
           <animated.div
             className={styles.Left}
             style={{
-              width: x.to([0, 1], [0, modalLeftSideWidth]),
+              width: x.to([0, 1], [0, modalSidebarWidth]),
               opacity: x2.to([0, 1], [0, 1]),
               translateY: x2.to([0, 1], [-15, 0]),
             }}
@@ -132,25 +112,6 @@ export const SketchModal = ({
           <div className={classNames(styles.Vertical, styles.Right)}>
             <div ref={sketchContainerRef} className={styles.RightTop}>
               <SketchCanvas size={size} sketch={sketch} playing={playing} />
-              {/* {showSketch ? (
-                <SketchCanvas
-                  width={modalCanvasWidth}
-                  height={modalCanvasHeight}
-                  sketch={sketch}
-                />
-              ) : (
-                <animated.div
-                  className={styles.ImgWrapper}
-                  style={{
-                    flexGrow: x.to([0, 1], [0, 1]),
-                    backgroundImage: `url(${imgSrc})`,
-                    backgroundSize: x
-                      .to([0, 1], [150, 100])
-                      .to((x) => `auto ${x}%`),
-                    backgroundPosition: "center",
-                  }}
-                />
-              )} */}
             </div>
             <animated.div
               className={styles.RightBottom}

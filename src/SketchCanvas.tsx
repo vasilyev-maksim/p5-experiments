@@ -8,41 +8,33 @@ import { animated, easings, to, useSpring } from "react-spring";
 
 export function SketchCanvas(props: {
   sketch: ISketch;
-  size: "preview" | "expanded";
+  size: "tile" | "modal";
   playing: boolean;
 }) {
-  const {
-    modalCanvasHeight,
-    modalCanvasWidth,
-    // tileHeight,
-    tileWidth,
-    tilePadding,
-  } = useViewport();
+  const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
 
   const { x } = useSpring({
     from: { x: 0 },
-    to: { x: props.size === "preview" ? 0 : 1 },
+    to: { x: props.size === "tile" ? 0 : 1 },
     config: { duration: 500, easing: easings.easeInOutCubic },
-    // delay: 500000,
   });
 
-  const w = tileWidth - tilePadding * 2;
-  const w2 = 520;
+  const previewSize = props.sketch.preview.size;
 
   const p5Sketch = useMemo(() => {
-    return sketchFactory(modalCanvasWidth, modalCanvasHeight);
-  }, [modalCanvasWidth, modalCanvasHeight]);
+    return sketchFactory(canvasModalWidth, canvasModalHeight);
+  }, [canvasModalWidth, canvasModalHeight]);
 
-  const scale = x.to([0, 1], [w / w2, 1]);
-  const translateX = x.to([0, 1], [-(modalCanvasWidth - w2) / 2, 0]);
-  const translateY = x.to([0, 1], [-(modalCanvasHeight - w2) / 2, 0]);
+  const scale = x.to([0, 1], [canvasTileSize / previewSize, 1]);
+  const translateX = x.to([0, 1], [-(canvasModalWidth - previewSize) / 2, 0]);
+  const translateY = x.to([0, 1], [-(canvasModalHeight - previewSize) / 2, 0]);
 
   return (
     <animated.div
       className={styles.Wrapper}
       style={{
-        width: x.to([0, 1], [w, modalCanvasWidth]),
-        height: x.to([0, 1], [w, modalCanvasHeight]),
+        width: x.to([0, 1], [canvasTileSize, canvasModalWidth]),
+        height: x.to([0, 1], [canvasTileSize, canvasModalHeight]),
       }}
     >
       <animated.div
@@ -55,20 +47,8 @@ export function SketchCanvas(props: {
           ),
         }}
       >
-        <ReactP5Wrapper sketch={p5Sketch} n={3} t={4} p={props.playing} />
+        <ReactP5Wrapper sketch={p5Sketch} n={3} t={4} playing={props.playing} />
       </animated.div>
-      {/* {showSketch ? (
-      ) : (
-        <animated.div
-          className={styles.ImgWrapper}
-          style={{
-            flexGrow: x.to([0, 1], [0, 1]),
-            backgroundImage: `url(${imgSrc})`,
-            backgroundSize: x.to([0, 1], [150, 100]).to((x) => `auto ${x}%`),
-            backgroundPosition: "center",
-          }}
-        />
-      )} */}
     </animated.div>
   );
 }

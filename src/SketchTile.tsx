@@ -28,8 +28,6 @@ export const SketchTile = forwardRef<
     ref
   ) => {
     const { tileWidth, tileHeight } = useViewport();
-    // const imgSrc = `./${sketch.id}.png`;
-    const imgSrc = `./${sketch.id}_full.png`;
 
     return (
       <div
@@ -50,15 +48,7 @@ export const SketchTile = forwardRef<
           height: tileHeight,
         }}
       >
-        <SketchCanvas sketch={sketch} playing={false} size="preview" />
-        {/* <div
-          className={styles.ImgWrapper}
-          style={{
-            backgroundImage: `url(${imgSrc})`,
-            backgroundSize: `auto 150%`,
-            backgroundPosition: "center",
-          }}
-        /> */}
+        <SketchCanvas sketch={sketch} playing={false} size="tile" />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>
     );
