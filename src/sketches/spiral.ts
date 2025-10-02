@@ -24,6 +24,12 @@ export const sketchFactory =
       if (props.t) {
         THICKNESS = props.t as number;
       }
+
+      if (props.p) {
+        p.loop();
+      } else {
+        p.noLoop();
+      }
     };
 
     p.setup = () => {

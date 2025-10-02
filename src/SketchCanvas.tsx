@@ -4,9 +4,13 @@ import styles from "./SketchCanvas.module.css";
 import { sketchFactory } from "./sketches/spiral";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "./hooks";
-import { animated } from "react-spring";
+import { animated, easings, to, useSpring } from "react-spring";
 
-export function SketchCanvas(props: { sketch: ISketch }) {
+export function SketchCanvas(props: {
+  sketch: ISketch;
+  size: "preview" | "expanded";
+  playing: boolean;
+}) {
   const {
     modalCanvasHeight,
     modalCanvasWidth,
@@ -15,28 +19,44 @@ export function SketchCanvas(props: { sketch: ISketch }) {
     tilePadding,
   } = useViewport();
 
+  const { x } = useSpring({
+    from: { x: 0 },
+    to: { x: props.size === "preview" ? 0 : 1 },
+    config: { duration: 500, easing: easings.easeInOutCubic },
+    // delay: 500000,
+  });
+
+  const w = tileWidth - tilePadding * 2;
+  const w2 = 520;
+
   const p5Sketch = useMemo(() => {
     return sketchFactory(modalCanvasWidth, modalCanvasHeight);
-  }, []);
+  }, [modalCanvasWidth, modalCanvasHeight]);
+
+  const scale = x.to([0, 1], [w / w2, 1]);
+  const translateX = x.to([0, 1], [-(modalCanvasWidth - w2) / 2, 0]);
+  const translateY = x.to([0, 1], [-(modalCanvasHeight - w2) / 2, 0]);
 
   return (
     <animated.div
       className={styles.Wrapper}
       style={{
-        width: tileWidth - tilePadding * 2,
-        height: tileWidth - tilePadding * 2,
+        width: x.to([0, 1], [w, modalCanvasWidth]),
+        height: x.to([0, 1], [w, modalCanvasHeight]),
       }}
     >
-      <div
+      <animated.div
         className={styles.CanvasWrapper}
         style={{
-          position: "absolute",
           transformOrigin: "top left",
-          transform: `scale(${tileWidth / modalCanvasHeight})`,
+          transform: to(
+            [scale, translateX, translateY],
+            (s, tx, ty) => `scale(${s}) translate(${tx}px, ${ty}px)`
+          ),
         }}
       >
-        <ReactP5Wrapper sketch={p5Sketch} n={3} t={4} />
-      </div>
+        <ReactP5Wrapper sketch={p5Sketch} n={3} t={4} p={props.playing} />
+      </animated.div>
       {/* {showSketch ? (
       ) : (
         <animated.div

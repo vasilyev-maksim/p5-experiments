@@ -4,10 +4,10 @@ import { animated, useChain, useSpring, useSpringRef } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import { easings } from "@react-spring/web";
 import classNames from "classnames";
-import { useMemo, useRef, useState } from "react";
-// import { SketchCanvas } from "./SketchCanvas";
-import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { sketchFactory } from "./sketches/spiral";
+import { useRef, useState } from "react";
+import { SketchCanvas } from "./SketchCanvas";
+// import { ReactP5Wrapper } from "@p5-wrapper/react";
+// import { sketchFactory } from "./sketches/spiral";
 
 export const SketchModal = ({
   sketch,
@@ -26,20 +26,23 @@ export const SketchModal = ({
     modalLeftSideWidth,
     modalCanvasWidth,
     modalCanvasHeight,
+    tileCanvasHeight,
+    tileCanvasWidth,
   } = useViewport();
 
-  console.log({ modalCanvasWidth, modalCanvasHeight });
+  // console.log({ modalCanvasWidth, modalCanvasHeight });
 
-  const [showSketch, setShowSketch] = useState(false);
+  const [size, setSize] = useState<"preview" | "expanded">("preview");
+  const [playing, setPlaying] = useState(false);
   const sketchContainerRef = useRef<HTMLDivElement>(null);
 
-  const p5Sketch = useMemo(() => {
-    if (showSketch && sketchContainerRef?.current) {
-      const { width, height } =
-        sketchContainerRef.current.getBoundingClientRect();
-      return sketchFactory(width, height);
-    }
-  }, [showSketch]);
+  // const p5Sketch = useMemo(() => {
+  //   if (showSketch && sketchContainerRef?.current) {
+  //     const { width, height } =
+  //       sketchContainerRef.current.getBoundingClientRect();
+  //     return sketchFactory(width, height);
+  //   }
+  // }, [showSketch]);
 
   const x1Ref = useSpringRef();
   const { x } = useSpring({
@@ -48,6 +51,9 @@ export const SketchModal = ({
     config: { duration: 500, easing: easings.easeInOutCubic },
     // delay: 500000,
     delay: 500,
+    onStart: () => {
+      setSize("expanded");
+    },
     ref: x1Ref,
   });
 
@@ -60,7 +66,7 @@ export const SketchModal = ({
     onRest: () => {},
     ref: x2Ref,
     onResolve: () => {
-      setShowSketch(true);
+      setPlaying(true);
     },
   });
 
@@ -125,9 +131,13 @@ export const SketchModal = ({
           </animated.div>
           <div className={classNames(styles.Vertical, styles.Right)}>
             <div ref={sketchContainerRef} className={styles.RightTop}>
-              {showSketch ? (
-                // <SketchCanvas sketch={sketch} />
-                <ReactP5Wrapper sketch={p5Sketch} n={n} t={t} />
+              <SketchCanvas size={size} sketch={sketch} playing={playing} />
+              {/* {showSketch ? (
+                <SketchCanvas
+                  width={modalCanvasWidth}
+                  height={modalCanvasHeight}
+                  sketch={sketch}
+                />
               ) : (
                 <animated.div
                   className={styles.ImgWrapper}
@@ -140,7 +150,7 @@ export const SketchModal = ({
                     backgroundPosition: "center",
                   }}
                 />
-              )}
+              )} */}
             </div>
             <animated.div
               className={styles.RightBottom}
