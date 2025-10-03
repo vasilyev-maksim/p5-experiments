@@ -174,6 +174,7 @@ export function getGrid2D(args: GetGrid2DArgs): Grid2DCallbackArgs[] {
   });
   return grid;
 }
+
 export function getRandomPartition(
   n: number,
   minPart: number,
@@ -189,6 +190,7 @@ export function getRandomPartition(
     ...getRandomPartition(n - part, minPart, maxPart, randomProvider),
   ];
 }
+
 export function oscillateBetween(
   p: p5,
   start: number,
