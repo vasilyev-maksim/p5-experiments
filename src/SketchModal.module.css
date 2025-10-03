@@ -58,6 +58,18 @@
   text-align: center;
   text-transform: uppercase;
   font-size: 1.2rem;
+}
+
+.ModalTitle {
+  font-size: 2.5rem;
+  color: var(--fontColor);
+  line-height: 100%;
+  padding-top: 40px;
+  text-align: center;
+}
+
+.Title,
+.ModalTitle {
   letter-spacing: 2px;
 }
 
@@ -105,12 +117,4 @@
 }
 
 .Left {
-}
-
-.ModalTitle {
-  font-size: 2.5rem;
-  color: var(--fontColor);
-  line-height: 100%;
-  padding-top: 40px;
-  text-align: center;
 }
