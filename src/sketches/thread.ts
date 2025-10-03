@@ -66,6 +66,7 @@ export const thread: SketchFactory =
       p.stroke(255, 0, 0, 255);
       p.strokeWeight(2);
       p.randomSeed(randomSeed);
+      p.noiseSeed(randomSeed);
       NODES = getNextNodes();
       NEXT_NODES = getNextNodes();
     };

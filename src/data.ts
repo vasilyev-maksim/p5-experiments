@@ -40,6 +40,7 @@ export const sketchList: ISketch[] = [
       size: 520,
     },
     factory: thread,
+    randomSeed: 332,
   },
   {
     id: "pillars",
