@@ -87,7 +87,7 @@ export const SketchModal = ({
               translateY: x2.to([0, 1], [-15, 0]),
             }}
           >
-            <h2 style={{ textAlign: "left" }}>{sketch.name.toUpperCase()}</h2>
+            <h2 className={styles.ModalTitle}>{sketch.name.toUpperCase()}</h2>
             <br />
             <input
               type="range"
