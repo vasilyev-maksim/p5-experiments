@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import type { ISketch } from "./models";
 import styles from "./SketchCanvas.module.css";
-import { sketchFactory } from "./sketches/spiral";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "./hooks";
 import { animated, easings, to, useSpring } from "react-spring";
@@ -12,18 +11,22 @@ export function SketchCanvas(props: {
   playing: boolean;
 }) {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
+  const previewSize = props.sketch.preview.size;
+
+  const p5Sketch = useMemo(() => {
+    return props.sketch.factory(
+      canvasModalWidth,
+      canvasModalHeight,
+      props.sketch.randomSeed ?? 0,
+      props.sketch.timeShift ?? 0
+    );
+  }, [props.sketch, canvasModalWidth, canvasModalHeight]);
 
   const { x } = useSpring({
     from: { x: 0 },
     to: { x: props.size === "tile" ? 0 : 1 },
     config: { duration: 500, easing: easings.easeInOutCubic },
   });
-
-  const previewSize = props.sketch.preview.size;
-
-  const p5Sketch = useMemo(() => {
-    return sketchFactory(canvasModalWidth, canvasModalHeight);
-  }, [canvasModalWidth, canvasModalHeight]);
 
   const scale = x.to([0, 1], [canvasTileSize / previewSize, 1]);
   const translateX = x.to([0, 1], [-(canvasModalWidth - previewSize) / 2, 0]);

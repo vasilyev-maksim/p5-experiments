@@ -1,7 +1,8 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
+import type { SketchFactory } from "../models";
 
-export const sketchFactory =
-  (WIDTH: number, HEIGHT: number) =>
+export const spiral: SketchFactory =
+  (WIDTH, HEIGHT) =>
   (p: P5CanvasInstance<{ playing: boolean; n: number; t: number }>) => {
     const ANGULAR_SPEED = 2,
       BRUSH_SPEED = 2;
@@ -12,8 +13,6 @@ export const sketchFactory =
     function getTime() {
       return p.frameCount + 1000;
     }
-
-    // let time = 0;
 
     p.updateWithProps = (props) => {
       if (props.n) {
@@ -38,7 +37,6 @@ export const sketchFactory =
       p.stroke(p.color("rgba(255, 0, 0, 1)"));
       p.strokeWeight(1);
       p.angleMode("degrees");
-      // p.noLoop();
     };
 
     function getNodes(): [number, number][] {
@@ -99,6 +97,4 @@ export const sketchFactory =
         return drawPolygon(x);
       });
     };
-
-    // p.mouseClicked = () => N++;
   };
