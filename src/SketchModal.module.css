@@ -111,4 +111,6 @@
   font-size: 2.5rem;
   color: var(--fontColor);
   line-height: 100%;
+  padding-top: 40px;
+  text-align: center;
 }

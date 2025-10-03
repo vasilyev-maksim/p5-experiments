@@ -54,8 +54,8 @@ export const SketchModal = ({
 
   useChain([x1Ref, x2Ref]);
 
-  const [n, setN] = useState(3);
-  const [t, setT] = useState(4);
+  // const [n, setN] = useState(3);
+  // const [t, setT] = useState(4);
 
   return (
     <animated.div
@@ -84,11 +84,16 @@ export const SketchModal = ({
             style={{
               width: x.to([0, 1], [0, modalSidebarWidth]),
               opacity: x2.to([0, 1], [0, 1]),
-              translateY: x2.to([0, 1], [-15, 0]),
+              translateY: x2.to([0, 1], [15, 0]),
             }}
           >
-            <h2 className={styles.ModalTitle}>{sketch.name.toUpperCase()}</h2>
-            <br />
+            <h2
+              style={{ paddingRight: modalPadding }}
+              className={styles.ModalTitle}
+            >
+              {sketch.name.toUpperCase()}
+            </h2>
+            {/* <br />
             <input
               type="range"
               max={10}
@@ -107,7 +112,7 @@ export const SketchModal = ({
               value={t}
               onChange={(e) => setT(parseInt(e.target.value))}
             />{" "}
-            T={t}
+            T={t} */}
           </animated.div>
           <div className={classNames(styles.Vertical, styles.Right)}>
             <div ref={sketchContainerRef} className={styles.RightTop}>
