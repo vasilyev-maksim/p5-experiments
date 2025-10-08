@@ -1,23 +1,40 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 
-export type SketchFactory = (
+export type ISketchProps<ParamKey extends string = string> = {
+  [K in ParamKey]: number;
+} & { playing: boolean };
+
+export type ISketchFactory<ParamKey extends string = string> = (
   width: number,
   height: number,
   randomSeed: number,
   timeShift: number // nice game btw
-) => (
-  p: P5CanvasInstance<{
-    playing: boolean;
-  }>
-) => void;
+) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
-export interface ISketch {
+export type IControl<ParamKey extends string = string> = {
+  key: ParamKey;
+  defaultValue: number;
+} & {
+  type: "range";
+  min: number;
+  max: number;
+  step: number;
+};
+
+export type IPreset<ParamKey extends string = string> = {
+  name?: string;
+  params: Record<ParamKey, number>;
+};
+
+export interface ISketch<ParamKey extends string = string> {
   name: string;
   id: string;
   preview: {
     size: number;
   };
-  factory: SketchFactory;
+  factory: ISketchFactory<ParamKey>;
   randomSeed?: number;
   timeShift?: number;
+  controls?: IControl<ParamKey>[];
+  presets?: IPreset<ParamKey>[];
 }

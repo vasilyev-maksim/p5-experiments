@@ -6,9 +6,9 @@ import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
 import { easeInOutQuad, getQsParam } from "../utils";
 import type { P5CanvasInstance } from "@p5-wrapper/react";
-import type { SketchFactory } from "../../models";
+import type { ISketchFactory } from "../../models";
 
-export const tiles: SketchFactory =
+export const tiles: ISketchFactory =
   (WIDTH, HEIGHT, randomSeed, timeShift) =>
   (p: P5CanvasInstance<{ playing: boolean }>) => {
     const GRID_CELLS_Y = Number(getQsParam("y", "20")),
@@ -54,7 +54,6 @@ export const tiles: SketchFactory =
 
     const spawnTurtle = () => {
       const randomOrigin = matrix.getRandomTrue();
-      console.log({ randomOrigin });
       if (!randomOrigin) {
         return false;
       }

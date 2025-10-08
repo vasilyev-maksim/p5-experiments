@@ -1,7 +1,7 @@
 import { getRandomPartition } from "./utils";
-import type { SketchFactory } from "../models";
+import type { ISketchFactory } from "../models";
 
-export const pillars: SketchFactory =
+export const pillars: ISketchFactory =
   (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
     const GAP_X = 10,
       GAP_Y = 10,

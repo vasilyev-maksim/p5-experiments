@@ -6,6 +6,7 @@ import { easings } from "@react-spring/web";
 import classNames from "classnames";
 import { useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
+import { Controls } from "./Controls";
 
 export const SketchModal = ({
   sketch,
@@ -54,8 +55,17 @@ export const SketchModal = ({
 
   useChain([x1Ref, x2Ref]);
 
-  // const [n, setN] = useState(3);
-  // const [t, setT] = useState(4);
+  const [paramsMap, setParamsMap] = useState(
+    Object.fromEntries(
+      sketch.controls?.map((x) => [x.key, x.defaultValue]) ?? []
+    )
+  );
+  const changeParam = (key: string, value: number) => {
+    setParamsMap((x) => ({ ...x, [key]: value }));
+  };
+  const applyPreset = (paramsMap: Record<string, number>) => {
+    setParamsMap(paramsMap);
+  };
 
   return (
     <animated.div
@@ -93,30 +103,22 @@ export const SketchModal = ({
             >
               {sketch.name.toUpperCase()}
             </h2>
-            {/* <br />
-            <input
-              type="range"
-              max={10}
-              min={3}
-              step={1}
-              value={n}
-              onChange={(e) => setN(parseInt(e.target.value))}
-            />{" "}
-            N={n}
             <br />
-            <input
-              type="range"
-              max={10}
-              min={1}
-              step={1}
-              value={t}
-              onChange={(e) => setT(parseInt(e.target.value))}
-            />{" "}
-            T={t} */}
+            <Controls
+              onPresetApply={applyPreset}
+              sketch={sketch}
+              paramsMap={paramsMap}
+              onParamChange={changeParam}
+            />
           </animated.div>
           <div className={classNames(styles.Vertical, styles.Right)}>
             <div ref={sketchContainerRef} className={styles.RightTop}>
-              <SketchCanvas size={size} sketch={sketch} playing={playing} />
+              <SketchCanvas
+                size={size}
+                sketch={sketch}
+                params={paramsMap}
+                playing={playing}
+              />
             </div>
             <animated.div
               className={styles.RightBottom}

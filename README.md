@@ -8,3 +8,5 @@
 - make animations independent from canvas size (?)
 - worm like transition of site header when scrolling down
 - thread: make multiple threads in sync but with x-axis shift and color shift
+- presets for params (with gradual transition)
+- more advanced controls: transformers, l/r arrows

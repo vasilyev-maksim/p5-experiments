@@ -1,6 +1,6 @@
-import type { SketchFactory } from "../models";
+import type { ISketchFactory } from "../models";
 
-export const pulse: SketchFactory =
+export const pulse: ISketchFactory =
   (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
     const ORIENTATION: "v" | "h" = "h",
       W = ORIENTATION === "v" ? WIDTH : HEIGHT,
@@ -17,13 +17,6 @@ export const pulse: SketchFactory =
       OPACITY = 20,
       BG = [0, 0, 0],
       twinMidIndex = Math.round((TWIN_CURVES_COUNT - 1) / 2);
-    // COLORS = [
-    //   [255, 0, 0],
-    //   [255, 255, 255],
-    //   [0, 0, 0],
-    //   [52, 9, 152],
-    //   [234, 114, 247],
-    // ];
     let NODES: [number, number][][] = [];
     let NEXT_NODES: [number, number][][] = [];
 
@@ -118,6 +111,7 @@ export const pulse: SketchFactory =
       p.strokeWeight(2);
       p.randomSeed(randomSeed);
       p.noiseSeed(randomSeed);
+      // p.noiseDetail(4, 0.7);
       NODES = getNextNodes();
       NEXT_NODES = getNextNodes();
     };

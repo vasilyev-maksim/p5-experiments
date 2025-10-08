@@ -1,7 +1,7 @@
 import p5 from "p5";
-import type { SketchFactory } from "../models";
+import type { ISketchFactory } from "../models";
 
-export const escalator: SketchFactory =
+export const escalator: ISketchFactory =
   (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
     const min = Math.min(WIDTH, HEIGHT),
       W = min,

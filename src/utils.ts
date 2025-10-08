@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { ISketch } from "./models";
 
 export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   useEffect(() => {
@@ -19,4 +20,10 @@ export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
       return () => window.removeEventListener("keydown", handleEsc);
     }
   }, [isOpen, closeModal]);
+}
+
+export function extractDefaultParamsMap(sketch: ISketch) {
+  return Object.fromEntries(
+    sketch.controls?.map((x) => [x.key, x.defaultValue]) ?? []
+  );
 }

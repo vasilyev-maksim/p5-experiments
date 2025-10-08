@@ -6,7 +6,8 @@ import { pulse } from "./sketches/pulse";
 import { spiral } from "./sketches/spiral";
 import { tiles } from "./sketches/tiles/tiles";
 
-export const sketchList: ISketch[] = [
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const sketchList: ISketch<any>[] = [
   {
     id: "lungs",
     name: "lungs",
@@ -31,8 +32,149 @@ export const sketchList: ISketch[] = [
     preview: {
       size: 520,
     },
+    timeShift: 1000,
     factory: spiral,
-  },
+    controls: [
+      {
+        key: "n",
+        max: 11,
+        min: 2,
+        step: 1,
+        type: "range",
+        defaultValue: 3,
+      },
+      {
+        key: "t",
+        max: 20,
+        min: 2,
+        step: 1,
+        type: "range",
+        defaultValue: 4,
+      },
+      {
+        key: "as",
+        max: 100,
+        min: 1,
+        step: 1,
+        type: "range",
+        defaultValue: 2,
+      },
+      {
+        key: "bs",
+        max: 20,
+        min: 1,
+        step: 1,
+        type: "range",
+        defaultValue: 2,
+      },
+      {
+        key: "ls",
+        max: 10,
+        min: 0,
+        step: 1,
+        type: "range",
+        defaultValue: 1.5,
+      },
+      {
+        key: "cs",
+        max: 10,
+        min: 1,
+        step: 1,
+        type: "range",
+        defaultValue: 10,
+      },
+      {
+        key: "s",
+        max: 10,
+        min: 0,
+        step: 1,
+        type: "range",
+        defaultValue: 1,
+      },
+      {
+        key: "sf",
+        max: 10,
+        min: 1,
+        step: 1,
+        type: "range",
+        defaultValue: 1,
+      },
+    ],
+    presets: [
+      {
+        params: {
+          n: 3,
+          t: 4,
+          as: 2,
+          bs: 2,
+          ls: 1.5,
+          cs: 10,
+          s: 1,
+          sf: 1,
+        },
+      },
+      {
+        params: {
+          n: 11,
+          t: 20,
+          as: 90,
+          bs: 2,
+          ls: 1.5,
+          cs: 10,
+          s: 10,
+          sf: 10,
+        },
+      },
+      {
+        params: {
+          n: 11,
+          t: 20,
+          as: 76,
+          bs: 2,
+          ls: 10,
+          cs: 10,
+          s: 0,
+          sf: 1,
+        },
+      },
+      {
+        params: {
+          n: 6,
+          t: 2,
+          as: 100,
+          bs: 20,
+          ls: 10,
+          cs: 10,
+          s: 1,
+          sf: 10,
+        },
+      },
+      {
+        params: {
+          n: 3,
+          t: 20,
+          as: 28,
+          bs: 2,
+          ls: 0,
+          cs: 10,
+          s: 10,
+          sf: 1,
+        },
+      },
+      {
+        params: {
+          n: 11,
+          t: 11,
+          as: 65,
+          bs: 2,
+          ls: 6,
+          cs: 10,
+          s: 10,
+          sf: 1,
+        },
+      },
+    ],
+  } satisfies ISketch<"n" | "t" | "as" | "bs" | "s" | "ls" | "cs" | "sf">,
   {
     id: "pulse",
     name: "pulse",

@@ -1,27 +1,45 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
-import type { SketchFactory } from "../models";
+import type { ISketchFactory } from "../models";
 
-export const spiral: SketchFactory =
-  (WIDTH, HEIGHT) =>
-  (p: P5CanvasInstance<{ playing: boolean; n: number; t: number }>) => {
-    const ANGULAR_SPEED = 2,
-      BRUSH_SPEED = 2;
-
+export const spiral: ISketchFactory<
+  "n" | "t" | "as" | "bs" | "s" | "ls" | "cs" | "sf"
+> =
+  (WIDTH, HEIGHT, _randomSeed, timeShift) =>
+  (
+    p: P5CanvasInstance<{
+      playing: boolean;
+      n: number;
+      t: number;
+      as: number;
+      bs: number;
+      s: number;
+      ls: number;
+      cs: number;
+      sf: number;
+    }>
+  ) => {
     let N = 3,
-      THICKNESS = 4;
+      THICKNESS = 4,
+      ANGULAR_SPEED = 2,
+      BRUSH_SPEED = 2,
+      SPEED = 1,
+      LINEAR_SPEED = 1.5,
+      COLOR_SPEED = 1,
+      SPEED_FACTOR = 1;
 
     function getTime() {
-      return p.frameCount + 1000;
+      return (p.frameCount + timeShift) / SPEED_FACTOR;
     }
 
     p.updateWithProps = (props) => {
-      if (props.n) {
-        N = props.n;
-      }
-
-      if (props.t) {
-        THICKNESS = props.t;
-      }
+      N = props.n;
+      THICKNESS = props.t;
+      ANGULAR_SPEED = props.as;
+      BRUSH_SPEED = props.bs;
+      SPEED = props.s;
+      LINEAR_SPEED = props.ls;
+      COLOR_SPEED = props.cs;
+      SPEED_FACTOR = props.sf;
 
       if (props.playing) {
         p.loop();
@@ -43,16 +61,17 @@ export const spiral: SketchFactory =
       return Array.from({ length: 500 }, (_, i) => {
         return [
           i * BRUSH_SPEED,
-          i * ANGULAR_SPEED * p.sin(getTime()) + getTime() * 1.5,
+          i * ANGULAR_SPEED * (SPEED === 0 ? 1 : p.sin(getTime() / SPEED)) +
+            getTime() * LINEAR_SPEED,
         ];
       });
     }
 
-    // function drawCircle([d, angle]: [number, number]) {
-    //   const x = d * p.cos(angle);
-    //   const y = d * p.sin(angle);
-    //   p.circle(WIDTH / 2 + x, HEIGHT / 2 + y, d);
-    // }
+    function drawCircle([d, angle]: [number, number]) {
+      const x = d * p.cos(angle);
+      const y = d * p.sin(angle);
+      p.circle(WIDTH / 2 + x, HEIGHT / 2 + y, (d * 2) / THICKNESS);
+    }
 
     // function drawSquare([d, angle]: [number, number]) {
     //   const x = d * p.cos(angle);
@@ -84,7 +103,7 @@ export const spiral: SketchFactory =
       return p.lerpColor(
         p.color("rgba(103, 3, 116, 1)"),
         p.color("rgba(45, 1, 147, 1)"),
-        p.sin(getTime() * 1 + (i / maxI) * 4 * 360)
+        p.sin(getTime() * COLOR_SPEED + (i / maxI) * 360 * 4)
       );
     }
 
@@ -94,7 +113,11 @@ export const spiral: SketchFactory =
       nodes.forEach((x, i, arr) => {
         const color = getColor(i, arr.length);
         p.fill(color);
-        return drawPolygon(x);
+        if (N > 10) {
+          drawCircle(x);
+        } else {
+          drawPolygon(x);
+        }
       });
     };
   };

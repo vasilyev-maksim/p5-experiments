@@ -9,6 +9,7 @@ export function SketchCanvas(props: {
   sketch: ISketch;
   size: "tile" | "modal";
   playing: boolean;
+  params: Record<string, number>;
 }) {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
   const previewSize = props.sketch.preview.size;
@@ -50,7 +51,11 @@ export function SketchCanvas(props: {
           ),
         }}
       >
-        <ReactP5Wrapper sketch={p5Sketch} n={3} t={4} playing={props.playing} />
+        <ReactP5Wrapper
+          sketch={p5Sketch}
+          {...props.params}
+          playing={props.playing}
+        />
       </animated.div>
     </animated.div>
   );

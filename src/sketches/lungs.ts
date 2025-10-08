@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { oscillateBetween } from "./utils";
-import type { SketchFactory } from "../models";
+import type { ISketchFactory } from "../models";
 
 class Circle {
   public constructor(
@@ -28,7 +28,7 @@ class Circle {
   };
 }
 
-export const lungs: SketchFactory =
+export const lungs: ISketchFactory =
   (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
     function getDirection(i: number) {
       return [
