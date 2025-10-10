@@ -1,49 +1,29 @@
-import type { ISketch } from "./models";
+import type { ISketch, IParams } from "./models";
+import { SectionLayout } from "./SectionLayout";
 import styles from "./Controls.module.css";
+import { Slider } from "./Slider";
 
 export function Controls(props: {
   sketch: ISketch<string>;
-  paramsMap: Record<string, number>;
+  params: IParams;
   onParamChange: (key: string, value: number) => void;
-  onPresetApply: (paramsMap: Record<string, number>) => void;
 }) {
-  console.log(props.paramsMap);
+  console.log(props.params);
   return (
-    <>
+    <SectionLayout header="Parameters" className={styles.Controls}>
       {props.sketch.controls?.map((c) => {
         if (c.type === "range") {
-          const value = props.paramsMap[c.key];
+          const value = props.params[c.key];
           return (
-            <div key={c.key}>
-              {c.key} &nbsp;
-              <input
-                name={c.key}
-                type="range"
-                max={c.max}
-                min={c.min}
-                step={c.step}
-                value={value}
-                onChange={(e) =>
-                  props.onParamChange(c.key, parseInt(e.target.value))
-                }
-              />
-              &nbsp; ({value})
-            </div>
+            <Slider
+              key={c.key}
+              control={c}
+              value={value}
+              onChange={(val) => props.onParamChange(c.key, val)}
+            />
           );
         }
       })}
-      <br />
-      PRESETS:
-      <br />
-      {props.sketch.presets?.map((p, i) => (
-        <button
-          key={i}
-          className={styles.PresetButton}
-          onClick={() => props.onPresetApply(p.params)}
-        >
-          {p.name ?? `_${i}`}
-        </button>
-      ))}
-    </>
+    </SectionLayout>
   );
 }

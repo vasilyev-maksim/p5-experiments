@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { ISketch } from "./models";
+import type { ISketch, IParams } from "./models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "./hooks";
@@ -9,7 +9,7 @@ export function SketchCanvas(props: {
   sketch: ISketch;
   size: "tile" | "modal";
   playing: boolean;
-  params: Record<string, number>;
+  params: IParams;
 }) {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
   const previewSize = props.sketch.preview.size;

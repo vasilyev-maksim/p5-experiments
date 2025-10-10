@@ -4,7 +4,7 @@ import styles from "./SketchTile.module.css";
 import classNames from "classnames";
 import { useViewport } from "./hooks";
 import { SketchCanvas } from "./SketchCanvas";
-import { extractDefaultParamsMap } from "./utils";
+import { extractDefaultParams } from "./utils";
 
 export const SketchTile = forwardRef<
   HTMLDivElement,
@@ -29,7 +29,7 @@ export const SketchTile = forwardRef<
     ref
   ) => {
     const { tileWidth, tileHeight } = useViewport();
-    const params = extractDefaultParamsMap(sketch);
+    const params = extractDefaultParams(sketch);
 
     return (
       <div

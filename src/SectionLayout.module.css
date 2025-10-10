@@ -1,0 +1,16 @@
+.SectionLayout {
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+.Body {
+  flex: 1;
+}
+
+.Header {
+  writing-mode: sideways-lr;
+  text-align: right;
+  padding-top: 5px;
+}

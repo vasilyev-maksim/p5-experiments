@@ -1,0 +1,14 @@
+.Slider {
+  input {
+    width: 100%;
+    display: block;
+  }
+}
+
+.Label {
+  text-align: center;
+}
+
+.Value {
+  text-align: center;
+}

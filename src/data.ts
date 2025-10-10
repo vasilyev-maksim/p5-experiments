@@ -37,6 +37,24 @@ export const sketchList: ISketch<any>[] = [
     controls: [
       {
         key: "n",
+        label: "Profile shape",
+        valueFormatter: (value, { max }) => {
+          if (value === max) {
+            return "circle";
+          } else if (value === 2) {
+            return "line";
+          } else if (value === 3) {
+            return "triangle";
+          } else if (value === 4) {
+            return "square";
+          } else if (value === 5) {
+            return "pentagon";
+          } else if (value === 6) {
+            return "hexagon";
+          } else {
+            return value + "-gon";
+          }
+        },
         max: 11,
         min: 2,
         step: 1,
@@ -112,6 +130,7 @@ export const sketchList: ISketch<any>[] = [
           s: 1,
           sf: 1,
         },
+        name: "spiral",
       },
       {
         params: {
@@ -124,30 +143,7 @@ export const sketchList: ISketch<any>[] = [
           s: 10,
           sf: 10,
         },
-      },
-      {
-        params: {
-          n: 11,
-          t: 20,
-          as: 76,
-          bs: 2,
-          ls: 10,
-          cs: 10,
-          s: 0,
-          sf: 1,
-        },
-      },
-      {
-        params: {
-          n: 6,
-          t: 2,
-          as: 100,
-          bs: 20,
-          ls: 10,
-          cs: 10,
-          s: 1,
-          sf: 10,
-        },
+        name: "cyclone 1",
       },
       {
         params: {
@@ -160,7 +156,79 @@ export const sketchList: ISketch<any>[] = [
           s: 10,
           sf: 1,
         },
+        name: "cyclone 2",
       },
+      {
+        params: {
+          n: 3,
+          t: 20,
+          as: 27,
+          bs: 2,
+          ls: 1.5,
+          cs: 10,
+          s: 0,
+          sf: 1,
+        },
+        name: "cyclone 3",
+      },
+      {
+        params: {
+          n: 11,
+          t: 20,
+          as: 62,
+          // as: 76,
+          bs: 2,
+          ls: 10,
+          cs: 10,
+          s: 0,
+          sf: 1,
+        },
+        name: "black hole",
+      },
+      {
+        params: {
+          n: 11,
+          t: 20,
+          // as: 88,
+          as: 58,
+          // as: 44,
+          // as: 76,
+          bs: 2,
+          ls: 10,
+          cs: 10,
+          s: 0,
+          sf: 1,
+        },
+        name: "white hole",
+      },
+      {
+        params: {
+          n: 11,
+          t: 20,
+          as: 10,
+          // as: 76,
+          bs: 2,
+          ls: 10,
+          cs: 10,
+          s: 0,
+          sf: 1,
+        },
+        name: "black hole 2",
+      },
+      {
+        params: {
+          n: 6,
+          t: 2,
+          as: 100,
+          bs: 20,
+          ls: 10,
+          cs: 10,
+          s: 1,
+          sf: 10,
+        },
+        name: "hexornado",
+      },
+
       {
         params: {
           n: 11,
@@ -172,6 +240,46 @@ export const sketchList: ISketch<any>[] = [
           s: 10,
           sf: 1,
         },
+        name: "hypno 1",
+      },
+      {
+        params: {
+          n: 7,
+          t: 10,
+          as: 19,
+          bs: 2,
+          ls: 10,
+          cs: 10,
+          s: 1,
+          sf: 1,
+        },
+        name: "hypno 2",
+      },
+      {
+        params: {
+          n: 2,
+          t: 6,
+          as: 42,
+          bs: 2,
+          ls: 10,
+          cs: 1,
+          s: 9,
+          sf: 1,
+        },
+        name: "phase space",
+      },
+      {
+        params: {
+          n: 2,
+          t: 2,
+          as: 16,
+          bs: 1,
+          ls: 0,
+          cs: 1,
+          s: 10,
+          sf: 1,
+        },
+        name: "radiation",
       },
     ],
   } satisfies ISketch<"n" | "t" | "as" | "bs" | "s" | "ls" | "cs" | "sf">,

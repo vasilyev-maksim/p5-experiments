@@ -62,9 +62,7 @@
 
 .ModalTitle {
   font-size: 2.5rem;
-  color: var(--fontColor);
   line-height: 100%;
-  padding-top: 40px;
   text-align: center;
 }
 
@@ -72,6 +70,12 @@
 .ModalTitle {
   letter-spacing: 2px;
 }
+/* 
+.SectionTitle {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: normal;
+} */
 
 .ImgWrapper {
   max-height: 100%;
@@ -117,4 +121,5 @@
 }
 
 .Left {
+  color: var(--fontColor);
 }

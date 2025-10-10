@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import type { ISketch } from "./models";
+import type { IParams, ISketch } from "./models";
 
 export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   useEffect(() => {
@@ -22,8 +22,19 @@ export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   }, [isOpen, closeModal]);
 }
 
-export function extractDefaultParamsMap(sketch: ISketch) {
+export function extractDefaultParams(sketch: ISketch): IParams {
   return Object.fromEntries(
     sketch.controls?.map((x) => [x.key, x.defaultValue]) ?? []
   );
+}
+
+function serializeParams(params: IParams): string {
+  return Object.entries(params)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map((key, value) => key + "__" + value)
+    .join("___");
+}
+
+export function areParamsEqual(a: IParams, b: IParams): boolean {
+  return serializeParams(a) === serializeParams(b);
 }
