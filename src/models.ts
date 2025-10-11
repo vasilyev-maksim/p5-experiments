@@ -11,19 +11,21 @@ export type ISketchFactory<ParamKey extends string = string> = (
   timeShift: number // nice game btw
 ) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
-interface IControlBase<ParamKey extends string = string> {
-  key: ParamKey;
+interface IControlBase {
   label?: string;
   defaultValue: number;
-  valueFormatter?: (value: number, control: IControl) => string;
+  valueFormatter?: (value: number, control: this) => string;
 }
 
-export interface IRangeControl<ParamKey extends string = string>
-  extends IControlBase<ParamKey> {
+export interface IRangeControl extends IControlBase {
   type: "range";
   min: number;
   max: number;
   step: number;
+}
+
+export interface IBooleanControl extends IControlBase {
+  type: "boolean";
 }
 
 export type IParams<ParamKey extends string = string> = Record<
@@ -31,8 +33,14 @@ export type IParams<ParamKey extends string = string> = Record<
   number
 >;
 
-export type IControl<ParamKey extends string = string> =
-  IRangeControl<ParamKey>;
+export type IControl = IRangeControl | IBooleanControl;
+
+export type IControls<ParamKey extends string = string> = Record<
+  ParamKey,
+  IControl
+>;
+
+export type ExtractParams<T> = T extends IControls<infer P> ? P : string;
 
 export type IPreset<ParamKey extends string = string> = {
   name?: string;
@@ -48,6 +56,6 @@ export interface ISketch<ParamKey extends string = string> {
   factory: ISketchFactory<ParamKey>;
   randomSeed?: number;
   timeShift?: number;
-  controls?: IControl<ParamKey>[];
+  controls?: IControls<ParamKey>;
   presets?: IPreset<ParamKey>[];
 }

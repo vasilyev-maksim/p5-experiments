@@ -5,12 +5,14 @@ export function Slider({
   control: c,
   value,
   onChange,
+  controlKey
 }: {
+  controlKey: string;
   control: IRangeControl;
   value: number;
   onChange: (value: number) => void;
 }) {
-  const label = c.label ?? c.key;
+  const label = c.label ?? controlKey;
   const valueStr = c.valueFormatter?.(value, c) ?? value;
 
   return (
@@ -19,7 +21,7 @@ export function Slider({
         {label}: {valueStr}
       </div>
       <input
-        name={c.key}
+        name={controlKey}
         type="range"
         max={c.max}
         min={c.min}

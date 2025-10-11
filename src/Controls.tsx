@@ -11,15 +11,16 @@ export function Controls(props: {
   console.log(props.params);
   return (
     <SectionLayout header="Parameters" className={styles.Controls}>
-      {props.sketch.controls?.map((c) => {
+      {Object.entries(props.sketch.controls ?? {})?.map(([key, c]) => {
         if (c.type === "range") {
-          const value = props.params[c.key];
+          const value = props.params[key];
           return (
             <Slider
-              key={c.key}
+              controlKey={key}
+              key={key}
               control={c}
               value={value}
-              onChange={(val) => props.onParamChange(c.key, val)}
+              onChange={(val) => props.onParamChange(key, val)}
             />
           );
         }

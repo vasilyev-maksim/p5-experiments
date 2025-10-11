@@ -65,6 +65,8 @@ export const SketchModal = ({
     setParams(preset.params);
   };
 
+  console.log({ params });
+
   return (
     <animated.div
       className={styles.SketchOverlay}

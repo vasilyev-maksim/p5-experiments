@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import type { IParams, ISketch } from "./models";
+import type { IControl, IParams, ISketch } from "./models";
 
 export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   useEffect(() => {
@@ -22,9 +22,13 @@ export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   }, [isOpen, closeModal]);
 }
 
-export function extractDefaultParams(sketch: ISketch): IParams {
+export function extractDefaultParams<K extends string>(
+  sketch: ISketch<K>
+): IParams {
   return Object.fromEntries(
-    sketch.controls?.map((x) => [x.key, x.defaultValue]) ?? []
+    Object.entries<IControl>(sketch.controls ?? {}).map(
+      ([key, { defaultValue }]) => [key, defaultValue]
+    )
   );
 }
 
