@@ -49,8 +49,6 @@ export const sketchList: ISketch<any>[] = [
             return "square";
           } else if (value === 5) {
             return "pentagon";
-          } else if (value === 6) {
-            return "hexagon";
           } else {
             return value + "-gon";
           }
@@ -63,11 +61,15 @@ export const sketchList: ISketch<any>[] = [
       },
       {
         key: "t",
+        label: "Thickness",
         max: 20,
         min: 2,
         step: 1,
         type: "range",
         defaultValue: 4,
+        valueMapper: (value, { max }) => {
+          return max - value;
+        },
       },
       {
         key: "as",
@@ -258,7 +260,7 @@ export const sketchList: ISketch<any>[] = [
       {
         params: {
           n: 2,
-          t: 6,
+          t: 20,
           as: 42,
           bs: 2,
           ls: 10,
@@ -280,6 +282,45 @@ export const sketchList: ISketch<any>[] = [
           sf: 1,
         },
         name: "radiation",
+      },
+      {
+        params: {
+          n: 7,
+          t: 2,
+          as: 83,
+          bs: 3,
+          ls: 2,
+          cs: 10,
+          s: 0,
+          sf: 10,
+        },
+        name: "slow",
+      },
+      {
+        params: {
+          n: 7,
+          t: 2,
+          as: 51,
+          bs: 2,
+          ls: 1,
+          cs: 10,
+          s: 0,
+          sf: 10,
+        },
+        name: "sloooower",
+      },
+      {
+        params: {
+          n: 11,
+          t: 2,
+          as: 33,
+          bs: 1,
+          ls: 0.05,
+          cs: 1,
+          s: 0,
+          sf: 1,
+        },
+        name: "the slowest",
       },
     ],
   } satisfies ISketch<"n" | "t" | "as" | "bs" | "s" | "ls" | "cs" | "sf">,
