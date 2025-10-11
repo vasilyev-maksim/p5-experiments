@@ -15,7 +15,9 @@ export function Slider({
 
   return (
     <div className={styles.Slider}>
-      <div className={styles.Label}>{label}</div>
+      <div className={styles.Title}>
+        {label}: {valueStr}
+      </div>
       <input
         name={c.key}
         type="range"
@@ -25,7 +27,6 @@ export function Slider({
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
       />
-      <div className={styles.Value}>{valueStr}</div>
     </div>
   );
 }
