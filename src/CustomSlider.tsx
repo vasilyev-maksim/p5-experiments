@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./CustomSlider.module.css";
-import { animated, easings, useSpring } from "react-spring";
+import { animated, easings, to, useSpring, useSpringValue } from "react-spring";
 
 const HANDLE_HEIGHT = 12;
 const HANDLE_WIDTH = [2, HANDLE_HEIGHT]; // [min, max]
@@ -41,13 +41,21 @@ export function CustomSlider(props: {
     config: { duration: 150, easing: easings.easeInOutCubic },
   });
 
+  const progress = useSpringValue(props.value, { config: { duration: 150 } });
+
+  useEffect(() => {
+    console.log(props.value);
+    progress.start(props.value);
+  }, [props.value]);
+
   const trackRef = useRef<HTMLDivElement>(null);
-  const handleX = ((props.value - props.min) / (props.max - props.min)) * 100;
+  const handleX = progress.to(
+    (v) => ((v - props.min) / (props.max - props.min)) * 100
+  );
   const rangeWidth = handleX;
 
   const handleMove = (clientX: number) => {
     if (trackRef.current) {
-      // trackRef.current.focus();
       const { left, width } = trackRef.current.getBoundingClientRect();
       const value =
         ((props.max - props.min) * (clientX - left)) / width + props.min;
@@ -62,7 +70,6 @@ export function CustomSlider(props: {
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    // e.preventDefault();
     document.body.style.userSelect = "none";
 
     handleMove(e.clientX);
@@ -121,7 +128,7 @@ export function CustomSlider(props: {
         <animated.div
           className={styles.Range}
           style={{
-            width: rangeWidth + "%",
+            width: rangeWidth.to((x) => x + "%"),
             height: x.to([0, 1], TRACK_HEIGHT),
             top: x.to([0, 1], TRACK_HEIGHT).to((t) => `calc(50% - ${t / 2}px)`),
           }}
@@ -129,9 +136,10 @@ export function CustomSlider(props: {
         <animated.div
           className={styles.Handle}
           style={{
-            left: x
-              .to([0, 1], HANDLE_WIDTH)
-              .to((w) => `calc(${handleX}% - ${w / 2}px)`),
+            left: to(
+              [x.to([0, 1], HANDLE_WIDTH), handleX],
+              (w, x) => `calc(${x}% - ${w / 2}px)`
+            ),
             width: x.to([0, 1], HANDLE_WIDTH),
             height: HANDLE_HEIGHT,
             top: `calc(50% - ${HANDLE_HEIGHT / 2}px)`,
