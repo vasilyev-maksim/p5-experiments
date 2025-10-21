@@ -16,6 +16,7 @@ export function Presets(props: {
           const isActive = areParamsEqual(props.params, p.params);
           return (
             <button
+              tabIndex={1}
               key={i}
               className={classNames(styles.PresetButton, {
                 [styles.Active]: isActive,

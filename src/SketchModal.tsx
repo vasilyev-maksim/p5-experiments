@@ -65,8 +65,6 @@ export const SketchModal = ({
     setParams(preset.params);
   };
 
-  console.log({ params });
-
   return (
     <animated.div
       className={styles.SketchOverlay}
@@ -107,11 +105,7 @@ export const SketchModal = ({
             >
               {sketch.name.toUpperCase()}
             </h2>
-
-            {/* <h3 className={styles.SectionTitle}>Presets</h3> */}
             <Presets sketch={sketch} params={params} onApply={applyPreset} />
-
-            {/* <h3 className={styles.SectionTitle}>Params</h3> */}
             <Controls
               sketch={sketch}
               params={params}

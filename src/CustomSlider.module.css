@@ -1,0 +1,38 @@
+.CustomSlider {
+  display: block;
+}
+
+.TrackWrapper {
+  width: 100%;
+  /* display: flex;
+  flex-direction: column;
+  align-items: center; */
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+
+  &:focus-visible {
+    background-color: rgba(46, 102, 98, 0.5);
+    outline: none;
+  }
+}
+
+.Track {
+  background-color: var(--primaryColorFaded);
+  width: 100%;
+  position: absolute;
+  left: 0;
+  border-radius: 2px;
+}
+
+.Handle {
+  position: absolute;
+  background-color: var(--primaryColor);
+  border-radius: 2px;
+}
+
+.Range {
+  background-color: var(--primaryColor);
+  position: absolute;
+  left: 0;
+}
