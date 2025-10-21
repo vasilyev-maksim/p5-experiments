@@ -4,12 +4,10 @@
   flex-direction: row;
   gap: 5px;
   flex-wrap: wrap;
-  /* position: relative; */
 }
 
 .PresetButton {
   padding: 3px 6px;
-  /* margin: 5px; */
   background-color: var(--primaryColorFaded);
   border-radius: 5px;
   transition: 200ms all;

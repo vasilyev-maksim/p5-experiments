@@ -44,7 +44,6 @@ export function CustomSlider(props: {
   const progress = useSpringValue(props.value, { config: { duration: 150 } });
 
   useEffect(() => {
-    console.log(props.value);
     progress.start(props.value);
   }, [props.value]);
 

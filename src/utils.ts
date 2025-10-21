@@ -42,3 +42,7 @@ function serializeParams(params: IParams): string {
 export function areParamsEqual(a: IParams, b: IParams): boolean {
   return serializeParams(a) === serializeParams(b);
 }
+
+export function delay(delay: number) {
+  return new Promise((r) => setTimeout(r, delay));
+}

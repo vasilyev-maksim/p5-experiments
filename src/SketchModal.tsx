@@ -1,6 +1,6 @@
 import type { IPreset, ISketch } from "./models";
 import styles from "./SketchModal.module.css";
-import { animated, useChain, useSpring, useSpringRef } from "@react-spring/web";
+import { animated, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import { easings } from "@react-spring/web";
 import classNames from "classnames";
@@ -29,33 +29,25 @@ export const SketchModal = ({
 
   const [size, setSize] = useState<"tile" | "modal">("tile");
   const [playing, setPlaying] = useState(false);
+  const [showLeftSideContent, setShowLeftSideContent] = useState(false);
+  const [showPresets, setShowPresets] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   const sketchContainerRef = useRef<HTMLDivElement>(null);
 
-  const x1Ref = useSpringRef();
-  const { x } = useSpring({
-    from: { x: 0 },
-    to: { x: 1 },
+  const { modalX, headerX } = useSpring({
+    from: { modalX: 0, headerX: 0 },
+    to: async (next) => {
+      setSize("modal");
+      await next({ modalX: 1 });
+      setShowLeftSideContent(true);
+      // setPlaying(true);
+      // await delay(1000);
+      await next({ headerX: 1 });
+      setShowPresets(true);
+    },
     config: { duration: 500, easing: easings.easeInOutCubic },
     delay: 500,
-    onStart: () => {
-      setSize("modal");
-    },
-    ref: x1Ref,
   });
-
-  const x2Ref = useSpringRef();
-  const { x2 } = useSpring({
-    from: { x2: 0 },
-    to: { x2: 1 },
-    config: { duration: 400, easing: easings.easeInOutCubic },
-    onRest: () => {},
-    ref: x2Ref,
-    onResolve: () => {
-      setPlaying(true);
-    },
-  });
-
-  useChain([x1Ref, x2Ref]);
 
   const [params, setParams] = useState(extractDefaultParams(sketch));
   const changeParam = (key: string, value: number) => {
@@ -69,48 +61,67 @@ export const SketchModal = ({
     <animated.div
       className={styles.SketchOverlay}
       style={{
-        backgroundColor: x.to((x) => `rgba(20, 20, 20, ${x})`),
+        backgroundColor: modalX.to((x) => `rgba(20, 20, 20, ${x})`),
       }}
     >
       <animated.div
         className={styles.SketchModal}
         style={{
-          width: x.to([0, 1], [tileWidth, window.innerWidth - modalMargin * 2]),
-          height: x.to(
+          width: modalX.to(
+            [0, 1],
+            [tileWidth, window.innerWidth - modalMargin * 2]
+          ),
+          height: modalX.to(
             [0, 1],
             [tileHeight, window.innerHeight - modalMargin * 2]
           ),
-          left: x.to([0, 1], [left, modalMargin]),
-          top: x.to([0, 1], [top, modalMargin]),
-          scale: x.to([0, 1], [1.03, 1]),
-          padding: x.to([0, 1], [15, modalPadding]),
+          left: modalX.to([0, 1], [left, modalMargin]),
+          top: modalX.to([0, 1], [top, modalMargin]),
+          scale: modalX.to([0, 1], [1.03, 1]),
+          padding: modalX.to([0, 1], [15, modalPadding]),
         }}
       >
         <div className={styles.Horizontal}>
           <animated.div
             className={styles.Left}
             style={{
-              width: x.to([0, 1], [0, modalSidebarWidth]),
-              opacity: x2.to([0, 1], [0, 1]),
-              translateY: x2.to([0, 1], [15, 0]),
-              paddingRight: x.to([0, 1], [0, modalPadding]),
+              width: modalX.to([0, 1], [0, modalSidebarWidth]),
+              // opacity: x2.to([0, 1], [0, 1]),
+              // translateY: x2.to([0, 1], [15, 0]),
+              paddingRight: modalX.to([0, 1], [0, modalPadding]),
             }}
           >
-            <h2
-              className={styles.ModalTitle}
-              style={{
-                marginBottom: modalPadding * 2,
-                marginTop: modalPadding,
-              }}
-            >
-              {sketch.name.toUpperCase()}
-            </h2>
-            <Presets sketch={sketch} params={params} onApply={applyPreset} />
-            <Controls
-              sketch={sketch}
-              params={params}
-              onParamChange={changeParam}
-            />
+            {showLeftSideContent && (
+              <>
+                <animated.h2
+                  className={styles.ModalTitle}
+                  style={{
+                    marginBottom: modalPadding * 2,
+                    marginTop: modalPadding,
+                    translateY: headerX.to([0, 1], [15, 0]),
+                    opacity: headerX,
+                  }}
+                >
+                  {sketch.name.toUpperCase()}
+                </animated.h2>
+                {showPresets && (
+                  <Presets
+                    sketch={sketch}
+                    params={params}
+                    onApply={applyPreset}
+                    onAnimationEnd={() => setShowControls(true)}
+                  />
+                )}
+                {showControls && (
+                  <Controls
+                    sketch={sketch}
+                    params={params}
+                    onParamChange={changeParam}
+                    onAnimationEnd={() => setPlaying(true)}
+                  />
+                )}
+              </>
+            )}
           </animated.div>
           <div className={classNames(styles.Vertical, styles.Right)}>
             <div ref={sketchContainerRef} className={styles.RightTop}>
@@ -124,8 +135,8 @@ export const SketchModal = ({
             <animated.div
               className={styles.RightBottom}
               style={{
-                maxHeight: x.to([0, 1], [50, 0]),
-                opacity: x.to([0, 1], [1, 0]),
+                maxHeight: modalX.to([0, 1], [50, 0]),
+                opacity: modalX.to([0, 1], [1, 0]),
               }}
             >
               <h2 className={styles.Title}>{sketch.name}</h2>

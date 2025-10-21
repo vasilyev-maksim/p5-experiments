@@ -60,7 +60,7 @@ const controls = {
     min: 0,
     step: 1,
     type: "range",
-    defaultValue: 1,
+    defaultValue: 10,
   },
   ZOOM: {
     label: "Zoom",
@@ -118,7 +118,14 @@ const factory: ISketchFactory<Params> =
       THICKNESS =
         controls.THICKNESS.max + controls.THICKNESS.min - props.THICKNESS;
       COIL_FACTOR = props.COIL_FACTOR;
-      COIL_SPEED = props.COIL_SPEED;
+      COIL_SPEED =
+        props.COIL_SPEED === 0
+          ? 0
+          : controls.COIL_SPEED.max +
+            controls.COIL_SPEED.min -
+            props.COIL_SPEED +
+            1;
+
       ZOOM = props.ZOOM;
       ROTATION_SPEED = props.ROTATION_SPEED;
       COLOR_CHANGE_SPEED = props.COLOR_CHANGE_SPEED;
@@ -206,7 +213,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 3,
       THICKNESS: 18,
       COIL_FACTOR: 2,
-      COIL_SPEED: 1,
+      COIL_SPEED: 10,
       ZOOM: 2,
       ROTATION_SPEED: 1.5,
       COLOR_CHANGE_SPEED: 10,
@@ -219,7 +226,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 3,
       THICKNESS: 2,
       COIL_FACTOR: 28,
-      COIL_SPEED: 10,
+      COIL_SPEED: 1,
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
@@ -232,7 +239,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 3,
       THICKNESS: 2,
       COIL_FACTOR: 28,
-      COIL_SPEED: 10,
+      COIL_SPEED: 1,
       ZOOM: 2,
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 10,
@@ -297,7 +304,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 6,
       THICKNESS: 20,
       COIL_FACTOR: 100,
-      COIL_SPEED: 1,
+      COIL_SPEED: 10,
       ZOOM: 20,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
@@ -310,7 +317,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 11,
       THICKNESS: 11,
       COIL_FACTOR: 65,
-      COIL_SPEED: 10,
+      COIL_SPEED: 1,
       ZOOM: 2,
       ROTATION_SPEED: 6,
       COLOR_CHANGE_SPEED: 10,
@@ -323,7 +330,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 7,
       THICKNESS: 2,
       COIL_FACTOR: 19,
-      COIL_SPEED: 1,
+      COIL_SPEED: 10,
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
@@ -336,7 +343,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 2,
       THICKNESS: 2,
       COIL_FACTOR: 42,
-      COIL_SPEED: 10,
+      COIL_SPEED: 1,
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 1,
@@ -349,7 +356,7 @@ const presets: IPreset<Params>[] = [
       POLYGON_N: 2,
       THICKNESS: 20,
       COIL_FACTOR: 16,
-      COIL_SPEED: 10,
+      COIL_SPEED: 1,
       ZOOM: 1,
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 1,
