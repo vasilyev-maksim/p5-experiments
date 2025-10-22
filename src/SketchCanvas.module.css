@@ -6,16 +6,5 @@
   canvas {
     max-width: unset;
     margin: 0 auto;
-    /* scale: 0.5; */
-  }
-}
-
-.CanvasWrapper {
-  & > div {
-    /* width: 100%; */
-    /* display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center; */
   }
 }

@@ -18,21 +18,3 @@
     translate: 0 0px;
   }
 }
-
-/* .MeLink {
-  &:hover .Swap {
-    transform: translateY(-50%);
-  }
-}
-
-.SwapWrapper {
-  overflow: hidden;
-  line-height: 3.5rem;
-  height: 3.5rem;
-  display: inline-block;
-}
-
-.Swap {
-  transition: 400ms all;
-  text-decoration: underline;
-} */

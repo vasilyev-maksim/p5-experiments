@@ -52,8 +52,8 @@ export function SketchCanvas(props: {
         }}
       >
         <ReactP5Wrapper
-          sketch={p5Sketch}
           {...props.params}
+          sketch={p5Sketch}
           playing={props.playing}
         />
       </animated.div>
