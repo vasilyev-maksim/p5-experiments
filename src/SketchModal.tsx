@@ -40,8 +40,8 @@ export const SketchModal = ({
       setSize("modal");
       await next({ modalX: 1 });
       setShowLeftSideContent(true);
-      // setPlaying(true);
       // await delay(1000);
+      setPlaying(true);
       await next({ headerX: 1 });
       setShowPresets(true);
     },
@@ -86,8 +86,6 @@ export const SketchModal = ({
             className={styles.Left}
             style={{
               width: modalX.to([0, 1], [0, modalSidebarWidth]),
-              // opacity: x2.to([0, 1], [0, 1]),
-              // translateY: x2.to([0, 1], [15, 0]),
               paddingRight: modalX.to([0, 1], [0, modalPadding]),
             }}
           >

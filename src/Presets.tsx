@@ -35,34 +35,36 @@ export function Presets(props: {
   );
 
   return (
-    <SectionLayout
-      header="Presets"
-      showHeader={showHeader}
-      onHeaderAnimationEnd={props.onAnimationEnd}
-    >
-      <div className={styles.Presets}>
-        {springs.map(({ x }, i) => {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          const p = props.sketch.presets?.[i]!;
-          const isActive = areParamsEqual(props.params, p.params);
-          return (
-            <animated.button
-              tabIndex={1}
-              key={i}
-              className={classNames(styles.PresetButton, {
-                [styles.Active]: isActive,
-              })}
-              onClick={() => props.onApply(p)}
-              style={{
-                opacity: x,
-                scale: x.to([0, 1], [0.9, 1]),
-              }}
-            >
-              {p.name ?? i}
-            </animated.button>
-          );
-        })}
-      </div>
-    </SectionLayout>
+    paramsCount > 0 && (
+      <SectionLayout
+        header="Presets"
+        showHeader={showHeader}
+        onHeaderAnimationEnd={props.onAnimationEnd}
+      >
+        <div className={styles.Presets}>
+          {springs.map(({ x }, i) => {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            const p = props.sketch.presets?.[i]!;
+            const isActive = areParamsEqual(props.params, p.params);
+            return (
+              <animated.button
+                tabIndex={1}
+                key={i}
+                className={classNames(styles.PresetButton, {
+                  [styles.Active]: isActive,
+                })}
+                onClick={() => props.onApply(p)}
+                style={{
+                  opacity: x,
+                  scale: x.to([0, 1], [0.9, 1]),
+                }}
+              >
+                {p.name ?? i}
+              </animated.button>
+            );
+          })}
+        </div>
+      </SectionLayout>
+    )
   );
 }
