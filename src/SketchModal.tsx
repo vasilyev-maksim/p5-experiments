@@ -6,7 +6,7 @@ import { easings } from "@react-spring/web";
 import classNames from "classnames";
 import { useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
-import { Controls } from "./Controls";
+import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
 import { extractDefaultParams } from "./utils";
 
@@ -31,7 +31,7 @@ export const SketchModal = ({
   const [playing, setPlaying] = useState(false);
   const [showLeftSideContent, setShowLeftSideContent] = useState(false);
   const [showPresets, setShowPresets] = useState(false);
-  const [showControls, setShowControls] = useState(false);
+  const [showParamControls, setShowParamControls] = useState(false);
   const sketchContainerRef = useRef<HTMLDivElement>(null);
 
   const { modalX, headerX } = useSpring({
@@ -107,11 +107,11 @@ export const SketchModal = ({
                     sketch={sketch}
                     params={params}
                     onApply={applyPreset}
-                    onAnimationEnd={() => setShowControls(true)}
+                    onAnimationEnd={() => setShowParamControls(true)}
                   />
                 )}
-                {showControls && (
-                  <Controls
+                {showParamControls && (
+                  <ParamControls
                     sketch={sketch}
                     params={params}
                     onParamChange={changeParam}

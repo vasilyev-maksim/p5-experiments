@@ -7,7 +7,7 @@ import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
 import { delay } from "./utils";
 
-export function Controls(props: {
+export function ParamControls(props: {
   sketch: ISketch<string>;
   params: IParams;
   onParamChange: (key: string, value: number) => void;
