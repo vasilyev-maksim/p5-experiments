@@ -9,7 +9,8 @@ import { sketchList } from "./data";
 import { SketchModal } from "./SketchModal";
 
 function App() {
-  const [selectedSketch, selectSketch] = useState<ISketch>();
+  const [selectedSketch, selectSketch] = useState<ISketch | undefined>();
+  // sketchList[2]
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();

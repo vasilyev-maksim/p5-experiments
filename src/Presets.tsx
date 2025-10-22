@@ -23,10 +23,10 @@ export function Presets(props: {
         duration: 180,
         easing: easings.easeInOutCubic,
       },
-      delay: i * 50,
+      delay: i * 25,
       onRest: async () => {
         if (i === paramsCount - 1) {
-          await delay(200);
+          await delay(50);
           setShowHeader(true);
         }
       },

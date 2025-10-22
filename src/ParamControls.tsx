@@ -1,11 +1,9 @@
 import type { ISketch, IParams } from "./models";
 import { SectionLayout } from "./SectionLayout";
-import styles from "./Controls.module.css";
-// import { Slider } from "./Slider";
+import styles from "./ParamControls.module.css";
 import { CustomSlider } from "./CustomSlider";
 import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
-import { delay } from "./utils";
 
 export function ParamControls(props: {
   sketch: ISketch<string>;
@@ -25,10 +23,10 @@ export function ParamControls(props: {
         duration: 300,
         easing: easings.easeInOutCubic,
       },
-      delay: i * 100,
+      delay: i * 50,
       onRest: async () => {
         if (i === entriesCount - 1) {
-          await delay(150);
+          // await delay(150);
           setShowHeader(true);
         }
       },
@@ -41,6 +39,7 @@ export function ParamControls(props: {
       <SectionLayout
         header="Parameters"
         className={styles.Controls}
+        bodyClassName={styles.ItemsWrapper}
         showHeader={showHeader}
         onHeaderAnimationEnd={props.onAnimationEnd}
       >

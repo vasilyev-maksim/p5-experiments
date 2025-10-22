@@ -9,6 +9,7 @@ import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
 import { extractDefaultParams } from "./utils";
+import { PlaybackControls } from "./PlaybackControls";
 
 export const SketchModal = ({
   sketch,
@@ -22,6 +23,7 @@ export const SketchModal = ({
   const {
     tileWidth,
     tileHeight,
+    tilePadding,
     modalMargin,
     modalPadding,
     modalSidebarWidth,
@@ -78,15 +80,18 @@ export const SketchModal = ({
           left: modalX.to([0, 1], [left, modalMargin]),
           top: modalX.to([0, 1], [top, modalMargin]),
           scale: modalX.to([0, 1], [1.03, 1]),
-          padding: modalX.to([0, 1], [15, modalPadding]),
+          paddingRight: modalX.to([0, 1], [15, modalPadding]),
+          paddingTop: modalX.to([0, 1], [15, modalPadding]),
+          paddingBottom: modalX.to([0, 1], [15, modalPadding]),
         }}
       >
         <div className={styles.Horizontal}>
           <animated.div
             className={styles.Left}
             style={{
-              width: modalX.to([0, 1], [0, modalSidebarWidth]),
+              width: modalX.to([0, 1], [0, modalSidebarWidth + modalPadding]),
               paddingRight: modalX.to([0, 1], [0, modalPadding]),
+              // paddingLeft: modalX.to([0, 1], [0, modalPadding]),
             }}
           >
             {showLeftSideContent && (
@@ -96,28 +101,32 @@ export const SketchModal = ({
                   style={{
                     marginBottom: modalPadding * 2,
                     marginTop: modalPadding,
+                    marginLeft: modalPadding,
                     translateY: headerX.to([0, 1], [15, 0]),
                     opacity: headerX,
                   }}
                 >
                   {sketch.name.toUpperCase()}
                 </animated.h2>
-                {showPresets && (
-                  <Presets
-                    sketch={sketch}
-                    params={params}
-                    onApply={applyPreset}
-                    onAnimationEnd={() => setShowParamControls(true)}
-                  />
-                )}
-                {showParamControls && (
-                  <ParamControls
-                    sketch={sketch}
-                    params={params}
-                    onParamChange={changeParam}
-                    onAnimationEnd={() => setPlaying(true)}
-                  />
-                )}
+                <div className={styles.Body}>
+                  {showPresets && (
+                    <Presets
+                      sketch={sketch}
+                      params={params}
+                      onApply={applyPreset}
+                      onAnimationEnd={() => setShowParamControls(true)}
+                    />
+                  )}
+                  {showParamControls && (
+                    <ParamControls
+                      sketch={sketch}
+                      params={params}
+                      onParamChange={changeParam}
+                      onAnimationEnd={() => setPlaying(true)}
+                    />
+                  )}
+                  {/* <PlaybackControls /> */}
+                </div>
               </>
             )}
           </animated.div>
@@ -137,7 +146,14 @@ export const SketchModal = ({
                 opacity: modalX.to([0, 1], [1, 0]),
               }}
             >
-              <h2 className={styles.Title}>{sketch.name}</h2>
+              <h2
+                className={styles.Title}
+                style={{
+                  paddingLeft: tilePadding,
+                }}
+              >
+                {sketch.name}
+              </h2>
             </animated.div>
           </div>
         </div>

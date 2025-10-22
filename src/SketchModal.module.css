@@ -60,35 +60,19 @@
   font-size: 1.2rem;
 }
 
-/* @keyframes appear {
-  to {
-    opacity: 1;
-    translate: 0px 0px;
-  }
-} */
-
 .ModalTitle {
   font-size: 2.5rem;
   line-height: 100%;
   text-align: center;
-  /* opacity: 0; */
-  /* translate: 0 15px; */
-  /* animation: appear 300ms ease-in-out forwards; */
 }
 
 .Title,
 .ModalTitle {
   letter-spacing: 2px;
 }
-/* 
-.SectionTitle {
-  text-align: center;
-  font-size: 1rem;
-  font-weight: normal;
-} */
 
 .ImgWrapper {
-  max-height: 100%;
+  max-height: 100%; 
   max-width: 100%;
   width: 100%;
   aspect-ratio: 1/1;
@@ -132,4 +116,12 @@
 
 .Left {
   color: var(--fontColor);
+  display: flex;
+  flex-direction: column;
+
+  .Body {
+    overflow-y: auto;
+    height: 100%;
+    flex: 1;
+  }
 }

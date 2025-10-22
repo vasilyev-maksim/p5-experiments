@@ -8,6 +8,7 @@ export function SectionLayout(
   props: PropsWithChildren<{
     header: string;
     className?: string;
+    bodyClassName?: string;
     showHeader?: boolean;
     onHeaderAnimationEnd?: () => void;
   }>
@@ -21,22 +22,22 @@ export function SectionLayout(
   });
 
   return (
-    <div
-      className={classNames(styles.SectionLayout, props.className)}
-      style={{ left: -modalPadding / 2 }}
-    >
+    <div className={classNames(styles.SectionLayout, props.className)}>
       <animated.div
         className={styles.Header}
         style={{
-          paddingRight: modalPadding / 2,
-          lineHeight: modalPadding + "px",
+          paddingRight: modalPadding / 4,
+          paddingLeft: modalPadding / 4,
+          lineHeight: modalPadding * 1.25 + "px",
           opacity: x,
           translateX: x.to([0, 1], [15, 0]),
         }}
       >
         {props.header}
       </animated.div>
-      <div className={styles.Body}>{props.children}</div>
+      <div className={classNames(styles.Body, props.bodyClassName)}>
+        {props.children}
+      </div>
     </div>
   );
 }

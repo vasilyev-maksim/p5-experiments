@@ -2,6 +2,10 @@
   margin-top: 40px;
 }
 
-.Item {
-  margin-top: 5px;
+.ItemsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+  top: -3px;
 }
