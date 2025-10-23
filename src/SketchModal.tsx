@@ -4,11 +4,11 @@ import { animated, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import { easings } from "@react-spring/web";
 import classNames from "classnames";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
-import { extractDefaultParams } from "./utils";
+import { delay, extractDefaultParams } from "./utils";
 import { PlaybackControls } from "./PlaybackControls";
 
 export const SketchModal = ({
@@ -35,22 +35,6 @@ export const SketchModal = ({
   const [showPresets, setShowPresets] = useState(false);
   const [showParamControls, setShowParamControls] = useState(false);
   const sketchContainerRef = useRef<HTMLDivElement>(null);
-
-  const { modalX, headerX } = useSpring({
-    from: { modalX: 0, headerX: 0 },
-    to: async (next) => {
-      setSize("modal");
-      await next({ modalX: 1 });
-      setShowLeftSideContent(true);
-      // await delay(1000);
-      setPlaying(true);
-      await next({ headerX: 1 });
-      setShowPresets(true);
-    },
-    config: { duration: 500, easing: easings.easeInOutCubic },
-    delay: 500,
-  });
-
   const [params, setParams] = useState(extractDefaultParams(sketch));
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
@@ -58,6 +42,24 @@ export const SketchModal = ({
   const applyPreset = (preset: IPreset) => {
     setParams(preset.params);
   };
+
+  const [{ modalX, headerX }, api] = useSpring(() => ({
+    from: { modalX: 0, headerX: 0 },
+    config: { duration: 500, easing: easings.easeInOutCubic },
+  }));
+
+  useEffect(() => {
+    async function runAnimations() {
+      await delay(500);
+      setSize("modal");
+      await Promise.all(api.start({ modalX: 1 }));
+      setShowLeftSideContent(true);
+      Promise.all(api.start({ headerX: 1 })).then(() => setShowPresets(true));
+      await delay(300);
+      setPlaying(true);
+    }
+    runAnimations();
+  });
 
   return (
     <animated.div
@@ -122,10 +124,22 @@ export const SketchModal = ({
                       sketch={sketch}
                       params={params}
                       onParamChange={changeParam}
-                      onAnimationEnd={() => setPlaying(true)}
+                      // onAnimationEnd={() => setPlaying(true)}
                     />
                   )}
-                  {/* <PlaybackControls /> */}
+                </div>
+                <div
+                  className={styles.Footer}
+                  style={{
+                    paddingLeft: modalPadding,
+                    paddingRight: modalPadding,
+                  }}
+                >
+                  <PlaybackControls
+                    onPlayPause={() => setPlaying((x) => !x)}
+                    onSlower={() => {}}
+                    onFaster={() => {}}
+                  />
                 </div>
               </>
             )}
