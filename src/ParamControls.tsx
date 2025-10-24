@@ -1,7 +1,7 @@
 import type { ISketch, IParams } from "./models";
 import { SectionLayout } from "./SectionLayout";
 import styles from "./ParamControls.module.css";
-import { CustomSlider } from "./CustomSlider";
+import { Slider } from "./Slider";
 import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
 
@@ -52,7 +52,7 @@ export function ParamControls(props: {
             const label = c.label ?? key;
             const valueStr = c.valueFormatter?.(value, c) ?? value;
             body = (
-              <CustomSlider
+              <Slider
                 initDelay={entriesCount * 50 + 500}
                 label={
                   <>

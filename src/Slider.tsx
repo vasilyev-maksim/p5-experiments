@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import styles from "./CustomSlider.module.css";
+import styles from "./Slider.module.css";
 import { animated, easings, to, useSpring, useSpringValue } from "react-spring";
 
 const TRACK_HEIGHT = [2, 2];
@@ -25,7 +25,7 @@ function getClosestDiscreteValue(
   }
 }
 
-export function CustomSlider(props: {
+export function Slider(props: {
   value: number;
   min: number;
   max: number;
@@ -45,7 +45,7 @@ export function CustomSlider(props: {
   const { initX } = useSpring({
     from: { initX: 0 },
     to: { initX: 1 },
-    config: { duration: 300, easing: easings.easeInOutCubic },
+    config: { duration: 400, easing: easings.easeInOutCubic },
     delay: props.initDelay ?? 0,
   });
 
@@ -117,7 +117,7 @@ export function CustomSlider(props: {
   const rangeWidth = handleLeft;
 
   return (
-    <div className={styles.CustomSlider}>
+    <div className={styles.Slider}>
       <div className={styles.Title}>{props.label}</div>
       <div
         tabIndex={2}
