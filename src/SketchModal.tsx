@@ -31,6 +31,7 @@ export const SketchModal = ({
 
   const [size, setSize] = useState<"tile" | "modal">("tile");
   const [playing, setPlaying] = useState(false);
+  const [timeDelta, setTimeDelta] = useState(1);
   const [showLeftSideContent, setShowLeftSideContent] = useState(false);
   const [showPresets, setShowPresets] = useState(false);
   const [showParamControls, setShowParamControls] = useState(false);
@@ -59,7 +60,7 @@ export const SketchModal = ({
       setPlaying(true);
     }
     runAnimations();
-  });
+  }, [api]);
 
   return (
     <animated.div
@@ -137,8 +138,10 @@ export const SketchModal = ({
                 >
                   <PlaybackControls
                     onPlayPause={() => setPlaying((x) => !x)}
-                    onSlower={() => {}}
-                    onFaster={() => {}}
+                    onSlower={() => setTimeDelta((x) => x - 0.1)}
+                    onFaster={() => setTimeDelta((x) => x + 0.1)}
+                    playing={playing}
+                    timeDelta={1}
                   />
                 </div>
               </>
@@ -151,6 +154,7 @@ export const SketchModal = ({
                 sketch={sketch}
                 params={params}
                 playing={playing}
+                timeDelta={timeDelta}
               />
             </div>
             <animated.div

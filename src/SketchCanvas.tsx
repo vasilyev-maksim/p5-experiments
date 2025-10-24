@@ -9,6 +9,7 @@ export function SketchCanvas(props: {
   sketch: ISketch;
   size: "tile" | "modal";
   playing: boolean;
+  timeDelta: number;
   params: IParams;
 }) {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -55,6 +56,7 @@ export function SketchCanvas(props: {
           {...props.params}
           sketch={p5Sketch}
           playing={props.playing}
+          timeDelta={props.timeDelta}
         />
       </animated.div>
     </animated.div>

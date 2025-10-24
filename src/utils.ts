@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { IControl, IParams, ISketch } from "./models";
 
 export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
@@ -45,4 +45,11 @@ export function areParamsEqual(a: IParams, b: IParams): boolean {
 
 export function delay(delay: number) {
   return new Promise((r) => setTimeout(r, delay));
+}
+
+export function useRerender(): () => void {
+  const [, setTick] = useState(0);
+  return useCallback(() => {
+    setTick((t) => t + 1);
+  }, []);
 }

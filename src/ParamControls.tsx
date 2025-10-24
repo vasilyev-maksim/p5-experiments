@@ -53,7 +53,12 @@ export function ParamControls(props: {
             const valueStr = c.valueFormatter?.(value, c) ?? value;
             body = (
               <CustomSlider
-                label={label + ": " + valueStr}
+                initDelay={entriesCount * 50 + 500}
+                label={
+                  <>
+                    {label}: {valueStr}
+                  </>
+                }
                 value={value}
                 onChange={(val) => props.onParamChange(key, val)}
                 max={c.max}

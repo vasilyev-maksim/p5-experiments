@@ -107,11 +107,8 @@ const factory: ISketchFactory<Params> =
       ZOOM = 2,
       COIL_SPEED = 1,
       ROTATION_SPEED = 1.5,
-      SLOWDOWN = 1;
-
-    function getTime() {
-      return (p.frameCount + timeShift) / SLOWDOWN;
-    }
+      time = timeShift,
+      timeDelta = 1;
 
     p.updateWithProps = (props) => {
       POLYGON_N = props.POLYGON_N;
@@ -129,7 +126,7 @@ const factory: ISketchFactory<Params> =
       ZOOM = props.ZOOM;
       ROTATION_SPEED = props.ROTATION_SPEED;
       COLOR_CHANGE_SPEED = props.COLOR_CHANGE_SPEED;
-      SLOWDOWN = props.SLOWDOWN;
+      timeDelta = props.timeDelta;
 
       if (props.playing) {
         p.loop();
@@ -151,10 +148,8 @@ const factory: ISketchFactory<Params> =
       return Array.from({ length: POLYGONS_COUNT }, (_, i) => {
         return [
           i * ZOOM,
-          i *
-            COIL_FACTOR *
-            (COIL_SPEED === 0 ? 1 : p.sin(getTime() / COIL_SPEED)) +
-            getTime() * ROTATION_SPEED,
+          i * COIL_FACTOR * (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
+            time * ROTATION_SPEED,
         ];
       });
     }
@@ -188,11 +183,12 @@ const factory: ISketchFactory<Params> =
       return p.lerpColor(
         p.color(A_COLOR),
         p.color(B_COLOR),
-        p.sin(getTime() * COLOR_CHANGE_SPEED + (i / maxI) * 360 * 4)
+        p.sin(time * COLOR_CHANGE_SPEED + (i / maxI) * 360 * 4)
       );
     }
 
     p.draw = () => {
+      time += timeDelta;
       p.background(BG_COLOR);
 
       getNodes().forEach((x, i, arr) => {
