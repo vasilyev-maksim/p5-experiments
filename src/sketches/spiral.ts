@@ -79,14 +79,14 @@ const controls = {
     type: "range",
     defaultValue: 10,
   },
-  SLOWDOWN: {
-    label: "Slowdown",
-    max: 10,
-    min: 1,
-    step: 1,
+  TIME_DELTA: {
     type: "range",
+    min: -2,
+    max: 2,
     defaultValue: 1,
-    valueFormatter: (x) => "x" + x,
+    step: 0.1,
+    label: "Playback speed",
+    valueFormatter: (x) => x.toFixed(1),
   },
 } as const satisfies IControls;
 
@@ -108,7 +108,7 @@ const factory: ISketchFactory<Params> =
       COIL_SPEED = 1,
       ROTATION_SPEED = 1.5,
       time = timeShift,
-      timeDelta = 1;
+      TIME_DELTA = 1;
 
     p.updateWithProps = (props) => {
       POLYGON_N = props.POLYGON_N;
@@ -126,7 +126,7 @@ const factory: ISketchFactory<Params> =
       ZOOM = props.ZOOM;
       ROTATION_SPEED = props.ROTATION_SPEED;
       COLOR_CHANGE_SPEED = props.COLOR_CHANGE_SPEED;
-      timeDelta = props.timeDelta;
+      TIME_DELTA = props.TIME_DELTA;
 
       if (props.playing) {
         p.loop();
@@ -188,7 +188,7 @@ const factory: ISketchFactory<Params> =
     }
 
     p.draw = () => {
-      time += timeDelta;
+      time += TIME_DELTA;
       p.background(BG_COLOR);
 
       getNodes().forEach((x, i, arr) => {
@@ -213,7 +213,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 1.5,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "spiral",
   },
@@ -226,7 +226,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "cyclone 1",
   },
@@ -239,7 +239,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "cyclone 2",
   },
@@ -252,7 +252,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 1.5,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "cyclone 3",
   },
@@ -265,7 +265,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "black hole",
   },
@@ -278,7 +278,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "white hole",
   },
@@ -291,7 +291,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "black hole 2",
   },
@@ -304,7 +304,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 20,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 10,
+      TIME_DELTA: 0.1,
     },
     name: "hexornado",
   },
@@ -317,7 +317,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 6,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "hypno 1",
   },
@@ -330,7 +330,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "hypno 2",
   },
@@ -343,7 +343,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 1,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "phase space",
   },
@@ -356,7 +356,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 1,
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 1,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "radiation",
   },
@@ -369,7 +369,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 3,
       ROTATION_SPEED: 2,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 10,
+      TIME_DELTA: 0.1,
     },
     name: "slow",
   },
@@ -382,7 +382,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 1,
       COLOR_CHANGE_SPEED: 10,
-      SLOWDOWN: 10,
+      TIME_DELTA: 0.1,
     },
     name: "sloooower",
   },
@@ -395,7 +395,7 @@ const presets: IPreset<Params>[] = [
       ZOOM: 1,
       ROTATION_SPEED: 0.05,
       COLOR_CHANGE_SPEED: 1,
-      SLOWDOWN: 1,
+      TIME_DELTA: 1,
     },
     name: "the slowest",
   },

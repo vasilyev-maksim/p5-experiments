@@ -55,7 +55,6 @@ export const SketchTile = forwardRef<
           playing={false}
           size="tile"
           params={params}
-          timeDelta={0}
         />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>

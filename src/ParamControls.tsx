@@ -35,53 +35,51 @@ export function ParamControls(props: {
   );
 
   return (
-    entriesCount > 0 && (
-      <SectionLayout
-        header="Parameters"
-        className={styles.Controls}
-        bodyClassName={styles.ItemsWrapper}
-        showHeader={showHeader}
-        onHeaderAnimationEnd={props.onAnimationEnd}
-      >
-        {springs.map(({ x }, i) => {
-          const [key, c] = entries[i];
-          let body = null;
+    <SectionLayout
+      header="Parameters"
+      className={styles.Controls}
+      bodyClassName={styles.ItemsWrapper}
+      showHeader={showHeader}
+      onHeaderAnimationEnd={props.onAnimationEnd}
+    >
+      {springs.map(({ x }, i) => {
+        const [key, c] = entries[i];
+        let body = null;
 
-          if (c.type === "range") {
-            const value = props.params[key];
-            const label = c.label ?? key;
-            const valueStr = c.valueFormatter?.(value, c) ?? value;
-            body = (
-              <Slider
-                initDelay={entriesCount * 50 + 500}
-                label={
-                  <>
-                    {label}: {valueStr}
-                  </>
-                }
-                value={value}
-                onChange={(val) => props.onParamChange(key, val)}
-                max={c.max}
-                min={c.min}
-                step={c.step}
-              />
-            );
-          }
-
-          return (
-            <animated.div
-              key={i}
-              className={styles.Item}
-              style={{
-                scale: x.to([0, 1], [0.9, 1]),
-                opacity: x,
-              }}
-            >
-              {body}
-            </animated.div>
+        if (c.type === "range") {
+          const value = props.params[key];
+          const label = c.label ?? key;
+          const valueStr = c.valueFormatter?.(value, c) ?? value;
+          body = (
+            <Slider
+              initDelay={entriesCount * 50 + 500}
+              label={
+                <>
+                  {label}: {valueStr}
+                </>
+              }
+              value={value}
+              onChange={(val) => props.onParamChange(key, val)}
+              max={c.max}
+              min={c.min}
+              step={c.step}
+            />
           );
-        })}
-      </SectionLayout>
-    )
+        }
+
+        return (
+          <animated.div
+            key={i}
+            className={styles.Item}
+            style={{
+              scale: x.to([0, 1], [0.9, 1]),
+              opacity: x,
+            }}
+          >
+            {body}
+          </animated.div>
+        );
+      })}
+    </SectionLayout>
   );
 }
