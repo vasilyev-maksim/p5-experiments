@@ -1,41 +1,20 @@
 .PlaybackControls {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: end;
+  animation: appear 200ms 500ms ease-in-out forwards;
+  opacity: 0;
+  translate: 0 5px;
 }
 
-.Slider {
-  display: block;
-}
-
-.TrackWrapper {
-  width: 100%;
-  justify-content: center;
-  position: relative;
-  cursor: pointer;
-
-  &:focus-visible {
-    background-color: rgba(46, 102, 98, 0.5);
-    outline: none;
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 5px;
   }
-}
 
-.Track {
-  background-color: var(--primaryColorFaded);
-  width: 100%;
-  position: absolute;
-  left: 0;
-  border-radius: 2px;
-}
-
-.Handle {
-  position: absolute;
-  background-color: var(--primaryColor);
-  border-radius: 2px;
-}
-
-.Range {
-  background-color: var(--primaryColor);
-  position: absolute;
-  left: 0;
+  to {
+    opacity: 1;
+    translate: 0 0px;
+  }
 }

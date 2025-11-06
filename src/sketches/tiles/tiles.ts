@@ -5,12 +5,10 @@ import { Turtle } from "./Turtle";
 import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
 import { easeInOutQuad, getQsParam } from "../utils";
-import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type { ISketchFactory } from "../../models";
 
 export const tiles: ISketchFactory =
-  (WIDTH, HEIGHT, randomSeed, timeShift) =>
-  (p: P5CanvasInstance<{ playing: boolean }>) => {
+  (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
     const GRID_CELLS_Y = Number(getQsParam("y", "20")),
       CANVAS_PADDING = 3,
       PADDING = 3,

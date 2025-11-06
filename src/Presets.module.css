@@ -8,9 +8,13 @@
 
 .PresetButton {
   padding: 3px 6px;
-  background-color: var(--primaryColorFaded);
+  background-color: var(--bgPrimaryColor);
   border-radius: 5px;
   transition: 200ms all;
+
+  &:hover {
+    background-color: var(--primaryColorFaded);
+  }
 
   &.Active {
     background-color: var(--secondaryColorFaded);

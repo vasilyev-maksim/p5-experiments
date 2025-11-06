@@ -1,5 +1,8 @@
 # TODO
 
+- tabIndex everywhere
+- back button in footer
+
 # NICE TO HAVE
 
 - Smooth animation start (with easing)
@@ -10,6 +13,7 @@
 - make animations independent from canvas size (?)
 - worm like transition of site header when scrolling down
 - full screen mode (using browser native API)
+- "P" keyboard button as play/pause
 
 # DONE
 
