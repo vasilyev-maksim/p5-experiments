@@ -1,5 +1,6 @@
 # TODO
 
+- FIX: links are not clickable in app header
 - tabIndex everywhere
 - back button in footer
 

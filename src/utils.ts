@@ -23,6 +23,16 @@ export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   }, [isOpen, closeModal]);
 }
 
+export function usePlayerShortcuts(onPlayPause: () => void) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "p" || e.key === "P") onPlayPause();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onPlayPause]);
+}
+
 export function extractDefaultParams<K extends string>(
   sketch: ISketch<K>
 ): IParams {

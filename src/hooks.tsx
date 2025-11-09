@@ -16,6 +16,7 @@ export function useViewport() {
   const modalMargin = 15;
   const modalPadding = 20;
   const modalSidebarWidth = 300;
+  const modalSidebarPadding = 27;
   const canvasModalWidth =
     ctx.viewportWidth - modalSidebarWidth - 2 * (modalPadding + modalMargin);
   const canvasModalHeight =
@@ -30,6 +31,7 @@ export function useViewport() {
     modalMargin,
     modalPadding,
     modalSidebarWidth,
+    modalSidebarPadding,
     canvasModalWidth,
     canvasModalHeight,
     canvasTileSize,

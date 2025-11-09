@@ -8,17 +8,24 @@ import { useEffect, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
-import { delay, extractDefaultParams } from "./utils";
-import { PlaybackControls } from "./PlaybackControls";
+import {
+  delay,
+  extractDefaultParams,
+  useModalBehavior,
+  usePlayerShortcuts,
+} from "./utils";
+import { SketchModalFooter } from "./SketchModalFooter";
 
 export const SketchModal = ({
   sketch,
   left = 0,
   top = 0,
+  onBackClick,
 }: {
   sketch: ISketch;
   left?: number;
   top?: number;
+  onBackClick: () => void;
 }) => {
   const {
     tileWidth,
@@ -27,6 +34,7 @@ export const SketchModal = ({
     modalMargin,
     modalPadding,
     modalSidebarWidth,
+    modalSidebarPadding,
   } = useViewport();
 
   const [size, setSize] = useState<"tile" | "modal">("tile");
@@ -34,7 +42,7 @@ export const SketchModal = ({
   const [showLeftSideContent, setShowLeftSideContent] = useState(false);
   const [showPresets, setShowPresets] = useState(false);
   const [showParamControls, setShowParamControls] = useState(false);
-  const [showPlaybackControls, setShowPlaybackControls] = useState(false);
+  const [showFooter, setShowPlaybackControls] = useState(false);
   const sketchContainerRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(extractDefaultParams(sketch));
   const changeParam = (key: string, value: number) => {
@@ -43,6 +51,7 @@ export const SketchModal = ({
   const applyPreset = (preset: IPreset) => {
     setParams(preset.params);
   };
+  const playPause = () => setPlaying((x) => !x);
 
   const [{ modalX, headerX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0 },
@@ -61,6 +70,9 @@ export const SketchModal = ({
     }
     runAnimations();
   }, [api]);
+
+  useModalBehavior(true, onBackClick);
+  usePlayerShortcuts(playPause);
 
   return (
     <animated.div
@@ -86,6 +98,7 @@ export const SketchModal = ({
           paddingRight: modalX.to([0, 1], [15, modalPadding]),
           paddingTop: modalX.to([0, 1], [15, modalPadding]),
           paddingBottom: modalX.to([0, 1], [15, modalPadding]),
+          paddingLeft: modalX.to([0, 1], [0, 4]),
         }}
       >
         <div className={styles.Horizontal}>
@@ -93,7 +106,7 @@ export const SketchModal = ({
             className={styles.Left}
             style={{
               width: modalX.to([0, 1], [0, modalSidebarWidth + modalPadding]),
-              paddingRight: modalX.to([0, 1], [0, modalPadding]),
+              paddingRight: modalX.to([0, 1], [0, modalSidebarPadding - 6]),
               // paddingLeft: modalX.to([0, 1], [0, modalPadding]),
             }}
           >
@@ -102,16 +115,21 @@ export const SketchModal = ({
                 <animated.h2
                   className={styles.ModalTitle}
                   style={{
-                    marginBottom: modalPadding * 2,
+                    marginBottom: modalPadding / 2,
                     marginTop: modalPadding,
-                    marginLeft: modalPadding,
+                    marginLeft: modalSidebarPadding,
                     translateY: headerX.to([0, 1], [15, 0]),
                     opacity: headerX,
                   }}
                 >
                   {sketch.name.toUpperCase()}
                 </animated.h2>
-                <div className={styles.Body}>
+                <div
+                  className={styles.Body}
+                  style={{
+                    paddingTop: (modalPadding * 3) / 2,
+                  }}
+                >
                   {showPresets && (
                     <Presets
                       sketch={sketch}
@@ -132,14 +150,14 @@ export const SketchModal = ({
                 <div
                   className={styles.Footer}
                   style={{
-                    paddingLeft: modalPadding,
-                    paddingRight: modalPadding,
+                    paddingLeft: modalPadding - 4,
                   }}
                 >
-                  {showPlaybackControls && (
-                    <PlaybackControls
-                      onPlayPause={() => setPlaying((x) => !x)}
+                  {showFooter && (
+                    <SketchModalFooter
+                      onPlayPause={playPause}
                       playing={playing}
+                      onBackClick={onBackClick}
                     />
                   )}
                 </div>

@@ -13,7 +13,7 @@ export function SectionLayout(
     onHeaderAnimationEnd?: () => void;
   }>
 ) {
-  const { modalPadding } = useViewport();
+  const { modalSidebarPadding } = useViewport();
   const { x } = useSpring({
     from: { x: 0 },
     to: { x: props.showHeader ? 1 : 0 },
@@ -26,9 +26,7 @@ export function SectionLayout(
       <animated.div
         className={styles.Header}
         style={{
-          paddingRight: modalPadding / 4,
-          paddingLeft: modalPadding / 4,
-          lineHeight: modalPadding * 1.25 + "px",
+          lineHeight: modalSidebarPadding + "px",
           opacity: x,
           translateX: x.to([0, 1], [15, 0]),
         }}

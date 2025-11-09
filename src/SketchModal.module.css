@@ -122,14 +122,11 @@
 
   .Body {
     overflow-y: auto;
+    overflow-x: hidden;
     height: 100%;
     flex: 1;
   }
 }
 
 .Footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
 }
