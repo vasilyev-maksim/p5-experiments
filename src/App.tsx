@@ -1,17 +1,15 @@
 import styles from "./App.module.css";
 import { Header } from "./Header";
 import { useLayoutEffect, useRef, useState } from "react";
-import type { ISketch } from "./models";
 import { SketchTile } from "./SketchTile";
 import classNames from "classnames";
 import { sketchList } from "./data";
 import { SketchModal } from "./SketchModal";
+import { useURLParams } from "./utils";
 
 function App() {
-  const [selectedSketch, selectSketch] = useState<ISketch | undefined>(
-    sketchList[2]
-  );
-  const clearSelection = () => selectSketch(undefined);
+  const { openedSketch, openSketch, closeSketch } = useURLParams();
+  // sketchList[2]
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();
@@ -22,13 +20,13 @@ function App() {
       setCloneLeft(left);
       setCloneTop(top);
     }
-  }, [selectedSketch]);
+  }, [openedSketch]);
 
   return (
     <>
       <div
         className={classNames(styles.Container, {
-          [styles.InBackground]: !!selectedSketch,
+          [styles.InBackground]: !!openedSketch,
         })}
       >
         <Header />
@@ -36,24 +34,24 @@ function App() {
           <div className={styles.Grid}>
             {sketchList.map((x, i) => (
               <SketchTile
-                invisible={selectedSketch === x}
-                ref={selectedSketch === x ? selectedTileRef : undefined}
-                onSelect={() => selectSketch(x)}
+                invisible={openedSketch === x}
+                ref={openedSketch === x ? selectedTileRef : undefined}
+                onSelect={() => openSketch(x)}
                 key={x.id}
                 sketch={x}
-                animationDelay={700 + 200 * i}
+                animationDelay={700 + 125 * i}
                 interactive
               />
             ))}
           </div>
         </div>
       </div>
-      {selectedSketch && (
+      {openedSketch && (
         <SketchModal
           top={cloneTop}
           left={cloneLeft}
-          sketch={selectedSketch}
-          onBackClick={clearSelection}
+          sketch={openedSketch}
+          onBackClick={closeSketch}
         />
       )}
     </>

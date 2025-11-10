@@ -1,6 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { IControl, IParams, ISketch } from "./models";
 import { useSpring, easings, useSpringValue } from "react-spring";
+import { sketchList } from "./data";
+
+export function useURLParams() {
+  const [openedSketchId, setOpenedSketchId] = useState<
+    ISketch["id"] | undefined
+  >(location.pathname.split("/").filter(Boolean).pop());
+  const openedSketch = sketchList.find((x) => x.id === openedSketchId);
+
+  const openSketch = (sketch: ISketch) => {
+    setOpenedSketchId(sketch.id);
+    history.pushState({}, "", "/" + sketch.id);
+  };
+  const closeSketch = () => {
+    setOpenedSketchId(undefined);
+    history.pushState({}, "", location.origin);
+  };
+
+  return {
+    openedSketchId,
+    openedSketch,
+    openSketch,
+    closeSketch,
+  };
+}
 
 export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   useEffect(() => {

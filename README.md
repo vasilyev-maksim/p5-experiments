@@ -2,6 +2,7 @@
 
 - FIX: links are not clickable in app header
 - tabIndex everywhere
+- make opening by link more smooth + disable list animation in bg
 
 # 💡 NICE TO HAVE
 
@@ -14,6 +15,7 @@
 
 # ✅ DONE
 
+- support links to a specific animation (like `/spiral`)
 - presets for params (with gradual transition)
 - pulse: make multiple threads in sync but with x-axis shift and color shift
 - back button in footer
