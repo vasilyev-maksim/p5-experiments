@@ -1,5 +1,8 @@
+# 👨‍💻 IN PROGRESS
+
 # 📋 TODO
 
+- make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - FIX: links are not clickable in app header
 - tabIndex everywhere
 - make opening by link more smooth + disable list animation in bg
@@ -11,10 +14,10 @@
 - position of preview fragment (in px)
 - make animations independent from canvas size (?)
 - worm like transition of site header when scrolling down
-- full screen mode (using browser native API)
 
 # ✅ DONE
 
+- full screen mode (using browser native API)
 - support links to a specific animation (like `/spiral`)
 - presets for params (with gradual transition)
 - pulse: make multiple threads in sync but with x-axis shift and color shift

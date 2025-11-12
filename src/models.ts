@@ -59,3 +59,5 @@ export interface ISketch<ParamKey extends string = string> {
   controls?: IControls<ParamKey>;
   presets?: IPreset<ParamKey>[];
 }
+
+export type SketchCanvasSize = "tile" | "modal" | "fullscreen";

@@ -1,4 +1,4 @@
-import type { IPreset, ISketch } from "./models";
+import type { IPreset, ISketch, SketchCanvasSize } from "./models";
 import styles from "./SketchModal.module.css";
 import { animated, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
@@ -12,7 +12,7 @@ import {
   delay,
   extractDefaultParams,
   useModalBehavior,
-  usePlayerShortcuts,
+  useKeyboardShortcuts,
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
 
@@ -37,13 +37,13 @@ export const SketchModal = ({
     modalSidebarPadding,
   } = useViewport();
 
-  const [size, setSize] = useState<"tile" | "modal">("tile");
+  const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
   const [showLeftSideContent, setShowLeftSideContent] = useState(false);
   const [showPresets, setShowPresets] = useState(false);
   const [showParamControls, setShowParamControls] = useState(false);
   const [showFooter, setShowPlaybackControls] = useState(false);
-  const sketchContainerRef = useRef<HTMLDivElement>(null);
+  const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(extractDefaultParams(sketch));
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
@@ -52,6 +52,20 @@ export const SketchModal = ({
     setParams(preset.params);
   };
   const playPause = () => setPlaying((x) => !x);
+  const openInFullscreen = () => {
+    if (sketchCanvasRef.current) {
+      setSize("fullscreen");
+      sketchCanvasRef.current.requestFullscreen?.();
+      document.addEventListener("fullscreenchange", exitHandler, false);
+
+      function exitHandler() {
+        if (!document.fullscreenElement) {
+          setSize("modal");
+          document.removeEventListener("fullscreenchange", exitHandler);
+        }
+      }
+    }
+  };
 
   const [{ modalX, headerX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0 },
@@ -72,7 +86,7 @@ export const SketchModal = ({
   }, [api]);
 
   useModalBehavior(true, onBackClick);
-  usePlayerShortcuts(playPause);
+  useKeyboardShortcuts(playPause, openInFullscreen);
 
   return (
     <animated.div
@@ -107,7 +121,6 @@ export const SketchModal = ({
             style={{
               width: modalX.to([0, 1], [0, modalSidebarWidth + modalPadding]),
               paddingRight: modalX.to([0, 1], [0, modalSidebarPadding - 6]),
-              // paddingLeft: modalX.to([0, 1], [0, modalPadding]),
             }}
           >
             {showLeftSideContent && (
@@ -147,30 +160,33 @@ export const SketchModal = ({
                     />
                   )}
                 </div>
-                <div
-                  className={styles.Footer}
-                  style={{
-                    paddingLeft: modalPadding - 4,
-                  }}
-                >
-                  {showFooter && (
+                {showFooter && (
+                  <div
+                    className={styles.Footer}
+                    style={{
+                      paddingLeft: modalPadding - 4,
+                      paddingRight: 6,
+                    }}
+                  >
                     <SketchModalFooter
                       onPlayPause={playPause}
                       playing={playing}
                       onBackClick={onBackClick}
+                      onFullscreenToggle={openInFullscreen}
                     />
-                  )}
-                </div>
+                  </div>
+                )}
               </>
             )}
           </animated.div>
           <div className={classNames(styles.Vertical, styles.Right)}>
-            <div ref={sketchContainerRef} className={styles.RightTop}>
+            <div className={styles.RightTop}>
               <SketchCanvas
                 size={size}
                 sketch={sketch}
                 params={params}
                 playing={playing}
+                ref={sketchCanvasRef}
               />
             </div>
             <animated.div

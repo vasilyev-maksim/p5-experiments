@@ -1,44 +1,73 @@
-import { useMemo } from "react";
-import type { ISketch, IParams } from "./models";
+import { useMemo, forwardRef, useEffect, useRef } from "react";
+import type { ISketch, IParams, SketchCanvasSize } from "./models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "./hooks";
 import { animated, easings, to, useSpring } from "react-spring";
 
-export function SketchCanvas(props: {
-  sketch: ISketch;
-  size: "tile" | "modal";
-  playing: boolean;
-  params: IParams;
-}) {
+export const SketchCanvas = forwardRef<
+  HTMLDivElement,
+  {
+    sketch: ISketch;
+    size: SketchCanvasSize;
+    playing: boolean;
+    params: IParams;
+  }
+>((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
   const previewSize = props.sketch.preview.size;
+  const prevSize = useRef<SketchCanvasSize>(null);
 
   const p5Sketch = useMemo(() => {
+    const width =
+      props.size === "fullscreen" ? window.innerWidth : canvasModalWidth;
+    const height =
+      props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
+
     return props.sketch.factory(
-      canvasModalWidth,
-      canvasModalHeight,
+      width,
+      height,
       props.sketch.randomSeed ?? 0,
       props.sketch.timeShift ?? 0
     );
-  }, [props.sketch, canvasModalWidth, canvasModalHeight]);
+  }, [props.sketch, props.size, canvasModalWidth, canvasModalHeight]);
 
-  const { x } = useSpring({
+  const [{ x }, api] = useSpring(() => ({
     from: { x: 0 },
-    to: { x: props.size === "tile" ? 0 : 1 },
     config: { duration: 500, easing: easings.easeInOutCubic },
-  });
+  }));
+
+  useEffect(() => {
+    const prev = prevSize.current;
+    const curr = props.size;
+    prevSize.current = curr;
+
+    if (curr === "modal") {
+      if (prev === "fullscreen") {
+        api.set({ x: 1 });
+      } else if (prev === "tile") {
+        api.start({ x: 1 });
+      }
+    } else if (curr === "tile") {
+      api.set({ x: 0 });
+    }
+
+    return () => {};
+  }, [props.size]);
 
   const scale = x.to([0, 1], [canvasTileSize / previewSize, 1]);
   const translateX = x.to([0, 1], [-(canvasModalWidth - previewSize) / 2, 0]);
   const translateY = x.to([0, 1], [-(canvasModalHeight - previewSize) / 2, 0]);
+  const width = x.to([0, 1], [canvasTileSize, canvasModalWidth]);
+  const height = x.to([0, 1], [canvasTileSize, canvasModalHeight]);
 
   return (
     <animated.div
       className={styles.Wrapper}
+      ref={ref}
       style={{
-        width: x.to([0, 1], [canvasTileSize, canvasModalWidth]),
-        height: x.to([0, 1], [canvasTileSize, canvasModalHeight]),
+        width,
+        height,
       }}
     >
       <animated.div
@@ -59,4 +88,4 @@ export function SketchCanvas(props: {
       </animated.div>
     </animated.div>
   );
-}
+});
