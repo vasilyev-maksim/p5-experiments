@@ -47,11 +47,14 @@ export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
   }, [isOpen, closeModal]);
 }
 
-export function useKeyboardShortcuts(onPlayPause: () => void, onFullscreenToggle: () => void) {
+export function useKeyboardShortcuts(
+  onPlayPause: () => void,
+  onFullscreenToggle: () => void
+) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "p" || e.key === "P") onPlayPause();
-      if (e.key === 'f' || e.key === "F") onFullscreenToggle();
+      if (e.key === "f" || e.key === "F") onFullscreenToggle();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -83,12 +86,6 @@ export function delay(delay: number) {
   return new Promise((r) => setTimeout(r, delay));
 }
 
-export function useRerender(): () => void {
-  const [, setTick] = useState(0);
-  return useCallback(() => {
-    setTick((t) => t + 1);
-  }, []);
-}
 export function getClosestDiscreteValue(
   min: number,
   max: number,
@@ -189,5 +186,21 @@ export function useSliderBehavior(
     handleMove,
     handleLeft,
     activeX,
+  };
+}
+
+export function checkExhaustiveness(x: never, message?: string): never {
+  throw new Error(message ?? `Unreachable case reached: ${JSON.stringify(x)}`);
+}
+
+export class Event<Arg = void> {
+  private readonly callbacks: Array<(arg?: Arg) => void> = [];
+
+  public addCallback = (...callbacks: Array<(arg?: Arg) => void>): void => {
+    callbacks.forEach((cb) => this.callbacks.push(cb));
+  };
+
+  public __invokeCallbacks = (arg?: Arg): void => {
+    this.callbacks.forEach((cb) => cb(arg));
   };
 }
