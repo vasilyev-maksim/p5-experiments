@@ -42,7 +42,7 @@ export const SketchModal = ({
   const [showLeftSideContent, setShowLeftSideContent] = useState(false);
   const [showPresets, setShowPresets] = useState(false);
   const [showParamControls, setShowParamControls] = useState(false);
-  const [showFooter, setShowPlaybackControls] = useState(false);
+  const [showFooter, setShowFooter] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(extractDefaultParams(sketch));
   const changeParam = (key: string, value: number) => {
@@ -156,7 +156,7 @@ export const SketchModal = ({
                       sketch={sketch}
                       params={params}
                       onParamChange={changeParam}
-                      onAnimationEnd={() => setShowPlaybackControls(true)}
+                      onAnimationEnd={() => setShowFooter(true)}
                     />
                   )}
                 </div>
