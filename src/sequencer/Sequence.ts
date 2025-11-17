@@ -27,6 +27,13 @@ export class Sequence<ValueType = unknown> {
     this._pipeline.addItem(item);
   }
 
+  public addSteps(steps: Step<ValueType>[]) {
+    steps.forEach((step) => {
+      const item = this._convertStepToPipelineItem(step);
+      this._pipeline.addItem(item);
+    });
+  }
+
   public start = () => {
     this._pipeline.run();
   };
@@ -39,13 +46,15 @@ export class Sequence<ValueType = unknown> {
     switch (true) {
       case step instanceof CallbackStep:
         return new PipelineItem((next) => {
-          step.callback(
-            () => this.value,
-            (val: ValueType) => {
-              this.value = val;
-            }
-          );
-          next();
+          const promise =
+            step.callback(
+              () => this.value,
+              (val: ValueType) => {
+                this.value = val;
+              }
+            ) ?? Promise.resolve();
+
+          promise.then(next);
         });
       case step instanceof ValueStep:
         return new PipelineItem((next) => {

@@ -4,17 +4,27 @@ import { animated, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import { easings } from "@react-spring/web";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
 import {
-  delay,
+  // delay,
   extractDefaultParams,
   useModalBehavior,
   useKeyboardShortcuts,
+  useSequence,
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
+import { DelayStep } from "./sequencer/DelayStep";
+import { CallbackStep } from "./sequencer/CallbackStep";
+import { ValueStep } from "./sequencer/ValueStep";
+import type { Step } from "./sequencer/models";
+
+enum _STEP {
+  Sidebar = 0,
+  Presets = 1,
+}
 
 export const SketchModal = ({
   sketch,
@@ -37,10 +47,55 @@ export const SketchModal = ({
     modalSidebarPadding,
   } = useViewport();
 
+  //  async function runAnimations() {
+  //     await delay(500);
+  //     setSize("modal");
+  //     await Promise.all(api.start({ modalX: 1 }));
+  //     setShowLeftSideContent(true);
+
+  //     Promise.all(api.start({ headerX: 1 })).then(() => setShowPresets(true));
+  //     await delay(300);
+  //     setPlaying(true);
+  //   }
+  //   runAnimations();
+  const steps: Step<_STEP>[] = useMemo(
+    () => [
+      new DelayStep(500),
+      new CallbackStep(() => setSize("modal")),
+      new CallbackStep(() =>
+        Promise.all(
+          api.start({
+            modalX: 1,
+            config: { duration: 500, easing: easings.easeInOutCubic },
+          })
+        )
+      ),
+      new ValueStep(_STEP.Sidebar),
+      new CallbackStep(async (_, setValue) => {
+        await Promise.all(
+          api.start({
+            headerX: 1,
+            config: { duration: 500, easing: easings.easeInOutCubic },
+          })
+        );
+        setValue(_STEP.Presets);
+      }),
+      new DelayStep(300),
+      new CallbackStep(() => setPlaying(true)),
+    ],
+    []
+  );
+  const { currentValue } = useSequence<_STEP>(steps);
+
+  useEffect(() => {
+    console.log({ currentValue });
+  }, [currentValue]);
+
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
-  const [showLeftSideContent, setShowLeftSideContent] = useState(false);
-  const [showPresets, setShowPresets] = useState(false);
+  // const [showLeftSideContent, setShowLeftSideContent] = useState(false);
+  // const [showPresets, setShowPresets] = useState(false);
+
   const [showParamControls, setShowParamControls] = useState(false);
   const [showFooter, setShowFooter] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
@@ -69,21 +124,21 @@ export const SketchModal = ({
 
   const [{ modalX, headerX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0 },
-    config: { duration: 500, easing: easings.easeInOutCubic },
+    // config: { duration: 500, easing: easings.easeInOutCubic },
   }));
 
-  useEffect(() => {
-    async function runAnimations() {
-      await delay(500);
-      setSize("modal");
-      await Promise.all(api.start({ modalX: 1 }));
-      setShowLeftSideContent(true);
-      Promise.all(api.start({ headerX: 1 })).then(() => setShowPresets(true));
-      await delay(300);
-      setPlaying(true);
-    }
-    runAnimations();
-  }, [api]);
+  // useEffect(() => {
+  //   async function runAnimations() {
+  //     await delay(500);
+  //     setSize("modal");
+  //     await Promise.all(api.start({ modalX: 1 }));
+  //     setShowLeftSideContent(true);
+  //     Promise.all(api.start({ headerX: 1 })).then(() => setShowPresets(true));
+  //     await delay(300);
+  //     setPlaying(true);
+  //   }
+  //   runAnimations();
+  // }, [api]);
 
   useModalBehavior(true, onBackClick);
   useKeyboardShortcuts(playPause, openInFullscreen);
@@ -123,7 +178,7 @@ export const SketchModal = ({
               paddingRight: modalX.to([0, 1], [0, modalSidebarPadding - 6]),
             }}
           >
-            {showLeftSideContent && (
+            {(currentValue ?? 0) >= _STEP.Sidebar && (
               <>
                 <animated.h2
                   className={styles.ModalTitle}
@@ -143,7 +198,7 @@ export const SketchModal = ({
                     paddingTop: (modalPadding * 3) / 2,
                   }}
                 >
-                  {showPresets && (
+                  {(currentValue ?? 0) >= _STEP.Presets && (
                     <Presets
                       sketch={sketch}
                       params={params}

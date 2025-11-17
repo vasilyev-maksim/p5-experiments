@@ -3,6 +3,6 @@ export class CallbackStep<ValueType = unknown> {
     public readonly callback: (
       getValue: () => ValueType | null,
       setValue: (val: ValueType) => void
-    ) => void
+    ) => Promise<unknown> | void
   ) {}
 }

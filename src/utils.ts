@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { IControl, IParams, ISketch } from "./models";
 import { useSpring, easings, useSpringValue } from "react-spring";
 import { sketchList } from "./data";
+import { Sequence } from "./sequencer/Sequence";
+import type { Step } from "./sequencer/models";
 
 export function useURLParams() {
   const [openedSketchId, setOpenedSketchId] = useState<
@@ -202,5 +204,23 @@ export class Event<Arg = void> {
 
   public __invokeCallbacks = (arg?: Arg): void => {
     this.callbacks.forEach((cb) => cb(arg));
+  };
+}
+
+export function useSequence<T = void>(steps: Step<T>[]) {
+  const sequence = useRef<Sequence<T>>(new Sequence());
+  const [currentValue, setCurrentValue] = useState<T | null>();
+
+  useEffect(() => {
+    if (sequence.current) {
+      sequence.current.addSteps(steps);
+      sequence.current.onValueChange.addCallback(setCurrentValue);
+      sequence.current.start();
+    }
+    // return () => {};
+  }, []);
+
+  return {
+    currentValue,
   };
 }
