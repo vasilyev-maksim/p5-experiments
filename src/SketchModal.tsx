@@ -16,10 +16,11 @@ import {
   useSequence,
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
-import { DelayStep } from "./sequencer/DelayStep";
-import { CallbackStep } from "./sequencer/CallbackStep";
-import { ValueStep } from "./sequencer/ValueStep";
+// import { DelayStep } from "./sequencer/DelayStep";
+// import { CallbackStep } from "./sequencer/CallbackStep";
+// import { ValueStep } from "./sequencer/ValueStep";
 import type { Step } from "./sequencer/models";
+import { AsyncStep } from "./sequencer/AsyncStep";
 
 enum _STEP {
   Sidebar = 0,
@@ -58,20 +59,19 @@ export const SketchModal = ({
   //     setPlaying(true);
   //   }
   //   runAnimations();
+  const D1 = 500;
   const steps: Step<_STEP>[] = useMemo(
     () => [
-      new DelayStep(500),
-      new CallbackStep(() => setSize("modal")),
-      new CallbackStep(() =>
-        Promise.all(
+      new AsyncStep(500, async (_, setValue) => {
+        setSize("modal");
+        await Promise.all(
           api.start({
             modalX: 1,
-            config: { duration: 500, easing: easings.easeInOutCubic },
+            config: { duration: D1, easing: easings.easeInOutCubic },
           })
-        )
-      ),
-      new ValueStep(_STEP.Sidebar),
-      new CallbackStep(async (_, setValue) => {
+        );
+        setPlaying(true);
+        setValue(_STEP.Sidebar);
         await Promise.all(
           api.start({
             headerX: 1,
@@ -80,8 +80,9 @@ export const SketchModal = ({
         );
         setValue(_STEP.Presets);
       }),
-      new DelayStep(300),
-      new CallbackStep(() => setPlaying(true)),
+      // new AsyncStep(0, async () => {
+      //   setPlaying(true);
+      // }),
     ],
     []
   );

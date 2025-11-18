@@ -1,10 +1,10 @@
-import { checkExhaustiveness } from "../utils";
-import { CallbackStep } from "./CallbackStep";
-import { DelayStep } from "./DelayStep";
+// import { checkExhaustiveness, delay } from "../utils";
+// import { CallbackStep } from "./CallbackStep";
+// import { DelayStep } from "./DelayStep";
 import type { IPipelineItem, Step } from "./models";
 import { Pipeline } from "./Pipeline";
 import { PipelineItem } from "./PipelineItem";
-import { ValueStep } from "./ValueStep";
+// import { ValueStep } from "./ValueStep";
 import { Event } from "../utils";
 
 export class Sequence<ValueType = unknown> {
@@ -43,32 +43,44 @@ export class Sequence<ValueType = unknown> {
   public reset = () => {};
 
   private _convertStepToPipelineItem(step: Step<ValueType>): IPipelineItem {
-    switch (true) {
-      case step instanceof CallbackStep:
-        return new PipelineItem((next) => {
-          const promise =
-            step.callback(
-              () => this.value,
-              (val: ValueType) => {
-                this.value = val;
-              }
-            ) ?? Promise.resolve();
+    return new PipelineItem(async (next) => {
+      await new Promise((r) => setTimeout(r, step.delayInMs));
+      const promise =
+        step.callback(
+          () => this.value,
+          (val: ValueType) => {
+            this.value = val;
+          }
+        ) ?? Promise.resolve();
+      await promise;
+      next();
+    });
+    // switch (true) {
+    //   case step instanceof CallbackStep:
+    //     return new PipelineItem((next) => {
+    //       const promise =
+    //         step.callback(
+    //           () => this.value,
+    //           (val: ValueType) => {
+    //             this.value = val;
+    //           }
+    //         ) ?? Promise.resolve();
 
-          promise.then(next);
-        });
-      case step instanceof ValueStep:
-        return new PipelineItem((next) => {
-          this.value = step.value;
-          next();
-        });
-      case step instanceof DelayStep:
-        return new PipelineItem((next) => {
-          setTimeout(() => {
-            next();
-          }, step.duration);
-        });
-      default:
-        checkExhaustiveness(step, "Unknown step type");
-    }
+    //       promise.then(next);
+    //     });
+    //   case step instanceof ValueStep:
+    //     return new PipelineItem((next) => {
+    //       this.value = step.value;
+    //       next();
+    //     });
+    //   case step instanceof DelayStep:
+    //     return new PipelineItem((next) => {
+    //       setTimeout(() => {
+    //         next();
+    //       }, step.duration);
+    //     });
+    //   default:
+    //     checkExhaustiveness(step, "Unknown step type");
+    // }
   }
 }

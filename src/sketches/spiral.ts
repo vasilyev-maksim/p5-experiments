@@ -219,6 +219,19 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
+      POLYGON_N: controls.POLYGON_N.max,
+      THICKNESS: 20,
+      COIL_FACTOR: 1,
+      COIL_SPEED: 10,
+      ZOOM: 4,
+      ROTATION_SPEED: 4,
+      COLOR_CHANGE_SPEED: 10,
+      TIME_DELTA: 1,
+    },
+    name: "spiral 2",
+  },
+  {
+    params: {
       POLYGON_N: 3,
       THICKNESS: 2,
       COIL_FACTOR: 28,
