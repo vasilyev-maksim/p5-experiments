@@ -1,16 +1,12 @@
 import type { AsyncStep } from "./AsyncStep";
+import type { ValueStep } from "./ValueStep";
 // import type { CallbackStep } from "./CallbackStep";
 // import type { DelayStep } from "./DelayStep";
 // import type { ValueStep } from "./ValueStep";
 
-export interface IPipelineItem {
-  run(): void;
-  runBackwards(): void;
-  bindNext(nextItem: IPipelineItem): void;
-  bindPrev(nextItem: IPipelineItem): void;
-}
-
-export type Step<ValueType = unknown> = AsyncStep<ValueType>;
+export type Step<ValueType = unknown> =
+  | AsyncStep<ValueType>
+  | ValueStep<ValueType>;
 // | DelayStep
 // | CallbackStep<ValueType>
 // | ValueStep<ValueType>;

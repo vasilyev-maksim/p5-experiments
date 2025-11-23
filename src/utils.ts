@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import type { IControl, IParams, ISketch } from "./models";
 import { useSpring, easings, useSpringValue } from "react-spring";
 import { sketchList } from "./data";
-import { Sequence } from "./sequencer/Sequence";
-import type { Step } from "./sequencer/models";
 
 export function useURLParams() {
   const [openedSketchId, setOpenedSketchId] = useState<
@@ -196,31 +194,16 @@ export function checkExhaustiveness(x: never, message?: string): never {
 }
 
 export class Event<Arg = void> {
-  private readonly callbacks: Array<(arg?: Arg) => void> = [];
+  private callbacks: Array<(arg: Arg) => void> = [];
 
-  public addCallback = (...callbacks: Array<(arg?: Arg) => void>): void => {
-    callbacks.forEach((cb) => this.callbacks.push(cb));
+  public addCallback = (callback: (arg: Arg) => void): (() => void) => {
+    this.callbacks.push(callback);
+    return () => {
+      this.callbacks = this.callbacks.filter((x) => x !== callback);
+    };
   };
 
-  public __invokeCallbacks = (arg?: Arg): void => {
+  public __invokeCallbacks = (arg: Arg): void => {
     this.callbacks.forEach((cb) => cb(arg));
-  };
-}
-
-export function useSequence<T = void>(steps: Step<T>[]) {
-  const sequence = useRef<Sequence<T>>(new Sequence());
-  const [currentValue, setCurrentValue] = useState<T | null>();
-
-  useEffect(() => {
-    if (sequence.current) {
-      sequence.current.addSteps(steps);
-      sequence.current.onValueChange.addCallback(setCurrentValue);
-      sequence.current.start();
-    }
-    // return () => {};
-  }, []);
-
-  return {
-    currentValue,
   };
 }

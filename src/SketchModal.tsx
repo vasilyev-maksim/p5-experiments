@@ -13,7 +13,6 @@ import {
   extractDefaultParams,
   useModalBehavior,
   useKeyboardShortcuts,
-  useSequence,
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
 // import { DelayStep } from "./sequencer/DelayStep";
@@ -21,11 +20,8 @@ import { SketchModalFooter } from "./SketchModalFooter";
 // import { ValueStep } from "./sequencer/ValueStep";
 import type { Step } from "./sequencer/models";
 import { AsyncStep } from "./sequencer/AsyncStep";
-
-enum _STEP {
-  Sidebar = 0,
-  Presets = 1,
-}
+import { useSequence } from "./sequencer";
+import { STEPS } from "./main";
 
 export const SketchModal = ({
   sketch,
@@ -62,6 +58,7 @@ export const SketchModal = ({
   const D1 = 500;
   const steps: Step<_STEP>[] = useMemo(
     () => [
+      // new ValueStep(500, ),
       new AsyncStep(500, async (_, setValue) => {
         setSize("modal");
         await Promise.all(
@@ -86,7 +83,16 @@ export const SketchModal = ({
     ],
     []
   );
-  const { currentValue } = useSequence<_STEP>(steps);
+  const { currentValue } = useSequence<STEPS>('MODAL_OPEN', {
+    autoStart: true,
+    onValueChange: (val) => {
+      switch (val) {
+        case STEPS.TILE_GOES_MODAL:
+          setSize("modal");
+        case STEPS.START_PLAYING
+      }
+    }
+  });
 
   useEffect(() => {
     console.log({ currentValue });
