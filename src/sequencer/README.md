@@ -27,8 +27,9 @@ There is no tools available rn solving this problem.
 - не давать возможности при инциализации прописывать простые обьекты типа {delay: 1000}, а принудить использовать статичные конструкторы типа Step.delay(1000), Step.value(‘SOME_ANIMATION_STEP_ID’), Step.callback()
 - схема шагов должна быть и источником инфы о длительностях анимаций для компонентов, чтоб все работало слажено
 
-### Done
+### TODO
 
+- return class instance from hook: `useSeq('SEQ_ID', 'STEP_ID')` will return typed Step with duration, delay, `next` to call etc.
 - get current step in component
 - resolve current step (call next()) from component
   - I can use cancelation token for force next() call for ValueStep (in contrast with AsyncStep, which requires `next` to be called at some moment)

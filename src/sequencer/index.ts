@@ -36,11 +36,11 @@ export function useSequence<T = void>(
     }
   }, [seq, opts?.autoStart, opts?.onValueChange]);
 
-  // const next = () => seq.
+  const next = () => seq.completeCurrentStep();
 
   return {
     currentValue,
-    // next: 
+    // next: s,
   };
 }
 

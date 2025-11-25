@@ -38,7 +38,13 @@ export class Sequence<ValueType = unknown> {
     this._pipeline.run();
   };
 
-  // public;
+  public get activeRunner() {
+    return this._pipeline.activeRunner;
+  }
+
+  // public completeCurrentStep = () => {
+  //   this._pipeline.activeRunner?.forceComplete();
+  // };
 
   public pause = () => {};
 

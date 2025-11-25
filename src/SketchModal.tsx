@@ -83,15 +83,15 @@ export const SketchModal = ({
     ],
     []
   );
-  const { currentValue } = useSequence<STEPS>('MODAL_OPEN', {
+  const { currentValue } = useSequence<STEPS>("MODAL_OPEN", {
     autoStart: true,
     onValueChange: (val) => {
-      switch (val) {
-        case STEPS.TILE_GOES_MODAL:
-          setSize("modal");
-        case STEPS.START_PLAYING
-      }
-    }
+      // switch (val) {
+      //   case STEPS.TILE_GOES_MODAL:
+      //     setSize("modal");
+      //   case STEPS.START_PLAYING
+      // }
+    },
   });
 
   useEffect(() => {
