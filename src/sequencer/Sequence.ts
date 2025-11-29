@@ -1,9 +1,12 @@
-import type { Step } from "./models";
+import {
+  AsyncStepController,
+  AsyncStepData,
+  StepController,
+  StepData,
+} from "./models";
 import { Pipeline } from "./Pipeline";
 import { PipelineItem } from "./PipelineItem";
 import { checkExhaustiveness, Event } from "../utils";
-import { AsyncStep } from "./AsyncStep";
-import { ValueStep } from "./ValueStep";
 
 export class Sequence<ValueType = unknown> {
   private _currentValue: ValueType | null = null;
@@ -18,20 +21,17 @@ export class Sequence<ValueType = unknown> {
     this.onValueChange.__invokeCallbacks(this._currentValue);
   }
 
-  public constructor(public readonly id: string, steps: Step<ValueType>[]) {
+  public constructor(public readonly id: string, steps: StepData<ValueType>[]) {
     this.addSteps(steps);
   }
 
-  public addStep(step: Step<ValueType>) {
-    const item = this._convertStepToPipelineItem(step);
+  public addStep(step: StepData<ValueType>) {
+    const item = this._convertToStep(step);
     this._pipeline.addItem(item);
   }
 
-  public addSteps(steps: Step<ValueType>[]) {
-    steps.forEach((step) => {
-      const item = this._convertStepToPipelineItem(step);
-      this._pipeline.addItem(item);
-    });
+  public addSteps(steps: StepData<ValueType>[]) {
+    steps.forEach((step) => this.addStep(step));
   }
 
   public start = () => {
@@ -39,7 +39,7 @@ export class Sequence<ValueType = unknown> {
   };
 
   public get activeRunner() {
-    return this._pipeline.activeRunner;
+    return this._pipeline.activeItem;
   }
 
   // public completeCurrentStep = () => {
@@ -50,11 +50,13 @@ export class Sequence<ValueType = unknown> {
 
   public reset = () => {};
 
-  private _convertStepToPipelineItem(step: Step<ValueType>): PipelineItem {
+  private _convertToStep(
+    step: StepData<ValueType> | AsyncStepData<ValueType>
+  ): StepController | AsyncStepController {
     switch (true) {
-      case step instanceof AsyncStep:
-        return new PipelineItem(async (next) => {
-          await new Promise((r) => setTimeout(r, step.delayInMs));
+      case step instanceof AsyncStepData: {
+        const pItem = new PipelineItem(async (next) => {
+          await new Promise((r) => setTimeout(r, step.delay));
           const promise =
             step.callback(
               () => this.value,
@@ -65,14 +67,18 @@ export class Sequence<ValueType = unknown> {
           await promise;
           next();
         });
-      case step instanceof ValueStep:
-        return new PipelineItem(async (next) => {
-          if ((step.delayInMs ?? 0) > 0) {
-            await new Promise((r) => setTimeout(r, step.delayInMs));
+        return new AsyncStepController(step.delay, step.value, step.payload);
+      }
+      case step instanceof StepData: {
+        const pItem = new PipelineItem(async (next) => {
+          if ((step.delay ?? 0) > 0) {
+            await new Promise((r) => setTimeout(r, step.delay));
           }
           this.value = step.value;
           next();
         });
+        return new StepController(pItem, step.delay, step.value, step.duration);
+      }
       default:
         checkExhaustiveness(step, "Unknown step type");
     }

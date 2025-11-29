@@ -18,7 +18,7 @@ import { SketchModalFooter } from "./SketchModalFooter";
 // import { DelayStep } from "./sequencer/DelayStep";
 // import { CallbackStep } from "./sequencer/CallbackStep";
 // import { ValueStep } from "./sequencer/ValueStep";
-import type { Step } from "./sequencer/models";
+import type { StepData } from "./sequencer/models";
 import { AsyncStep } from "./sequencer/AsyncStep";
 import { useSequence } from "./sequencer";
 import { STEPS } from "./main";
@@ -56,7 +56,7 @@ export const SketchModal = ({
   //   }
   //   runAnimations();
   const D1 = 500;
-  const steps: Step<_STEP>[] = useMemo(
+  const steps: StepData<_STEP>[] = useMemo(
     () => [
       // new ValueStep(500, ),
       new AsyncStep(500, async (_, setValue) => {

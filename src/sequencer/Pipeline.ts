@@ -1,45 +1,41 @@
-import { PipelineItemRunner, type PipelineItem } from "./PipelineItem";
+import { PipelineItem } from "./PipelineItem";
 
 export class Pipeline {
-  private _runners: PipelineItemRunner[] = [];
-  private _activeRunner: PipelineItemRunner | null = null;
+  private _items: PipelineItem[] = [];
+  private _activeItem: PipelineItem | null = null;
 
-  private get _firstRunner(): PipelineItemRunner | null {
-    return this._runners[0] ?? null;
+  private get _firstItem(): PipelineItem | null {
+    return this._items[0] ?? null;
   }
 
-  private get _lastRunner(): PipelineItemRunner | null {
-    return this._runners[this._runners.length - 1] ?? null;
+  private get _lastItem(): PipelineItem | null {
+    return this._items[this._items.length - 1] ?? null;
   }
 
-  public get activeRunner() {
-    return this._activeRunner;
+  public get activeItem() {
+    return this._activeItem;
   }
 
   public addItem(item: PipelineItem): void {
-    const runner = new PipelineItemRunner(item);
-
-    runner.prev = this._lastRunner;
-    if (this._lastRunner) {
-      this._lastRunner.next = runner;
+    item.prev = this._lastItem;
+    if (this._lastItem) {
+      this._lastItem.next = item;
     }
+    item.onNext.addCallback((item) => (this._activeItem = item.next));
+    item.onPrev.addCallback((item) => (this._activeItem = item.prev));
 
-    this._runners.push(runner);
+    this._items.push(item);
   }
 
   public run(): void {
-    this._activeRunner = this._firstRunner;
-    this._firstRunner?.run((runner) => (this._activeRunner = runner.next));
+    this._activeItem = this._firstItem;
+    this._firstItem?.run();
   }
 
-  public runNext(): void {
-    
-  }
+  // public runNext(): void {}
 
   public runBackwards(): void {
-    this._activeRunner = this._lastRunner;
-    this._lastRunner?.runBackwards(
-      (runner) => (this._activeRunner = runner.prev)
-    );
+    this._activeItem = this._lastItem;
+    this._lastItem?.runBackwards();
   }
 }

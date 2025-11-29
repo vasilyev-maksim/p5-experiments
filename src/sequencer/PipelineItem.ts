@@ -1,4 +1,12 @@
+import { Event } from "../utils";
+
 export class PipelineItem {
+  public next: PipelineItem | null = null;
+  public prev: PipelineItem | null = null;
+  public onNext = new Event<PipelineItem>();
+  public onPrev = new Event<PipelineItem>();
+  // private _completed: boolean = false;
+
   public constructor(
     public readonly callback: (
       next: () => void,
@@ -6,31 +14,23 @@ export class PipelineItem {
     ) => void,
     public readonly description?: string
   ) {}
-}
 
-export class PipelineItemRunner {
-  public next: PipelineItemRunner | null = null;
-  public prev: PipelineItemRunner | null = null;
-  // private _completed: boolean = false;
-
-  public constructor(public readonly item: PipelineItem) {}
-
-  public run(onComplete: (next: PipelineItemRunner) => void): void {
+  public run(): void {
     // if (this._completed) {
-    this.item.callback(() => {
+    this.callback(() => {
       // this._completed = true;
-      onComplete(this);
-      this.next?.run(onComplete);
+      this.onNext.__invokeCallbacks(this);
+      this.next?.run();
     }, false);
     // }
   }
 
-  public runBackwards(onComplete: (next: PipelineItemRunner) => void): void {
+  public runBackwards(): void {
     // if (this._completed) {
-    this.item.callback(() => {
+    this.callback(() => {
       // this._completed = true;
-      onComplete(this);
-      this.prev?.run(onComplete);
+      this.onPrev.__invokeCallbacks(this);
+      this.prev?.run();
     }, true);
     // }
   }
