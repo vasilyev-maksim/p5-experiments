@@ -1,11 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import {
-  Sequence,
-  type SegmentPhase,
-  type Segment,
-  SyncSegment,
-  AsyncSegment,
-} from "./Sequence";
+import { Sequence } from "./Sequence";
+import { SyncSegment } from "./SyncSegment";
+import { AsyncSegment } from "./AsyncSegment";
+import type { Segment, SegmentPhase } from "./models";
 
 export type SequenceContextValue = { sequences: Sequence[] };
 export const SequenceContext = createContext<SequenceContextValue>({

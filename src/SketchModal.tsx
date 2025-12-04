@@ -15,7 +15,8 @@ import {
 import { SketchModalFooter } from "./SketchModalFooter";
 import { useSequence } from "./sequencer";
 import { MODAL_OPEN_SEQ, type STEPS } from "./main";
-import { SyncSegment, type Segment } from "./sequencer/Sequence";
+import { SyncSegment } from "./sequencer/SyncSegment";
+import type { Segment } from "./sequencer/models";
 
 export const SketchModal = ({
   sketch,
