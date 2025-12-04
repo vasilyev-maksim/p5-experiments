@@ -58,7 +58,7 @@ export function useKeyboardShortcuts(
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onPlayPause]);
+  }, [onPlayPause, onFullscreenToggle]);
 }
 
 export function extractDefaultParams<K extends string>(
