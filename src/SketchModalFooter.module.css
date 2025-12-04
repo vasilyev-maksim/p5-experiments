@@ -5,6 +5,9 @@
   justify-content: end;
   align-items: end;
   gap: 5px;
+  padding-top: 15px;
+  animation: appear ease-in-out forwards;
+  opacity: 0;
 }
 
 .BackButton {
@@ -41,5 +44,17 @@
   strong {
     position: relative;
     top: -1px;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0px;
   }
 }

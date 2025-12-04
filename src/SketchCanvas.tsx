@@ -4,6 +4,8 @@ import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "./hooks";
 import { animated, easings, to, useSpring } from "react-spring";
+import { MODAL_OPEN_SEQ, type STEPS } from "./main";
+import { useSequence } from "./sequencer";
 
 export const SketchCanvas = forwardRef<
   HTMLDivElement,
@@ -32,9 +34,11 @@ export const SketchCanvas = forwardRef<
     );
   }, [props.sketch, props.size, canvasModalWidth, canvasModalHeight]);
 
+  const { duration } =
+    useSequence<STEPS>(MODAL_OPEN_SEQ).useSegment("TILE_GOES_MODAL");
   const [{ x }, api] = useSpring(() => ({
     from: { x: 0 },
-    config: { duration: 500, easing: easings.easeInOutCubic },
+    config: { duration, easing: easings.easeInOutCubic },
   }));
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export const SketchCanvas = forwardRef<
     }
 
     return () => {};
-  }, [props.size]);
+  }, [props.size, api]);
 
   const scale = x.to([0, 1], [canvasTileSize / previewSize, 1]);
   const translateX = x.to([0, 1], [-(canvasModalWidth - previewSize) / 2, 0]);

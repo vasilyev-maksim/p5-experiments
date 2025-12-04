@@ -5,25 +5,37 @@ import classNames from "classnames";
 import { SectionLayout } from "./SectionLayout";
 import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
+import { useSequence } from "./sequencer";
+import {
+  MODAL_OPEN_SEQ,
+  type STEPS,
+  type PresetsAnimationParams,
+} from "./main";
 
 export function Presets(props: {
   sketch: ISketch;
   onApply: (preset: IPreset) => void;
   params: IParams;
-  onAnimationEnd?: () => void;
+  // onAnimationEnd?: () => void;
 }) {
+  const segment =
+    useSequence<STEPS>(MODAL_OPEN_SEQ).useSegment<PresetsAnimationParams>(
+      "SHOW_PRESETS"
+    );
+  const { itemDelay, itemDuration } = segment.timingPayload;
   const [showHeader, setShowHeader] = useState(false);
   const paramsCount = props.sketch.presets?.length ?? 0;
   const [springs] = useSprings(
     paramsCount,
     (i) => ({
       from: { x: 0 },
-      to: { x: 1 },
+      to: { x: segment.currentPhase !== "not_started" ? 1 : 0 },
+      // to: { x: 1 },
       config: {
-        duration: 180,
+        duration: itemDuration,
         easing: easings.easeInOutCubic,
       },
-      delay: i * 25,
+      delay: i * itemDelay,
       onRest: async () => {
         if (i === paramsCount - 1) {
           await delay(50);
@@ -31,15 +43,16 @@ export function Presets(props: {
         }
       },
     }),
-    []
+    [segment.currentPhase]
   );
 
   return (
-    paramsCount > 0 && (
+    paramsCount > 0 &&
+    segment.currentPhase !== "not_started" && (
       <SectionLayout
         header="Presets"
         showHeader={showHeader}
-        onHeaderAnimationEnd={props.onAnimationEnd}
+        onHeaderAnimationEnd={segment.complete}
       >
         <div className={styles.Presets}>
           {springs.map(({ x }, i) => {

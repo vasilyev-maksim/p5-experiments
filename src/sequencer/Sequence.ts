@@ -1,113 +1,182 @@
-import {
-  AsyncStepController,
-  AsyncStepData,
-  StepController,
-  StepData,
-} from "./models";
-import { Pipeline } from "./Pipeline";
-import { PipelineItem } from "./PipelineItem";
-import { checkExhaustiveness, Event } from "../utils";
+// import { Pipeline } from "./Pipeline";
+import { Deferred, delay, Event } from "../utils";
 
-export class Sequence<ValueType = unknown> {
-  private _currentValue: ValueType | null = null;
-  private readonly _pipeline = new Pipeline();
-  public readonly onValueChange = new Event<ValueType | null>();
+export class Sequence {
+  private _activeSegmentIndex: number = 0;
+  private _segments: Segment[] = [];
+  public readonly onSegmentActivation = new Event<Segment>();
 
-  public get value() {
-    return this._currentValue;
-  }
-  private set value(val) {
-    this._currentValue = val;
-    this.onValueChange.__invokeCallbacks(this._currentValue);
+  public get activeSegment() {
+    return this._activeSegmentIndex
+      ? this._segments[this._activeSegmentIndex]
+      : null;
   }
 
-  public constructor(public readonly id: string, steps: StepData<ValueType>[]) {
-    this.addSteps(steps);
+  public constructor(public readonly id: string, segments: Segment[] = []) {
+    if (segments) {
+      this.addSegments(segments);
+    }
   }
 
-  public addStep(step: StepData<ValueType>) {
-    const item = this._convertToStep(step);
-    this._pipeline.addItem(item);
+  public addSegment(segment: Segment) {
+    this._segments.push(segment);
   }
 
-  public addSteps(steps: StepData<ValueType>[]) {
-    steps.forEach((step) => this.addStep(step));
+  public addSegments(segments: Segment[]) {
+    segments.forEach((step) => this.addSegment(step));
   }
 
-  public start = () => {
-    this._pipeline.run();
+  public start = async () => {
+    this.reset();
+
+    if (this._segments.length > 0) {
+      Sequence.asyncWhile(
+        () => this._activeSegmentIndex < this._segments.length,
+        async () => {
+          const seg = this._segments[this._activeSegmentIndex];
+          this.onSegmentActivation.__invokeCallbacks(seg);
+
+          if (seg.delay > 0) {
+            seg.currentPhase = "delay";
+            await delay(seg.delay);
+          }
+
+          if (seg instanceof SyncSegment) {
+            if (seg.duration > 0) {
+              seg.currentPhase = "running";
+              await delay(seg.duration);
+            }
+          } else {
+            seg.currentPhase = "running";
+            await seg.promise;
+          }
+
+          seg.currentPhase = "completed";
+          this._activeSegmentIndex++;
+        }
+      );
+    }
   };
 
-  public get activeRunner() {
-    return this._pipeline.activeItem;
+  private static asyncWhile(
+    condition: () => boolean,
+    cb: () => Promise<unknown>
+  ) {
+    const f = () => {
+      if (condition()) {
+        cb().then(f);
+      }
+    };
+
+    f();
   }
+
+  public reset = () => {
+    this._activeSegmentIndex = 0;
+    this._segments.forEach((seg) => seg.reset());
+  };
+
+  public getSegmentById = (id: Segment["id"]) => {
+    return this._segments.find((x) => x.id === id);
+  };
+
+  // public get activeSegment() {
+  //   // return this._pipeline.activeItem;
+  // }
 
   // public completeCurrentStep = () => {
   //   this._pipeline.activeRunner?.forceComplete();
   // };
 
-  public pause = () => {};
+  // public pause = () => {};
 
-  public reset = () => {};
-
-  private _convertToStep(
-    step: StepData<ValueType> | AsyncStepData<ValueType>
-  ): StepController | AsyncStepController {
-    switch (true) {
-      case step instanceof AsyncStepData: {
-        const pItem = new PipelineItem(async (next) => {
-          await new Promise((r) => setTimeout(r, step.delay));
-          const promise =
-            step.callback(
-              () => this.value,
-              (val: ValueType) => {
-                this.value = val;
-              }
-            ) ?? Promise.resolve();
-          await promise;
-          next();
-        });
-        return new AsyncStepController(step.delay, step.value, step.payload);
-      }
-      case step instanceof StepData: {
-        const pItem = new PipelineItem(async (next) => {
-          if ((step.delay ?? 0) > 0) {
-            await new Promise((r) => setTimeout(r, step.delay));
-          }
-          this.value = step.value;
-          next();
-        });
-        return new StepController(pItem, step.delay, step.value, step.duration);
-      }
-      default:
-        checkExhaustiveness(step, "Unknown step type");
-    }
-    // switch (true) {
-    //   case step instanceof CallbackStep:
-    //     return new PipelineItem((next) => {
-    //       const promise =
-    //         step.callback(
-    //           () => this.value,
-    //           (val: ValueType) => {
-    //             this.value = val;
-    //           }
-    //         ) ?? Promise.resolve();
-
-    //       promise.then(next);
-    //     });
-    //   case step instanceof ValueStep:
-    //     return new PipelineItem((next) => {
-    //       this.value = step.value;
-    //       next();
-    //     });
-    //   case step instanceof DelayStep:
-    //     return new PipelineItem((next) => {
-    //       setTimeout(() => {
-    //         next();
-    //       }, step.duration);
-    //     });
-    //   default:
-    //     checkExhaustiveness(step, "Unknown step type");
-    // }
+  public static syncSegment(args: {
+    id: string;
+    delay?: SyncSegment["delay"];
+    duration?: SyncSegment["duration"];
+  }): SyncSegment {
+    return new SyncSegment(args.id, args.delay, args.duration);
   }
+
+  public static asyncSegment<Payload = void>(args: {
+    id: string;
+    delay?: SyncSegment["delay"];
+    timingPayload: Payload;
+  }): AsyncSegment<Payload> {
+    return new AsyncSegment<Payload>(args.id, args.delay, args.timingPayload);
+  }
+}
+
+export type SegmentPhase = "not_started" | "delay" | "running" | "completed";
+
+export type Segment<Payload = unknown> = SyncSegment | AsyncSegment<Payload>;
+
+class SegmentBase {
+  private _currentPhase: SegmentPhase = "not_started";
+  public onPhaseChange = new Event<SegmentPhase>();
+
+  public get currentPhase() {
+    return this._currentPhase;
+  }
+
+  public set currentPhase(phase) {
+    this._currentPhase = phase;
+    this.onPhaseChange.__invokeCallbacks(phase);
+  }
+
+  public constructor(
+    public readonly id: string,
+    public readonly delay: number = 0
+  ) {
+    if (this.delay < 0) {
+      throw new Error(
+        `delay should be non-negative ("${this.delay}" provided)`
+      );
+    }
+  }
+
+  public reset() {
+    this._currentPhase = "not_started";
+  }
+}
+
+export class SyncSegment extends SegmentBase {
+  public constructor(
+    public readonly id: string,
+    public readonly delay: number = 0,
+    public readonly duration: number = 0
+  ) {
+    super(id, delay);
+
+    if ((this.duration ?? 0) < 0) {
+      throw new Error(
+        `duration should be non-negative ("${this.duration}" provided)`
+      );
+    }
+  }
+}
+
+export class AsyncSegment<Payload = void> extends SegmentBase {
+  private _deferred = new Deferred();
+
+  public get promise() {
+    return this._deferred.promise;
+  }
+
+  public complete = () => {
+    this._deferred.resolve();
+  };
+
+  public constructor(
+    public readonly id: string,
+    public readonly delay: number = 0,
+    public readonly timingPayload: Payload
+  ) {
+    super(id, delay);
+  }
+
+  public override reset = () => {
+    super.reset();
+    this._deferred = new Deferred();
+  };
 }

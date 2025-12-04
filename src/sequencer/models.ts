@@ -1,19 +1,14 @@
 // import type { AsyncStep } from "./AsyncStep";
 // import type { ValueStep } from "./ValueStep";
 // import type { CallbackStep } from "./CallbackStep";
-// import type { DelayStep } from "./DelayStep";
-// import type { ValueStep } from "./ValueStep";
+export type StepData<ValueType = unknown> =
+  | AsyncStepData<ValueType>
+  | SyncStepData<ValueType>;
+// | DelayStep
+// | CallbackStep<ValueType>
+// | ValueStep<ValueType>;
 
-import type { PipelineItem } from "./PipelineItem";
-
-// export type Step<ValueType = unknown> =
-//   | AsyncStep<ValueType>
-//   | ValueStep<ValueType>;
-// // | DelayStep
-// // | CallbackStep<ValueType>
-// // | ValueStep<ValueType>;
-
-export class StepData<ValueType = unknown> {
+export class SyncStepData<ValueType = unknown> {
   public constructor(
     public readonly delay: number,
     public readonly value: ValueType,
@@ -30,7 +25,11 @@ export class AsyncStepData<ValueType = unknown, TimingPayload = unknown> {
   ) {}
 }
 
-export class StepController<ValueType = unknown> {
+export type StepController<ValueType = unknown, TimingPayload = unknown> =
+  | SyncStepController<ValueType>
+  | AsyncStepController<ValueType, TimingPayload>;
+
+export class SyncStepController<ValueType = unknown> {
   public constructor(
     // public readonly pipelineItem: PipelineItem,
     public readonly delay: number,
@@ -49,6 +48,6 @@ export class AsyncStepController<ValueType = unknown, TimingPayload = unknown> {
   ) {}
 
   public next() {
-    this.pipelineItem.next();
+    // this.pipelineItem.next();
   }
 }

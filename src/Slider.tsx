@@ -42,7 +42,6 @@ export function Slider(props: {
 
   const handleWidth = activeX.to([0, 1], HANDLE_WIDTH);
   const handleHeight = initX.to([0, 1], HANDLE_HEIGHT);
-
   const handleTop = handleHeight.to((h) => `calc(50% - ${h / 2}px)`);
   const trackHeight = activeX.to([0, 1], TRACK_HEIGHT);
   const trackTop = trackHeight.to((t) => `calc(50% - ${t / 2}px)`);

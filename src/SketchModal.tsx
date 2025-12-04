@@ -1,27 +1,21 @@
 import type { IPreset, ISketch, SketchCanvasSize } from "./models";
 import styles from "./SketchModal.module.css";
-import { animated, useSpring } from "@react-spring/web";
+import { animated, easings, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
-import { easings } from "@react-spring/web";
 import classNames from "classnames";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
 import {
-  // delay,
   extractDefaultParams,
   useModalBehavior,
   useKeyboardShortcuts,
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
-// import { DelayStep } from "./sequencer/DelayStep";
-// import { CallbackStep } from "./sequencer/CallbackStep";
-// import { ValueStep } from "./sequencer/ValueStep";
-import type { StepData } from "./sequencer/models";
-import { AsyncStep } from "./sequencer/AsyncStep";
 import { useSequence } from "./sequencer";
-import { STEPS } from "./main";
+import { MODAL_OPEN_SEQ, type STEPS } from "./main";
+import { SyncSegment, type Segment } from "./sequencer/Sequence";
 
 export const SketchModal = ({
   sketch,
@@ -44,67 +38,32 @@ export const SketchModal = ({
     modalSidebarPadding,
   } = useViewport();
 
-  //  async function runAnimations() {
-  //     await delay(500);
-  //     setSize("modal");
-  //     await Promise.all(api.start({ modalX: 1 }));
-  //     setShowLeftSideContent(true);
+  const onSegmentActivation = useCallback((seg: Segment) => {
+    if (seg.id === "TILE_GOES_MODAL" && seg instanceof SyncSegment) {
+      setSize("modal");
+      api.start({
+        modalX: 1,
+        config: { duration: seg.duration, easing: easings.easeInOutCubic },
+      });
+    } else if (seg.id === "SHOW_HEADER" && seg instanceof SyncSegment) {
+      api.start({
+        headerX: 1,
+        config: { duration: seg.duration, easing: easings.easeInOutCubic },
+      });
+    } else if (seg.id === "START_PLAYING") {
+      setPlaying(true);
+    }
+  }, []);
 
-  //     Promise.all(api.start({ headerX: 1 })).then(() => setShowPresets(true));
-  //     await delay(300);
-  //     setPlaying(true);
-  //   }
-  //   runAnimations();
-  const D1 = 500;
-  const steps: StepData<_STEP>[] = useMemo(
-    () => [
-      // new ValueStep(500, ),
-      new AsyncStep(500, async (_, setValue) => {
-        setSize("modal");
-        await Promise.all(
-          api.start({
-            modalX: 1,
-            config: { duration: D1, easing: easings.easeInOutCubic },
-          })
-        );
-        setPlaying(true);
-        setValue(_STEP.Sidebar);
-        await Promise.all(
-          api.start({
-            headerX: 1,
-            config: { duration: 500, easing: easings.easeInOutCubic },
-          })
-        );
-        setValue(_STEP.Presets);
-      }),
-      // new AsyncStep(0, async () => {
-      //   setPlaying(true);
-      // }),
-    ],
-    []
-  );
-  const { currentValue } = useSequence<STEPS>("MODAL_OPEN", {
-    autoStart: true,
-    onValueChange: (val) => {
-      // switch (val) {
-      //   case STEPS.TILE_GOES_MODAL:
-      //     setSize("modal");
-      //   case STEPS.START_PLAYING
-      // }
-    },
-  });
+  const { useListener, useStart, useSegment } =
+    useSequence<STEPS>(MODAL_OPEN_SEQ);
+  const showSidebar = useSegment("SHOW_SIDEBAR").currentPhase !== "not_started";
 
-  useEffect(() => {
-    console.log({ currentValue });
-  }, [currentValue]);
+  useListener(onSegmentActivation);
+  useStart();
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
-  // const [showLeftSideContent, setShowLeftSideContent] = useState(false);
-  // const [showPresets, setShowPresets] = useState(false);
-
-  const [showParamControls, setShowParamControls] = useState(false);
-  const [showFooter, setShowFooter] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(extractDefaultParams(sketch));
   const changeParam = (key: string, value: number) => {
@@ -131,21 +90,7 @@ export const SketchModal = ({
 
   const [{ modalX, headerX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0 },
-    // config: { duration: 500, easing: easings.easeInOutCubic },
   }));
-
-  // useEffect(() => {
-  //   async function runAnimations() {
-  //     await delay(500);
-  //     setSize("modal");
-  //     await Promise.all(api.start({ modalX: 1 }));
-  //     setShowLeftSideContent(true);
-  //     Promise.all(api.start({ headerX: 1 })).then(() => setShowPresets(true));
-  //     await delay(300);
-  //     setPlaying(true);
-  //   }
-  //   runAnimations();
-  // }, [api]);
 
   useModalBehavior(true, onBackClick);
   useKeyboardShortcuts(playPause, openInFullscreen);
@@ -185,7 +130,7 @@ export const SketchModal = ({
               paddingRight: modalX.to([0, 1], [0, modalSidebarPadding - 6]),
             }}
           >
-            {(currentValue ?? 0) >= _STEP.Sidebar && (
+            {showSidebar && (
               <>
                 <animated.h2
                   className={styles.ModalTitle}
@@ -205,39 +150,23 @@ export const SketchModal = ({
                     paddingTop: (modalPadding * 3) / 2,
                   }}
                 >
-                  {(currentValue ?? 0) >= _STEP.Presets && (
-                    <Presets
-                      sketch={sketch}
-                      params={params}
-                      onApply={applyPreset}
-                      onAnimationEnd={() => setShowParamControls(true)}
-                    />
-                  )}
-                  {showParamControls && (
-                    <ParamControls
-                      sketch={sketch}
-                      params={params}
-                      onParamChange={changeParam}
-                      onAnimationEnd={() => setShowFooter(true)}
-                    />
-                  )}
+                  <Presets
+                    sketch={sketch}
+                    params={params}
+                    onApply={applyPreset}
+                  />
+                  <ParamControls
+                    sketch={sketch}
+                    params={params}
+                    onParamChange={changeParam}
+                  />
                 </div>
-                {showFooter && (
-                  <div
-                    className={styles.Footer}
-                    style={{
-                      paddingLeft: modalPadding - 4,
-                      paddingRight: 6,
-                    }}
-                  >
-                    <SketchModalFooter
-                      onPlayPause={playPause}
-                      playing={playing}
-                      onBackClick={onBackClick}
-                      onFullscreenToggle={openInFullscreen}
-                    />
-                  </div>
-                )}
+                <SketchModalFooter
+                  onPlayPause={playPause}
+                  playing={playing}
+                  onBackClick={onBackClick}
+                  onFullscreenToggle={openInFullscreen}
+                />
               </>
             )}
           </animated.div>

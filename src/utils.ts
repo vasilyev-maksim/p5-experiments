@@ -53,7 +53,7 @@ export function useKeyboardShortcuts(
 ) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "p" || e.key === "P") onPlayPause();
+      if (e.key === "p" || e.key === "P" || e.key === " ") onPlayPause();
       if (e.key === "f" || e.key === "F") onFullscreenToggle();
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -206,4 +206,17 @@ export class Event<Arg = void> {
   public __invokeCallbacks = (arg: Arg): void => {
     this.callbacks.forEach((cb) => cb(arg));
   };
+}
+
+export class Deferred<T = void> {
+  promise: Promise<T>;
+  resolve!: (value: T | PromiseLike<T>) => void;
+  reject!: (reason?: unknown) => void;
+
+  constructor() {
+    this.promise = new Promise<T>((res, rej) => {
+      this.resolve = res;
+      this.reject = rej;
+    });
+  }
 }

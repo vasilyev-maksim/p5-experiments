@@ -7,36 +7,61 @@ import App from "./App.tsx";
 import { ViewportProvider } from "./ViewportProvider.tsx";
 import { SequenceContext } from "./sequencer/index.ts";
 import { Sequence } from "./sequencer/Sequence";
-import { ValueStep } from "./sequencer/ValueStep";
 
-export enum STEPS {
-  GRID_GOES_IN_BG,
-  TILE_GOES_MODAL,
-  START_PLAYING,
-  SHOW_SIDEBAR,
-  SHOW_HEADER,
-  SHOW_PRESETS,
-  SHOW_CONTROLS,
-  SHOW_FOOTER,
-}
+export type STEPS =
+  | "GRID_GOES_IN_BG"
+  | "TILE_GOES_MODAL"
+  | "START_PLAYING"
+  | "SHOW_SIDEBAR"
+  | "SHOW_HEADER"
+  | "SHOW_PRESETS"
+  | "SHOW_CONTROLS"
+  | "SHOW_FOOTER";
 
-const seqs = [
-  new Sequence<STEPS>("MODAL_OPEN", [
-    new ValueStep(STEPS.GRID_GOES_IN_BG),
-    new ValueStep(STEPS.TILE_GOES_MODAL, 400),
-    new ValueStep(STEPS.START_PLAYING, 500),
-    new ValueStep(STEPS.START_PLAYING),
-    new ValueStep(STEPS.SHOW_HEADER),
-    new ValueStep(STEPS.SHOW_PRESETS, 500),
-    new ValueStep(STEPS.SHOW_CONTROLS),
-    new ValueStep(STEPS.SHOW_FOOTER),
-  ]),
+export const MODAL_OPEN_SEQ = "MODAL_OPEN";
+export type PresetsAnimationParams = {
+  itemDelay: number;
+  itemDuration: number;
+};
+export type ControlsAnimationParams = {
+  itemDelay: number;
+  itemDuration: number;
+  slidersInitDelay: number;
+};
+
+const segments = [
+  Sequence.syncSegment({ id: "GRID_GOES_IN_BG", duration: 400 }),
+  Sequence.syncSegment({
+    id: "TILE_GOES_MODAL",
+    delay: 100,
+    duration: 500,
+  }),
+  Sequence.syncSegment({ id: "START_PLAYING" }),
+  Sequence.syncSegment({ id: "SHOW_SIDEBAR" }),
+  Sequence.syncSegment({ id: "SHOW_HEADER", duration: 500 }),
+  Sequence.asyncSegment<PresetsAnimationParams>({
+    id: "SHOW_PRESETS",
+    timingPayload: {
+      itemDelay: 25,
+      itemDuration: 180,
+    },
+  }),
+  Sequence.asyncSegment<ControlsAnimationParams>({
+    id: "SHOW_CONTROLS",
+    timingPayload: {
+      itemDelay: 50,
+      itemDuration: 300,
+      slidersInitDelay: 500,
+    },
+  }),
+  Sequence.syncSegment({ id: "SHOW_FOOTER", duration: 200, delay: 500 }),
 ];
+const sequences = [new Sequence(MODAL_OPEN_SEQ, segments)];
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <ViewportProvider>
-    <SequenceContext.Provider value={{ seqs }}>
+    <SequenceContext.Provider value={{ sequences }}>
       <App />
     </SequenceContext.Provider>
   </ViewportProvider>

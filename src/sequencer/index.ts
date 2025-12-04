@@ -1,46 +1,80 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Sequence } from "./Sequence";
+import {
+  Sequence,
+  type SegmentPhase,
+  type Segment,
+  SyncSegment,
+  AsyncSegment,
+} from "./Sequence";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SequenceContextValue = { seqs: Sequence<any>[] };
+export type SequenceContextValue = { sequences: Sequence[] };
 export const SequenceContext = createContext<SequenceContextValue>({
-  seqs: [],
+  sequences: [],
 });
 
-export function useSequence<T = void>(
-  id: string,
-  opts: { autoStart?: boolean; onValueChange?: (value: T | null) => void } = {
-    autoStart: true,
-  }
-) {
-  const { seqs } = useContext(SequenceContext);
+export function useSequence<Id extends string = string>(id: string) {
+  const { sequences } = useContext(SequenceContext);
   const seq = useMemo(
-    () => seqs.find((x) => x.id === id),
-    [seqs, id]
-  ) as Sequence<T>;
-  const [currentValue, setCurrentValue] = useState<T | null>();
+    () => sequences.find((x) => x.id === id)!,
+    [sequences, id]
+  ) as Sequence;
+  // const [currentSegment, setCurrentSegment] = useState<Segment>();
 
-  useEffect(() => {
-    if (seq && opts?.autoStart) {
-      const cleanup = seq.onValueChange.addCallback(setCurrentValue);
-      const cleanup2 = seq.onValueChange.addCallback((val) =>
-        opts?.onValueChange?.(val)
-      );
+  // useEffect(() => {
+  //   if (opts?.autoStart) {
+  //     // const cleanup = seq.onSegmentActivation.addCallback(setCurrentSegment);
+  //     const cleanup2 = seq.onSegmentActivation.addCallback((seg) =>
+  //       opts?.onSegmentActivation?.(seg)
+  //     );
 
-      seq.start();
+  //     seq.start();
 
-      return () => {
-        cleanup();
-        cleanup2();
-      };
-    }
-  }, [seq, opts?.autoStart, opts?.onValueChange]);
+  //     return () => {
+  //       // cleanup();
+  //       cleanup2();
+  //     };
+  //   }
+  // }, [seq, opts?.autoStart, opts?.onSegmentActivation]);
 
-  const next = () => seq.completeCurrentStep();
+  const useListener = (cb: (segment: Segment) => void) => {
+    useEffect(() => {
+      return seq.onSegmentActivation.addCallback(cb);
+    }, [cb, seq]);
+  };
+
+  const useStart = (condition: boolean = true) => {
+    useEffect(() => {
+      if (condition) {
+        seq.start();
+      }
+    }, [condition, seq]);
+  };
+
+  const useSegment = <
+    P = void
+    // T extends Segment = SyncSegment
+  >(
+    segmentId: Id
+  ) => {
+    const [, setPhase] = useState<SegmentPhase>();
+    const segment = useMemo(
+      () => seq.getSegmentById(segmentId)!,
+      [segmentId, seq]
+    );
+
+    useEffect(() => {
+      return segment.onPhaseChange.addCallback(setPhase);
+    }, [segment]);
+
+    return segment as P extends void ? SyncSegment : AsyncSegment<P>;
+  };
 
   return {
-    currentValue,
-    // next: s,
+    // currentSegment,
+    // start: seq.start,
+    useListener,
+    useStart,
+    useSegment,
   };
 }
 
