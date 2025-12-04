@@ -18,23 +18,6 @@ export function useSequence<Id extends string = string>(id: string) {
     () => sequences.find((x) => x.id === id)!,
     [sequences, id]
   ) as Sequence;
-  // const [currentSegment, setCurrentSegment] = useState<Segment>();
-
-  // useEffect(() => {
-  //   if (opts?.autoStart) {
-  //     // const cleanup = seq.onSegmentActivation.addCallback(setCurrentSegment);
-  //     const cleanup2 = seq.onSegmentActivation.addCallback((seg) =>
-  //       opts?.onSegmentActivation?.(seg)
-  //     );
-
-  //     seq.start();
-
-  //     return () => {
-  //       // cleanup();
-  //       cleanup2();
-  //     };
-  //   }
-  // }, [seq, opts?.autoStart, opts?.onSegmentActivation]);
 
   const useListener = (cb: (segment: Segment) => void) => {
     useEffect(() => {
@@ -50,12 +33,7 @@ export function useSequence<Id extends string = string>(id: string) {
     }, [condition, seq]);
   };
 
-  const useSegment = <
-    P = void
-    // T extends Segment = SyncSegment
-  >(
-    segmentId: Id
-  ) => {
+  const useSegment = <P = void>(segmentId: Id) => {
     const [, setPhase] = useState<SegmentPhase>();
     const segment = useMemo(
       () => seq.getSegmentById(segmentId)!,
@@ -70,22 +48,8 @@ export function useSequence<Id extends string = string>(id: string) {
   };
 
   return {
-    // currentSegment,
-    // start: seq.start,
     useListener,
     useStart,
     useSegment,
   };
 }
-
-// s.addStep(new AsyncStep(2000, (_, set) => set(1)));
-// s.addStep(new AsyncStep(1000, (_, set) => set(2)));
-// s.addStep(
-//   new AsyncStep(2000, (_, set) => {
-//     console.log("last step");
-//     set(3);
-//   })
-// );
-// s.onValueChange.addCallback((x) => console.log(`value changed: ${x}`));
-// s.start();
-// console.log(s.value);

@@ -127,12 +127,3 @@
     flex: 1;
   }
 }
-
-.Footer {
-  animation: appear 200ms 500ms ease-in-out forwards;
-  padding-top: 15px;
-  opacity: 0;
-  translate: 0 10px;
-}
-
-
