@@ -2,31 +2,39 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { Sequence } from "./Sequence";
 import { SyncSegment } from "./SyncSegment";
 import { AsyncSegment } from "./AsyncSegment";
-import type { Segment, SegmentPhase } from "./models";
+import type { SegmentPhase } from "./models";
 import { SequenceContext } from "./SequenceContext";
+import type { SegmentBase } from "./SegmentBase";
 
-export function useSequence<Id extends string = string>(id: string) {
-  const { sequences } = useContext(SequenceContext);
+export function useSequence<Id extends string = string, Context = unknown>(
+  id: string
+) {
+  const sequences = useContext(SequenceContext).sequences as Sequence[];
   const seq = useMemo(
     () => sequences.find((x) => x.id === id)!,
     [sequences, id]
   ) as Sequence;
 
-  const useListener = (cb: (segment: Segment) => void) => {
+  const useListener = (cb: (segment: SegmentBase) => void) => {
     useEffect(() => {
       return seq.onSegmentActivation.addCallback(cb);
     }, [cb, seq]);
   };
 
-  const useStart = (condition: boolean = true) => {
+  const useStart = (
+    opts: { condition?: boolean; ctx?: Context } = {
+      condition: true,
+      ctx: undefined,
+    }
+  ) => {
     useEffect(() => {
-      if (condition) {
-        seq.start();
+      if (opts.ctx ?? opts.condition ?? true) {
+        seq.start(opts.ctx);
       }
-    }, [condition, seq]);
+    }, [opts.condition, opts.ctx, seq]);
   };
 
-  const useSegment = <P = void>(segmentId: Id) => {
+  const useSegment = <P = unknown>(segmentId: Id) => {
     const [, setPhase] = useState<SegmentPhase>();
     const segment = useMemo(
       () => seq.getSegmentById(segmentId)!,

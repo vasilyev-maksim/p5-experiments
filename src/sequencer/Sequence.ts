@@ -1,12 +1,12 @@
 import { delay, Event } from "../utils";
 import { AsyncSegment } from "./AsyncSegment";
-import { type Segment } from "./models";
+import type { SegmentBase } from "./SegmentBase";
 import { SyncSegment } from "./SyncSegment";
 
 export class Sequence {
   private _activeSegmentIndex: number = 0;
-  private _segments: Segment[] = [];
-  public readonly onSegmentActivation = new Event<Segment>();
+  private _segments: SegmentBase[] = [];
+  public readonly onSegmentActivation = new Event<SegmentBase>();
 
   public get activeSegment() {
     return this._activeSegmentIndex
@@ -14,21 +14,21 @@ export class Sequence {
       : null;
   }
 
-  public constructor(public readonly id: string, segments: Segment[] = []) {
+  public constructor(public readonly id: string, segments: SegmentBase[] = []) {
     if (segments) {
       this.addSegments(segments);
     }
   }
 
-  public addSegment(segment: Segment) {
+  public addSegment(segment: SegmentBase) {
     this._segments.push(segment);
   }
 
-  public addSegments(segments: Segment[]) {
+  public addSegments(segments: SegmentBase[]) {
     segments.forEach((step) => this.addSegment(step));
   }
 
-  public start = async () => {
+  public start = async (ctx: unknown) => {
     this.reset();
 
     if (this._segments.length > 0) {
@@ -38,22 +38,28 @@ export class Sequence {
           const seg = this._segments[this._activeSegmentIndex];
           this.onSegmentActivation.__invokeCallbacks(seg);
 
-          if (seg.delay > 0) {
-            seg.currentPhase = "delay";
-            await delay(seg.delay);
-          }
-
-          if (seg instanceof SyncSegment) {
-            if (seg.duration > 0) {
-              seg.currentPhase = "running";
-              await delay(seg.duration);
+          const disabled = seg.isDisabled(ctx);
+          if (!disabled) {
+            if (seg.delay > 0) {
+              seg.currentPhase = "delay";
+              await delay(seg.delay);
             }
+
+            if (seg instanceof SyncSegment) {
+              if (seg.duration > 0) {
+                seg.currentPhase = "running";
+                await delay(seg.duration);
+              }
+            } else if (seg instanceof AsyncSegment) {
+              seg.currentPhase = "running";
+              await seg.promise;
+            }
+
+            seg.currentPhase = "completed";
           } else {
-            seg.currentPhase = "running";
-            await seg.promise;
+            seg.currentPhase = "disabled";
           }
 
-          seg.currentPhase = "completed";
           this._activeSegmentIndex++;
         }
       );
@@ -78,7 +84,7 @@ export class Sequence {
     this._segments.forEach((seg) => seg.reset());
   };
 
-  public getSegmentById = (id: Segment["id"]) => {
+  public getSegmentById = (id: SegmentBase["id"]) => {
     return this._segments.find((x) => x.id === id);
   };
 
@@ -86,15 +92,22 @@ export class Sequence {
     id: string;
     delay?: SyncSegment["delay"];
     duration?: SyncSegment["duration"];
+    disabledIf?: (ctx: unknown) => boolean;
   }): SyncSegment {
-    return new SyncSegment(args.id, args.delay, args.duration);
+    return new SyncSegment(args.id, args.delay, args.duration, args.disabledIf);
   }
 
-  public static asyncSegment<Payload = void>(args: {
+  public static asyncSegment<Payload = unknown>(args: {
     id: string;
     delay?: SyncSegment["delay"];
     timingPayload: Payload;
+    disabledIf?: (ctx: unknown) => boolean;
   }): AsyncSegment<Payload> {
-    return new AsyncSegment<Payload>(args.id, args.delay, args.timingPayload);
+    return new AsyncSegment<Payload>(
+      args.id,
+      args.delay,
+      args.timingPayload,
+      args.disabledIf
+    );
   }
 }

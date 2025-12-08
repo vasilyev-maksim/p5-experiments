@@ -1,7 +1,7 @@
 import { Deferred } from "../utils";
 import { SegmentBase } from "./SegmentBase";
 
-export class AsyncSegment<Payload = void> extends SegmentBase {
+export class AsyncSegment<Payload = unknown> extends SegmentBase {
   private _deferred = new Deferred();
 
   public get promise() {
@@ -13,11 +13,12 @@ export class AsyncSegment<Payload = void> extends SegmentBase {
   };
 
   public constructor(
-    public readonly id: string,
-    public readonly delay: number = 0,
-    public readonly timingPayload: Payload
+    id: string,
+    delay: number = 0,
+    public readonly timingPayload: Payload,
+    __enabledIf?: (ctx: unknown) => boolean
   ) {
-    super(id, delay);
+    super(id, delay, __enabledIf);
   }
 
   public override reset = () => {

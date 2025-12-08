@@ -3,7 +3,7 @@ import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import classNames from "classnames";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
@@ -14,9 +14,9 @@ import {
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
 import { useSequence } from "./sequencer";
-import { MODAL_OPEN_SEQ, type STEPS } from "./main";
+import { MODAL_OPEN_SEQ, type Ctx, type STEPS } from "./main";
 import { SyncSegment } from "./sequencer/SyncSegment";
-import type { Segment } from "./sequencer/models";
+import type { SegmentBase } from "./sequencer/SegmentBase";
 
 export const SketchModal = ({
   sketch,
@@ -39,7 +39,7 @@ export const SketchModal = ({
     modalSidebarPadding,
   } = useViewport();
 
-  const onSegmentActivation = useCallback((seg: Segment) => {
+  const onSegmentActivation = useCallback((seg: SegmentBase) => {
     if (seg.id === "TILE_GOES_MODAL" && seg instanceof SyncSegment) {
       setSize("modal");
       api.start({
@@ -56,12 +56,20 @@ export const SketchModal = ({
     }
   }, []);
 
-  const { useListener, useStart, useSegment } =
-    useSequence<STEPS>(MODAL_OPEN_SEQ);
+  const { useListener, useStart, useSegment } = useSequence<STEPS, Ctx>(
+    MODAL_OPEN_SEQ
+  );
   const showSidebar = useSegment("SHOW_SIDEBAR").currentPhase !== "not_started";
 
+  const ctx = useMemo(
+    () => ({
+      controlsPresent: Object.entries(sketch.controls ?? {}).length > 0,
+      presetsPresent: (sketch.presets?.length ?? 0) > 0,
+    }),
+    [sketch.controls, sketch.presets]
+  );
   useListener(onSegmentActivation);
-  useStart();
+  useStart({ ctx });
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);

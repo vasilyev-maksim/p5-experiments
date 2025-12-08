@@ -193,7 +193,7 @@ export function checkExhaustiveness(x: never, message?: string): never {
   throw new Error(message ?? `Unreachable case reached: ${JSON.stringify(x)}`);
 }
 
-export class Event<Arg = void> {
+export class Event<in out Arg = void> {
   private callbacks: Array<(arg: Arg) => void> = [];
 
   public addCallback = (callback: (arg: Arg) => void): (() => void) => {

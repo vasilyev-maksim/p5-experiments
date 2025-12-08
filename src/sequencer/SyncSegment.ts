@@ -2,11 +2,12 @@ import { SegmentBase } from "./SegmentBase";
 
 export class SyncSegment extends SegmentBase {
   public constructor(
-    public readonly id: string,
-    public readonly delay: number = 0,
-    public readonly duration: number = 0
+    id: string,
+    delay: number = 0,
+    public readonly duration: number = 0,
+    __enabledIf?: (ctx: unknown) => boolean
   ) {
-    super(id, delay);
+    super(id, delay, __enabledIf);
 
     if ((this.duration ?? 0) < 0) {
       throw new Error(

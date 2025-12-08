@@ -16,7 +16,8 @@ export class SegmentBase {
 
   public constructor(
     public readonly id: string,
-    public readonly delay: number = 0
+    public readonly delay: number = 0,
+    private readonly __disabledIf?: (ctx: unknown) => boolean
   ) {
     if (this.delay < 0) {
       throw new Error(
@@ -27,5 +28,9 @@ export class SegmentBase {
 
   public reset() {
     this._currentPhase = "not_started";
+  }
+
+  public isDisabled(ctx: unknown) {
+    return this.__disabledIf?.(ctx) ?? false;
   }
 }
