@@ -13,16 +13,10 @@ import {
   useKeyboardShortcuts,
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
-import { useSequenceRegistry } from "./sequencer";
-import {
-  MODAL_OPEN_SEQ,
-  type ControlsAnimationParams,
-  type PresetsAnimationParams,
-  type STEPS,
-} from "./main";
+import { useSequence } from "./sequencer";
+import { MODAL_OPEN_SEQ, type STEPS } from "./main";
 import { SyncSegment } from "./sequencer/SyncSegment";
 import type { Segment } from "./sequencer/models";
-import { Sequence } from "./sequencer/Sequence.ts";
 
 export const SketchModal = ({
   sketch,
@@ -45,38 +39,6 @@ export const SketchModal = ({
     modalSidebarPadding,
   } = useViewport();
 
-  const { useListener, useStart, useSegment } = useSequenceRegistry<STEPS>(
-    MODAL_OPEN_SEQ,
-    () => [
-      Sequence.syncSegment({ id: "GRID_GOES_IN_BG", duration: 400 }),
-      Sequence.syncSegment({
-        id: "TILE_GOES_MODAL",
-        delay: 100,
-        duration: 500,
-      }),
-      Sequence.syncSegment({ id: "START_PLAYING" }),
-      Sequence.syncSegment({ id: "SHOW_SIDEBAR" }),
-      Sequence.syncSegment({ id: "SHOW_HEADER", duration: 500 }),
-      Sequence.asyncSegment<PresetsAnimationParams>({
-        id: "SHOW_PRESETS",
-        timingPayload: {
-          itemDelay: 25,
-          itemDuration: 180,
-        },
-      }),
-      Sequence.asyncSegment<ControlsAnimationParams>({
-        id: "SHOW_CONTROLS",
-        timingPayload: {
-          itemDelay: 50,
-          itemDuration: 300,
-          slidersInitDelay: 500,
-        },
-      }),
-      Sequence.syncSegment({ id: "SHOW_FOOTER", duration: 200, delay: 500 }),
-    ],
-    [sketch]
-  );
-
   const onSegmentActivation = useCallback((seg: Segment) => {
     if (seg.id === "TILE_GOES_MODAL" && seg instanceof SyncSegment) {
       setSize("modal");
@@ -93,11 +55,13 @@ export const SketchModal = ({
       setPlaying(true);
     }
   }, []);
+
+  const { useListener, useStart, useSegment } =
+    useSequence<STEPS>(MODAL_OPEN_SEQ);
+  const showSidebar = useSegment("SHOW_SIDEBAR").currentPhase !== "not_started";
+
   useListener(onSegmentActivation);
   useStart();
-
-  const showSidebar =
-    useSegment("SHOW_SIDEBAR")?.currentPhase !== "not_started";
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
