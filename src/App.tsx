@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { sketchList } from "./data";
 import { SketchModal } from "./SketchModal";
 import { useURLParams } from "./utils";
-import "./sequencer";
+// import "./sequencer";
 
 function App() {
   const { openedSketch, openSketch, closeSketch } = useURLParams();

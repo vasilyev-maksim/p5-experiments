@@ -1,15 +1,11 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { Sequence } from "./Sequence";
 import { SyncSegment } from "./SyncSegment";
 import { AsyncSegment } from "./AsyncSegment";
 import type { Segment, SegmentPhase } from "./models";
+import { SequenceContext } from "./SequenceContext";
 
-export type SequenceContextValue = { sequences: Sequence[] };
-export const SequenceContext = createContext<SequenceContextValue>({
-  sequences: [],
-});
-
-export function useSequence<Id extends string = string>(id: string) {
+export function useSequence<SId extends string = string>(id: string) {
   const { sequences } = useContext(SequenceContext);
   const seq = useMemo(
     () => sequences.find((x) => x.id === id)!,
@@ -30,7 +26,7 @@ export function useSequence<Id extends string = string>(id: string) {
     }, [condition, seq]);
   };
 
-  const useSegment = <P = void>(segmentId: Id) => {
+  const useSegment = <P = void>(segmentId: SId) => {
     const [, setPhase] = useState<SegmentPhase>();
     const segment = useMemo(
       () => seq.getSegmentById(segmentId)!,
@@ -48,5 +44,21 @@ export function useSequence<Id extends string = string>(id: string) {
     useListener,
     useStart,
     useSegment,
+    useSequence,
   };
 }
+
+export const useSequenceRegistry = <SId extends string = string>(
+  sequenceId: string,
+  segmentsFn: () => Segment[],
+  deps: unknown[]
+) => {
+  const { registerSequence } = useContext(SequenceContext);
+
+  useEffect(() => {
+    const seq = new Sequence(sequenceId, segmentsFn());
+    registerSequence(seq);
+  }, deps);
+
+  return useSequence<SId>(sequenceId);
+};

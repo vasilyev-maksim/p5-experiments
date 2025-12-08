@@ -1,5 +1,5 @@
 import { Event } from "../utils";
-import type { SegmentPhase } from "./Sequence";
+import type { SegmentPhase } from "./models";
 
 export class SegmentBase {
   private _currentPhase: SegmentPhase = "not_started";

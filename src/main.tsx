@@ -5,8 +5,7 @@ import "./index.css";
 // import App from "./Test.tsx";
 import App from "./App.tsx";
 import { ViewportProvider } from "./ViewportProvider.tsx";
-import { SequenceContext } from "./sequencer/index.ts";
-import { Sequence } from "./sequencer/Sequence";
+import { SequenceProvider } from "./sequencer/SequenceProvider.tsx";
 
 export type STEPS =
   | "GRID_GOES_IN_BG"
@@ -29,41 +28,12 @@ export type ControlsAnimationParams = {
   slidersInitDelay: number;
 };
 
-const segments = [
-  Sequence.syncSegment({ id: "GRID_GOES_IN_BG", duration: 400 }),
-  Sequence.syncSegment({
-    id: "TILE_GOES_MODAL",
-    delay: 100,
-    duration: 500,
-  }),
-  Sequence.syncSegment({ id: "START_PLAYING" }),
-  Sequence.syncSegment({ id: "SHOW_SIDEBAR" }),
-  Sequence.syncSegment({ id: "SHOW_HEADER", duration: 500 }),
-  Sequence.asyncSegment<PresetsAnimationParams>({
-    id: "SHOW_PRESETS",
-    timingPayload: {
-      itemDelay: 25,
-      itemDuration: 180,
-    },
-  }),
-  Sequence.asyncSegment<ControlsAnimationParams>({
-    id: "SHOW_CONTROLS",
-    timingPayload: {
-      itemDelay: 50,
-      itemDuration: 300,
-      slidersInitDelay: 500,
-    },
-  }),
-  Sequence.syncSegment({ id: "SHOW_FOOTER", duration: 200, delay: 500 }),
-];
-const sequences = [new Sequence(MODAL_OPEN_SEQ, segments)];
-
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <ViewportProvider>
-    <SequenceContext.Provider value={{ sequences }}>
+    <SequenceProvider>
       <App />
-    </SequenceContext.Provider>
+    </SequenceProvider>
   </ViewportProvider>
   // </StrictMode>
 );

@@ -35,6 +35,7 @@ There is no tools available rn solving this problem.
   - I can use cancelation token for force next() call for ValueStep (in contrast with AsyncStep, which requires `next` to be called at some moment)
 - read params from step in component
 - “value” анимации
+- conditional segments (to skip presets and controls if none)
 
 * переименовать StepController в Step, Step в StepData
 
