@@ -6,11 +6,9 @@ import classNames from "classnames";
 import { sketchList } from "./data";
 import { SketchModal } from "./SketchModal";
 import { useURLParams } from "./utils";
-// import "./sequencer";
 
 function App() {
   const { openedSketch, openSketch, closeSketch } = useURLParams();
-  // sketchList[2]
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();

@@ -34,7 +34,7 @@ export function useSequence<Id extends string = string, Context = unknown>(
     }, [opts.condition, opts.ctx, seq]);
   };
 
-  const useSegment = <P = unknown>(segmentId: Id) => {
+  const useSegment = <P = void>(segmentId: Id) => {
     const [, setPhase] = useState<SegmentPhase>();
     const segment = useMemo(
       () => seq.getSegmentById(segmentId)!,

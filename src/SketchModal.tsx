@@ -39,6 +39,11 @@ export const SketchModal = ({
     modalSidebarPadding,
   } = useViewport();
 
+  const { useListener, useStart, useSegment } = useSequence<STEPS, Ctx>(
+    MODAL_OPEN_SEQ
+  );
+  const showSidebar = useSegment("SHOW_SIDEBAR").currentPhase !== "not_started";
+
   const onSegmentActivation = useCallback((seg: SegmentBase) => {
     if (seg.id === "TILE_GOES_MODAL" && seg instanceof SyncSegment) {
       setSize("modal");
@@ -55,12 +60,7 @@ export const SketchModal = ({
       setPlaying(true);
     }
   }, []);
-
-  const { useListener, useStart, useSegment } = useSequence<STEPS, Ctx>(
-    MODAL_OPEN_SEQ
-  );
-  const showSidebar = useSegment("SHOW_SIDEBAR").currentPhase !== "not_started";
-
+  
   const ctx = useMemo(
     () => ({
       controlsPresent: Object.entries(sketch.controls ?? {}).length > 0,
@@ -68,6 +68,7 @@ export const SketchModal = ({
     }),
     [sketch.controls, sketch.presets]
   );
+  
   useListener(onSegmentActivation);
   useStart({ ctx });
 

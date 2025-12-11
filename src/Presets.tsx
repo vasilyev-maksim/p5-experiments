@@ -16,7 +16,6 @@ export function Presets(props: {
   sketch: ISketch;
   onApply: (preset: IPreset) => void;
   params: IParams;
-  // onAnimationEnd?: () => void;
 }) {
   const segment =
     useSequence<STEPS>(MODAL_OPEN_SEQ).useSegment<PresetsAnimationParams>(
@@ -30,7 +29,6 @@ export function Presets(props: {
     (i) => ({
       from: { x: 0 },
       to: { x: segment.currentPhase !== "not_started" ? 1 : 0 },
-      // to: { x: 1 },
       config: {
         duration: itemDuration,
         easing: easings.easeInOutCubic,

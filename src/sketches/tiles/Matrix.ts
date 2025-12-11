@@ -25,7 +25,6 @@ export class Matrix implements IMatrix {
   }
 
   public set(cell: p5.Vector, value: boolean) {
-    // console.log(this.matrix, this.matrix[cell.y - 1][cell.x - 1]);
     this.matrix[cell.y - 1][cell.x - 1] = value;
   }
 
