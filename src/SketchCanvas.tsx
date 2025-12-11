@@ -4,7 +4,7 @@ import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "./hooks";
 import { animated, easings, to, useSpring } from "react-spring";
-import { MODAL_OPEN_SEQ, type STEPS } from "./main";
+import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "./main";
 import { useSequence } from "./sequencer";
 
 export const SketchCanvas = forwardRef<
@@ -35,7 +35,9 @@ export const SketchCanvas = forwardRef<
   }, [props.sketch, props.size, canvasModalWidth, canvasModalHeight]);
 
   const { duration } =
-    useSequence<STEPS>(MODAL_OPEN_SEQ).useSegment("TILE_GOES_MODAL");
+    useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
+      "TILE_GOES_MODAL"
+    );
   const [{ x }, api] = useSpring(() => ({
     from: { x: 0 },
     config: { duration, easing: easings.easeInOutCubic },

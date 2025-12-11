@@ -6,8 +6,8 @@ import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
 import { useSequence } from "./sequencer";
 import {
-  MODAL_OPEN_SEQ,
-  type STEPS,
+  MODAL_OPEN_SEQUENCE,
+  type MODAL_OPEN_SEGMENTS,
   type ControlsAnimationParams,
 } from "./main";
 
@@ -17,9 +17,9 @@ export function ParamControls(props: {
   onParamChange: (key: string, value: number) => void;
 }) {
   const segment =
-    useSequence<STEPS>(MODAL_OPEN_SEQ).useSegment<ControlsAnimationParams>(
-      "SHOW_CONTROLS"
-    );
+    useSequence<MODAL_OPEN_SEGMENTS>(
+      MODAL_OPEN_SEQUENCE
+    ).useSegment<ControlsAnimationParams>("SHOW_CONTROLS");
   const { itemDelay, itemDuration, slidersInitDelay } = segment.timingPayload;
   const [showHeader, setShowHeader] = useState(false);
   const entries = Object.entries(props.sketch.controls ?? {});
@@ -28,7 +28,7 @@ export function ParamControls(props: {
     entriesCount,
     (i) => ({
       from: { x: 0 },
-      to: { x: segment.currentPhase !== "not_started" ? 1 : 0 },
+      to: { x: segment.wasRun ? 1 : 0 },
       config: {
         duration: itemDuration,
         easing: easings.easeInOutCubic,
@@ -41,11 +41,11 @@ export function ParamControls(props: {
         }
       },
     }),
-    [segment.currentPhase]
+    [segment.wasRun]
   );
 
   return (
-    segment.currentPhase !== "not_started" && (
+    segment.wasRun && (
       <SectionLayout
         header="Parameters"
         className={styles.Controls}

@@ -12,6 +12,13 @@ If we add another animation in between, the all others after this one should be 
 
 There is no tools available rn solving this problem.
 
+Segment phases:
+
+- "not_started"
+- "delay"
+- "running"
+- "completed"
+
 ## Thoughts
 
 - работать будет через реакт контекст
@@ -24,10 +31,23 @@ There is no tools available rn solving this problem.
 - апи для обьединения 2ух последовательностей в одну
 - проигрывание посл в обратную сторону
 - готовые компоненты-хелперы
-- не давать возможности при инциализации прописывать простые обьекты типа {delay: 1000}, а принудить использовать статичные конструкторы типа Step.delay(1000), Step.value(‘SOME_ANIMATION_STEP_ID’), Step.callback()
-- схема шагов должна быть и источником инфы о длительностях анимаций для компонентов, чтоб все работало слажено
+
+* не давать возможности при инциализации прописывать простые обьекты типа {delay: 1000}, а принудить использовать статичные конструкторы типа Step.delay(1000), Step.value(‘SOME_ANIMATION_STEP_ID’), Step.callback()
+* схема шагов должна быть и источником инфы о длительностях анимаций для компонентов, чтоб все работало слажено
 
 ### TODO
+
+- delay (как и все остальное) должен быть динамическим и зависеть от контекста
+  - чтоб можно было пропустить задержку если например предыдущий шаг бывает disabled
+- что делать после окончания прогона? надо все ресетать? сейчас ресет происходит при новом запуске
+  - наверно надо еще сделать один из конфигов запуска что то типа "animation-fill-mode"
+- нужно сделать phase > 'running'
+- Пересмотреть API (сигнатуры и названия)
+- Разделить понятия блупринта сегментов и непосредственно их исполнения
+  - например disabled точно определеяется по ctx вызова, а не по блупринту
+  - при прогоне последовательности назад тоже может понадобиться (чтоб хранить направление анимации или процент исполнения и тд)
+
+* need to trigger `onSegmentActivation` on segment phase change too.
 
 - return class instance from hook: `useSeq('SEQ_ID', 'STEP_ID')` will return typed Step with duration, delay, `next` to call etc.
 - get current step in component
@@ -35,8 +55,8 @@ There is no tools available rn solving this problem.
   - I can use cancelation token for force next() call for ValueStep (in contrast with AsyncStep, which requires `next` to be called at some moment)
 - read params from step in component
 - “value” анимации
-- conditional segments (to skip presets and controls if none)
 
+* conditional segments (to skip presets and controls if none)
 * переименовать StepController в Step, Step в StepData
 
 ## Мой вариант из RTK:

@@ -1,17 +1,21 @@
 import { Event } from "../utils";
-import type { SegmentPhase } from "./models";
+import { SegmentPhase } from "./models";
 
 export class SegmentBase {
-  private _currentPhase: SegmentPhase = "not_started";
+  private __phase: SegmentPhase = SegmentPhase.NotStarted;
   public onPhaseChange = new Event<SegmentPhase>();
 
-  public get currentPhase() {
-    return this._currentPhase;
+  public __setPhase(phase: SegmentPhase) {
+    this.__phase = phase;
+    this.onPhaseChange.__invokeCallbacks(phase);
   }
 
-  public set currentPhase(phase) {
-    this._currentPhase = phase;
-    this.onPhaseChange.__invokeCallbacks(phase);
+  public get isRunning() {
+    return this.__phase === SegmentPhase.Running;
+  }
+
+  public get wasRun() {
+    return this.__phase >= SegmentPhase.Running;
   }
 
   public constructor(
@@ -27,7 +31,7 @@ export class SegmentBase {
   }
 
   public reset() {
-    this._currentPhase = "not_started";
+    this.__setPhase(SegmentPhase.NotStarted);
   }
 
   public isDisabled(ctx: unknown) {

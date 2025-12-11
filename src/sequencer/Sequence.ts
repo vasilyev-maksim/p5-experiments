@@ -1,12 +1,13 @@
-import { delay, Event } from "../utils";
+import { asyncWhile, delay, Event } from "../utils";
 import { AsyncSegment } from "./AsyncSegment";
+import { SegmentPhase } from "./models";
 import type { SegmentBase } from "./SegmentBase";
 import { SyncSegment } from "./SyncSegment";
 
 export class Sequence {
-  private _activeSegmentIndex: number = 0;
+  private _activeSegmentIndex: number = -1;
   private _segments: SegmentBase[] = [];
-  public readonly onSegmentActivation = new Event<SegmentBase>();
+  public readonly onProgress = new Event<SegmentBase>();
 
   public get activeSegment() {
     return this._activeSegmentIndex
@@ -32,55 +33,50 @@ export class Sequence {
     this.reset();
 
     if (this._segments.length > 0) {
-      Sequence.asyncWhile(
-        () => this._activeSegmentIndex < this._segments.length,
+      asyncWhile(
+        () => this._activeSegmentIndex < this._segments.length - 1,
         async () => {
+          this._activeSegmentIndex++;
           const seg = this._segments[this._activeSegmentIndex];
-          this.onSegmentActivation.__invokeCallbacks(seg);
 
-          const disabled = seg.isDisabled(ctx);
+          this.onProgress.__invokeCallbacks(seg);
+          const cleanup = seg.onPhaseChange.addCallback(() =>
+            this.onProgress.__invokeCallbacks(seg)
+          );
+
+          const disabled = seg.isDisabled(ctx); // TODO: should be accessible in components too (without knowing ctx)
           if (!disabled) {
             if (seg.delay > 0) {
-              seg.currentPhase = "delay";
+              seg.__setPhase(SegmentPhase.Delay);
               await delay(seg.delay);
             }
 
             if (seg instanceof SyncSegment) {
+              seg.__setPhase(SegmentPhase.Running);
+
               if (seg.duration > 0) {
-                seg.currentPhase = "running";
                 await delay(seg.duration);
               }
             } else if (seg instanceof AsyncSegment) {
-              seg.currentPhase = "running";
+              seg.__setPhase(SegmentPhase.Running);
               await seg.promise;
             }
 
-            seg.currentPhase = "completed";
-          } else {
-            seg.currentPhase = "disabled";
+            seg.__setPhase(SegmentPhase.Completed);
           }
 
-          this._activeSegmentIndex++;
+          cleanup();
+        },
+        // cleanups
+        () => {
+          // this.reset();
         }
       );
     }
   };
 
-  private static asyncWhile(
-    condition: () => boolean,
-    cb: () => Promise<unknown>
-  ) {
-    const f = () => {
-      if (condition()) {
-        cb().then(f);
-      }
-    };
-
-    f();
-  }
-
   public reset = () => {
-    this._activeSegmentIndex = 0;
+    this._activeSegmentIndex = -1;
     this._segments.forEach((seg) => seg.reset());
   };
 

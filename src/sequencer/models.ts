@@ -1,6 +1,6 @@
-export type SegmentPhase =
-  | "not_started"
-  | "delay"
-  | "running"
-  | "completed"
-  | "disabled";
+export enum SegmentPhase {
+  NotStarted,
+  Delay,
+  Running,
+  Completed,
+}

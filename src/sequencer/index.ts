@@ -17,7 +17,7 @@ export function useSequence<Id extends string = string, Context = unknown>(
 
   const useListener = (cb: (segment: SegmentBase) => void) => {
     useEffect(() => {
-      return seq.onSegmentActivation.addCallback(cb);
+      return seq.onProgress.addCallback(cb);
     }, [cb, seq]);
   };
 
@@ -52,5 +52,6 @@ export function useSequence<Id extends string = string, Context = unknown>(
     useListener,
     useStart,
     useSegment,
+    start: seq.start,
   };
 }

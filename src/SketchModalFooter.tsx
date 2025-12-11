@@ -1,7 +1,7 @@
 import styles from "./SketchModalFooter.module.css";
 import { PlayPauseButton } from "./PlayPauseButton";
 import { useViewport } from "./hooks";
-import { type STEPS, MODAL_OPEN_SEQ } from "./main";
+import { type MODAL_OPEN_SEGMENTS, MODAL_OPEN_SEQUENCE } from "./main";
 import { useSequence } from "./sequencer";
 
 export function SketchModalFooter(props: {
@@ -11,10 +11,13 @@ export function SketchModalFooter(props: {
   onFullscreenToggle: () => void;
 }) {
   const { modalPadding } = useViewport();
-  const segment = useSequence<STEPS>(MODAL_OPEN_SEQ).useSegment("SHOW_FOOTER");
+  const segment =
+    useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
+      "SHOW_FOOTER"
+    );
 
   return (
-    segment.currentPhase !== "not_started" && (
+    segment.wasRun && (
       <div
         className={styles.SketchModalFooter}
         style={{

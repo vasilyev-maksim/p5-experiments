@@ -7,8 +7,8 @@ import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
 import { useSequence } from "./sequencer";
 import {
-  MODAL_OPEN_SEQ,
-  type STEPS,
+  MODAL_OPEN_SEQUENCE,
+  type MODAL_OPEN_SEGMENTS,
   type PresetsAnimationParams,
 } from "./main";
 
@@ -18,9 +18,9 @@ export function Presets(props: {
   params: IParams;
 }) {
   const segment =
-    useSequence<STEPS>(MODAL_OPEN_SEQ).useSegment<PresetsAnimationParams>(
-      "SHOW_PRESETS"
-    );
+    useSequence<MODAL_OPEN_SEGMENTS>(
+      MODAL_OPEN_SEQUENCE
+    ).useSegment<PresetsAnimationParams>("SHOW_PRESETS");
   const { itemDelay, itemDuration } = segment.timingPayload;
   const [showHeader, setShowHeader] = useState(false);
   const paramsCount = props.sketch.presets?.length ?? 0;
@@ -28,7 +28,7 @@ export function Presets(props: {
     paramsCount,
     (i) => ({
       from: { x: 0 },
-      to: { x: segment.currentPhase !== "not_started" ? 1 : 0 },
+      to: { x: segment.wasRun ? 1 : 0 },
       config: {
         duration: itemDuration,
         easing: easings.easeInOutCubic,
@@ -41,12 +41,12 @@ export function Presets(props: {
         }
       },
     }),
-    [segment.currentPhase]
+    [segment.wasRun]
   );
 
   return (
     paramsCount > 0 &&
-    segment.currentPhase !== "not_started" && (
+    segment.wasRun && (
       <SectionLayout
         header="Presets"
         showHeader={showHeader}

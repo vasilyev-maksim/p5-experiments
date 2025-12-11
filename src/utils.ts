@@ -220,3 +220,19 @@ export class Deferred<T = void> {
     });
   }
 }
+
+export function asyncWhile(
+  condition: () => boolean,
+  cb: () => Promise<unknown>,
+  cleanup?: () => void
+) {
+  const f = () => {
+    if (condition()) {
+      cb().then(f);
+    } else {
+      cleanup?.();
+    }
+  };
+
+  f();
+}

@@ -7,7 +7,7 @@ import { ViewportProvider } from "./ViewportProvider.tsx";
 import { Sequence } from "./sequencer/Sequence";
 import { SequenceProvider } from "./sequencer/SequenceProvider.tsx";
 
-export type STEPS =
+export type MODAL_OPEN_SEGMENTS =
   | "GRID_GOES_IN_BG"
   | "TILE_GOES_MODAL"
   | "START_PLAYING"
@@ -16,8 +16,7 @@ export type STEPS =
   | "SHOW_PRESETS"
   | "SHOW_CONTROLS"
   | "SHOW_FOOTER";
-
-export const MODAL_OPEN_SEQ = "MODAL_OPEN";
+export const MODAL_OPEN_SEQUENCE = "MODAL_OPEN";
 export type PresetsAnimationParams = {
   itemDelay: number;
   itemDuration: number;
@@ -33,14 +32,14 @@ export type Ctx = {
 };
 
 const sequences = [
-  new Sequence(MODAL_OPEN_SEQ, [
+  new Sequence(MODAL_OPEN_SEQUENCE, [
     Sequence.syncSegment({ id: "GRID_GOES_IN_BG", duration: 400 }),
     Sequence.syncSegment({
       id: "TILE_GOES_MODAL",
       delay: 100,
       duration: 500,
     }),
-    Sequence.syncSegment({ id: "START_PLAYING" }),
+    Sequence.syncSegment({ id: "START_PLAYING", delay: 100 }),
     Sequence.syncSegment({ id: "SHOW_SIDEBAR" }),
     Sequence.syncSegment({ id: "SHOW_HEADER", duration: 500 }),
     Sequence.asyncSegment<PresetsAnimationParams>({
@@ -60,7 +59,7 @@ const sequences = [
       },
       disabledIf: (ctx) => !(ctx as Ctx).controlsPresent,
     }),
-    Sequence.syncSegment({ id: "SHOW_FOOTER", duration: 200, delay: 500 }),
+    Sequence.syncSegment({ id: "SHOW_FOOTER", duration: 200, delay: 200 }),
   ]),
 ]; // TODO: fix typings
 

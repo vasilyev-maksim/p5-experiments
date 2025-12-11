@@ -3,7 +3,7 @@ import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import classNames from "classnames";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
@@ -14,7 +14,11 @@ import {
 } from "./utils";
 import { SketchModalFooter } from "./SketchModalFooter";
 import { useSequence } from "./sequencer";
-import { MODAL_OPEN_SEQ, type Ctx, type STEPS } from "./main";
+import {
+  MODAL_OPEN_SEQUENCE,
+  type Ctx,
+  type MODAL_OPEN_SEGMENTS,
+} from "./main";
 import { SyncSegment } from "./sequencer/SyncSegment";
 import type { SegmentBase } from "./sequencer/SegmentBase";
 
@@ -39,38 +43,38 @@ export const SketchModal = ({
     modalSidebarPadding,
   } = useViewport();
 
-  const { useListener, useStart, useSegment } = useSequence<STEPS, Ctx>(
-    MODAL_OPEN_SEQ
+  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+    MODAL_OPEN_SEQUENCE
   );
-  const showSidebar = useSegment("SHOW_SIDEBAR").currentPhase !== "not_started";
+  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
 
-  const onSegmentActivation = useCallback((seg: SegmentBase) => {
-    if (seg.id === "TILE_GOES_MODAL" && seg instanceof SyncSegment) {
+  const onProgress = useCallback((seg: SegmentBase) => {
+    if (
+      seg.id === "TILE_GOES_MODAL" &&
+      seg.isRunning &&
+      seg instanceof SyncSegment
+    ) {
       setSize("modal");
       api.start({
         modalX: 1,
         config: { duration: seg.duration, easing: easings.easeInOutCubic },
       });
-    } else if (seg.id === "SHOW_HEADER" && seg instanceof SyncSegment) {
+    } else if (
+      seg.id === "SHOW_HEADER" &&
+      seg.isRunning &&
+      seg instanceof SyncSegment
+    ) {
       api.start({
         headerX: 1,
         config: { duration: seg.duration, easing: easings.easeInOutCubic },
       });
-    } else if (seg.id === "START_PLAYING") {
+    } else if (seg.id === "START_PLAYING" && seg.isRunning) {
       setPlaying(true);
     }
   }, []);
-  
-  const ctx = useMemo(
-    () => ({
-      controlsPresent: Object.entries(sketch.controls ?? {}).length > 0,
-      presetsPresent: (sketch.presets?.length ?? 0) > 0,
-    }),
-    [sketch.controls, sketch.presets]
-  );
-  
-  useListener(onSegmentActivation);
-  useStart({ ctx });
+
+  useListener(onProgress);
+  // useStart({ ctx });
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
