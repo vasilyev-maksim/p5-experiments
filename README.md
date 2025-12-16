@@ -2,7 +2,6 @@
 
 # 📋 TODO
 
-- make 1st deploy
 - remove animation delay for modal footer when no presets/controls provided
 - make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - FIX: links are not clickable in app header
@@ -20,6 +19,7 @@
 
 # ✅ DONE
 
+- make 1st deploy
 - full screen mode (using browser native API)
 - support links to a specific animation (like `/spiral`)
 - presets for params (with gradual transition)
