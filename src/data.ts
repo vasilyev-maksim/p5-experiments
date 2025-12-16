@@ -1,7 +1,7 @@
 import type { ISketch } from "./models";
 import { escalator } from "./sketches/escalator";
 import { lungs } from "./sketches/lungs";
-import { pillars } from "./sketches/pillars";
+import { pillarsSketch } from "./sketches/pillars";
 import { pulse } from "./sketches/pulse";
 import { spiralSketch } from "./sketches/spiral";
 import { tiles } from "./sketches/tiles/tiles";
@@ -36,16 +36,7 @@ export const sketchList: ISketch<any>[] = [
     factory: pulse,
     randomSeed: 44,
   },
-  {
-    id: "pillars",
-    name: "pillars",
-    preview: {
-      size: 420,
-    },
-    factory: pillars,
-    randomSeed: 44,
-    timeShift: 10,
-  },
+  pillarsSketch,
   {
     id: "tiles",
     name: "tiles",

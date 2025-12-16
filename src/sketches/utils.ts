@@ -184,7 +184,9 @@ export function getRandomPartition(
   if (n <= 0) {
     return [];
   }
-  const part = Math.floor(minPart + randomProvider() * (maxPart - minPart));
+  const part = Math.floor(
+    Math.min(minPart + randomProvider() * (maxPart - minPart), n)
+  );
   return [
     part,
     ...getRandomPartition(n - part, minPart, maxPart, randomProvider),

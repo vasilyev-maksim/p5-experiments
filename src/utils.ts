@@ -236,3 +236,36 @@ export function asyncWhile(
 
   f();
 }
+
+export class ValueWithHistory<T> {
+  private static DEFAULT_COMPARATOR = <T>(a: T | null, b: T | null) => a === b;
+  private __value: T;
+  private __prev: T | null = null;
+
+  public set value(val: T) {
+    this.__prev = this.__value;
+    this.__value = val;
+  }
+
+  public get value() {
+    return this.__value;
+  }
+
+  public get prev() {
+    return this.__prev;
+  }
+
+  public get hasChanged() {
+    return this.__comparator(this.__prev, this.__value) === false;
+  }
+
+  public constructor(
+    initValue: T,
+    private readonly __comparator: (
+      a: T | null,
+      b: T | null
+    ) => boolean = ValueWithHistory.DEFAULT_COMPARATOR
+  ) {
+    this.__value = initValue;
+  }
+}
