@@ -2,7 +2,7 @@ import type { ISketchFactory } from "../models";
 
 export const pulse: ISketchFactory =
   (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
-    const ORIENTATION: "v" | "h" = "h",
+    const ORIENTATION: string = "h",
       W = ORIENTATION === "v" ? WIDTH : HEIGHT,
       H = ORIENTATION === "v" ? HEIGHT : WIDTH,
       Y_SIZE = 20,
