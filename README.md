@@ -2,6 +2,8 @@
 
 # 📋 TODO
 
+- make 1st deploy
+- remove animation delay for modal footer when no presets/controls provided
 - make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - FIX: links are not clickable in app header
 - tabIndex everywhere
@@ -9,6 +11,7 @@
 
 # 💡 NICE TO HAVE
 
+- mobile version (?)
 - perf opt: use cache for init data (like precomputed partitions array in TILES)
 - next/prev animation modal (using keyboard arrows)
 - position of preview fragment (in px)
