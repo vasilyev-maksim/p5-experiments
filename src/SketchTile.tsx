@@ -11,6 +11,7 @@ export const SketchTile = forwardRef<
   {
     sketch: ISketch;
     animationDelay?: number;
+    animationDuration?: number;
     onSelect?: () => void;
     interactive?: boolean;
     className?: string;
@@ -25,6 +26,7 @@ export const SketchTile = forwardRef<
       interactive = false,
       className,
       invisible = false,
+      animationDuration = 0,
     },
     ref
   ) => {
@@ -46,6 +48,7 @@ export const SketchTile = forwardRef<
         onClick={onSelect}
         style={{
           animationDelay: animationDelay + "ms",
+          animationDuration: animationDuration + "ms",
           width: tileWidth,
           height: tileHeight,
         }}

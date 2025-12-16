@@ -37,27 +37,28 @@ Segment phases:
 
 ### TODO
 
-- delay (как и все остальное) должен быть динамическим и зависеть от контекста
+- delay (как и все остальное) должен быть динамическим и зависеть от контекста (и от payload)
   - чтоб можно было пропустить задержку если например предыдущий шаг бывает disabled
 - что делать после окончания прогона? надо все ресетать? сейчас ресет происходит при новом запуске
   - наверно надо еще сделать один из конфигов запуска что то типа "animation-fill-mode"
-- нужно сделать phase > 'running'
 - Пересмотреть API (сигнатуры и названия)
 - Разделить понятия блупринта сегментов и непосредственно их исполнения
   - например disabled точно определеяется по ctx вызова, а не по блупринту
   - при прогоне последовательности назад тоже может понадобиться (чтоб хранить направление анимации или процент исполнения и тд)
 
-* need to trigger `onSegmentActivation` on segment phase change too.
+### DONE
 
+- перевести анимацию появления грида на sequencer
+- нужно сделать phase > 'running'
+- need to trigger `onSegmentActivation` on segment phase change too.
 - return class instance from hook: `useSeq('SEQ_ID', 'STEP_ID')` will return typed Step with duration, delay, `next` to call etc.
 - get current step in component
 - resolve current step (call next()) from component
   - I can use cancelation token for force next() call for ValueStep (in contrast with AsyncStep, which requires `next` to be called at some moment)
 - read params from step in component
 - “value” анимации
-
-* conditional segments (to skip presets and controls if none)
-* переименовать StepController в Step, Step в StepData
+- conditional segments (to skip presets and controls if none)
+- переименовать StepController в Step, Step в StepData
 
 ## Мой вариант из RTK:
 

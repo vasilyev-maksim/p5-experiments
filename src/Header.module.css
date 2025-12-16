@@ -4,7 +4,7 @@
   margin-bottom: 70px;
   font-size: 3.5rem;
   color: var(--fontColor);
-  animation: appear 300ms 300ms ease-in-out forwards;
+  animation: appear ease-in-out forwards;
 }
 
 @keyframes appear {

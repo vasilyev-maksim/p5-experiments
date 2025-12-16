@@ -1,5 +1,5 @@
 .SketchTile {
-  --animationDuration: 300ms;
+  --transitionDuration: 300ms;
   --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
   --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
   --scale: 1.03;
@@ -80,12 +80,12 @@
   }
 
   &::before {
-    transition: var(--animationDuration) all linear;
+    transition: var(--transitionDuration) all linear;
   }
 
   opacity: 0;
-  animation: appear 300ms ease-in-out forwards;
-  transition: var(--animationDuration) all ease-in-out;
+  animation: appear ease-in-out forwards;
+  transition: var(--transitionDuration) all ease-in-out;
 }
 
 .Hidden {

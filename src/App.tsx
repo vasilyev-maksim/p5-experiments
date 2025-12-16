@@ -1,7 +1,6 @@
 import styles from "./App.module.css";
 import { Header } from "./Header";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { SketchTile } from "./SketchTile";
 import classNames from "classnames";
 import { sketchList } from "./data";
 import { SketchModal } from "./SketchModal";
@@ -9,10 +8,12 @@ import { useURLParams } from "./utils";
 import type { ISketch } from "./models";
 import { useSequence } from "./sequencer";
 import {
+  HOME_PAGE_SEQUENCE,
   MODAL_OPEN_SEQUENCE,
   type Ctx,
   type MODAL_OPEN_SEGMENTS,
 } from "./main";
+import { SketchTilesGrid } from "./SketchTilesGrid";
 
 function App() {
   const { openedSketch, openSketch, closeSketch } = useURLParams();
@@ -22,6 +23,7 @@ function App() {
   const { start, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE
   );
+  useSequence(HOME_PAGE_SEQUENCE).useStart();
 
   const seg = useSegment("GRID_GOES_IN_BG");
 
@@ -61,21 +63,12 @@ function App() {
         }}
       >
         <Header />
-        <div className={styles.GridWrapper}>
-          <div className={styles.Grid}>
-            {sketchList.map((x, i) => (
-              <SketchTile
-                invisible={openedSketch === x}
-                ref={openedSketch === x ? selectedTileRef : undefined}
-                onSelect={() => handleSketchClick(x)}
-                key={x.id}
-                sketch={x}
-                animationDelay={700 + 125 * i}
-                interactive
-              />
-            ))}
-          </div>
-        </div>
+        <SketchTilesGrid
+          onClick={handleSketchClick}
+          openedSketch={openedSketch}
+          sketches={sketchList}
+          ref={selectedTileRef}
+        />
       </div>
       {openedSketch && (
         <SketchModal

@@ -1,0 +1,10 @@
+.Grid {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 30px;
+  row-gap: 50px;
+  margin: 50px;
+  max-width: 1300px;
+  margin: 0 auto;
+}

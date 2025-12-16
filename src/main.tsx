@@ -7,6 +7,7 @@ import { ViewportProvider } from "./ViewportProvider.tsx";
 import { Sequence } from "./sequencer/Sequence";
 import { SequenceProvider } from "./sequencer/SequenceProvider.tsx";
 
+export const MODAL_OPEN_SEQUENCE = "MODAL_OPEN";
 export type MODAL_OPEN_SEGMENTS =
   | "GRID_GOES_IN_BG"
   | "TILE_GOES_MODAL"
@@ -16,7 +17,8 @@ export type MODAL_OPEN_SEGMENTS =
   | "SHOW_PRESETS"
   | "SHOW_CONTROLS"
   | "SHOW_FOOTER";
-export const MODAL_OPEN_SEQUENCE = "MODAL_OPEN";
+export const HOME_PAGE_SEQUENCE = "HOME_PAGE";
+export type HOME_PAGE_SEGMENTS = "HEADER" | "TILES";
 export type PresetsAnimationParams = {
   itemDelay: number;
   itemDuration: number;
@@ -29,6 +31,10 @@ export type ControlsAnimationParams = {
 export type Ctx = {
   presetsPresent: boolean;
   controlsPresent: boolean;
+};
+export type GridAnimationParams = {
+  itemDelay: number;
+  itemDuration: number;
 };
 
 const sequences = [
@@ -61,7 +67,23 @@ const sequences = [
     }),
     Sequence.syncSegment({ id: "SHOW_FOOTER", duration: 200, delay: 200 }),
   ]),
+  new Sequence(HOME_PAGE_SEQUENCE, [
+    Sequence.syncSegment({
+      id: "HEADER",
+      delay: 700,
+      duration: 400,
+    }),
+    Sequence.asyncSegment<GridAnimationParams>({
+      id: "TILES",
+      delay: 200,
+      timingPayload: {
+        itemDelay: 125,
+        itemDuration: 300,
+      },
+    }),
+  ]),
 ]; // TODO: fix typings
+// sequences[1].onProgress.addCallback((x) => console.log(x));
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
