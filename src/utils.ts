@@ -11,11 +11,11 @@ export function useURLParams() {
 
   const openSketch = (sketch: ISketch) => {
     setOpenedSketchId(sketch.id);
-    history.pushState({}, "", "/" + sketch.id);
+    history.pushState({}, "", import.meta.env.BASE_URL + sketch.id);
   };
   const closeSketch = () => {
     setOpenedSketchId(undefined);
-    history.pushState({}, "", location.origin);
+    history.pushState({}, "", location.origin + import.meta.env.BASE_URL);
   };
 
   return {

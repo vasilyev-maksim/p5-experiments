@@ -85,7 +85,6 @@ const factory: ISketchFactory<Params> =
       GAP_Y = props.GAP_Y;
       W_MEAN.value = props.W_MEAN;
       W_DISPERSION.value = props.W_DISPERSION;
-      console.log(W_MEAN, W_DISPERSION);
 
       if (W_MEAN.hasChanged || W_DISPERSION.hasChanged) {
         initParts();
@@ -189,7 +188,6 @@ const factory: ISketchFactory<Params> =
       PARTS = getRandomPartition(WIDTH, min, max, () => p.random()).filter(
         (x) => x >= W_MIN + GAP_X
       );
-      console.log({ PARTS, min, max });
     }
   };
 

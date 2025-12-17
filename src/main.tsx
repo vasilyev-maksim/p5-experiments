@@ -83,7 +83,6 @@ const sequences = [
     }),
   ]),
 ]; // TODO: fix typings
-// sequences[1].onProgress.addCallback((x) => console.log(x));
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>

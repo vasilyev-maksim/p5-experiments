@@ -2,6 +2,8 @@
 
 # 📋 TODO
 
+- move sequences declaration code to separate file/folder
+- fix links to sketches on prod (`base` config is ignored)
 - add color palette choice control (for pillars)
 - remove param controls margin-top if no presets
 - remove animation delay for modal footer when no presets/controls provided
