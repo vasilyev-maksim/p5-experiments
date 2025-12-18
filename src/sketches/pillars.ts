@@ -2,6 +2,7 @@ import { getRandomPartition } from "./utils";
 import type {
   ExtractParams,
   IControls,
+  IPreset,
   ISketch,
   ISketchFactory,
 } from "../models";
@@ -15,6 +16,14 @@ const controls = {
     step: 1,
     type: "range",
     defaultValue: 5,
+  },
+  PERIOD: {
+    label: "Wave period",
+    max: 4,
+    min: 1,
+    step: 1,
+    type: "range",
+    defaultValue: 1,
   },
   GAP_X: {
     label: "Horizontal gap",
@@ -51,7 +60,7 @@ const controls = {
   },
   TIME_DELTA: {
     type: "range",
-    min: -3,
+    min: 0,
     max: 3,
     defaultValue: 1,
     step: 0.1,
@@ -76,11 +85,13 @@ const factory: ISketchFactory<Params> =
       GAP_X: number = controls.GAP_X.defaultValue,
       GAP_Y: number = controls.GAP_Y.defaultValue,
       TIME_DELTA: number = controls.TIME_DELTA.defaultValue,
-      AMPLITUDE: number = controls.AMPLITUDE.defaultValue;
+      AMPLITUDE: number = controls.AMPLITUDE.defaultValue,
+      PERIOD: number = controls.PERIOD.defaultValue;
 
     p.updateWithProps = (props) => {
       TIME_DELTA = props.TIME_DELTA;
       AMPLITUDE = props.AMPLITUDE;
+      PERIOD = props.PERIOD;
       GAP_X = props.GAP_X;
       GAP_Y = props.GAP_Y;
       W_MEAN.value = props.W_MEAN;
@@ -105,20 +116,20 @@ const factory: ISketchFactory<Params> =
     };
 
     p.draw = () => {
-      time += TIME_DELTA;
+      time += TIME_DELTA * 0.015;
 
       p.background("black");
 
       const totalWidth = PARTS.reduce((acc, x) => acc + x, 0) - GAP_X;
       let start = (WIDTH - totalWidth) / 2;
 
-      PARTS.forEach((w, i) => {
-        drawColumn(
-          start,
-          0,
-          w - GAP_X,
-          HEIGHT,
-          HEIGHT / 2 +
+      PARTS.forEach((_w, i) => {
+        const x = start,
+          y = 0,
+          w = _w - GAP_X,
+          h = HEIGHT,
+          gapX =
+            HEIGHT / 2 +
             p.map(
               AMPLITUDE,
               controls.AMPLITUDE.min,
@@ -126,10 +137,10 @@ const factory: ISketchFactory<Params> =
               0,
               HEIGHT / 2
             ) *
-              p.sin((p.PI * i * 2) / PARTS.length + p.PI * time * 0.005),
-          GAP_Y
-        );
-        start += w;
+              p.sin((p.TWO_PI * PERIOD * i) / PARTS.length + time);
+
+        drawColumn(x, y, w, h, gapX, GAP_Y);
+        start += _w;
       });
 
       function drawColumn(
@@ -141,8 +152,8 @@ const factory: ISketchFactory<Params> =
         gapH: number
       ) {
         const gd = gapH / 2;
-        drawPill(x, y, w, gapY - gd, "down");
-        drawPill(x, gapY + gd, w, h - gapY + gd, "up");
+        drawPill(x, y, w, gapY - gd, "down", "circle");
+        drawPill(x, gapY + gd, w, h - gapY + gd, "up", "circle");
       }
 
       function drawPill(
@@ -150,7 +161,8 @@ const factory: ISketchFactory<Params> =
         y: number,
         w: number,
         h: number,
-        direction: "up" | "down"
+        direction: "up" | "down",
+        endStyle: "circle" | "polygon"
       ) {
         const color = p.lerpColor(
           p.color("rgba(52, 9, 152, 1)"),
@@ -161,13 +173,32 @@ const factory: ISketchFactory<Params> =
         p.fill(color);
 
         const tl = p.createVector(x, y);
-        const r = w / 2,
-          c = tl
-            .copy()
-            .add(
-              p.createVector(...(direction === "up" ? [r, r] : [w - r, h - r]))
-            );
-        p.circle(c.x, c.y, r * 2);
+        const r = w / 2;
+        const c = tl
+          .copy()
+          .add(
+            p.createVector(...(direction === "up" ? [r, r] : [w - r, h - r]))
+          );
+        switch (endStyle) {
+          default:
+          case "circle":
+            p.circle(c.x, c.y, r * 2);
+            break;
+          case "polygon":
+            p.push();
+            {
+              p.translate(c.x, c.y);
+              p.beginShape();
+              for (let a = 0; a <= p.PI; a += p.PI / 9) {
+                const sx = p.cos(a) * r;
+                const sy = p.sin(a) * r * (direction === "up" ? -1 : 1);
+                p.vertex(sx, sy);
+              }
+              p.endShape("close");
+            }
+            p.pop();
+            break;
+        }
 
         const rtl =
           direction === "up" ? tl.copy().add(p.createVector(0, r)) : tl;
@@ -191,6 +222,57 @@ const factory: ISketchFactory<Params> =
     }
   };
 
+const presets: IPreset<Params>[] = [
+  {
+    params: {
+      AMPLITUDE: 5,
+      PERIOD: 1,
+      GAP_X: 6,
+      GAP_Y: 6,
+      W_MEAN: 2,
+      W_DISPERSION: 0.5,
+      TIME_DELTA: 1,
+    },
+    name: "default",
+  },
+  {
+    params: {
+      AMPLITUDE: 7,
+      PERIOD: 1,
+      GAP_X: 25,
+      GAP_Y: 25,
+      W_MEAN: 8,
+      W_DISPERSION: 0.3,
+      TIME_DELTA: 0.3,
+    },
+    name: "lava lamp",
+  },
+  {
+    params: {
+      AMPLITUDE: 2,
+      PERIOD: 2,
+      GAP_X: 0,
+      GAP_Y: 200,
+      W_MEAN: 1,
+      W_DISPERSION: 0,
+      TIME_DELTA: 1.6,
+    },
+    name: "dragon",
+  },
+  {
+    params: {
+      AMPLITUDE: 10,
+      PERIOD: 4,
+      GAP_X: 23,
+      GAP_Y: 25,
+      W_MEAN: 1,
+      W_DISPERSION: 0,
+      TIME_DELTA: 0.3,
+    },
+    name: "rush hour",
+  },
+];
+
 export const pillarsSketch: ISketch<Params> = {
   factory,
   id: "pillars",
@@ -201,5 +283,5 @@ export const pillarsSketch: ISketch<Params> = {
   timeShift: 10,
   randomSeed: 44,
   controls,
-  // presets,
+  presets,
 };

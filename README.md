@@ -2,9 +2,12 @@
 
 # 📋 TODO
 
+- pillars
+  - ~~add ending style for pillars (round, triangle, polygon)~~
+  - ~~add wave period as param to pillars~~
+  - add color palette choice control (for pillars)
 - move sequences declaration code to separate file/folder
 - fix links to sketches on prod (`base` config is ignored)
-- add color palette choice control (for pillars)
 - remove param controls margin-top if no presets
 - remove animation delay for modal footer when no presets/controls provided
 - make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)

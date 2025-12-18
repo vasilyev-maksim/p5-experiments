@@ -3,7 +3,7 @@ import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useViewport } from "./hooks";
 import classNames from "classnames";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
@@ -101,6 +101,10 @@ export const SketchModal = ({
       }
     }
   };
+
+  useEffect(() => {
+    console.log(params);
+  }, [params]);
 
   const [{ modalX, headerX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0 },
