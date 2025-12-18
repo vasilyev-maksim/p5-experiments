@@ -274,6 +274,18 @@ const presets: IPreset<Params>[] = [
   {
     params: {
       AMPLITUDE: 10,
+      PERIOD: 1,
+      GAP_X: 8,
+      GAP_Y: 8,
+      W_MEAN: 1,
+      W_DISPERSION: 0,
+      TIME_DELTA: 3,
+    },
+    name: "wave",
+  },
+  {
+    params: {
+      AMPLITUDE: 10,
       PERIOD: 3,
       GAP_X: 10,
       GAP_Y: 12,
