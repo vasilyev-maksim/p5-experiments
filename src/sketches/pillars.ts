@@ -189,7 +189,7 @@ const factory: ISketchFactory<Params> =
             {
               p.translate(c.x, c.y);
               p.beginShape();
-              for (let a = 0; a <= p.PI; a += p.PI / 9) {
+              for (let a = 0; a <= p.PI; a += p.PI / 3) {
                 const sx = p.cos(a) * r;
                 const sy = p.sin(a) * r * (direction === "up" ? -1 : 1);
                 p.vertex(sx, sy);
@@ -233,7 +233,7 @@ const presets: IPreset<Params>[] = [
       W_DISPERSION: 0.5,
       TIME_DELTA: 1,
     },
-    name: "default",
+    name: "looks uneven",
   },
   {
     params: {
@@ -271,6 +271,30 @@ const presets: IPreset<Params>[] = [
     },
     name: "rush hour",
   },
+  {
+    params: {
+      AMPLITUDE: 10,
+      PERIOD: 3,
+      GAP_X: 10,
+      GAP_Y: 12,
+      W_MEAN: 5,
+      W_DISPERSION: 0,
+      TIME_DELTA: 1,
+    },
+    name: "balance",
+  },
+  {
+    params: {
+      AMPLITUDE: 1,
+      PERIOD: 1,
+      GAP_X: 10,
+      GAP_Y: 35,
+      W_MEAN: 1,
+      W_DISPERSION: 0,
+      TIME_DELTA: 0.8,
+    },
+    name: "scoliosis",
+  },
 ];
 
 export const pillarsSketch: ISketch<Params> = {
@@ -280,7 +304,7 @@ export const pillarsSketch: ISketch<Params> = {
   preview: {
     size: 420,
   },
-  timeShift: 10,
+  timeShift: 25.5,
   randomSeed: 44,
   controls,
   presets,
