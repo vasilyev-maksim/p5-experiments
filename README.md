@@ -2,14 +2,11 @@
 
 # 📋 TODO
 
-- pillars
-  - ~~add ending style for pillars (round, triangle, polygon)~~
-  - ~~add wave period as param to pillars~~
-  - add color palette choice control (for pillars)
+- add randomize button for controls
 - move sequences declaration code to separate file/folder
-- fix links to sketches on prod (`base` config is ignored)
 - remove param controls margin-top if no presets
 - remove animation delay for modal footer when no presets/controls provided
+- focus trap for modal (home page links are accessible)
 - make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - FIX: links are not clickable in app header
 - tabIndex everywhere
@@ -26,6 +23,11 @@
 
 # ✅ DONE
 
+- fix links to sketches on prod (`base` config is ignored)
+- pillars
+  - add ending style for pillars (round, triangle, polygon)
+  - add wave period as param to pillars
+  - add color palette choice control (for pillars)
 - make 1st deploy
 - full screen mode (using browser native API)
 - support links to a specific animation (like `/spiral`)

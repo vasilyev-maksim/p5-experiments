@@ -88,6 +88,19 @@ const controls = {
     label: "Playback speed",
     valueFormatter: (x) => x.toFixed(1),
   },
+  COLOR: {
+    type: "color",
+    colors: [
+      ["#670374ff", "#2d0193ff"],
+      ["#340998ff", "#ea72f7ff"],
+      ["#ff4b4bff", "#f0f689ff"],
+      ["#13005fff", "#a3ff9aff"],
+      ["#000", "#ffffffff"],
+      // ["#003e49ff", "#8aee98ff"],
+    ],
+    defaultValue: 0,
+    label: "Color palette",
+  },
 } as const satisfies IControls;
 
 type Params = ExtractParams<typeof controls>;
@@ -96,25 +109,25 @@ const factory: ISketchFactory<Params> =
   (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
     const POLYGONS_COUNT = 500,
       BORDER_COLOR = "rgba(255, 0, 0, 1)",
-      A_COLOR = "rgba(103, 3, 116, 1)",
-      B_COLOR = "rgba(45, 1, 147, 1)",
       BG_COLOR = "black";
 
-    let POLYGON_N = 3,
-      THICKNESS = 4,
-      COIL_FACTOR = 2,
-      COLOR_CHANGE_SPEED = 1,
-      ZOOM = 2,
-      COIL_SPEED = 1,
-      ROTATION_SPEED = 1.5,
-      time = timeShift,
-      TIME_DELTA = 1;
+    let time: number = timeShift,
+      POLYGON_N: number = controls.POLYGON_N.defaultValue,
+      THICKNESS: number = controls.THICKNESS.defaultValue,
+      COIL_FACTOR: number = controls.COIL_FACTOR.defaultValue,
+      COLOR_CHANGE_SPEED: number = controls.COLOR_CHANGE_SPEED.defaultValue,
+      ZOOM: number = controls.ZOOM.defaultValue,
+      COIL_SPEED: number = controls.COIL_SPEED.defaultValue,
+      ROTATION_SPEED: number = controls.ROTATION_SPEED.defaultValue,
+      TIME_DELTA: number = controls.TIME_DELTA.defaultValue,
+      COLOR: number = controls.COLOR.defaultValue;
 
     p.updateWithProps = (props) => {
       POLYGON_N = props.POLYGON_N;
       THICKNESS =
         controls.THICKNESS.max + controls.THICKNESS.min - props.THICKNESS;
       COIL_FACTOR = props.COIL_FACTOR;
+      COLOR = props.COLOR;
       COIL_SPEED =
         props.COIL_SPEED === 0
           ? 0
@@ -181,8 +194,8 @@ const factory: ISketchFactory<Params> =
 
     function getColor(i: number, maxI: number) {
       return p.lerpColor(
-        p.color(A_COLOR),
-        p.color(B_COLOR),
+        p.color(controls.COLOR.colors[COLOR][0]),
+        p.color(controls.COLOR.colors[COLOR][1]),
         p.sin(time * COLOR_CHANGE_SPEED + (i / maxI) * 360 * 4)
       );
     }
@@ -214,6 +227,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 1.5,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "spiral",
   },
@@ -227,6 +241,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 4,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "spiral 2",
   },
@@ -240,6 +255,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "cyclone 1",
   },
@@ -253,6 +269,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "cyclone 2",
   },
@@ -266,6 +283,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 1.5,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "cyclone 3",
   },
@@ -279,6 +297,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "black hole",
   },
@@ -292,6 +311,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "white hole",
   },
@@ -305,6 +325,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "black hole 2",
   },
@@ -318,6 +339,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 0.1,
+      COLOR: 0,
     },
     name: "hexornado",
   },
@@ -331,6 +353,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 6,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "hypno 1",
   },
@@ -344,6 +367,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "hypno 2",
   },
@@ -357,6 +381,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 1,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "phase space",
   },
@@ -370,6 +395,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 1,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "radiation",
   },
@@ -383,6 +409,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 2,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 0.1,
+      COLOR: 0,
     },
     name: "slow",
   },
@@ -396,6 +423,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 1,
       COLOR_CHANGE_SPEED: 10,
       TIME_DELTA: 0.1,
+      COLOR: 0,
     },
     name: "sloooower",
   },
@@ -409,6 +437,7 @@ const presets: IPreset<Params>[] = [
       ROTATION_SPEED: 0.05,
       COLOR_CHANGE_SPEED: 1,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "the slowest",
   },

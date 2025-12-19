@@ -254,13 +254,13 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      AMPLITUDE: 2,
+      AMPLITUDE: 1,
       PERIOD: 2,
       GAP_X: 0,
       GAP_Y: 200,
       W_MEAN: 1,
       W_DISPERSION: 0,
-      TIME_DELTA: 1.6,
+      TIME_DELTA: 3,
       COLOR: 1,
     },
     name: "dragon",
