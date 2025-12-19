@@ -28,12 +28,17 @@ export interface IBooleanControl extends IControlBase {
   type: "boolean";
 }
 
+export interface IColorControl extends IControlBase {
+  type: "color";
+  colors: [string, string][];
+}
+
 export type IParams<ParamKey extends string = string> = Record<
   ParamKey,
   number
 >;
 
-export type IControl = IRangeControl | IBooleanControl;
+export type IControl = IRangeControl | IBooleanControl | IColorControl;
 
 export type IControls<ParamKey extends string = string> = Record<
   ParamKey,

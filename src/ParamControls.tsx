@@ -10,6 +10,7 @@ import {
   type MODAL_OPEN_SEGMENTS,
   type ControlsAnimationParams,
 } from "./main";
+import { ColorSelector } from "./ColorSelector";
 
 export function ParamControls(props: {
   sketch: ISketch<string>;
@@ -74,6 +75,15 @@ export function ParamControls(props: {
                 max={c.max}
                 min={c.min}
                 step={c.step}
+              />
+            );
+          } else if (c.type === "color") {
+            body = (
+              <ColorSelector
+                title={c.label}
+                colors={c.colors}
+                value={props.params[key]}
+                onChange={(val) => props.onParamChange(key, val)}
               />
             );
           }

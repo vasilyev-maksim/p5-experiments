@@ -15,7 +15,7 @@ const controls = {
     min: 0,
     step: 1,
     type: "range",
-    defaultValue: 5,
+    defaultValue: 6,
   },
   PERIOD: {
     label: "Wave period",
@@ -67,6 +67,18 @@ const controls = {
     label: "Playback speed",
     valueFormatter: (x) => x.toFixed(1),
   },
+  COLOR: {
+    type: "color",
+    colors: [
+      ["#340998ff", "#ea72f7ff"],
+      ["#ff4b4bff", "#f0f689ff"],
+      ["#13005fff", "#a3ff9aff"],
+      ["#000", "#ffffffff"],
+      // ["#003e49ff", "#8aee98ff"],
+    ],
+    defaultValue: 0,
+    label: "Color palette",
+  },
 } as const satisfies IControls;
 
 type Params = ExtractParams<typeof controls>;
@@ -86,7 +98,8 @@ const factory: ISketchFactory<Params> =
       GAP_Y: number = controls.GAP_Y.defaultValue,
       TIME_DELTA: number = controls.TIME_DELTA.defaultValue,
       AMPLITUDE: number = controls.AMPLITUDE.defaultValue,
-      PERIOD: number = controls.PERIOD.defaultValue;
+      PERIOD: number = controls.PERIOD.defaultValue,
+      COLOR: number = controls.COLOR.defaultValue;
 
     p.updateWithProps = (props) => {
       TIME_DELTA = props.TIME_DELTA;
@@ -94,6 +107,7 @@ const factory: ISketchFactory<Params> =
       PERIOD = props.PERIOD;
       GAP_X = props.GAP_X;
       GAP_Y = props.GAP_Y;
+      COLOR = props.COLOR;
       W_MEAN.value = props.W_MEAN;
       W_DISPERSION.value = props.W_DISPERSION;
 
@@ -165,8 +179,10 @@ const factory: ISketchFactory<Params> =
         endStyle: "circle" | "polygon"
       ) {
         const color = p.lerpColor(
-          p.color("rgba(52, 9, 152, 1)"),
-          p.color("rgba(234, 114, 247, 1)"),
+          p.color(controls.COLOR.colors[COLOR][0]),
+          p.color(controls.COLOR.colors[COLOR][1]),
+          // p.color("#340998ff"),
+          // p.color("#ea72f7ff"),
           h / HEIGHT
         );
 
@@ -225,27 +241,16 @@ const factory: ISketchFactory<Params> =
 const presets: IPreset<Params>[] = [
   {
     params: {
-      AMPLITUDE: 5,
+      AMPLITUDE: 6,
       PERIOD: 1,
       GAP_X: 6,
       GAP_Y: 6,
       W_MEAN: 2,
       W_DISPERSION: 0.5,
       TIME_DELTA: 1,
+      COLOR: 0,
     },
     name: "looks uneven",
-  },
-  {
-    params: {
-      AMPLITUDE: 7,
-      PERIOD: 1,
-      GAP_X: 25,
-      GAP_Y: 25,
-      W_MEAN: 8,
-      W_DISPERSION: 0.3,
-      TIME_DELTA: 0.3,
-    },
-    name: "lava lamp",
   },
   {
     params: {
@@ -256,20 +261,22 @@ const presets: IPreset<Params>[] = [
       W_MEAN: 1,
       W_DISPERSION: 0,
       TIME_DELTA: 1.6,
+      COLOR: 1,
     },
     name: "dragon",
   },
   {
     params: {
-      AMPLITUDE: 10,
-      PERIOD: 4,
-      GAP_X: 23,
+      AMPLITUDE: 7,
+      PERIOD: 1,
+      GAP_X: 25,
       GAP_Y: 25,
-      W_MEAN: 1,
-      W_DISPERSION: 0,
+      W_MEAN: 8,
+      W_DISPERSION: 0.3,
       TIME_DELTA: 0.3,
+      COLOR: 0,
     },
-    name: "rush hour",
+    name: "lava lamp",
   },
   {
     params: {
@@ -280,8 +287,22 @@ const presets: IPreset<Params>[] = [
       W_MEAN: 1,
       W_DISPERSION: 0,
       TIME_DELTA: 3,
+      COLOR: 2,
     },
     name: "wave",
+  },
+  {
+    params: {
+      AMPLITUDE: 10,
+      PERIOD: 4,
+      GAP_X: 23,
+      GAP_Y: 25,
+      W_MEAN: 1,
+      W_DISPERSION: 0,
+      TIME_DELTA: 0.3,
+      COLOR: 0,
+    },
+    name: "rush hour",
   },
   {
     params: {
@@ -292,8 +313,9 @@ const presets: IPreset<Params>[] = [
       W_MEAN: 5,
       W_DISPERSION: 0,
       TIME_DELTA: 1,
+      COLOR: 3,
     },
-    name: "balance",
+    name: "piano",
   },
   {
     params: {
@@ -304,6 +326,7 @@ const presets: IPreset<Params>[] = [
       W_MEAN: 1,
       W_DISPERSION: 0,
       TIME_DELTA: 0.8,
+      COLOR: 1,
     },
     name: "scoliosis",
   },
