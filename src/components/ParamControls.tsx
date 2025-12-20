@@ -1,15 +1,15 @@
-import type { ISketch, IParams } from "./models";
+import type { ISketch, IParams } from "../models";
 import { SectionLayout } from "./SectionLayout";
 import styles from "./ParamControls.module.css";
 import { Slider } from "./Slider";
 import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
-import { useSequence } from "./sequencer";
+import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
   type MODAL_OPEN_SEGMENTS,
   type ControlsAnimationParams,
-} from "./main";
+} from "../main";
 import { ColorSelector } from "./ColorSelector";
 
 export function ParamControls(props: {

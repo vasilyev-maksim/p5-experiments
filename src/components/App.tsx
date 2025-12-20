@@ -2,21 +2,21 @@ import styles from "./App.module.css";
 import { Header } from "./Header";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { sketchList } from "./data";
+import { sketchList } from "../data";
 import { SketchModal } from "./SketchModal";
-import { useURLParams } from "./utils";
-import type { ISketch } from "./models";
-import { useSequence } from "./sequencer";
+import type { ISketch } from "../models";
+import { useSequence } from "../sequencer";
 import {
   HOME_PAGE_SEQUENCE,
   MODAL_OPEN_SEQUENCE,
   type Ctx,
   type MODAL_OPEN_SEGMENTS,
-} from "./main";
+} from "../main";
 import { SketchTilesGrid } from "./SketchTilesGrid";
+import { useURLParams } from "../hooks";
 
 function App() {
-  const { openedSketch, openSketch, closeSketch } = useURLParams();
+  const { openedSketch, openSketch, closeSketch } = useURLParams(sketchList);
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();

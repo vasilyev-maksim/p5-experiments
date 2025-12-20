@@ -1,11 +1,11 @@
 import { useMemo, forwardRef, useEffect, useRef } from "react";
-import type { ISketch, IParams, SketchCanvasSize } from "./models";
+import type { ISketch, IParams, SketchCanvasSize } from "../models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { useViewport } from "./hooks";
+import { useViewport } from "../hooks";
 import { animated, easings, to, useSpring } from "react-spring";
-import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "./main";
-import { useSequence } from "./sequencer";
+import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../main";
+import { useSequence } from "../sequencer";
 
 export const SketchCanvas = forwardRef<
   HTMLDivElement,

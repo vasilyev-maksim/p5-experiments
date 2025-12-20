@@ -1,16 +1,16 @@
-import type { IParams, IPreset, ISketch } from "./models";
+import type { IParams, IPreset, ISketch } from "../models";
 import styles from "./Presets.module.css";
-import { areParamsEqual, delay } from "./utils";
+import { areParamsEqual, delay } from "../utils";
 import classNames from "classnames";
 import { SectionLayout } from "./SectionLayout";
 import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
-import { useSequence } from "./sequencer";
+import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
   type MODAL_OPEN_SEGMENTS,
   type PresetsAnimationParams,
-} from "./main";
+} from "../main";
 
 export function Presets(props: {
   sketch: ISketch;

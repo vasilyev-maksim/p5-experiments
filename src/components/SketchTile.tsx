@@ -1,10 +1,10 @@
 import { forwardRef } from "react";
-import type { ISketch } from "./models";
+import type { ISketch } from "../models";
 import styles from "./SketchTile.module.css";
 import classNames from "classnames";
-import { useViewport } from "./hooks";
+import { useViewport } from "../hooks";
 import { SketchCanvas } from "./SketchCanvas";
-import { extractDefaultParams } from "./utils";
+import { extractDefaultParams } from "../utils";
 
 export const SketchTile = forwardRef<
   HTMLDivElement,

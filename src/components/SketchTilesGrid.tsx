@@ -1,13 +1,13 @@
 import { forwardRef } from "react";
-import type { ISketch } from "./models";
+import type { ISketch } from "../models";
 import { SketchTile } from "./SketchTile";
 import styles from "./SketchTilesGrid.module.css";
-import { useSequence } from "./sequencer";
+import { useSequence } from "../sequencer";
 import {
   type GridAnimationParams,
   type HOME_PAGE_SEGMENTS,
   HOME_PAGE_SEQUENCE,
-} from "./main";
+} from "../main";
 
 export const SketchTilesGrid = forwardRef<
   HTMLDivElement | null,

@@ -2,8 +2,8 @@
 import { createRoot } from "react-dom/client";
 import "./reset.css";
 import "./index.css";
-import App from "./App.tsx";
-import { ViewportProvider } from "./ViewportProvider.tsx";
+import App from "./components/App.tsx";
+import { ViewportProvider } from "./components/ViewportProvider.tsx";
 import { Sequence } from "./sequencer/Sequence";
 import { SequenceProvider } from "./sequencer/SequenceProvider.tsx";
 

@@ -1,4 +1,4 @@
-import type { IColorControl } from "./models";
+import type { IColorControl } from "../models";
 import styles from "./ColorSelector.module.css";
 import { ColorButton } from "./ColorButton";
 

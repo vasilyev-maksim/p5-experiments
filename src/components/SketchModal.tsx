@@ -1,26 +1,22 @@
-import type { IPreset, ISketch, SketchCanvasSize } from "./models";
+import type { IPreset, ISketch, SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
-import { useViewport } from "./hooks";
+import { useKeyboardShortcuts, useModalBehavior, useViewport } from "../hooks";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
-import {
-  extractDefaultParams,
-  useModalBehavior,
-  useKeyboardShortcuts,
-} from "./utils";
+import { extractDefaultParams } from "../utils";
 import { SketchModalFooter } from "./SketchModalFooter";
-import { useSequence } from "./sequencer";
+import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
   type Ctx,
   type MODAL_OPEN_SEGMENTS,
-} from "./main";
-import { SyncSegment } from "./sequencer/SyncSegment";
-import type { SegmentBase } from "./sequencer/SegmentBase";
+} from "../main";
+import { SyncSegment } from "../sequencer/SyncSegment";
+import type { SegmentBase } from "../sequencer/SegmentBase";
 
 export const SketchModal = ({
   sketch,

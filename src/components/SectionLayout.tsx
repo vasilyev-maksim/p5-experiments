@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { useViewport } from "./hooks";
+import { useViewport } from "../hooks";
 import styles from "./SectionLayout.module.css";
 import classNames from "classnames";
 import { animated, easings, useSpring } from "react-spring";

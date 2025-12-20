@@ -1,8 +1,8 @@
 import styles from "./SketchModalFooter.module.css";
 import { PlayPauseButton } from "./PlayPauseButton";
-import { useViewport } from "./hooks";
-import { type MODAL_OPEN_SEGMENTS, MODAL_OPEN_SEQUENCE } from "./main";
-import { useSequence } from "./sequencer";
+import { useViewport } from "../hooks";
+import { type MODAL_OPEN_SEGMENTS, MODAL_OPEN_SEQUENCE } from "../main";
+import { useSequence } from "../sequencer";
 
 export function SketchModalFooter(props: {
   onPlayPause: () => void;

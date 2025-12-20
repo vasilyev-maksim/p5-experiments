@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ViewportContext } from "./hooks";
+import { ViewportContext } from "./ViewportContext";
 
 export function ViewportProvider({ children }: { children: React.ReactNode }) {
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);

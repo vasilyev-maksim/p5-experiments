@@ -1,6 +1,6 @@
 import styles from "./Header.module.css";
-import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "./main";
-import { useSequence } from "./sequencer";
+import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "../main";
+import { useSequence } from "../sequencer";
 
 export function Header() {
   const { wasRun, duration } =
