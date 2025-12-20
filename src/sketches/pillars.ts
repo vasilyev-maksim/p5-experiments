@@ -256,7 +256,7 @@ const presets: IPreset<Params>[] = [
     params: {
       AMPLITUDE: 1,
       PERIOD: 2,
-      GAP_X: 0,
+      GAP_X: 1,
       GAP_Y: 200,
       W_MEAN: 1,
       W_DISPERSION: 0,

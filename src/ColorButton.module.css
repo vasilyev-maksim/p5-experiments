@@ -1,0 +1,38 @@
+.Wrapper {
+  position: relative;
+  width: 40px;
+  height: 25px;
+  padding: 3px;
+  display: flex;
+  cursor: pointer;
+  transition: 200ms all;
+  border-radius: 5px;
+
+  &:focus-visible {
+    outline: none;
+    background-color: var(--primaryColorFaded);
+  }
+
+  &.Active {
+    background-color: unset;
+  }
+}
+
+.Bg {
+  border-radius: 3px;
+  background-origin: content-box;
+  background-repeat: no-repeat;
+  border: 1px solid transparent;
+  position: relative;
+  flex: 1;
+  background-clip: padding-box;
+}
+
+.Frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border: 1px solid var(--primaryColor);
+  border-radius: 5px;
+}

@@ -1,6 +1,6 @@
 import type { IColorControl } from "./models";
 import styles from "./ColorSelector.module.css";
-import classNames from "classnames";
+import { ColorButton } from "./ColorButton";
 
 export function ColorSelector(props: {
   colors: IColorControl["colors"];
@@ -13,15 +13,12 @@ export function ColorSelector(props: {
       {props.title && <div className={styles.Title}>{props.title}</div>}
       <div className={styles.ButtonsBlock}>
         {props.colors.map(([c1, c2], i) => (
-          <button
-            className={classNames(styles.Button, {
-              [styles.Active]: i === props.value,
-            })}
-            style={{
-              backgroundImage: `linear-gradient(to right, ${c1}, ${c2})`,
-            }}
+          <ColorButton
+            active={i === props.value}
+            color1={c1}
+            color2={c2}
             onClick={() => props.onChange(i)}
-          ></button>
+          />
         ))}
       </div>
     </div>
