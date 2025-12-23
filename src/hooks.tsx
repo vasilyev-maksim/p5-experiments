@@ -35,21 +35,31 @@ export function useViewport() {
 }
 
 export function useURLParams(sketchList: ISketch[]) {
+  const baseUrl = import.meta.env.BASE_URL;
+  const directLinkSketchId = location.pathname
+    .split(baseUrl)
+    .filter(Boolean)
+    .pop();
+  const [isDirectSketchLink, setIsDirectSketchLink] = useState(
+    sketchList.some((x) => x.id === directLinkSketchId)
+  );
   const [openedSketchId, setOpenedSketchId] = useState<
     ISketch["id"] | undefined
-  >(location.pathname.split("/").filter(Boolean).pop());
+  >(directLinkSketchId);
   const openedSketch = sketchList.find((x) => x.id === openedSketchId);
 
   const openSketch = (sketch: ISketch) => {
     setOpenedSketchId(sketch.id);
-    history.pushState({}, "", import.meta.env.BASE_URL + sketch.id);
+    history.pushState({}, "", baseUrl + sketch.id);
   };
   const closeSketch = () => {
+    setIsDirectSketchLink(false);
     setOpenedSketchId(undefined);
     history.pushState({}, "", location.origin + import.meta.env.BASE_URL);
   };
 
   return {
+    isDirectSketchLink,
     openedSketchId,
     openedSketch,
     openSketch,

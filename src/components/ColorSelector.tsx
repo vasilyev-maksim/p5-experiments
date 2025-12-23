@@ -14,6 +14,7 @@ export function ColorSelector(props: {
       <div className={styles.ButtonsBlock}>
         {props.colors.map(([c1, c2], i) => (
           <ColorButton
+            key={c1 + c2}
             active={i === props.value}
             color1={c1}
             color2={c2}
