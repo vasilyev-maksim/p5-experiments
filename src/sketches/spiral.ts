@@ -477,7 +477,7 @@ export const spiralSketch: ISketch<Params> = {
   id: "spiral",
   name: "spiral",
   preview: {
-    size: 520,
+    size: 515,
   },
   timeShift: 1000,
   controls,
