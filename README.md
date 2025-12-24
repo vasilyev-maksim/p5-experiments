@@ -2,6 +2,7 @@
 
 # 📋 TODO
 
+- use query params for direct sketch links
 - add randomize button for controls
 - move sequences declaration code to separate file/folder
 - remove param controls margin-top if no presets

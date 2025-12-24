@@ -44,6 +44,7 @@ export function ParamControls(props: {
     }),
     [segment.wasRun]
   );
+  const controlsInitDelay = entriesCount * itemDelay + slidersInitDelay;
 
   return (
     segment.wasRun && (
@@ -64,7 +65,7 @@ export function ParamControls(props: {
             const valueStr = c.valueFormatter?.(value, c) ?? value;
             body = (
               <Slider
-                initDelay={entriesCount * itemDelay + slidersInitDelay}
+                initDelay={controlsInitDelay}
                 label={
                   <>
                     {label}: {valueStr}
@@ -84,6 +85,7 @@ export function ParamControls(props: {
                 colors={c.colors}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}
+                initDelay={controlsInitDelay}
               />
             );
           }
