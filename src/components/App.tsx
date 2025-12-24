@@ -1,6 +1,6 @@
 import styles from "./App.module.css";
 import { Header } from "./Header";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { sketchList } from "../data";
 import { SketchModal } from "./SketchModal";
@@ -14,9 +14,12 @@ import {
 } from "../main";
 import { SketchTilesGrid } from "./SketchTilesGrid";
 import { useURLParams } from "../hooks";
+import { delay } from "../utils";
 
 function App() {
-  const { openedSketch, openSketch, closeSketch } = useURLParams(sketchList);
+  const { clearUrlSketch, directLinkSketch, updateUrlSketch } =
+    useURLParams(sketchList);
+  const [openedSketch, setOpenedSketch] = useState<ISketch | undefined>();
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();
@@ -41,14 +44,29 @@ function App() {
       setCloneLeft(left);
       setCloneTop(top);
     }
+  }, [openedSketch]);
 
+  useEffect(() => {
+    if (directLinkSketch) {
+      delay(0).then(() => {
+        setOpenedSketch(directLinkSketch);
+      });
+    }
+  }, [directLinkSketch]);
+
+  useEffect(() => {
     if (openedSketch) {
       start(ctx);
     }
   }, [openedSketch, ctx]);
 
   const handleSketchClick = (x: ISketch) => {
-    openSketch(x);
+    updateUrlSketch(x);
+    setOpenedSketch(x);
+  };
+  const closeSketch = () => {
+    clearUrlSketch();
+    setOpenedSketch(undefined);
   };
 
   return (

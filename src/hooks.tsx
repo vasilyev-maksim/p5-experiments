@@ -40,30 +40,23 @@ export function useURLParams(sketchList: ISketch[]) {
     .split(baseUrl)
     .filter(Boolean)
     .pop();
-  const [isDirectSketchLink, setIsDirectSketchLink] = useState(
-    sketchList.some((x) => x.id === directLinkSketchId)
+  const [directLinkSketch, setDirectLinkSketch] = useState<ISketch | undefined>(
+    sketchList.find((x) => x.id === directLinkSketchId)
   );
-  const [openedSketchId, setOpenedSketchId] = useState<
-    ISketch["id"] | undefined
-  >(directLinkSketchId);
-  const openedSketch = sketchList.find((x) => x.id === openedSketchId);
 
-  const openSketch = (sketch: ISketch) => {
-    setOpenedSketchId(sketch.id);
+  const updateUrlSketch = (sketch: ISketch) => {
     history.pushState({}, "", baseUrl + sketch.id);
   };
-  const closeSketch = () => {
-    setIsDirectSketchLink(false);
-    setOpenedSketchId(undefined);
+
+  const clearUrlSketch = () => {
+    setDirectLinkSketch(undefined);
     history.pushState({}, "", location.origin + import.meta.env.BASE_URL);
   };
 
   return {
-    isDirectSketchLink,
-    openedSketchId,
-    openedSketch,
-    openSketch,
-    closeSketch,
+    directLinkSketch,
+    updateUrlSketch,
+    clearUrlSketch,
   };
 }
 
