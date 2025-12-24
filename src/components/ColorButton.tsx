@@ -37,7 +37,9 @@ export const ColorButton = (props: {
       <div
         className={styles.Bg}
         style={{
-          backgroundImage: `linear-gradient(to right, ${props.color1}, ${props.color2})`,
+          backgroundImage: `linear-gradient(to right, ${props.color1}, ${
+            props.color2 ?? props.color1
+          })`,
         }}
       />
     </div>

@@ -161,7 +161,7 @@ export const SketchModal = ({
                 <div
                   className={styles.Body}
                   style={{
-                    paddingTop: (modalPadding * 3) / 2,
+                    paddingTop: modalPadding,
                   }}
                 >
                   <Presets

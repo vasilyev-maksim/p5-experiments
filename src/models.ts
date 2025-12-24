@@ -30,7 +30,7 @@ export interface IBooleanControl extends IControlBase {
 
 export interface IColorControl extends IControlBase {
   type: "color";
-  colors: [string, string][];
+  colors: string[][];
 }
 
 export type IParams<ParamKey extends string = string> = Record<
