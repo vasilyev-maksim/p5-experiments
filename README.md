@@ -2,6 +2,7 @@
 
 # 📋 TODO
 
+- auto-select first preset by default
 - use query params for direct sketch links
 - add randomize button for controls
 - move sequences declaration code to separate file/folder
