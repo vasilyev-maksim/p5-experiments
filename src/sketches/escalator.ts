@@ -1,18 +1,58 @@
 import p5 from "p5";
-import type { ISketchFactory } from "../models";
+import type {
+  ExtractParams,
+  IControls,
+  IPreset,
+  ISketch,
+  ISketchFactory,
+} from "../models";
 
-export const escalator: ISketchFactory =
+const controls = {
+  TIME_DELTA: {
+    type: "range",
+    min: 0,
+    max: 3,
+    defaultValue: 1,
+    step: 0.1,
+    label: "Playback speed",
+    valueFormatter: (x) => x.toFixed(1),
+  },
+  COLOR: {
+    type: "color",
+    colors: [
+      ["#ea72f7ff"],
+      ["#ff0000ff"],
+      ["#aa00ffff"],
+      ["#00a6ffff"],
+      ["#00ff4cff"],
+      ["#ffffffff"],
+    ],
+    defaultValue: 0,
+    label: "Color",
+  },
+} as const satisfies IControls;
+
+type Params = ExtractParams<typeof controls>;
+
+const factory: ISketchFactory<Params> =
   (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
     const min = Math.min(WIDTH, HEIGHT),
       W = min,
       H = min,
       STEPS_COUNT = 20;
 
+    let time: number = timeShift,
+      COLOR_INDEX: number = controls.COLOR.defaultValue,
+      TIME_DELTA: number = controls.TIME_DELTA.defaultValue;
+
     p.setup = () => {
-      p.createCanvas(W, H);
+      p.createCanvas(WIDTH, HEIGHT);
     };
 
     p.updateWithProps = (props) => {
+      COLOR_INDEX = props.COLOR;
+      TIME_DELTA = props.TIME_DELTA;
+
       if (props.playing) {
         p.loop();
       } else {
@@ -28,7 +68,6 @@ export const escalator: ISketchFactory =
       y1: number,
       stroke: string = "black"
     ): void {
-      const time = p.frameCount + timeShift;
       const startToEndAngle =
         p.PI / 2 + p.atan(p.abs(x1 - x0) / p.abs(y1 - y0));
       const stepAngle = p.map(
@@ -74,12 +113,16 @@ export const escalator: ISketchFactory =
     }
 
     p.draw = () => {
+      time += TIME_DELTA;
+
       p.background(0);
 
       const steps = 60;
+      const x0 = (WIDTH - W) / 2;
+      const y0 = (HEIGHT - H) / 2;
       const traveler = new RectangleBorderTraveler(
-        p.createVector(0, 0),
-        p.createVector(W, H),
+        p.createVector(x0, y0),
+        p.createVector(x0 + W, y0 + H),
         steps,
         steps
       );
@@ -98,9 +141,11 @@ export const escalator: ISketchFactory =
           [steps, pLen + steps],
         ],
       ] as [number, number][][];
+      const color = controls.COLOR.colors[COLOR_INDEX][0];
       const cb = ([a, b]: [p5.Vector, p5.Vector]) => {
-        drawZigzag(p, a.x, a.y, b.x, b.y, "#ea72f7ff");
+        drawZigzag(p, a.x, a.y, b.x, b.y, color);
       };
+
       traveler.combineIntervals(intervals[0], intervals[1], cb);
       traveler.combineIntervals(intervals2[0], intervals2[1], cb);
     };
@@ -123,7 +168,7 @@ export class RectangleBorderTraveler {
     const dy = (this.b.y - this.a.y) / this.stepsY;
 
     for (let ix = 0; ix <= this.stepsX; ix++) {
-      this.points.push(new p5.Vector(ix * dx, this.a.y));
+      this.points.push(new p5.Vector(this.a.x + ix * dx, this.a.y));
     }
     for (let iy = 1; iy <= this.stepsY; iy++) {
       this.points.push(new p5.Vector(this.b.x, this.a.y + iy * dy));
@@ -163,3 +208,32 @@ export class RectangleBorderTraveler {
     return result;
   }
 }
+const presets: IPreset<Params>[] = [
+  // {
+  //   params: {
+  //     POLYGON_N: 5,
+  //     THICKNESS: 18,
+  //     COIL_FACTOR: 2,
+  //     COIL_SPEED: 10,
+  //     ZOOM: 2,
+  //     ROTATION_SPEED: 1.5,
+  //     COLOR_CHANGE_SPEED: 10,
+  //     TIME_DELTA: 1,
+  //     FILL_COLORS: 0,
+  //     BORDER_COLOR: 0,
+  //   },
+  //   name: "spiral",
+  // },
+];
+
+export const escalatorSketch: ISketch<Params> = {
+  factory,
+  id: "escalator",
+  name: "escalator",
+  preview: {
+    size: 300,
+  },
+  timeShift: 60,
+  controls,
+  presets,
+};

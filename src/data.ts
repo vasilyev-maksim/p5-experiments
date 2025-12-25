@@ -1,5 +1,5 @@
 import type { ISketch } from "./models";
-import { escalator } from "./sketches/escalator";
+import { escalatorSketch } from "./sketches/escalator";
 import { lungs } from "./sketches/lungs";
 import { pillarsSketch } from "./sketches/pillars";
 import { pulse } from "./sketches/pulse";
@@ -17,15 +17,7 @@ export const sketchList: ISketch<any>[] = [
     factory: lungs,
     timeShift: 50,
   },
-  {
-    id: "escalator",
-    name: "escalator",
-    preview: {
-      size: 300,
-    },
-    factory: escalator,
-    timeShift: 60,
-  },
+  escalatorSketch,
   spiralSketch,
   {
     id: "pulse",
