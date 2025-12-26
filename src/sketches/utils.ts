@@ -198,10 +198,9 @@ export function oscillateBetween(
   start: number,
   end: number,
   speed: number,
-  frameCount?: number
+  time: number
 ): number {
-  const t = p.sin((frameCount ?? p.frameCount) * speed) * 0.5 + 0.5; // от 0 до 1
-  return p.lerp(start, end, t);
+  return p.map(p.sin(time * speed), -1, 1, start, end);
 }
 
 export function linearOscillateBetween(

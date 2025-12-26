@@ -7,7 +7,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
-import { extractDefaultParams } from "../utils";
 import { SketchModalFooter } from "./SketchModalFooter";
 import { useSequence } from "../sequencer";
 import {
@@ -75,7 +74,7 @@ export const SketchModal = ({
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
-  const [params, setParams] = useState(extractDefaultParams(sketch));
+  const [params, setParams] = useState(sketch.defaultParams);
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
   };

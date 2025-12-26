@@ -1,10 +1,11 @@
-import type { ISketch } from "./models";
-import { escalatorSketch } from "./sketches/escalator";
-import { lungs } from "./sketches/lungs";
-import { pillarsSketch } from "./sketches/pillars";
-import { pulse } from "./sketches/pulse";
-import { spiralSketch } from "./sketches/spiral";
-import { tiles } from "./sketches/tiles/tiles";
+import type { ISketch } from "../models";
+import { lungs } from "./lungs";
+import { pillarsSketch } from "./pillars";
+import { pulse } from "./pulse";
+import { spiralSketch } from "./spiral";
+import { tiles } from "./tiles/tiles";
+import { arcSketch } from "./traveler/arcs";
+import { escalatorSketch } from "./traveler/zigzags";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
@@ -16,8 +17,12 @@ export const sketchList: ISketch<any>[] = [
     },
     factory: lungs,
     timeShift: 50,
+    presets: [],
+    controls: {},
+    defaultParams: {},
   },
   escalatorSketch,
+  arcSketch,
   spiralSketch,
   {
     id: "pulse",
@@ -27,6 +32,9 @@ export const sketchList: ISketch<any>[] = [
     },
     factory: pulse,
     randomSeed: 44,
+    presets: [],
+    controls: {},
+    defaultParams: {},
   },
   pillarsSketch,
   {
@@ -38,6 +46,9 @@ export const sketchList: ISketch<any>[] = [
     factory: tiles,
     timeShift: -20,
     randomSeed: 123,
+    presets: [],
+    controls: {},
+    defaultParams: {},
     // randomSeed: 12,
     // randomSeed: 45,
   },

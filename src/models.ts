@@ -13,7 +13,6 @@ export type ISketchFactory<ParamKey extends string = string> = (
 
 interface IControlBase {
   label?: string;
-  defaultValue: number;
   valueFormatter?: (value: number, control: this) => string;
 }
 
@@ -61,8 +60,9 @@ export interface ISketch<ParamKey extends string = string> {
   factory: ISketchFactory<ParamKey>;
   randomSeed?: number;
   timeShift?: number;
-  controls?: IControls<ParamKey>;
-  presets?: IPreset<ParamKey>[];
+  controls: IControls<ParamKey>;
+  defaultParams: IParams<ParamKey>;
+  presets: IPreset<ParamKey>[];
 }
 
 export type SketchCanvasSize = "tile" | "modal" | "fullscreen";

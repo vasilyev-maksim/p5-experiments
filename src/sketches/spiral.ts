@@ -28,7 +28,6 @@ const controls = {
     min: 2,
     step: 1,
     type: "range",
-    defaultValue: 5,
   },
   THICKNESS: {
     label: "Thickness",
@@ -36,7 +35,6 @@ const controls = {
     min: 2,
     step: 1,
     type: "range",
-    defaultValue: 18,
   },
   ROTATION_SPEED: {
     label: "Rotation speed",
@@ -44,7 +42,6 @@ const controls = {
     min: 0,
     step: 1,
     type: "range",
-    defaultValue: 1.5,
   },
   COIL_FACTOR: {
     label: "Coil factor",
@@ -52,7 +49,6 @@ const controls = {
     min: 0,
     step: 1,
     type: "range",
-    defaultValue: 2,
   },
   COIL_SPEED: {
     label: "Coil speed",
@@ -60,7 +56,6 @@ const controls = {
     min: 0,
     step: 1,
     type: "range",
-    defaultValue: 10,
   },
   ZOOM: {
     label: "Zoom",
@@ -68,7 +63,6 @@ const controls = {
     min: 1,
     step: 0.1,
     type: "range",
-    defaultValue: 2,
     valueFormatter: (x) => "x" + x.toFixed(1),
   },
   COLOR_CHANGE_SPEED: {
@@ -77,13 +71,11 @@ const controls = {
     min: -10,
     step: 1,
     type: "range",
-    defaultValue: 10,
   },
   TIME_DELTA: {
     type: "range",
     min: -2,
     max: 2,
-    defaultValue: 1,
     step: 0.1,
     label: "Playback speed",
     valueFormatter: (x) => x.toFixed(1),
@@ -98,7 +90,6 @@ const controls = {
       ["#ffffffff"],
       ["#000000ff"],
     ],
-    defaultValue: 0,
     label: "Border color",
   },
   FILL_COLORS: {
@@ -111,7 +102,6 @@ const controls = {
       ["#000", "#ffffffff", "#ff0000ff"],
       // ["#003e49ff", "#8aee98ff"],
     ],
-    defaultValue: 0,
     label: "Main colors",
   },
 } as const satisfies IControls;
@@ -125,16 +115,16 @@ const factory: ISketchFactory<Params> =
       BG_COLOR = "black";
 
     let time: number = timeShift,
-      POLYGON_N: number = controls.POLYGON_N.defaultValue,
-      THICKNESS: number = controls.THICKNESS.defaultValue,
-      COIL_FACTOR: number = controls.COIL_FACTOR.defaultValue,
-      COLOR_CHANGE_SPEED: number = controls.COLOR_CHANGE_SPEED.defaultValue,
-      ZOOM: number = controls.ZOOM.defaultValue,
-      COIL_SPEED: number = controls.COIL_SPEED.defaultValue,
-      ROTATION_SPEED: number = controls.ROTATION_SPEED.defaultValue,
-      TIME_DELTA: number = controls.TIME_DELTA.defaultValue,
-      FILL_COLORS_INDEX: number = controls.FILL_COLORS.defaultValue,
-      BORDER_COLOR_INDEX: number = controls.BORDER_COLOR.defaultValue;
+      POLYGON_N: number,
+      THICKNESS: number,
+      COIL_FACTOR: number,
+      COLOR_CHANGE_SPEED: number,
+      ZOOM: number,
+      COIL_SPEED: number,
+      ROTATION_SPEED: number,
+      TIME_DELTA: number,
+      FILL_COLORS_INDEX: number,
+      BORDER_COLOR_INDEX: number;
 
     p.updateWithProps = (props) => {
       POLYGON_N = props.POLYGON_N;
@@ -482,4 +472,5 @@ export const spiralSketch: ISketch<Params> = {
   timeShift: 1000,
   controls,
   presets,
+  defaultParams: presets[0].params,
 };

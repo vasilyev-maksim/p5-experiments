@@ -15,7 +15,6 @@ const controls = {
     min: 0,
     step: 1,
     type: "range",
-    defaultValue: 6,
   },
   PERIOD: {
     label: "Wave period",
@@ -23,7 +22,6 @@ const controls = {
     min: 1,
     step: 1,
     type: "range",
-    defaultValue: 1,
   },
   GAP_X: {
     label: "Horizontal gap",
@@ -31,7 +29,6 @@ const controls = {
     min: 0,
     step: 1,
     type: "range",
-    defaultValue: 6,
   },
   GAP_Y: {
     label: "Vertical gap",
@@ -39,7 +36,6 @@ const controls = {
     min: 1,
     step: 1,
     type: "range",
-    defaultValue: 6,
   },
   W_MEAN: {
     label: "Pillar width average",
@@ -47,7 +43,6 @@ const controls = {
     min: 1,
     step: 1,
     type: "range",
-    defaultValue: 2,
   },
   W_DISPERSION: {
     label: "Pillar width dispersion",
@@ -55,14 +50,12 @@ const controls = {
     min: 0,
     step: 0.1,
     type: "range",
-    defaultValue: 0.5,
     valueFormatter: (x) => x.toFixed(1),
   },
   TIME_DELTA: {
     type: "range",
     min: 0,
     max: 3,
-    defaultValue: 1,
     step: 0.1,
     label: "Playback speed",
     valueFormatter: (x) => x.toFixed(1),
@@ -76,7 +69,6 @@ const controls = {
       ["#000", "#ffffffff"],
       // ["#003e49ff", "#8aee98ff"],
     ],
-    defaultValue: 0,
     label: "Color palette",
   },
 } as const satisfies IControls;
@@ -87,19 +79,17 @@ const factory: ISketchFactory<Params> =
   (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
     const W_MEAN_RANGE = [WIDTH / 25, WIDTH / 3],
       W_MIN = 15,
-      W_MEAN = new ValueWithHistory<number>(controls.W_MEAN.defaultValue),
-      W_DISPERSION = new ValueWithHistory<number>(
-        controls.W_DISPERSION.defaultValue
-      );
+      W_MEAN = new ValueWithHistory<number>(),
+      W_DISPERSION = new ValueWithHistory<number>();
 
     let PARTS: number[];
     let time = timeShift,
-      GAP_X: number = controls.GAP_X.defaultValue,
-      GAP_Y: number = controls.GAP_Y.defaultValue,
-      TIME_DELTA: number = controls.TIME_DELTA.defaultValue,
-      AMPLITUDE: number = controls.AMPLITUDE.defaultValue,
-      PERIOD: number = controls.PERIOD.defaultValue,
-      COLOR: number = controls.COLOR.defaultValue;
+      GAP_X: number,
+      GAP_Y: number,
+      TIME_DELTA: number,
+      AMPLITUDE: number,
+      PERIOD: number,
+      COLOR: number;
 
     p.updateWithProps = (props) => {
       TIME_DELTA = props.TIME_DELTA;
@@ -126,7 +116,7 @@ const factory: ISketchFactory<Params> =
       p.createCanvas(WIDTH, HEIGHT);
       p.noStroke();
       p.randomSeed(randomSeed);
-      initParts();
+      // initParts();
     };
 
     p.draw = () => {
@@ -224,14 +214,14 @@ const factory: ISketchFactory<Params> =
 
     function initParts() {
       const mean = p.map(
-        W_MEAN.value,
+        W_MEAN.value!,
         controls.W_MEAN.min,
         controls.W_MEAN.max,
         W_MEAN_RANGE[0],
         W_MEAN_RANGE[1]
       );
-      const min = Math.max(mean * (1 - W_DISPERSION.value), W_MIN);
-      const max = Math.max(mean * (1 + W_DISPERSION.value), W_MIN);
+      const min = Math.max(mean * (1 - W_DISPERSION.value!), W_MIN);
+      const max = Math.max(mean * (1 + W_DISPERSION.value!), W_MIN);
       PARTS = getRandomPartition(WIDTH, min, max, () => p.random()).filter(
         (x) => x >= W_MIN + GAP_X
       );
@@ -343,4 +333,5 @@ export const pillarsSketch: ISketch<Params> = {
   randomSeed: 44,
   controls,
   presets,
+  defaultParams: presets[0].params,
 };

@@ -2,6 +2,7 @@
 
 # 📋 TODO
 
+- refactor oscillateBetween (or better signature)
 - auto-select first preset by default
 - use query params for direct sketch links
 - add randomize button for controls

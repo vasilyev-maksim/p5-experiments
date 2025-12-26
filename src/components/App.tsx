@@ -2,7 +2,6 @@ import styles from "./App.module.css";
 import { Header } from "./Header";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { sketchList } from "../data";
 import { SketchModal } from "./SketchModal";
 import type { ISketch } from "../models";
 import { useSequence } from "../sequencer";
@@ -15,6 +14,7 @@ import {
 import { SketchTilesGrid } from "./SketchTilesGrid";
 import { useURLParams } from "../hooks";
 import { delay } from "../utils";
+import { sketchList } from "../sketches";
 
 function App() {
   const { clearUrlSketch, directLinkSketch, updateUrlSketch } =

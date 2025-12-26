@@ -1,14 +1,4 @@
-import type { IControl, IParams, ISketch } from "./models";
-
-export function extractDefaultParams<K extends string>(
-  sketch: ISketch<K>
-): IParams {
-  return Object.fromEntries(
-    Object.entries<IControl>(sketch.controls ?? {}).map(
-      ([key, { defaultValue }]) => [key, defaultValue]
-    )
-  );
-}
+import type { IParams } from "./models";
 
 function serializeParams(params: IParams): string {
   return Object.entries(params)
@@ -92,16 +82,17 @@ export function asyncWhile(
 }
 
 export class ValueWithHistory<T> {
-  private static DEFAULT_COMPARATOR = <T>(a: T | null, b: T | null) => a === b;
-  private __value: T;
-  private __prev: T | null = null;
+  private static DEFAULT_COMPARATOR = <T>(a: T | undefined, b: T | undefined) =>
+    a === b;
+  private __value?: T;
+  private __prev?: T;
 
   public set value(val: T) {
     this.__prev = this.__value;
     this.__value = val;
   }
 
-  public get value() {
+  public get value(): T | undefined {
     return this.__value;
   }
 
@@ -114,12 +105,14 @@ export class ValueWithHistory<T> {
   }
 
   public constructor(
-    initValue: T,
+    initValue?: T,
     private readonly __comparator: (
-      a: T | null,
-      b: T | null
+      a: T | undefined,
+      b: T | undefined
     ) => boolean = ValueWithHistory.DEFAULT_COMPARATOR
   ) {
-    this.__value = initValue;
+    if (initValue) {
+      this.__value = initValue;
+    }
   }
 }
