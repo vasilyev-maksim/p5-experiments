@@ -11,6 +11,7 @@ import {
   type ControlsAnimationParams,
 } from "../main";
 import { ColorSelector } from "./ColorSelector";
+import { BooleanSelector } from "./BooleanSelector";
 
 export function ParamControls(props: {
   sketch: ISketch<string>;
@@ -83,6 +84,15 @@ export function ParamControls(props: {
               <ColorSelector
                 title={c.label}
                 colors={c.colors}
+                value={props.params[key]}
+                onChange={(val) => props.onParamChange(key, val)}
+                initDelay={controlsInitDelay}
+              />
+            );
+          } else if (c.type === "boolean") {
+            body = (
+              <BooleanSelector
+                title={c.label}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}
                 initDelay={controlsInitDelay}

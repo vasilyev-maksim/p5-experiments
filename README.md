@@ -2,8 +2,8 @@
 
 # 📋 TODO
 
-- refactor oscillateBetween (or better signature)
-- auto-select first preset by default
+- move play controls to sketch bottom-center (show up on mouse hover)
+  - move playback speed there as well
 - use query params for direct sketch links
 - add randomize button for controls
 - move sequences declaration code to separate file/folder
@@ -26,6 +26,8 @@
 
 # ✅ DONE
 
+- refactor oscillateBetween (or better signature)
+- auto-select first preset by default
 - fix links to sketches on prod (`base` config is ignored)
 - pillars
   - add ending style for pillars (round, triangle, polygon)

@@ -23,6 +23,7 @@ const controls = {
     max: 2.5,
     step: 0.1,
     label: "Max curvature",
+    valueFormatter: (x) => x.toFixed(1),
   },
   MIN_CURVATURE: {
     type: "range",
@@ -30,6 +31,7 @@ const controls = {
     max: 0,
     step: 0.1,
     label: "Min curvature",
+    valueFormatter: (x) => x.toFixed(1),
   },
   PADDING_PERCENT: {
     type: "range",
@@ -38,6 +40,14 @@ const controls = {
     step: 1,
     label: "Padding",
     valueFormatter: (x) => x + "%",
+  },
+  INVERT_CURVATURE: {
+    type: "boolean",
+    label: "Invert curvature",
+  },
+  INVERT_COLORS: {
+    type: "boolean",
+    label: "Invert colors",
   },
   TIME_DELTA: {
     type: "range",
@@ -50,12 +60,11 @@ const controls = {
   COLOR: {
     type: "color",
     colors: [
-      ["#ea72f7ff"],
-      ["#ff0000ff"],
-      ["#aa00ffff"],
-      ["#00a6ffff"],
-      ["#00ff4cff"],
-      ["#ffffffff"],
+      ["#0000ffff", "#ea72f7ff"],
+      ["#fcff39ff", "#c04affff"],
+      ["#13005fff", "#a3ff9aff"],
+      ["#ffffffff", "#1e00c8ff"],
+      ["#ffffffff", "#000000ff"],
     ],
     label: "Color",
   },
@@ -74,7 +83,9 @@ const factory: ISketchFactory<Params> =
       STEPS: number,
       PADDING_PERCENT: number,
       MIN_CURVATURE: number,
-      MAX_CURVATURE: number;
+      MAX_CURVATURE: number,
+      INVERT_COLORS: number,
+      INVERT_CURVATURE: number;
 
     p.setup = () => {
       p.createCanvas(WIDTH, HEIGHT);
@@ -89,6 +100,8 @@ const factory: ISketchFactory<Params> =
       MAX_CURVATURE = props.MAX_CURVATURE;
       MIN_CURVATURE = props.MIN_CURVATURE;
       PADDING_PERCENT = props.PADDING_PERCENT;
+      INVERT_CURVATURE = props.INVERT_CURVATURE;
+      INVERT_COLORS = props.INVERT_COLORS;
 
       if (props.playing) {
         p.loop();
@@ -99,9 +112,6 @@ const factory: ISketchFactory<Params> =
 
     p.draw = () => {
       p.background(BG_COLOR);
-
-      const color = controls.COLOR.colors[COLOR_INDEX][0];
-      p.stroke(color);
 
       const ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100);
       const steps = STEPS;
@@ -133,7 +143,9 @@ const factory: ISketchFactory<Params> =
         ([a, b]: [p5.Vector, p5.Vector], i: number, n: number) => {
           const halfDiagonal = (ACTUAL_SIZE * 2) / p.sqrt(2);
           const distanceToDiagonal =
-            (1 - i / n) * halfDiagonal * curvatureSign || 1;
+            (INVERT_CURVATURE ? 1 - i / n : i / n) *
+              halfDiagonal *
+              curvatureSign || 1;
           const curvature = oscillateBetween(
             p,
             distanceToDiagonal * MIN_CURVATURE,
@@ -142,8 +154,19 @@ const factory: ISketchFactory<Params> =
             time
           );
           const colorIntensity = p.map(p.abs(curvature), 0, halfDiagonal, 1, 0);
-          // console.log({ i, curvature, colorIntensity });
-          drawArc({ p, a, b, curvature, colorIntensity });
+          const [c1, c2] = controls.COLOR.colors[COLOR_INDEX];
+          const colorA = INVERT_COLORS ? c2 ?? c1 : c1;
+          const colorB = INVERT_COLORS ? c1 ?? c2 : c2 ?? c1;
+
+          drawArc({
+            p,
+            a,
+            b,
+            curvature,
+            colorIntensity,
+            colorA,
+            colorB,
+          });
         };
 
       traveler.combineIntervals(intervals[0], intervals[1], cb(1));
@@ -159,12 +182,16 @@ function drawArc({
   b,
   curvature,
   colorIntensity,
+  colorA,
+  colorB,
 }: {
   p: p5;
   a: p5.Vector;
   b: p5.Vector;
   curvature: number;
   colorIntensity: number;
+  colorA: string;
+  colorB: string;
 }) {
   p.push();
   {
@@ -177,9 +204,7 @@ function drawArc({
     const curSign = Math.sign(curvature);
 
     p.noFill();
-    p.stroke(
-      p.lerpColor(p.color("blue"), p.color("#ea72f7ff"), colorIntensity)
-    );
+    p.stroke(p.lerpColor(p.color(colorA), p.color(colorB), colorIntensity));
     p.translate(m.x, m.y);
     p.rotate(angle);
     p.strokeWeight(2);
@@ -203,18 +228,22 @@ const presets: IPreset<Params>[] = [
       STEPS: 60,
       MAX_CURVATURE: 1,
       MIN_CURVATURE: 0,
-      PADDING_PERCENT: 0,
+      PADDING_PERCENT: 20,
+      INVERT_CURVATURE: 0,
+      INVERT_COLORS: 0,
     },
     name: "touch",
   },
   {
     params: {
       TIME_DELTA: 1,
-      COLOR: 5,
+      COLOR: 0,
       STEPS: 30,
-      MAX_CURVATURE: 2,
+      MAX_CURVATURE: 1,
       MIN_CURVATURE: -1,
       PADDING_PERCENT: 50,
+      INVERT_CURVATURE: 0,
+      INVERT_COLORS: 0,
     },
     name: "mayonnaise",
   },
@@ -226,6 +255,8 @@ const presets: IPreset<Params>[] = [
       MIN_CURVATURE: -0.7999999999999998,
       PADDING_PERCENT: 45,
       COLOR: 0,
+      INVERT_CURVATURE: 0,
+      INVERT_COLORS: 0,
     },
     name: "croissant",
   },
@@ -237,6 +268,8 @@ const presets: IPreset<Params>[] = [
       MIN_CURVATURE: -0.2999999999999998,
       PADDING_PERCENT: 50,
       COLOR: 0,
+      INVERT_CURVATURE: 0,
+      INVERT_COLORS: 0,
     },
     name: "cookie",
   },

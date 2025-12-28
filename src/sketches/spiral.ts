@@ -95,11 +95,11 @@ const controls = {
   FILL_COLORS: {
     type: "color",
     colors: [
-      ["#670374ff", "#2d0193ff", "#ff0000ff"],
-      ["#340998ff", "#ea72f7ff", "#1cb0ffff"],
-      ["#ff4b4bff", "#f0f689ff", "#ff0000ff"],
-      ["#13005fff", "#a3ff9aff", "#ff0000ff"],
-      ["#000", "#ffffffff", "#ff0000ff"],
+      ["#670374ff", "#2d0193ff"],
+      ["#340998ff", "#ea72f7ff"],
+      ["#ff4b4bff", "#f0f689ff"],
+      ["#13005fff", "#a3ff9aff"],
+      ["#000", "#ffffffff"],
       // ["#003e49ff", "#8aee98ff"],
     ],
     label: "Main colors",

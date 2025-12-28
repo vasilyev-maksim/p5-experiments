@@ -1,12 +1,14 @@
 .Wrapper {
+  --outer-radius: 6px;
+
   position: relative;
-  width: 40px;
-  height: 25px;
   padding: 3px;
   display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   transition: 200ms all;
-  border-radius: 5px;
+  border-radius: var(--outer-radius);
 
   &:focus-visible {
     outline: none;
@@ -18,21 +20,12 @@
   }
 }
 
-.Bg {
-  border-radius: 3px;
-  background-origin: content-box;
-  background-repeat: no-repeat;
-  border: 1px solid transparent;
-  position: relative;
-  flex: 1;
-  background-clip: padding-box;
-}
-
 .Frame {
   position: absolute;
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-  border: 1px solid var(--primaryColor);
-  border-radius: 5px;
+  border-color: var(--primaryColor);
+  border-style: solid;
+  border-radius: var(--outer-radius);
 }

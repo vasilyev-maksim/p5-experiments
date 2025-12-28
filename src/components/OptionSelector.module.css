@@ -1,0 +1,9 @@
+.Title {
+  margin-bottom: 5px;
+}
+
+.ButtonsBlock {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+}

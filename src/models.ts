@@ -32,12 +32,21 @@ export interface IColorControl extends IControlBase {
   colors: string[][];
 }
 
+export interface IChoiceControl extends IControlBase {
+  type: "choice";
+  options: { label: string; value: string }[];
+}
+
 export type IParams<ParamKey extends string = string> = Record<
   ParamKey,
   number
 >;
 
-export type IControl = IRangeControl | IBooleanControl | IColorControl;
+export type IControl =
+  | IRangeControl
+  | IBooleanControl
+  | IColorControl
+  | IChoiceControl;
 
 export type IControls<ParamKey extends string = string> = Record<
   ParamKey,
