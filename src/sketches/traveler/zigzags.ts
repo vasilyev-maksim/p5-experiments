@@ -9,12 +9,12 @@ import type {
 import { RectangleBorderTraveler } from "./traveler";
 
 const controls = {
-  STEPS: {
+  RESOLUTION: {
     type: "range",
     min: 1,
     max: 60,
     step: 1,
-    label: "Steps",
+    label: "Resolution",
   },
   PADDING_PERCENT: {
     type: "range",
@@ -55,7 +55,7 @@ const factory: ISketchFactory<Params> =
     let time: number = timeShift,
       COLOR_INDEX: number,
       TIME_DELTA: number,
-      STEPS: number,
+      RESOLUTION: number,
       PADDING_PERCENT: number;
 
     p.setup = () => {
@@ -67,7 +67,7 @@ const factory: ISketchFactory<Params> =
     p.updateWithProps = (props) => {
       COLOR_INDEX = props.COLOR;
       TIME_DELTA = props.TIME_DELTA;
-      STEPS = props.STEPS;
+      RESOLUTION = props.RESOLUTION;
       PADDING_PERCENT = props.PADDING_PERCENT;
 
       if (props.playing) {
@@ -85,7 +85,7 @@ const factory: ISketchFactory<Params> =
       p.stroke(color);
 
       const ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100);
-      const steps = STEPS;
+      const steps = RESOLUTION;
       const x0 = (WIDTH - ACTUAL_SIZE) / 2;
       const y0 = (HEIGHT - ACTUAL_SIZE) / 2;
       const traveler = new RectangleBorderTraveler(
@@ -127,7 +127,7 @@ const factory: ISketchFactory<Params> =
           y0: a.y,
           x1: b.x,
           y1: b.y,
-          stepsCount: STEPS / 3,
+          stepsCount: RESOLUTION / 3,
           // Math.ceil((1 - i / n) * 100),
           stepAngle,
           lineWidth: 2,
@@ -196,7 +196,7 @@ const presets: IPreset<Params>[] = [
     params: {
       TIME_DELTA: 1,
       COLOR: 5,
-      STEPS: 60,
+      RESOLUTION: 60,
       PADDING_PERCENT: 0,
     },
     name: "escalator",
@@ -205,7 +205,7 @@ const presets: IPreset<Params>[] = [
     params: {
       TIME_DELTA: 1,
       COLOR: 5,
-      STEPS: 30,
+      RESOLUTION: 30,
       PADDING_PERCENT: 50,
     },
     name: "mayonnaise",
@@ -213,7 +213,7 @@ const presets: IPreset<Params>[] = [
   {
     params: {
       TIME_DELTA: 1,
-      STEPS: 6,
+      RESOLUTION: 6,
       PADDING_PERCENT: 45,
       COLOR: 0,
     },
@@ -222,7 +222,7 @@ const presets: IPreset<Params>[] = [
   {
     params: {
       TIME_DELTA: 0.8,
-      STEPS: 18,
+      RESOLUTION: 18,
       PADDING_PERCENT: 50,
       COLOR: 0,
     },

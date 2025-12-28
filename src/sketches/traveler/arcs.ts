@@ -10,12 +10,12 @@ import { oscillateBetween } from "../utils";
 import { RectangleBorderTraveler } from "./traveler";
 
 const controls = {
-  STEPS: {
+  RESOLUTION: {
     type: "range",
     min: 1,
     max: 60,
     step: 1,
-    label: "Steps",
+    label: "Resolution",
   },
   MAX_CURVATURE: {
     type: "range",
@@ -80,7 +80,7 @@ const factory: ISketchFactory<Params> =
     let time: number = timeShift,
       COLOR_INDEX: number,
       TIME_DELTA: number,
-      STEPS: number,
+      RESOLUTION: number,
       PADDING_PERCENT: number,
       MIN_CURVATURE: number,
       MAX_CURVATURE: number,
@@ -90,13 +90,12 @@ const factory: ISketchFactory<Params> =
     p.setup = () => {
       p.createCanvas(WIDTH, HEIGHT);
       p.angleMode("radians");
-      // p.noLoop();
     };
 
     p.updateWithProps = (props) => {
       COLOR_INDEX = props.COLOR;
       TIME_DELTA = props.TIME_DELTA;
-      STEPS = props.STEPS;
+      RESOLUTION = props.RESOLUTION;
       MAX_CURVATURE = props.MAX_CURVATURE;
       MIN_CURVATURE = props.MIN_CURVATURE;
       PADDING_PERCENT = props.PADDING_PERCENT;
@@ -114,28 +113,28 @@ const factory: ISketchFactory<Params> =
       p.background(BG_COLOR);
 
       const ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100);
-      const steps = STEPS;
+      const res = RESOLUTION;
       const x0 = (WIDTH - ACTUAL_SIZE) / 2;
       const y0 = (HEIGHT - ACTUAL_SIZE) / 2;
       const traveler = new RectangleBorderTraveler(
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
-        steps,
-        steps
+        res,
+        res
       );
       const pLen = traveler.points.length;
       const [intervals, intervals2] = [
         [
-          [0, steps],
-          [steps * 2, steps],
+          [0, res],
+          [res * 2, res],
         ],
         [
-          [steps * 4, steps * 3],
-          [steps * 2, steps * 3],
+          [res * 4, res * 3],
+          [res * 2, res * 3],
         ],
         [
           [0, pLen],
-          [steps, pLen + steps],
+          [res, pLen + res],
         ],
       ] as [number, number][][];
       const cb =
@@ -225,7 +224,7 @@ const presets: IPreset<Params>[] = [
     params: {
       TIME_DELTA: 1,
       COLOR: 0,
-      STEPS: 60,
+      RESOLUTION: 60,
       MAX_CURVATURE: 1,
       MIN_CURVATURE: 0,
       PADDING_PERCENT: 20,
@@ -238,7 +237,7 @@ const presets: IPreset<Params>[] = [
     params: {
       TIME_DELTA: 1,
       COLOR: 0,
-      STEPS: 30,
+      RESOLUTION: 30,
       MAX_CURVATURE: 1,
       MIN_CURVATURE: -1,
       PADDING_PERCENT: 50,
@@ -250,7 +249,7 @@ const presets: IPreset<Params>[] = [
   {
     params: {
       TIME_DELTA: 1,
-      STEPS: 6,
+      RESOLUTION: 6,
       MAX_CURVATURE: 1.6,
       MIN_CURVATURE: -0.7999999999999998,
       PADDING_PERCENT: 45,
@@ -263,7 +262,7 @@ const presets: IPreset<Params>[] = [
   {
     params: {
       TIME_DELTA: 0.8,
-      STEPS: 18,
+      RESOLUTION: 18,
       MAX_CURVATURE: 0.6000000000000001,
       MIN_CURVATURE: -0.2999999999999998,
       PADDING_PERCENT: 50,
