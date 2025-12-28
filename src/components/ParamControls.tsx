@@ -9,7 +9,7 @@ import {
   MODAL_OPEN_SEQUENCE,
   type MODAL_OPEN_SEGMENTS,
   type ControlsAnimationParams,
-} from "../main";
+} from "../animations";
 import { ColorSelector } from "./ColorSelector";
 import { BooleanSelector } from "./BooleanSelector";
 

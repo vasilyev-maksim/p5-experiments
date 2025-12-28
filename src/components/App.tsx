@@ -10,7 +10,7 @@ import {
   MODAL_OPEN_SEQUENCE,
   type Ctx,
   type MODAL_OPEN_SEGMENTS,
-} from "../main";
+} from "../animations";
 import { SketchTilesGrid } from "./SketchTilesGrid";
 import { useURLParams } from "../hooks";
 import { delay } from "../utils";

@@ -7,7 +7,7 @@ import {
   type GridAnimationParams,
   type HOME_PAGE_SEGMENTS,
   HOME_PAGE_SEQUENCE,
-} from "../main";
+} from "../animations";
 
 export const SketchTilesGrid = forwardRef<
   HTMLDivElement | null,

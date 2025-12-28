@@ -10,7 +10,7 @@ import {
   MODAL_OPEN_SEQUENCE,
   type MODAL_OPEN_SEGMENTS,
   type PresetsAnimationParams,
-} from "../main";
+} from "../animations";
 
 export function Presets(props: {
   sketch: ISketch;

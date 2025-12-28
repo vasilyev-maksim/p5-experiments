@@ -1,5 +1,5 @@
 import styles from "./Header.module.css";
-import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "../main";
+import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
 
 export function Header() {

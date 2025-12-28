@@ -13,7 +13,7 @@ import {
   MODAL_OPEN_SEQUENCE,
   type Ctx,
   type MODAL_OPEN_SEGMENTS,
-} from "../main";
+} from "../animations";
 import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 
