@@ -6,7 +6,7 @@ import type {
   ISketch,
   ISketchFactory,
 } from "../../models";
-import { RectangleBorderTraveler } from "./traveler";
+import { SquareBorderPointsJoiner } from "./joiner";
 
 const controls = {
   RESOLUTION: {
@@ -88,14 +88,13 @@ const factory: ISketchFactory<Params> =
       const steps = RESOLUTION;
       const x0 = (WIDTH - ACTUAL_SIZE) / 2;
       const y0 = (HEIGHT - ACTUAL_SIZE) / 2;
-      const traveler = new RectangleBorderTraveler(
+      const traveler = new SquareBorderPointsJoiner(
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
         steps,
         steps
       );
 
-      const pLen = traveler.points.length;
       const [intervals, intervals2] = [
         [
           [0, steps],
@@ -105,13 +104,9 @@ const factory: ISketchFactory<Params> =
           [steps * 4, steps * 3],
           [steps * 2, steps * 3],
         ],
-        [
-          [0, pLen],
-          [steps, pLen + steps],
-        ],
       ] as [number, number][][];
 
-      const cb = ([a, b]: [p5.Vector, p5.Vector]) => {
+      const cb = (a: p5.Vector, b: p5.Vector) => {
         const startToEndAngle =
           p.PI / 2 + p.atan(p.abs(b.x - a.x) / p.abs(b.y - a.y));
         const stepAngle = p.map(
@@ -134,8 +129,8 @@ const factory: ISketchFactory<Params> =
         });
       };
 
-      traveler.combineIntervals(intervals[0], intervals[1], cb);
-      traveler.combineIntervals(intervals2[0], intervals2[1], cb);
+      traveler.renderJoints(intervals[0], intervals[1], cb);
+      traveler.renderJoints(intervals2[0], intervals2[1], cb);
     };
   };
 

@@ -29,3 +29,15 @@
   border-style: solid;
   border-radius: var(--outer-radius);
 }
+
+.Bg {
+  border-radius: 3px;
+  background-origin: content-box;
+  background-repeat: no-repeat;
+  border: 1px solid transparent;
+  position: relative;
+  flex: 1;
+  background-clip: padding-box;
+  width: 30px;
+  height: 20px;
+}

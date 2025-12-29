@@ -1,5 +1,5 @@
 import type { IColorControl } from "../models";
-import styles from "./ColorSelector.module.css";
+import { ColorOptionButton } from "./ColorOptionButton";
 import { OptionSelector } from "./OptionSelector";
 
 export function ColorSelector(props: {
@@ -12,17 +12,18 @@ export function ColorSelector(props: {
   const { colors, ...rest } = props;
   return (
     <OptionSelector
-      options={colors.map(([c1, c2], i) => ({
-        value: i,
-        body: (
-          <div
-            className={styles.Bg}
-            style={{
-              backgroundImage: `linear-gradient(to right, ${c1}, ${c2 ?? c1})`,
-            }}
+      valuesCount={colors.length}
+      renderOption={(value, active, onClick) => {
+        const [colorA, colorB] = colors[value];
+        return (
+          <ColorOptionButton
+            active={active}
+            onClick={onClick}
+            colorA={colorA}
+            colorB={colorB}
           />
-        ),
-      }))}
+        );
+      }}
       {...rest}
     />
   );

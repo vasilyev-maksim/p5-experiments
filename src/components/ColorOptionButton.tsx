@@ -1,14 +1,13 @@
 import classNames from "classnames";
 import { useSpring, easings, animated } from "react-spring";
 import styles from "./ColorOptionButton.module.css";
-import type { PropsWithChildren } from "react";
 
-export const ColorOptionButton = (
-  props: PropsWithChildren<{
-    active: boolean;
-    onClick: () => void;
-  }>
-) => {
+export const ColorOptionButton = (props: {
+  active: boolean;
+  onClick: () => void;
+  colorA: string;
+  colorB: string;
+}) => {
   const { x } = useSpring({
     from: { x: props.active ? 0 : 1 },
     to: { x: props.active ? 1 : 0 },
@@ -36,7 +35,14 @@ export const ColorOptionButton = (
           opacity: x.to([0, 1], [0, 1]),
         }}
       />
-      {props.children}
+      <div
+        className={styles.Bg}
+        style={{
+          backgroundImage: `linear-gradient(to right, ${props.colorA}, ${
+            props.colorB ?? props.colorA
+          })`,
+        }}
+      />
     </div>
   );
 };

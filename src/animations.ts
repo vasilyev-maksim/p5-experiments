@@ -54,7 +54,7 @@ export const sequences = [
       timingPayload: {
         itemDelay: 50,
         itemDuration: 300,
-        slidersInitDelay: 500,
+        slidersInitDelay: 700,
       },
       disabledIf: (ctx) => !(ctx as Ctx).controlsPresent,
     }),

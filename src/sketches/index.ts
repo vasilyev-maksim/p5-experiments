@@ -4,8 +4,8 @@ import { pillarsSketch } from "./pillars";
 import { pulse } from "./pulse";
 import { spiralSketch } from "./spiral";
 import { tiles } from "./tiles/tiles";
-import { arcSketch } from "./traveler/arcs";
-import { escalatorSketch } from "./traveler/zigzags";
+import { arcSketch } from "./border-points-joiner/arcs";
+import { escalatorSketch } from "./border-points-joiner/zigzags";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [

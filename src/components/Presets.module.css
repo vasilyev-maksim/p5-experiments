@@ -1,23 +1,10 @@
 .Presets {
-  font-size: 0.9rem;
   display: flex;
   flex-direction: row;
   gap: 5px;
   flex-wrap: wrap;
 }
 
-.PresetButton {
-  padding: 3px 6px;
-  background-color: var(--bgPrimaryColor);
-  border-radius: 5px;
-  transition: 200ms all;
-
-  &:hover {
-    background-color: var(--primaryColorFaded);
-  }
-
-  &.Active {
-    background-color: var(--secondaryColorFaded);
-    color: var(--secondaryColor);
-  }
+.PresetButtonWrapper {
+  display: inline-block;
 }

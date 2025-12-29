@@ -7,14 +7,14 @@ import type {
   ISketchFactory,
 } from "../../models";
 import { oscillateBetween } from "../utils";
-import { RectangleBorderTraveler } from "./traveler";
+import { SquareBorderPointsJoiner, type JoinRenderCallback } from "./joiner";
 
 const controls = {
   RESOLUTION: {
     type: "range",
-    min: 1,
+    min: 2,
     max: 60,
-    step: 1,
+    step: 2,
     label: "Resolution",
   },
   MAX_CURVATURE: {
@@ -44,15 +44,21 @@ const controls = {
   PATTERN_TYPE: {
     type: "choice",
     options: [
-      { label: "type 0", value: 0 },
-      { label: "type 1", value: 1 },
-      { label: "type 2", value: 2 },
+      { label: "0", value: 0 },
+      { label: "1", value: 1 },
+      { label: "2", value: 2 },
+      { label: "3", value: 3 },
     ],
     label: "Pattern type",
   },
-  INVERT_CURVATURE: {
-    type: "boolean",
-    label: "Invert curvature",
+  CURVATURE_TYPE: {
+    type: "choice",
+    options: [
+      { label: "dynamic", value: 0 },
+      { label: "dynamic inverted", value: 1 },
+      { label: "static", value: 2 },
+    ],
+    label: "Curvature type",
   },
   INVERT_COLORS: {
     type: "boolean",
@@ -91,10 +97,11 @@ const factory: ISketchFactory<Params> =
       TIME_DELTA: number,
       RESOLUTION: number,
       PADDING_PERCENT: number,
+      PATTERN_TYPE: number,
       MAX_CURVATURE: number,
       MAX_NEGATIVE_CURVATURE: number,
       INVERT_COLORS: number,
-      INVERT_CURVATURE: number;
+      CURVATURE_TYPE: number;
 
     p.setup = () => {
       p.createCanvas(WIDTH, HEIGHT);
@@ -105,10 +112,11 @@ const factory: ISketchFactory<Params> =
       COLOR_INDEX = props.COLOR;
       TIME_DELTA = props.TIME_DELTA;
       RESOLUTION = props.RESOLUTION;
+      PATTERN_TYPE = props.PATTERN_TYPE;
       MAX_CURVATURE = props.MAX_CURVATURE;
       MAX_NEGATIVE_CURVATURE = props.MAX_NEGATIVE_CURVATURE;
       PADDING_PERCENT = props.PADDING_PERCENT;
-      INVERT_CURVATURE = props.INVERT_CURVATURE;
+      CURVATURE_TYPE = props.CURVATURE_TYPE;
       INVERT_COLORS = props.INVERT_COLORS;
 
       if (props.playing) {
@@ -122,40 +130,30 @@ const factory: ISketchFactory<Params> =
       p.background(BG_COLOR);
 
       const ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100);
-      const res = RESOLUTION;
+      const r = RESOLUTION,
+        r2 = r * 2,
+        r3 = r * 3,
+        r4 = r * 4;
       const x0 = (WIDTH - ACTUAL_SIZE) / 2;
       const y0 = (HEIGHT - ACTUAL_SIZE) / 2;
-      const traveler = new RectangleBorderTraveler(
+      const joiner = new SquareBorderPointsJoiner(
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
-        res,
-        res
+        r,
+        r
       );
-      const pLen = traveler.points.length;
-      const [intervals, intervals2] = [
-        [
-          [0, res * 2],
-          [res * 2, 0],
-        ],
-        [
-          [res * 2, res * 4],
-          [res * 4, res * 2],
-        ],
-        [
-          [0, pLen],
-          [res, pLen + res],
-        ],
-      ] as [number, number][][];
+      // const pLen = joiner.points.length;
 
-      const cb =
+      const render =
         (curvatureSign: 1 | -1) =>
-        ([a, b]: [p5.Vector, p5.Vector], i: number, n: number) => {
+        (a: p5.Vector, b: p5.Vector, i: number, n: number) => {
           if (a.equals(b)) return;
+
           const halfDiagonal = (ACTUAL_SIZE * 2) / p.sqrt(2);
+          const curvatureFactor =
+            CURVATURE_TYPE === 0 ? i / n : CURVATURE_TYPE === 1 ? 1 - i / n : 1;
           const distanceToDiagonal =
-            (INVERT_CURVATURE ? 1 - i / n : i / n) *
-              halfDiagonal *
-              curvatureSign || 1;
+            curvatureFactor * halfDiagonal * curvatureSign || 1;
           const curvature = oscillateBetween(
             p,
             distanceToDiagonal * MAX_NEGATIVE_CURVATURE * -1,
@@ -179,8 +177,38 @@ const factory: ISketchFactory<Params> =
           });
         };
 
-      traveler.combineIntervals(intervals[0], intervals[1], cb(1));
-      traveler.combineIntervals(intervals2[0], intervals2[1], cb(1));
+      let intervals: [[number, number], [number, number], JoinRenderCallback][];
+      if (PATTERN_TYPE === 0) {
+        intervals = [
+          [[0, r2], [r2, 0], render(1)],
+          [[r2, r4], [r4, r2], render(1)],
+        ];
+      } else if (PATTERN_TYPE === 1) {
+        intervals = [
+          [[0, r], [r2, r], render(1)],
+          [[r4, r3], [r2, r3], render(-1)],
+        ];
+      } else if (PATTERN_TYPE === 2) {
+        intervals = [
+          [[0, r], [r, r2], render(1)],
+          [[r3, r4], [r2, r3], render(-1)],
+          [[r, r2], [r2, r3], render(1)],
+          [[0, r], [r3, r4], render(-1)],
+        ];
+      } else {
+        intervals = [
+          [[0, r / 2], [r2 + r / 2, r2], render(1)],
+          [[r, r / 2], [r3 - r / 2, r3], render(-1)],
+          // [[r, r / 2], [r2, r2 + r / 2], render(-1)],
+          // [[r3, r4], [r2, r3], render(-1)],
+          // [[r, r2], [r2, r3], render(1)],
+          // [[0, r], [r3, r4], render(-1)],
+        ];
+      }
+
+      intervals.forEach(([starts, ends, cb]) => {
+        joiner.renderJoints(starts, ends, cb);
+      });
 
       time += TIME_DELTA;
     };
@@ -239,9 +267,9 @@ const presets: IPreset<Params>[] = [
       MAX_CURVATURE: 1,
       MAX_NEGATIVE_CURVATURE: 0,
       PADDING_PERCENT: 20,
-      INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
-      PATTERN_TYPE: 0,
+      PATTERN_TYPE: 1,
+      CURVATURE_TYPE: 0,
     },
     name: "touch",
   },
@@ -249,13 +277,13 @@ const presets: IPreset<Params>[] = [
     params: {
       TIME_DELTA: 1,
       COLOR: 0,
-      RESOLUTION: 30,
-      MAX_CURVATURE: 1,
-      MAX_NEGATIVE_CURVATURE: 1,
+      RESOLUTION: 18,
+      MAX_CURVATURE: 1.2,
+      MAX_NEGATIVE_CURVATURE: 0.2,
       PADDING_PERCENT: 50,
-      INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
       PATTERN_TYPE: 0,
+      CURVATURE_TYPE: 0,
     },
     name: "mayonnaise",
   },
@@ -267,9 +295,9 @@ const presets: IPreset<Params>[] = [
       MAX_NEGATIVE_CURVATURE: 0.8,
       PADDING_PERCENT: 45,
       COLOR: 0,
-      INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
       PATTERN_TYPE: 0,
+      CURVATURE_TYPE: 0,
     },
     name: "croissant",
   },
@@ -281,11 +309,67 @@ const presets: IPreset<Params>[] = [
       MAX_NEGATIVE_CURVATURE: 0.3,
       PADDING_PERCENT: 50,
       COLOR: 0,
-      INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
-      PATTERN_TYPE: 0,
+      PATTERN_TYPE: 2,
+      CURVATURE_TYPE: 0,
     },
     name: "cookie",
+  },
+  {
+    params: {
+      TIME_DELTA: 1.5,
+      RESOLUTION: 60,
+      MAX_CURVATURE: 1.2,
+      MAX_NEGATIVE_CURVATURE: 0,
+      PADDING_PERCENT: 50,
+      COLOR: 1,
+      INVERT_COLORS: 0,
+      PATTERN_TYPE: 2,
+      CURVATURE_TYPE: 0,
+    },
+    name: "shutter",
+  },
+  {
+    params: {
+      TIME_DELTA: 1,
+      RESOLUTION: 60,
+      MAX_CURVATURE: 0.5,
+      MAX_NEGATIVE_CURVATURE: 1.5,
+      PADDING_PERCENT: 31,
+      COLOR: 0,
+      INVERT_COLORS: 0,
+      PATTERN_TYPE: 2,
+      CURVATURE_TYPE: 2,
+    },
+    name: "test",
+  },
+  {
+    params: {
+      TIME_DELTA: 1,
+      RESOLUTION: 12,
+      MAX_CURVATURE: 0.1,
+      MAX_NEGATIVE_CURVATURE: 0.1,
+      PADDING_PERCENT: 45,
+      COLOR: 0,
+      INVERT_COLORS: 0,
+      PATTERN_TYPE: 0,
+      CURVATURE_TYPE: 2,
+    },
+    name: "cookie 2",
+  },
+  {
+    params: {
+      TIME_DELTA: 2,
+      RESOLUTION: 12,
+      MAX_CURVATURE: 0.2,
+      MAX_NEGATIVE_CURVATURE: 0.1,
+      PADDING_PERCENT: 45,
+      COLOR: 0,
+      INVERT_COLORS: 0,
+      PATTERN_TYPE: 2,
+      CURVATURE_TYPE: 2,
+    },
+    name: "cookie 3",
   },
 ];
 
@@ -299,5 +383,5 @@ export const arcSketch: ISketch<Params> = {
   timeShift: 236,
   controls,
   presets,
-  defaultParams: presets[3].params,
+  defaultParams: presets[0].params,
 };

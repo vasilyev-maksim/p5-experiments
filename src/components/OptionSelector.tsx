@@ -1,15 +1,20 @@
 import styles from "./OptionSelector.module.css";
-import { OptionButton } from "./OptionButton";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { delay } from "../utils";
 
 export function OptionSelector(props: {
-  options: { value: number; body: React.ReactNode }[];
+  valuesCount: number;
+  renderOption: (
+    value: number,
+    active: boolean,
+    onClick: () => void
+  ) => React.ReactNode;
   value: number;
   onChange: (val: number) => void;
   title?: string;
   initDelay?: number;
   className?: string;
+  gap?: number;
 }) {
   const [initialized, setInitialized] = useState(false);
   useEffect(() => {
@@ -19,15 +24,15 @@ export function OptionSelector(props: {
   return (
     <div className={props.className}>
       {props.title && <div className={styles.Title}>{props.title}</div>}
-      <div className={styles.ButtonsBlock}>
-        {props.options.map(({ value, body }) => (
-          <OptionButton
-            key={value}
-            active={initialized && value === props.value}
-            onClick={() => props.onChange(value)}
-          >
-            {body}
-          </OptionButton>
+      <div className={styles.OptionsBlock} style={{ gap: props.gap ?? 0 }}>
+        {Array.from({ length: props.valuesCount }).map((_, value) => (
+          <Fragment key={value}>
+            {props.renderOption(
+              value,
+              initialized && value === props.value,
+              () => props.onChange(value)
+            )}
+          </Fragment>
         ))}
       </div>
     </div>

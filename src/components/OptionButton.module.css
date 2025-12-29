@@ -1,31 +1,20 @@
-.Wrapper {
-  --outer-radius: 6px;
-
-  position: relative;
-  padding: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+.OptionButton {
+  padding: 3px 6px;
+  background-color: var(--bgPrimaryColor);
+  border-radius: 5px;
   transition: 200ms all;
-  border-radius: var(--outer-radius);
 
-  &:focus-visible {
-    outline: none;
+  &:hover {
     background-color: var(--primaryColorFaded);
   }
 
   &.Active {
-    background-color: unset;
+    background-color: var(--secondaryColorFaded);
+    color: var(--secondaryColor);
   }
-}
 
-.Frame {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
-  border-color: var(--primaryColor);
-  border-style: solid;
-  border-radius: var(--outer-radius);
+  &.Mini {
+    padding: 0px 5px;
+    font-size: 0.85rem;
+  }
 }

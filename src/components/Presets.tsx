@@ -1,7 +1,6 @@
 import type { IParams, IPreset, ISketch } from "../models";
 import styles from "./Presets.module.css";
 import { areParamsEqual, delay } from "../utils";
-import classNames from "classnames";
 import { SectionLayout } from "./SectionLayout";
 import { animated, easings, useSprings } from "react-spring";
 import { useState } from "react";
@@ -11,6 +10,7 @@ import {
   type MODAL_OPEN_SEGMENTS,
   type PresetsAnimationParams,
 } from "../animations";
+import { OptionButton } from "./OptionButton";
 
 export function Presets(props: {
   sketch: ISketch;
@@ -58,20 +58,21 @@ export function Presets(props: {
             const p = props.sketch.presets?.[i]!;
             const isActive = areParamsEqual(props.params, p.params);
             return (
-              <animated.button
+              <animated.div
                 tabIndex={1}
                 key={i}
-                className={classNames(styles.PresetButton, {
-                  [styles.Active]: isActive,
-                })}
-                onClick={() => props.onApply(p)}
+                className={styles.PresetButtonWrapper}
                 style={{
                   opacity: x,
                   scale: x.to([0, 1], [0.9, 1]),
                 }}
               >
-                {p.name ?? i}
-              </animated.button>
+                <OptionButton
+                  label={p.name ?? i.toString()}
+                  active={isActive}
+                  onClick={() => props.onApply(p)}
+                />
+              </animated.div>
             );
           })}
         </div>

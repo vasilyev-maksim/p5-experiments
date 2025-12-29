@@ -1,7 +1,14 @@
 import p5 from "p5";
 
-export class RectangleBorderTraveler {
-  public readonly points: p5.Vector[] = [];
+export type JoinRenderCallback = (
+  start: p5.Vector,
+  end: p5.Vector,
+  index: number,
+  totalCount: number
+) => void;
+
+export class SquareBorderPointsJoiner {
+  private points: p5.Vector[] = [];
 
   public constructor(
     private readonly a: p5.Vector,
@@ -30,32 +37,26 @@ export class RectangleBorderTraveler {
     }
   }
 
-  public combineIntervals(
-    startIndexes: [number, number],
-    endIndexes: [number, number],
-    cb: (
-      interval: [p5.Vector, p5.Vector],
-      index: number,
-      intervalsCount: number
-    ) => void
-  ): void {
-    const starts = this.cyclicSubset(this.points, ...startIndexes);
-    const ends = this.cyclicSubset(this.points, ...endIndexes);
+  public renderJoints(
+    startPointsInterval: [number, number],
+    endPointsInterval: [number, number],
+    cb: JoinRenderCallback
+  ) {
+    const starts = this.cyclicSubset(...startPointsInterval);
+    const ends = this.cyclicSubset(...endPointsInterval);
 
-    const intervals = starts
-      .map((start, i) => (ends[i] ? [start, ends[i]] : null), [])
-      .filter(Boolean) as [p5.Vector, p5.Vector][];
-
-    intervals.forEach((x, i, arr) => cb(x, i, arr.length || 0));
+    starts.forEach((start, i, arr) =>
+      cb(this.points[start], this.points[ends[i]], i, arr.length || 0)
+    );
   }
 
-  private cyclicSubset<T>(arr: T[], start: number, end: number): T[] {
+  private cyclicSubset(start: number, end: number): number[] {
     const result = [];
-    const len = arr.length;
+    const len = this.points.length;
     const step = start < end ? 1 : -1; // Определяем направление
 
     for (let i = start; i !== end; i += step) {
-      result.push(arr[((i % len) + len) % len]); // Обеспечиваем циклический доступ к элементам массива
+      result.push(((i % len) + len) % len); // Обеспечиваем циклический доступ к элементам массива
     }
 
     return result;

@@ -11,8 +11,8 @@ import {
   type ControlsAnimationParams,
 } from "../animations";
 import { ColorSelector } from "./ColorSelector";
-import { BooleanSelector } from "./BooleanSelector";
 import { OptionSelector } from "./OptionSelector";
+import { OptionButton } from "./OptionButton";
 
 export function ParamControls(props: {
   sketch: ISketch<string>;
@@ -92,24 +92,40 @@ export function ParamControls(props: {
             );
           } else if (c.type === "boolean") {
             body = (
-              <BooleanSelector
+              <OptionSelector
+                valuesCount={2}
                 title={c.label}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}
                 initDelay={controlsInitDelay}
+                renderOption={(value, active, onClick) => (
+                  <OptionButton
+                    mini
+                    active={active}
+                    onClick={onClick}
+                    label={["Nope", "Yeap"][value]}
+                  />
+                )}
+                gap={5}
               />
             );
           } else if (c.type === "choice") {
             body = (
               <OptionSelector
-                options={c.options.map((x) => ({
-                  body: <div className={styles.ChoiceButton}>{x.label}</div>,
-                  value: x.value,
-                }))}
+                valuesCount={c.options.length}
+                renderOption={(value, active, onClick) => (
+                  <OptionButton
+                    active={active}
+                    onClick={onClick}
+                    label={c.options[value].label}
+                    mini
+                  />
+                )}
                 title={c.label}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}
                 initDelay={controlsInitDelay}
+                gap={5}
               />
             );
           }
