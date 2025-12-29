@@ -20,17 +20,17 @@ const controls = {
   MAX_CURVATURE: {
     type: "range",
     min: 0,
-    max: 2.5,
+    max: 2,
     step: 0.1,
     label: "Max curvature",
     valueFormatter: (x) => x.toFixed(1),
   },
-  MIN_CURVATURE: {
+  MAX_NEGATIVE_CURVATURE: {
     type: "range",
-    min: -2.5,
-    max: 0,
+    min: 0,
+    max: 2,
     step: 0.1,
-    label: "Min curvature",
+    label: "Max negative curvature",
     valueFormatter: (x) => x.toFixed(1),
   },
   PADDING_PERCENT: {
@@ -40,6 +40,15 @@ const controls = {
     step: 1,
     label: "Padding",
     valueFormatter: (x) => x + "%",
+  },
+  PATTERN_TYPE: {
+    type: "choice",
+    options: [
+      { label: "type 0", value: 0 },
+      { label: "type 1", value: 1 },
+      { label: "type 2", value: 2 },
+    ],
+    label: "Pattern type",
   },
   INVERT_CURVATURE: {
     type: "boolean",
@@ -82,8 +91,8 @@ const factory: ISketchFactory<Params> =
       TIME_DELTA: number,
       RESOLUTION: number,
       PADDING_PERCENT: number,
-      MIN_CURVATURE: number,
       MAX_CURVATURE: number,
+      MAX_NEGATIVE_CURVATURE: number,
       INVERT_COLORS: number,
       INVERT_CURVATURE: number;
 
@@ -97,7 +106,7 @@ const factory: ISketchFactory<Params> =
       TIME_DELTA = props.TIME_DELTA;
       RESOLUTION = props.RESOLUTION;
       MAX_CURVATURE = props.MAX_CURVATURE;
-      MIN_CURVATURE = props.MIN_CURVATURE;
+      MAX_NEGATIVE_CURVATURE = props.MAX_NEGATIVE_CURVATURE;
       PADDING_PERCENT = props.PADDING_PERCENT;
       INVERT_CURVATURE = props.INVERT_CURVATURE;
       INVERT_COLORS = props.INVERT_COLORS;
@@ -125,21 +134,23 @@ const factory: ISketchFactory<Params> =
       const pLen = traveler.points.length;
       const [intervals, intervals2] = [
         [
-          [0, res],
-          [res * 2, res],
+          [0, res * 2],
+          [res * 2, 0],
         ],
         [
-          [res * 4, res * 3],
-          [res * 2, res * 3],
+          [res * 2, res * 4],
+          [res * 4, res * 2],
         ],
         [
           [0, pLen],
           [res, pLen + res],
         ],
       ] as [number, number][][];
+
       const cb =
         (curvatureSign: 1 | -1) =>
         ([a, b]: [p5.Vector, p5.Vector], i: number, n: number) => {
+          if (a.equals(b)) return;
           const halfDiagonal = (ACTUAL_SIZE * 2) / p.sqrt(2);
           const distanceToDiagonal =
             (INVERT_CURVATURE ? 1 - i / n : i / n) *
@@ -147,7 +158,7 @@ const factory: ISketchFactory<Params> =
               curvatureSign || 1;
           const curvature = oscillateBetween(
             p,
-            distanceToDiagonal * MIN_CURVATURE,
+            distanceToDiagonal * MAX_NEGATIVE_CURVATURE * -1,
             distanceToDiagonal * MAX_CURVATURE,
             0.02,
             time
@@ -169,7 +180,7 @@ const factory: ISketchFactory<Params> =
         };
 
       traveler.combineIntervals(intervals[0], intervals[1], cb(1));
-      traveler.combineIntervals(intervals2[0], intervals2[1], cb(-1));
+      traveler.combineIntervals(intervals2[0], intervals2[1], cb(1));
 
       time += TIME_DELTA;
     };
@@ -226,10 +237,11 @@ const presets: IPreset<Params>[] = [
       COLOR: 0,
       RESOLUTION: 60,
       MAX_CURVATURE: 1,
-      MIN_CURVATURE: 0,
+      MAX_NEGATIVE_CURVATURE: 0,
       PADDING_PERCENT: 20,
       INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
+      PATTERN_TYPE: 0,
     },
     name: "touch",
   },
@@ -239,10 +251,11 @@ const presets: IPreset<Params>[] = [
       COLOR: 0,
       RESOLUTION: 30,
       MAX_CURVATURE: 1,
-      MIN_CURVATURE: -1,
+      MAX_NEGATIVE_CURVATURE: 1,
       PADDING_PERCENT: 50,
       INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
+      PATTERN_TYPE: 0,
     },
     name: "mayonnaise",
   },
@@ -251,11 +264,12 @@ const presets: IPreset<Params>[] = [
       TIME_DELTA: 1,
       RESOLUTION: 6,
       MAX_CURVATURE: 1.6,
-      MIN_CURVATURE: -0.7999999999999998,
+      MAX_NEGATIVE_CURVATURE: 0.8,
       PADDING_PERCENT: 45,
       COLOR: 0,
       INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
+      PATTERN_TYPE: 0,
     },
     name: "croissant",
   },
@@ -263,12 +277,13 @@ const presets: IPreset<Params>[] = [
     params: {
       TIME_DELTA: 0.8,
       RESOLUTION: 18,
-      MAX_CURVATURE: 0.6000000000000001,
-      MIN_CURVATURE: -0.2999999999999998,
+      MAX_CURVATURE: 0.6,
+      MAX_NEGATIVE_CURVATURE: 0.3,
       PADDING_PERCENT: 50,
       COLOR: 0,
       INVERT_CURVATURE: 0,
       INVERT_COLORS: 0,
+      PATTERN_TYPE: 0,
     },
     name: "cookie",
   },
@@ -284,5 +299,5 @@ export const arcSketch: ISketch<Params> = {
   timeShift: 236,
   controls,
   presets,
-  defaultParams: presets[0].params,
+  defaultParams: presets[3].params,
 };

@@ -12,7 +12,7 @@ export type ISketchFactory<ParamKey extends string = string> = (
 ) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
 interface IControlBase {
-  label?: string;
+  label: string;
   valueFormatter?: (value: number, control: this) => string;
 }
 
@@ -34,7 +34,7 @@ export interface IColorControl extends IControlBase {
 
 export interface IChoiceControl extends IControlBase {
   type: "choice";
-  options: { label: string; value: string }[];
+  options: { label: string; value: number }[];
 }
 
 export type IParams<ParamKey extends string = string> = Record<

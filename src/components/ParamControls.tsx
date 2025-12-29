@@ -12,6 +12,7 @@ import {
 } from "../animations";
 import { ColorSelector } from "./ColorSelector";
 import { BooleanSelector } from "./BooleanSelector";
+import { OptionSelector } from "./OptionSelector";
 
 export function ParamControls(props: {
   sketch: ISketch<string>;
@@ -92,6 +93,19 @@ export function ParamControls(props: {
           } else if (c.type === "boolean") {
             body = (
               <BooleanSelector
+                title={c.label}
+                value={props.params[key]}
+                onChange={(val) => props.onParamChange(key, val)}
+                initDelay={controlsInitDelay}
+              />
+            );
+          } else if (c.type === "choice") {
+            body = (
+              <OptionSelector
+                options={c.options.map((x) => ({
+                  body: <div className={styles.ChoiceButton}>{x.label}</div>,
+                  value: x.value,
+                }))}
                 title={c.label}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}

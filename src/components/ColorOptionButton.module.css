@@ -1,0 +1,31 @@
+.Wrapper {
+  --outer-radius: 6px;
+
+  position: relative;
+  padding: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 200ms all;
+  border-radius: var(--outer-radius);
+
+  &:focus-visible {
+    outline: none;
+    background-color: var(--primaryColorFaded);
+  }
+
+  &.Active {
+    background-color: unset;
+  }
+}
+
+.Frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border-color: var(--primaryColor);
+  border-style: solid;
+  border-radius: var(--outer-radius);
+}
