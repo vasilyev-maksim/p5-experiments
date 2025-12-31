@@ -21,17 +21,17 @@ const controls = {
     type: "range",
     min: 0,
     max: 2,
-    step: 0.1,
+    step: 0.05,
     label: "Max curvature",
-    valueFormatter: (x) => x.toFixed(1),
+    valueFormatter: (x) => x.toFixed(2),
   },
   MAX_NEGATIVE_CURVATURE: {
     type: "range",
     min: 0,
     max: 2,
-    step: 0.1,
+    step: 0.05,
     label: "Max negative curvature",
-    valueFormatter: (x) => x.toFixed(1),
+    valueFormatter: (x) => x.toFixed(2),
   },
   PADDING_PERCENT: {
     type: "range",
@@ -44,10 +44,10 @@ const controls = {
   PATTERN_TYPE: {
     type: "choice",
     options: [
-      { label: "0", value: 0 },
-      { label: "1", value: 1 },
-      { label: "2", value: 2 },
-      { label: "3", value: 3 },
+      { label: "#1", value: 0 },
+      { label: "#2", value: 1 },
+      { label: "#3", value: 2 },
+      { label: "#4", value: 3 },
     ],
     label: "Pattern type",
   },
@@ -142,12 +142,14 @@ const factory: ISketchFactory<Params> =
         r,
         r
       );
+
+      // joiner.renderPoints(p);
       // const pLen = joiner.points.length;
 
       const render =
         (curvatureSign: 1 | -1) =>
         (a: p5.Vector, b: p5.Vector, i: number, n: number) => {
-          if (a.equals(b)) return;
+          if (a.equals(b) || !a || !b) return;
 
           const halfDiagonal = (ACTUAL_SIZE * 2) / p.sqrt(2);
           const curvatureFactor =
@@ -197,9 +199,10 @@ const factory: ISketchFactory<Params> =
         ];
       } else {
         intervals = [
-          [[0, r / 2], [r2 + r / 2, r2], render(1)],
-          [[r, r / 2], [r3 - r / 2, r3], render(-1)],
-          // [[r, r / 2], [r2, r2 + r / 2], render(-1)],
+          [[0, r / 2], [r2 + (r * 3) / 4, r2 + r / 4], render(1)],
+          [[r, r / 2], [r2 + r / 4, r2 + (r * 3) / 4], render(-1)],
+          [[r3, r2 + r / 2], [r / 4, r - r / 4], render(-1)],
+          [[r2, r2 + r / 2], [r - r / 4, r / 4], render(1)],
           // [[r3, r4], [r2, r3], render(-1)],
           // [[r, r2], [r2, r3], render(1)],
           // [[0, r], [r3, r4], render(-1)],
@@ -278,37 +281,37 @@ const presets: IPreset<Params>[] = [
       TIME_DELTA: 1,
       COLOR: 0,
       RESOLUTION: 18,
-      MAX_CURVATURE: 1.2,
-      MAX_NEGATIVE_CURVATURE: 0.2,
+      MAX_CURVATURE: 1,
+      MAX_NEGATIVE_CURVATURE: 0,
       PADDING_PERCENT: 50,
       INVERT_COLORS: 0,
       PATTERN_TYPE: 0,
       CURVATURE_TYPE: 0,
     },
-    name: "mayonnaise",
+    name: "khachapuri",
   },
   {
     params: {
       TIME_DELTA: 1,
       RESOLUTION: 6,
-      MAX_CURVATURE: 1.6,
-      MAX_NEGATIVE_CURVATURE: 0.8,
+      MAX_CURVATURE: 2,
+      MAX_NEGATIVE_CURVATURE: 0.6,
       PADDING_PERCENT: 45,
       COLOR: 0,
       INVERT_COLORS: 0,
-      PATTERN_TYPE: 0,
+      PATTERN_TYPE: 1,
       CURVATURE_TYPE: 0,
     },
     name: "croissant",
   },
   {
     params: {
-      TIME_DELTA: 0.8,
-      RESOLUTION: 18,
-      MAX_CURVATURE: 0.6,
-      MAX_NEGATIVE_CURVATURE: 0.3,
+      TIME_DELTA: 1.5,
+      RESOLUTION: 20,
+      MAX_CURVATURE: 0.75,
+      MAX_NEGATIVE_CURVATURE: 2,
       PADDING_PERCENT: 50,
-      COLOR: 0,
+      COLOR: 2,
       INVERT_COLORS: 0,
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 0,
@@ -327,7 +330,7 @@ const presets: IPreset<Params>[] = [
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 0,
     },
-    name: "shutter",
+    name: "flower",
   },
   {
     params: {
@@ -341,35 +344,49 @@ const presets: IPreset<Params>[] = [
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 2,
     },
-    name: "test",
+    name: "cube",
   },
   {
     params: {
       TIME_DELTA: 1,
-      RESOLUTION: 12,
-      MAX_CURVATURE: 0.1,
-      MAX_NEGATIVE_CURVATURE: 0.1,
+      RESOLUTION: 6,
+      MAX_CURVATURE: 0.025,
+      MAX_NEGATIVE_CURVATURE: 0.025,
       PADDING_PERCENT: 45,
-      COLOR: 0,
+      COLOR: 2,
       INVERT_COLORS: 0,
       PATTERN_TYPE: 0,
       CURVATURE_TYPE: 2,
     },
-    name: "cookie 2",
+    name: "scars",
   },
   {
     params: {
-      TIME_DELTA: 2,
-      RESOLUTION: 12,
-      MAX_CURVATURE: 0.2,
-      MAX_NEGATIVE_CURVATURE: 0.1,
+      TIME_DELTA: 1.2000000000000002,
+      RESOLUTION: 30,
+      MAX_CURVATURE: 0.9,
+      MAX_NEGATIVE_CURVATURE: 0.5,
       PADDING_PERCENT: 45,
       COLOR: 0,
       INVERT_COLORS: 0,
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 2,
     },
-    name: "cookie 3",
+    name: "demogorgon",
+  },
+  {
+    params: {
+      TIME_DELTA: 1.5,
+      COLOR: 0,
+      RESOLUTION: 60,
+      MAX_CURVATURE: 0.7999999999999997,
+      MAX_NEGATIVE_CURVATURE: 0,
+      PADDING_PERCENT: 34,
+      INVERT_COLORS: 0,
+      PATTERN_TYPE: 3,
+      CURVATURE_TYPE: 1,
+    },
+    name: "torus",
   },
 ];
 

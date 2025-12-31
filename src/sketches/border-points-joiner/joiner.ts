@@ -37,6 +37,17 @@ export class SquareBorderPointsJoiner {
     }
   }
 
+  public renderPoints(p: p5) {
+    p.push();
+    {
+      p.stroke("white");
+      this.points.forEach(({ x, y }) => {
+        p.circle(x, y, 5);
+      });
+    }
+    p.pop();
+  }
+
   public renderJoints(
     startPointsInterval: [number, number],
     endPointsInterval: [number, number],
@@ -46,17 +57,22 @@ export class SquareBorderPointsJoiner {
     const ends = this.cyclicSubset(...endPointsInterval);
 
     starts.forEach((start, i, arr) =>
-      cb(this.points[start], this.points[ends[i]], i, arr.length || 0)
+      cb(
+        this.points[Math.floor(start)],
+        this.points[Math.floor(ends[i])],
+        i,
+        arr.length || 0
+      )
     );
   }
 
   private cyclicSubset(start: number, end: number): number[] {
     const result = [];
     const len = this.points.length;
-    const step = start < end ? 1 : -1; // Определяем направление
+    const step = start < end ? 1 : -1;
 
-    for (let i = start; i !== end; i += step) {
-      result.push(((i % len) + len) % len); // Обеспечиваем циклический доступ к элементам массива
+    for (let i = start; i !== end + step; i += step) {
+      result.push(((i % len) + len) % len); // considers negative indexes too
     }
 
     return result;
