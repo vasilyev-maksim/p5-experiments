@@ -77,8 +77,8 @@ const controls = {
     colors: [
       ["#0000ffff", "#ea72f7ff"],
       ["#fcff39ff", "#c04affff"],
-      ["#13005fff", "#a3ff9aff"],
-      ["#ffffffff", "#1e00c8ff"],
+      ["#18005fff", "#5aff4aff"],
+      // ["#ffffffff", "#1e00c8ff"],
       ["#ffffffff", "#000000ff"],
     ],
     label: "Color",
@@ -307,16 +307,30 @@ const presets: IPreset<Params>[] = [
   {
     params: {
       TIME_DELTA: 1.5,
-      RESOLUTION: 20,
-      MAX_CURVATURE: 0.75,
-      MAX_NEGATIVE_CURVATURE: 2,
-      PADDING_PERCENT: 50,
-      COLOR: 2,
+      COLOR: 0,
+      RESOLUTION: 60,
+      MAX_CURVATURE: 0.7999999999999997,
+      MAX_NEGATIVE_CURVATURE: 0,
+      PADDING_PERCENT: 34,
       INVERT_COLORS: 0,
+      PATTERN_TYPE: 3,
+      CURVATURE_TYPE: 1,
+    },
+    name: "torus",
+  },
+  {
+    params: {
+      TIME_DELTA: 1,
+      RESOLUTION: 20,
+      MAX_CURVATURE: 0.1,
+      MAX_NEGATIVE_CURVATURE: 3,
+      PADDING_PERCENT: 50,
+      COLOR: 3,
+      INVERT_COLORS: 1,
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 0,
     },
-    name: "cookie",
+    name: "springs",
   },
   {
     params: {
@@ -373,20 +387,6 @@ const presets: IPreset<Params>[] = [
       CURVATURE_TYPE: 2,
     },
     name: "demogorgon",
-  },
-  {
-    params: {
-      TIME_DELTA: 1.5,
-      COLOR: 0,
-      RESOLUTION: 60,
-      MAX_CURVATURE: 0.7999999999999997,
-      MAX_NEGATIVE_CURVATURE: 0,
-      PADDING_PERCENT: 34,
-      INVERT_COLORS: 0,
-      PATTERN_TYPE: 3,
-      CURVATURE_TYPE: 1,
-    },
-    name: "torus",
   },
 ];
 
