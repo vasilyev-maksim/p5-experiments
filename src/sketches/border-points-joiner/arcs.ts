@@ -14,7 +14,7 @@ const controls = {
     type: "range",
     min: 2,
     max: 60,
-    step: 2,
+    step: 1,
     label: "Resolution",
   },
   MAX_CURVATURE: {
@@ -48,6 +48,7 @@ const controls = {
       { label: "#2", value: 1 },
       { label: "#3", value: 2 },
       { label: "#4", value: 3 },
+      { label: "#5", value: 4 },
     ],
     label: "Pattern type",
   },
@@ -182,13 +183,13 @@ const factory: ISketchFactory<Params> =
       let intervals: [[number, number], [number, number], JoinRenderCallback][];
       if (PATTERN_TYPE === 0) {
         intervals = [
-          [[0, r2], [r2, 0], render(1)],
-          [[r2, r4], [r4, r2], render(1)],
+          [[0, r], [r2, r], render(1)],
+          [[r4, r3], [r2, r3], render(-1)],
         ];
       } else if (PATTERN_TYPE === 1) {
         intervals = [
-          [[0, r], [r2, r], render(1)],
-          [[r4, r3], [r2, r3], render(-1)],
+          [[0, r2], [r2, 0], render(1)],
+          [[r2, r4], [r4, r2], render(1)],
         ];
       } else if (PATTERN_TYPE === 2) {
         intervals = [
@@ -197,15 +198,23 @@ const factory: ISketchFactory<Params> =
           [[r, r2], [r2, r3], render(1)],
           [[0, r], [r3, r4], render(-1)],
         ];
-      } else {
+      } else if (PATTERN_TYPE === 3) {
         intervals = [
           [[0, r / 2], [r2 + (r * 3) / 4, r2 + r / 4], render(1)],
           [[r, r / 2], [r2 + r / 4, r2 + (r * 3) / 4], render(-1)],
           [[r3, r2 + r / 2], [r / 4, r - r / 4], render(-1)],
           [[r2, r2 + r / 2], [r - r / 4, r / 4], render(1)],
-          // [[r3, r4], [r2, r3], render(-1)],
-          // [[r, r2], [r2, r3], render(1)],
-          // [[0, r], [r3, r4], render(-1)],
+        ];
+      } else {
+        intervals = [
+          [[0, r / 2], [r, r - r / 2], render(1)],
+          [[r, r / 2], [r, r + r / 2], render(1)],
+          [[r, r + r / 2], [r2, r2 - r / 2], render(1)],
+          [[r2, r + r / 2], [r2, r2 + r / 2], render(1)],
+          [[r2, r2 + r / 2], [r3, r3 - r / 2], render(1)],
+          [[r3, r2 + r / 2], [r3, r3 + r / 2], render(1)],
+          [[r3, r3 + r / 2], [0, -r / 2], render(1)],
+          [[r4, r3 + r / 2], [r4, r4 + r / 2], render(1)],
         ];
       }
 
@@ -271,7 +280,7 @@ const presets: IPreset<Params>[] = [
       MAX_NEGATIVE_CURVATURE: 0,
       PADDING_PERCENT: 20,
       INVERT_COLORS: 0,
-      PATTERN_TYPE: 1,
+      PATTERN_TYPE: 0,
       CURVATURE_TYPE: 0,
     },
     name: "touch",
@@ -285,7 +294,7 @@ const presets: IPreset<Params>[] = [
       MAX_NEGATIVE_CURVATURE: 0,
       PADDING_PERCENT: 50,
       INVERT_COLORS: 0,
-      PATTERN_TYPE: 0,
+      PATTERN_TYPE: 1,
       CURVATURE_TYPE: 0,
     },
     name: "khachapuri",
@@ -299,7 +308,7 @@ const presets: IPreset<Params>[] = [
       PADDING_PERCENT: 45,
       COLOR: 0,
       INVERT_COLORS: 0,
-      PATTERN_TYPE: 1,
+      PATTERN_TYPE: 0,
       CURVATURE_TYPE: 0,
     },
     name: "croissant",
@@ -369,7 +378,7 @@ const presets: IPreset<Params>[] = [
       PADDING_PERCENT: 45,
       COLOR: 2,
       INVERT_COLORS: 0,
-      PATTERN_TYPE: 0,
+      PATTERN_TYPE: 1,
       CURVATURE_TYPE: 2,
     },
     name: "scars",
@@ -388,6 +397,34 @@ const presets: IPreset<Params>[] = [
     },
     name: "demogorgon",
   },
+  {
+    params: {
+      TIME_DELTA: 0.8,
+      RESOLUTION: 60,
+      MAX_CURVATURE: 0.5,
+      MAX_NEGATIVE_CURVATURE: 0.5,
+      PADDING_PERCENT: 45,
+      COLOR: 1,
+      INVERT_COLORS: 0,
+      PATTERN_TYPE: 4,
+      CURVATURE_TYPE: 2,
+    },
+    name: "cotton",
+  },
+  {
+    params: {
+      TIME_DELTA: 1.2,
+      RESOLUTION: 24,
+      MAX_CURVATURE: 0.7,
+      MAX_NEGATIVE_CURVATURE: 0.5,
+      PADDING_PERCENT: 45,
+      COLOR: 2,
+      INVERT_COLORS: 0,
+      PATTERN_TYPE: 4,
+      CURVATURE_TYPE: 1,
+    },
+    name: "jungle",
+  },
 ];
 
 export const arcSketch: ISketch<Params> = {
@@ -400,5 +437,5 @@ export const arcSketch: ISketch<Params> = {
   timeShift: 236,
   controls,
   presets,
-  defaultParams: presets[0].params,
+  defaultParams: presets[9].params,
 };

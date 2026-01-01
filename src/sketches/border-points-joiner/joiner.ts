@@ -71,7 +71,7 @@ export class SquareBorderPointsJoiner {
     const len = this.points.length;
     const step = start < end ? 1 : -1;
 
-    for (let i = start; i !== end + step; i += step) {
+    for (let i = Math.floor(start); i !== Math.floor(end) + step; i += step) {
       result.push(((i % len) + len) % len); // considers negative indexes too
     }
 
