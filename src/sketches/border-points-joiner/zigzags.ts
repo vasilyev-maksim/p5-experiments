@@ -61,7 +61,6 @@ const factory: ISketchFactory<Params> =
     p.setup = () => {
       p.createCanvas(WIDTH, HEIGHT);
       p.angleMode("radians");
-      // p.noLoop();
     };
 
     p.updateWithProps = (props) => {
@@ -78,6 +77,7 @@ const factory: ISketchFactory<Params> =
     };
 
     p.draw = () => {
+      // p.noLoop();
       time += TIME_DELTA;
       p.background("black");
 
@@ -85,24 +85,26 @@ const factory: ISketchFactory<Params> =
       p.stroke(color);
 
       const ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100);
-      const steps = RESOLUTION;
+      const r = RESOLUTION;
       const x0 = (WIDTH - ACTUAL_SIZE) / 2;
       const y0 = (HEIGHT - ACTUAL_SIZE) / 2;
-      const traveler = new SquareBorderPointsJoiner(
+      const joiner = new SquareBorderPointsJoiner(
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
-        steps,
-        steps
+        r,
+        r
       );
+
+      // joiner.renderPoints(p);
 
       const [intervals, intervals2] = [
         [
-          [0, steps],
-          [steps * 2, steps],
+          [0, r],
+          [r * 2, r],
         ],
         [
-          [steps * 4, steps * 3],
-          [steps * 2, steps * 3],
+          [r * 4, r * 3],
+          [r * 2, r * 3],
         ],
       ] as [number, number][][];
 
@@ -129,8 +131,8 @@ const factory: ISketchFactory<Params> =
         });
       };
 
-      traveler.renderJoints(intervals[0], intervals[1], cb);
-      traveler.renderJoints(intervals2[0], intervals2[1], cb);
+      joiner.renderJoints(intervals[0], intervals[1], cb);
+      joiner.renderJoints(intervals2[0], intervals2[1], cb);
     };
   };
 
@@ -171,8 +173,11 @@ function drawZigzag({
 
     for (let i = 0; i < stepsCount; i++) {
       vertices = vertices.concat([
-        [i * stepLength - dropShift, i * dropHeight],
-        [(i + 1) * stepLength + dropShift, i * dropHeight],
+        [i * stepLength - (i === 0 ? 0 : dropShift), i * dropHeight],
+        [
+          (i + 1) * stepLength + (i === stepsCount - 1 ? 0 : dropShift),
+          i * dropHeight,
+        ],
       ]);
     }
 
@@ -192,36 +197,9 @@ const presets: IPreset<Params>[] = [
       TIME_DELTA: 1,
       COLOR: 5,
       RESOLUTION: 60,
-      PADDING_PERCENT: 0,
+      PADDING_PERCENT: 20,
     },
     name: "escalator",
-  },
-  {
-    params: {
-      TIME_DELTA: 1,
-      COLOR: 5,
-      RESOLUTION: 30,
-      PADDING_PERCENT: 50,
-    },
-    name: "mayonnaise",
-  },
-  {
-    params: {
-      TIME_DELTA: 1,
-      RESOLUTION: 6,
-      PADDING_PERCENT: 45,
-      COLOR: 0,
-    },
-    name: "croissant",
-  },
-  {
-    params: {
-      TIME_DELTA: 0.8,
-      RESOLUTION: 18,
-      PADDING_PERCENT: 50,
-      COLOR: 0,
-    },
-    name: "cookie",
   },
 ];
 

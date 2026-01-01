@@ -437,5 +437,5 @@ export const arcSketch: ISketch<Params> = {
   timeShift: 236,
   controls,
   presets,
-  defaultParams: presets[9].params,
+  defaultParams: presets[0].params,
 };
