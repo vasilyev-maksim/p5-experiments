@@ -1,6 +1,6 @@
 import styles from "./OptionSelector.module.css";
 import { Fragment, useEffect, useState } from "react";
-import { delay } from "../utils";
+import { delay, range } from "../utils";
 
 export function OptionSelector(props: {
   valuesCount: number;
@@ -25,7 +25,7 @@ export function OptionSelector(props: {
     <div className={props.className}>
       {props.title && <div className={styles.Title}>{props.title}</div>}
       <div className={styles.OptionsBlock} style={{ gap: props.gap ?? 0 }}>
-        {Array.from({ length: props.valuesCount }).map((_, value) => (
+        {range(props.valuesCount).map((value) => (
           <Fragment key={value}>
             {props.renderOption(
               value,

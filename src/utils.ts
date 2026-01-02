@@ -116,3 +116,7 @@ export class ValueWithHistory<T> {
     }
   }
 }
+
+export function range(len: number): number[] {
+  return Array.from({ length: len }).map((_, i) => i);
+}

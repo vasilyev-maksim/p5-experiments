@@ -5,6 +5,7 @@ import type {
   ISketchFactory,
   ExtractParams,
 } from "../models";
+import { range } from "../utils";
 
 const controls = {
   POLYGON_N: {
@@ -161,7 +162,7 @@ const factory: ISketchFactory<Params> =
     };
 
     function getNodes(): [number, number][] {
-      return Array.from({ length: POLYGONS_COUNT }, (_, i) => {
+      return range(POLYGONS_COUNT).map((i) => {
         return [
           i * ZOOM,
           i * COIL_FACTOR * (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +

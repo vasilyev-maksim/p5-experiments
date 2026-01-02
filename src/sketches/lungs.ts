@@ -1,6 +1,7 @@
 import p5 from "p5";
 import { oscillateBetween } from "./utils";
 import type { ISketchFactory } from "../models";
+import { range } from "../utils";
 
 class Circle {
   public constructor(
@@ -42,7 +43,7 @@ export const lungs: ISketchFactory =
     const CENTER_VEC = p.createVector(WIDTH / 2, HEIGHT / 2),
       RINGS_COUNT = 20,
       RD = WIDTH / 120,
-      CIRCLES = Array.from({ length: RINGS_COUNT }, (_, i) => {
+      CIRCLES = range(RINGS_COUNT).map((i) => {
         const dir = getDirection(i);
         const rotationShiftDelta = (RD / 2) * (i + 1);
         return new Circle(

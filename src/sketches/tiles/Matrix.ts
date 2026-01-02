@@ -1,5 +1,6 @@
 import p5 from "p5";
 import { Size } from "./Size";
+import { range } from "../../utils";
 
 export interface IMatrix {
   get(cell: p5.Vector): boolean;
@@ -15,7 +16,7 @@ export class Matrix implements IMatrix {
     public readonly sizes: Size,
     public readonly randomProvider: () => number
   ) {
-    this.matrix = Array.from({ length: this.sizes.height }, () =>
+    this.matrix = range(this.sizes.height).map(() =>
       Array(this.sizes.width).fill(true)
     );
   }
