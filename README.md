@@ -2,6 +2,7 @@
 
 # 📋 TODO
 
+- add save as image button
 - move play controls to sketch bottom-center (show up on mouse hover)
   - move playback speed there as well
 - use query params for direct sketch links

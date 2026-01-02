@@ -1,56 +1,142 @@
-import type { ISketchFactory } from "../models";
+import type {
+  ExtractParams,
+  IControls,
+  IPreset,
+  ISketch,
+  ISketchFactory,
+} from "../models";
+import { ValueWithHistory } from "../utils";
 
-export const pulse: ISketchFactory =
+const controls = {
+  GAP: {
+    label: "Gap",
+    max: 50,
+    min: 10,
+    step: 1,
+    type: "range",
+  },
+  CURVES_COUNT: {
+    label: "Curves count",
+    max: 50,
+    min: 1,
+    step: 2,
+    type: "range",
+  },
+  TRACE_FACTOR: {
+    label: "Trace factor",
+    max: 100,
+    min: 0,
+    step: 1,
+    type: "range",
+    valueFormatter: (x) => x + "%",
+  },
+  FRACTURE_FREQUENCY: {
+    label: "Fracture frequency",
+    max: 60,
+    min: 5,
+    step: 1,
+    type: "range",
+  },
+  DISPERSION: {
+    label: "Dispersion",
+    max: 1,
+    min: 0,
+    step: 0.05,
+    type: "range",
+    valueFormatter: (x) => x.toFixed(2),
+  },
+  // ORIENTATION: {
+  //   label: "Orientation",
+  //   options: [
+  //     {
+  //       label: "horizontal",
+  //       value: 0,
+  //     },
+  //     {
+  //       label: "vertical",
+  //       value: 1,
+  //     },
+  //   ],
+  //   type: "choice",
+  // },
+  TIME_DELTA: {
+    type: "range",
+    min: 0,
+    max: 3,
+    step: 0.1,
+    label: "Playback speed",
+    valueFormatter: (x) => x.toFixed(1),
+  },
+  COLOR: {
+    type: "color",
+    colors: [["#ff0000ff"], ["#36ff1fff"], ["#ffffffff"]],
+    label: "Color palette",
+  },
+} as const satisfies IControls;
+
+type Params = ExtractParams<typeof controls>;
+type Nodes = [number, number, number][][];
+
+const factory: ISketchFactory<Params> =
   (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
     const ORIENTATION: string = "h",
       W = ORIENTATION === "v" ? WIDTH : HEIGHT,
       H = ORIENTATION === "v" ? HEIGHT : WIDTH,
-      Y_SIZE = 20,
-      RANDOMNESS_MODE: "bates" | "noise" = "noise",
-      POINTS_PER_LINE = 5,
-      X_DISPERSION = 0.2,
+      // FRACTURE_FREQUENCY = 20,
+      // X_DISPERSION = 0.2,
       SPEED = 20,
-      Y_DELTA = H / Y_SIZE,
-      INDEPENDENT_CURVES_COUNT = 1,
-      TWIN_CURVES_COUNT = 25, // same curve with x-axis offset
-      TWIN_X_OFFSET = 30,
-      OPACITY = 20,
-      BG = [0, 0, 0],
-      twinMidIndex = Math.round((TWIN_CURVES_COUNT - 1) / 2);
-    let NODES: [number, number][][] = [];
-    let NEXT_NODES: [number, number][][] = [];
+      INDEPENDENT_CURVES_COUNT = 1;
+    const FRACTURE_FREQUENCY = new ValueWithHistory<number>();
+
+    let NODES: Nodes = [];
+    let NEXT_NODES: Nodes = [];
+
+    let time = timeShift,
+      GAP: number,
+      TIME_DELTA: number,
+      COLOR_INDEX: number,
+      CURVES_COUNT: number,
+      TRACE_FACTOR: number,
+      DISPERSION: number;
+
+    p.updateWithProps = (props) => {
+      TIME_DELTA = props.TIME_DELTA;
+      COLOR_INDEX = props.COLOR;
+      GAP = props.GAP;
+      CURVES_COUNT = props.CURVES_COUNT;
+      TRACE_FACTOR = props.TRACE_FACTOR;
+      FRACTURE_FREQUENCY.value = props.FRACTURE_FREQUENCY;
+      DISPERSION = props.DISPERSION;
+
+      if (FRACTURE_FREQUENCY.hasChanged) {
+        NEXT_NODES = getNextNodes();
+        NODES = NEXT_NODES;
+      }
+
+      if (props.playing) {
+        p.loop();
+      } else {
+        p.noLoop();
+      }
+    };
 
     function getNextNodes() {
-      const time = p.frameCount + timeShift;
-      const nodes: typeof NODES = [];
+      const nodes: Nodes = [];
+      const Y_DELTA = H / FRACTURE_FREQUENCY.value!;
 
       for (let l = 0; l < INDEPENDENT_CURVES_COUNT; l++) {
-        const arr: (typeof NODES)[0] = [];
-        for (let i = -1; i <= Y_SIZE + 1; i++) {
+        const arr: Nodes[0] = [];
+        for (let i = -1; i <= FRACTURE_FREQUENCY.value! + 1; i++) {
           const y = i * Y_DELTA;
 
-          if (RANDOMNESS_MODE == "noise") {
-            const x = p.map(
-              p.noise(i, l, (time * 0.1) / SPEED),
-              0,
-              1,
-              (W / 2) * (1 - X_DISPERSION),
-              (W / 2) * (1 + X_DISPERSION)
-            );
-            arr.push([x, y]);
-          } else {
-            const xs = [];
-            for (let j = 0; j < POINTS_PER_LINE; j++) {
-              const node = p.random(
-                (W / 2) * (1 - X_DISPERSION),
-                (W / 2) * (1 + X_DISPERSION)
-              );
-              xs.push(node);
-            }
-
-            const avgX = xs.reduce((acc, x) => acc + x, 0) / POINTS_PER_LINE;
-            arr.push([avgX, y]);
-          }
+          const x = p.map(
+            p.noise(i, l, (time * 0.1) / SPEED),
+            0,
+            1,
+            (W / 2) * (1 - DISPERSION),
+            (W / 2) * (1 + DISPERSION)
+          );
+          arr.push([x, y, SPEED]);
         }
         nodes.push(arr);
       }
@@ -60,13 +146,22 @@ export const pulse: ISketchFactory =
 
     function renderNodesDeltaPerFrame() {
       NODES = NODES.map((arr, j) =>
-        arr.map(([x, y], i) => {
-          const nextX = p.mouseIsPressed ? W / 2 : NEXT_NODES[j][i][0];
-          const distance = nextX - x;
-          const newX = x + distance / SPEED;
-          return [newX, y];
+        arr.map((node, i) => {
+          const [x, y, progress] = node;
+          // console.log(progress);
+          if (progress > 0) {
+            const nextX = NEXT_NODES[j][i][0];
+            // const nextX = p.mouseIsPressed ? W / 2 : NEXT_NODES[j][i][0];
+            const distance = nextX - x;
+            // console.log({ distance, i });
+            const newX = x + distance / progress;
+            return [newX, y, progress - 1];
+          } else {
+            return node;
+          }
         })
       );
+      // console.log({ NODES });
     }
 
     function drawLines() {
@@ -76,11 +171,15 @@ export const pulse: ISketchFactory =
         //   p.color("rgba(234, 114, 247, 1)"),
         //   j / INDEPENDENT_CURVES_COUNT
         // );
+        const twinMidIndex = Math.round((CURVES_COUNT - 1) / 2);
 
         for (let t = -twinMidIndex; t <= twinMidIndex; t++) {
-          const xOffset = t * TWIN_X_OFFSET;
-          const alpha = t === 0 ? 255 : p.map(p.abs(t), 0, twinMidIndex, 20, 0);
-          const color = p.color(255, 0, 0, alpha);
+          const xOffset = t * GAP;
+          const alpha =
+            t === 0 ? 255 : p.map(p.abs(t), 0, twinMidIndex + 1, 20, 0);
+
+          const color = p.color(controls.COLOR.colors[COLOR_INDEX][0]);
+          color.setAlpha(alpha);
           p.stroke(color);
 
           p.beginShape();
@@ -105,44 +204,72 @@ export const pulse: ISketchFactory =
       } else {
         p.createCanvas(H, W);
       }
-      const [r, g, b] = BG;
-      p.background(r, g, b);
-      p.stroke(255, 0, 0, 255);
       p.strokeWeight(2);
       p.randomSeed(randomSeed);
       p.noiseSeed(randomSeed);
+      p.background("black");
       // p.noiseDetail(4, 0.7);
-      NODES = getNextNodes();
-      NEXT_NODES = getNextNodes();
-    };
-
-    p.updateWithProps = (props) => {
-      if (props.playing) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
+      // NODES = getNextNodes();
+      // NEXT_NODES = getNextNodes();
     };
 
     p.draw = () => {
-      const time = p.frameCount + timeShift;
+      // console.log("draw", NEXT_NODES);
+
+      time += TIME_DELTA;
 
       if (time % SPEED === 0) {
+        // console.log("new");
+
         NEXT_NODES = getNextNodes();
+        NODES = NODES.map((arr) => arr.map((x) => [x[0], x[1], SPEED]));
+        // NODES = NEXT_NODES;
       }
 
       p.noStroke();
-      const [r, g, b] = BG;
-      p.fill(p.color(r, g, b, OPACITY));
+      const OPACITY = p.map(TRACE_FACTOR, 0, 100, 100, 5);
+
+      p.fill(p.color(0, 0, 0, OPACITY));
 
       if (ORIENTATION === "v") {
         p.rect(0, 0, W, H);
       } else {
         p.rect(0, 0, H, W);
       }
+
       p.noFill();
+      // p.stroke(p.color(controls.COLOR.colors[COLOR_INDEX][0]));
 
       renderNodesDeltaPerFrame();
       drawLines();
     };
   };
+
+const presets: IPreset<Params>[] = [
+  {
+    params: {
+      CURVES_COUNT: 35,
+      GAP: 20,
+      TIME_DELTA: 1,
+      FRACTURE_FREQUENCY: 6,
+      COLOR: 0,
+      TRACE_FACTOR: 80,
+      DISPERSION: 0.6, // 0.2
+    },
+    // name: "looks uneven",
+  },
+];
+
+export const pulseSketch: ISketch<Params> = {
+  factory,
+  id: "pulse",
+  name: "pulse",
+  preview: {
+    size: 520,
+  },
+  timeShift: 0,
+  randomSeed: 44,
+  controls,
+  presets,
+  defaultParams: presets[0].params,
+};

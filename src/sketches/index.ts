@@ -1,11 +1,12 @@
 import type { ISketch } from "../models";
 import { lungs } from "./lungs";
 import { pillarsSketch } from "./pillars";
-import { pulse } from "./pulse";
+import { pulseSketch } from "./pulse";
 import { spiralSketch } from "./spiral";
 import { tiles } from "./tiles/tiles";
 import { arcSketch } from "./border-points-joiner/arcs";
 import { escalatorSketch } from "./border-points-joiner/zigzags";
+import { testSketch } from "./test";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
@@ -24,18 +25,7 @@ export const sketchList: ISketch<any>[] = [
   escalatorSketch,
   arcSketch,
   spiralSketch,
-  {
-    id: "pulse",
-    name: "pulse",
-    preview: {
-      size: 520,
-    },
-    factory: pulse,
-    randomSeed: 44,
-    presets: [],
-    controls: {},
-    defaultParams: {},
-  },
+  pulseSketch,
   pillarsSketch,
   {
     id: "tiles",
@@ -52,4 +42,5 @@ export const sketchList: ISketch<any>[] = [
     // randomSeed: 12,
     // randomSeed: 45,
   },
+  testSketch,
 ];
