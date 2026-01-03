@@ -75,10 +75,14 @@ export const SketchModal = ({
   const [playing, setPlaying] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(sketch.defaultParams);
+  const [presetName, setPresetName] = useState<string>();
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
   };
   const applyPreset = (preset: IPreset) => {
+    console.log(preset.name);
+
+    setPresetName(preset.name);
     setParams(preset.params);
   };
   const playPause = () => setPlaying((x) => !x);
@@ -191,6 +195,7 @@ export const SketchModal = ({
                 params={params}
                 playing={playing}
                 ref={sketchCanvasRef}
+                presetName={presetName}
               />
             </div>
             <animated.div

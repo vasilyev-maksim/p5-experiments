@@ -14,6 +14,7 @@ export const SketchCanvas = forwardRef<
     size: SketchCanvasSize;
     playing: boolean;
     params: IParams;
+    presetName?: string;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -90,6 +91,7 @@ export const SketchCanvas = forwardRef<
           {...props.params}
           sketch={p5Sketch}
           playing={props.playing}
+          presetName={props.presetName}
         />
       </animated.div>
     </animated.div>
