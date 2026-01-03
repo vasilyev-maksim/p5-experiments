@@ -44,8 +44,8 @@ export const sequences = [
     Sequence.asyncSegment<PresetsAnimationParams>({
       id: "SHOW_PRESETS",
       timingPayload: {
-        itemDelay: 25,
-        itemDuration: 180,
+        itemDelay: 30,
+        itemDuration: 200,
       },
       disabledIf: (ctx) => !(ctx as Ctx).presetsPresent,
     }),
