@@ -53,6 +53,32 @@ const controls = {
     type: "range",
     valueFormatter: (x) => x + "%",
   },
+  JOINT_TYPE: {
+    label: "Joint type",
+    type: "choice",
+    options: [
+      {
+        label: "None",
+        value: 0,
+      },
+      {
+        label: "Square",
+        value: 1,
+      },
+      {
+        label: "Circle",
+        value: 2,
+      },
+      {
+        label: "Plus",
+        value: 3,
+      },
+      {
+        label: "Cross",
+        value: 4,
+      },
+    ],
+  },
   COLOR: {
     type: "color",
     colors: [["#ff0000ff"], ["#00fbffff"], ["#36ff1fff"], ["#ffffffff"]],
@@ -64,18 +90,20 @@ type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
   (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
-    const CURVE_RESOLUTION = new ValueWithHistory<number>();
-    const TIME_DELTA: number = 1;
+    const CURVE_RESOLUTION = new ValueWithHistory<number>(),
+      JOINT_SIZE = 10,
+      TIME_DELTA: number = 1,
+      PRESET_NAME = new ValueWithHistory<string | undefined>();
 
-    let Y_COORDS: number[] = [];
-
-    let time = timeShift,
+    let Y_COORDS: number[] = [],
+      time = timeShift,
       GAP: number,
       COLOR_INDEX: number,
       CURVES_COUNT: number,
       TRACE_FACTOR: number,
       DISPERSION: number,
-      CHAOS_FACTOR: number;
+      CHAOS_FACTOR: number,
+      JOINT_TYPE: number;
 
     p.updateWithProps = (props) => {
       COLOR_INDEX = props.COLOR;
@@ -85,9 +113,17 @@ const factory: ISketchFactory<Params> =
       CURVE_RESOLUTION.value = props.CURVE_RESOLUTION;
       DISPERSION = props.DISPERSION;
       CHAOS_FACTOR = props.CHAOS_FACTOR;
+      JOINT_TYPE = props.JOINT_TYPE;
+      PRESET_NAME.value = props.presetName;
+
+      console.log(props.presetName);
 
       if (CURVE_RESOLUTION.hasChanged) {
         updateYCoords();
+      }
+
+      if (PRESET_NAME.hasChanged) {
+        p.background("black");
       }
 
       if (props.playing) {
@@ -126,8 +162,25 @@ const factory: ISketchFactory<Params> =
         Y_COORDS.forEach((_y, i, arr) => {
           const x = (WIDTH * (i - 1)) / (arr.length - 3);
           const y = _y + yOffset;
-          // p.circle(x, y, 6);
-          // p.rect(x - 3, y - 3, 6, 6);
+          const j = JOINT_SIZE,
+            j2 = JOINT_SIZE / 2;
+          switch (JOINT_TYPE) {
+            case 1:
+              p.rect(x - j2, y - j2, j, j);
+              break;
+            case 2:
+              p.circle(x, y, j);
+              break;
+            case 3:
+              p.line(x, y - j2, x, y + j2);
+              p.line(x - j2, y, x + j2, y);
+              break;
+            case 4: {
+              p.line(x - j2, y - j2, x + j2, y + j2);
+              p.line(x - j2, y + j2, x + j2, y - j2);
+              break;
+            }
+          }
           p.curveVertex(x, y);
         });
         p.endShape();
@@ -164,7 +217,87 @@ const presets: IPreset<Params>[] = [
       TRACE_FACTOR: 80,
       DISPERSION: 0.2,
       CHAOS_FACTOR: 3,
+      JOINT_TYPE: 0,
     },
+    name: "originality",
+  },
+  {
+    params: {
+      CURVES_COUNT: 50,
+      GAP: 50,
+      CURVE_RESOLUTION: 15,
+      COLOR: 0,
+      TRACE_FACTOR: 82,
+      DISPERSION: 0.5,
+      CHAOS_FACTOR: 69,
+      JOINT_TYPE: 0,
+    },
+    name: "DnB",
+  },
+  {
+    params: {
+      CURVES_COUNT: 1,
+      GAP: 38,
+      CURVE_RESOLUTION: 5,
+      COLOR: 0,
+      TRACE_FACTOR: 100,
+      DISPERSION: 0.45,
+      CHAOS_FACTOR: 1,
+      JOINT_TYPE: 0,
+    },
+    name: "sunrise",
+  },
+  {
+    params: {
+      CURVES_COUNT: 1,
+      GAP: 10,
+      CURVE_RESOLUTION: 6,
+      COLOR: 2,
+      TRACE_FACTOR: 100,
+      DISPERSION: 1,
+      CHAOS_FACTOR: 10,
+      JOINT_TYPE: 0,
+    },
+    name: "hills",
+  },
+  {
+    params: {
+      CURVES_COUNT: 1,
+      GAP: 24,
+      CURVE_RESOLUTION: 100,
+      COLOR: 0,
+      TRACE_FACTOR: 100,
+      DISPERSION: 0.05,
+      CHAOS_FACTOR: 75,
+      JOINT_TYPE: 0,
+    },
+    name: "fluctuations",
+  },
+  {
+    params: {
+      CURVES_COUNT: 50,
+      GAP: 50,
+      CURVE_RESOLUTION: 10,
+      COLOR: 3,
+      TRACE_FACTOR: 0,
+      DISPERSION: 1,
+      CHAOS_FACTOR: 0,
+      JOINT_TYPE: 3,
+    },
+    name: "isolines",
+  },
+  {
+    params: {
+      CURVES_COUNT: 50,
+      GAP: 10,
+      CURVE_RESOLUTION: 5,
+      COLOR: 1,
+      TRACE_FACTOR: 100,
+      DISPERSION: 0.5,
+      CHAOS_FACTOR: 100,
+      JOINT_TYPE: 0,
+    },
+    name: "ice plazma",
   },
 ];
 
