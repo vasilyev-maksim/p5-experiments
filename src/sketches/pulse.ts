@@ -82,7 +82,7 @@ const controls = {
   COLOR: {
     type: "color",
     colors: [["#ff0000ff"], ["#00fbffff"], ["#36ff1fff"], ["#ffffffff"]],
-    label: "Color palette",
+    label: "Color",
   },
 } as const satisfies IControls;
 

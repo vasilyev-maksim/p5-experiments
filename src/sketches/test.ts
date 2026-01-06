@@ -1,4 +1,4 @@
-import type p5 from "p5";
+import p5 from "p5";
 import type {
   ExtractParams,
   IControls,
@@ -6,7 +6,7 @@ import type {
   ISketch,
   ISketchFactory,
 } from "../models";
-import { AnimatedValue } from "./utils";
+import { range } from "../utils";
 
 const controls = {
   TIME_DELTA: {
@@ -20,17 +20,15 @@ const controls = {
 } as const satisfies IControls;
 
 type Params = ExtractParams<typeof controls>;
-type Nodes = [AnimatedValue, AnimatedValue][];
 
 const factory: ISketchFactory<Params> =
   (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
-    const NODES_UPDATE_PERIOD = 51;
-    const NODES: Nodes = [
-      [
-        new AnimatedValue(NODES_UPDATE_PERIOD, WIDTH / 2),
-        new AnimatedValue(NODES_UPDATE_PERIOD, HEIGHT / 2),
-      ],
-    ];
+    const R = 50;
+    const N = 25;
+    const A = 120;
+    const arr: p5.Vector[] = range(N).map((i) =>
+      p.createVector(WIDTH / 2 + R * i, HEIGHT / 2)
+    );
     let time = timeShift,
       TIME_DELTA: number;
 
@@ -44,73 +42,64 @@ const factory: ISketchFactory<Params> =
       }
     };
 
-    // function getNextNodes(p: p5): Nodes {
-    //   return [[WIDTH / 2, p.noise(time * 0.01) * HEIGHT]];
-    // }
-
-    p.mouseClicked = () => {
-      updateNodes();
-    };
-
-    function renderNodes(p: p5) {
-      NODES.forEach((node) => {
-        p.fill("white");
-        const [x, y] = node;
-        p.circle(x.getCurrentValue()!, y.getCurrentValue()!, 10);
-        p.fill("red");
-        p.circle(x.getNextValue()!, y.getNextValue()!, 5);
-        // console.log(
-        //   time,
-        //   animatedY.getCurrentValue(),
-        //   animatedY.getNextValue()
-        // );
-        x.nextStep();
-        y.nextStep();
-      });
-
-      // NODES = NODES.map((arr, j) =>
-      //   arr.map((node, i) => {
-      //     const [x, y, progress] = node;
-      //     if (progress > 0) {
-      //       const nextX = NEXT_NODES[j][i][0];
-      //       const distance = nextX - x;
-      //       const newX = x + distance / progress;
-      //       return [newX, y, progress - 1];
-      //     } else {
-      //       return node;
-      //     }
-      //   })
-      // );
-    }
-
-    function updateNodes() {
-      NODES.forEach(([x, y]) => {
-        x.animateTo(p.mouseX);
-        y.animateTo(p.mouseY);
-      });
-      // NODES = NEXT_NODES;
-      // NODES = NODES.map((x) => [x[0], x[1], NODES_UPDATE_PERIOD]);
-    }
-
     p.setup = () => {
       p.createCanvas(WIDTH, HEIGHT);
-      p.noiseSeed(42);
-      // updateNodes();
-      // NODES = getNextNodes();
-      // NEXT_NODES = getNextNodes();
+      p.angleMode("degrees");
     };
+
+    function updatePositions() {
+      arr[0] = p.createVector(p.mouseX, p.mouseY);
+
+      for (let i = 1; i < arr.length; i++) {
+        const v = p5.Vector.sub(arr[i], arr[i - 1]).setMag(R);
+        arr[i] = p5.Vector.add(arr[i - 1], v);
+      }
+
+      for (let i = 1; i < arr.length - 1; i++) {
+        const a = arr[i - 1];
+        const b = arr[i];
+        const c = arr[i + 1];
+        const ba = p5.Vector.sub(a, b);
+        const bc = p5.Vector.sub(c, b);
+        const angle = p5.Vector.angleBetween(ba, bc);
+        if (p.abs(angle) < A) {
+          console.log(angle);
+          const n = ba
+            .copy()
+            .rotate(Math.sign(angle) * A)
+            .add(b);
+          // p.circle(n.x, n.y, 5);
+          arr[i + 1] = n;
+        }
+        // console.log(angle);
+      }
+    }
 
     p.draw = () => {
       p.background("black");
       time += TIME_DELTA;
-      console.log(time);
+      // console.log(time);
 
-      // if (time % NODES_UPDATE_PERIOD === 0) {
-      //   // if (time === NODES_UPDATE_PERIOD) {
-      //   updateNodes();
-      // }
+      // renderNodes(p);
+      p.noFill();
+      p.stroke("white");
 
-      renderNodes(p);
+      updatePositions();
+
+      arr.forEach((x) => {
+        p.circle(x.x, x.y, R);
+      });
+
+      p.push();
+      p.strokeWeight(R);
+      p.beginShape();
+      p.curveVertex(arr[0].x, arr[0].y);
+      arr.forEach((x) => {
+        p.curveVertex(x.x, x.y);
+      });
+      p.curveVertex(arr[arr.length - 1].x, arr[arr.length - 1].y);
+      p.endShape();
+      p.pop();
     };
   };
 

@@ -69,7 +69,7 @@ const controls = {
       ["#000", "#ffffffff"],
       // ["#003e49ff", "#8aee98ff"],
     ],
-    label: "Color palette",
+    label: "Color",
   },
 } as const satisfies IControls;
 
