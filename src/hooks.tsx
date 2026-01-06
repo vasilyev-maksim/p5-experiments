@@ -9,8 +9,8 @@ export function useViewport() {
   const tileWidth = 292;
   const tileHeight = 335;
   const tilePadding = 15;
-  const modalMargin = 15;
-  const modalPadding = 20;
+  const modalMargin = 10;
+  const modalPadding = 15;
   const modalSidebarWidth = 300;
   const modalSidebarPadding = 27;
   const canvasModalWidth =
