@@ -29,7 +29,7 @@ export const SketchTile = forwardRef<
     },
     ref
   ) => {
-    const { tileWidth, tileHeight } = useViewport();
+    const { tileWidth, tileHeight, borderWidth } = useViewport();
 
     return (
       <div
@@ -44,12 +44,16 @@ export const SketchTile = forwardRef<
           className
         )}
         onClick={onSelect}
-        style={{
-          animationDelay: animationDelay + "ms",
-          animationDuration: animationDuration + "ms",
-          width: tileWidth,
-          height: tileHeight,
-        }}
+        style={
+          {
+            animationDelay: animationDelay + "ms",
+            animationDuration: animationDuration + "ms",
+            width: tileWidth,
+            height: tileHeight,
+            "--borderWidth": borderWidth + "px",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any
+        }
       >
         <SketchCanvas
           sketch={sketch}

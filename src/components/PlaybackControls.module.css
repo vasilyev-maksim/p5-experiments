@@ -1,0 +1,65 @@
+.PlaybackControls {
+  color: var(--fontColor) !important;
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.72);
+  margin: 10px;
+  border-radius: 10px;
+  /* flex: 1; */
+}
+
+.InnerWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  /* padding: 5px 10px; */
+  flex-shrink: 0;
+}
+
+.TextButton,
+.IconButton {
+  --size: 30px;
+  background-color: var(--controlButtonBgColor);
+  border-radius: 5px;
+  transition: 200ms all;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: var(--controlButtonHoverBgColor);
+  }
+
+  &:active {
+    background-color: var(--controlButtonActiveBgColor);
+  }
+}
+
+.IconButton {
+  width: var(--size);
+  height: var(--size);
+  padding: 5px;
+}
+
+.TextButton {
+  padding: 10px;
+  text-align: center;
+  /* line-height: var(--size); */
+}
+
+.Fullscreen {
+  width: var(--size);
+  padding: 0;
+  aspect-ratio: 1;
+  font-size: 20px;
+  font-weight: bold;
+
+  strong {
+    position: relative;
+    top: -1px;
+  }
+}

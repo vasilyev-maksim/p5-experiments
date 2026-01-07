@@ -16,9 +16,7 @@
 }
 
 .SketchModal {
-  --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
-  --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
-  --scale: 1.03;
+  --borderWidth: 4px;
 
   border-radius: 20px;
   position: relative;
@@ -30,7 +28,7 @@
   );
   background-size: 100% 200%;
   color: var(--fontColorAccent);
-  transform: scale(var(--scale));
+  transform: scale(var(--tileHoverScale));
   transform-origin: top left;
   overflow: hidden;
 
@@ -38,7 +36,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    padding: 4px;
+    padding: var(--borderWidth);
     border-radius: inherit;
     background: linear-gradient(
       180deg,
@@ -96,6 +94,8 @@
 
 .Right {
   flex: 1;
+  position: relative;
+  overflow: hidden;
 }
 
 .RightTop {
@@ -126,4 +126,16 @@
     height: 100%;
     flex: 1;
   }
+}
+
+.PlaybackControlsBlock {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  translate: -50% 0%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }

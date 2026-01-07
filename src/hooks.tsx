@@ -13,8 +13,12 @@ export function useViewport() {
   const modalPadding = 15;
   const modalSidebarWidth = 300;
   const modalSidebarPadding = 27;
+  const borderWidth = 4;
   const canvasModalWidth =
-    ctx.viewportWidth - modalSidebarWidth - 2 * (modalPadding + modalMargin);
+    ctx.viewportWidth -
+    modalSidebarWidth -
+    2 * (modalPadding + modalMargin) -
+    borderWidth;
   const canvasModalHeight =
     ctx.viewportHeight - 2 * (modalPadding + modalMargin);
   const canvasTileSize = tileWidth - tilePadding * 2;
@@ -31,6 +35,7 @@ export function useViewport() {
     canvasModalWidth,
     canvasModalHeight,
     canvasTileSize,
+    borderWidth,
   };
 }
 

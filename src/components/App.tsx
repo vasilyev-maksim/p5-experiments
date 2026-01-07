@@ -23,7 +23,7 @@ function App() {
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();
-  const { start, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+  const { start, reset, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE
   );
   useSequence(HOME_PAGE_SEQUENCE).useStart();
@@ -58,6 +58,7 @@ function App() {
     if (openedSketch) {
       start(ctx);
     }
+    return reset;
   }, [openedSketch, ctx]);
 
   const handleSketchClick = (x: ISketch) => {

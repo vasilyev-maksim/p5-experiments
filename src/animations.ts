@@ -58,7 +58,6 @@ export const sequences = [
       },
       disabledIf: (ctx) => !(ctx as Ctx).controlsPresent,
     }),
-    Sequence.syncSegment({ id: "SHOW_FOOTER", duration: 200, delay: 200 }),
   ]),
   new Sequence(HOME_PAGE_SEQUENCE, [
     Sequence.syncSegment({

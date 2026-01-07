@@ -1,8 +1,7 @@
 .SketchTile {
   --transitionDuration: 300ms;
-  --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
-  --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
-  --scale: 1.03;
+
+  --borderWidth: 4px;
 
   padding: 15px;
   border-radius: 20px;
@@ -70,13 +69,13 @@
 }
 
 .Copy {
-  transform: scale(var(--scale));
+  transform: scale(var(--tileHoverScale));
   transform-origin: top left;
 }
 
 .Interactive {
   &:hover {
-    transform: scale(var(--scale)) translateY(-15px);
+    transform: scale(var(--tileHoverScale)) translateY(-15px);
   }
 
   &::before {

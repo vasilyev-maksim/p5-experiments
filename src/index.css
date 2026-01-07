@@ -13,6 +13,12 @@ body {
   --secondaryColorFaded: hsl(var(--secondaryColorH) 38 29);
   --fontColorAccent: hsl(var(--secondaryColorH) 100 85);
   --fontColor: hsl(var(--primaryColorH) 100 88 / 80%);
+  --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
+  --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
+  --tileHoverScale: 1.03;
+  --controlButtonBgColor: hsl(var(--primaryColorH) 100 55 / 0%);
+  --controlButtonHoverBgColor: hsl(var(--primaryColorH) 100 55 / 15%);
+  --controlButtonActiveBgColor: hsl(var(--primaryColorH) 100 55 / 35%);
 
   background-color: var(--bgColor);
   background-image: linear-gradient(

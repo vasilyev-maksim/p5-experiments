@@ -7,7 +7,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
-import { SketchModalFooter } from "./SketchModalFooter";
 import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
@@ -16,6 +15,7 @@ import {
 } from "../animations";
 import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
+import { PlaybackControls } from "./PlaybackControls";
 
 export const SketchModal = ({
   sketch,
@@ -36,12 +36,14 @@ export const SketchModal = ({
     modalPadding,
     modalSidebarWidth,
     modalSidebarPadding,
+    borderWidth,
   } = useViewport();
 
   const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE
   );
   const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
+  const playbackControlsEnabled = useSegment("START_PLAYING").completed;
 
   const onProgress = useCallback((seg: SegmentBase) => {
     if (
@@ -80,8 +82,6 @@ export const SketchModal = ({
     setParams((x) => ({ ...x, [key]: value }));
   };
   const applyPreset = (preset: IPreset) => {
-    console.log(preset.name);
-
     setPresetName(preset.name);
     setParams(preset.params);
   };
@@ -105,9 +105,26 @@ export const SketchModal = ({
     console.log(params);
   }, [params]);
 
-  const [{ modalX, headerX }, api] = useSpring(() => ({
-    from: { modalX: 0, headerX: 0 },
+  const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
+    from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
   }));
+
+  const showPlaybackControls = () => {
+    if (playbackControlsEnabled) {
+      api.start({
+        playbackControlsX: 1,
+        config: { duration: 300, easing: easings.easeInOutCubic },
+      });
+    }
+  };
+  const hidePlaybackControls = () => {
+    if (playbackControlsEnabled) {
+      api.start({
+        playbackControlsX: 1,
+        config: { duration: 300, easing: easings.easeInOutCubic },
+      });
+    }
+  };
 
   useModalBehavior(true, onBackClick);
   useKeyboardShortcuts(playPause, openInFullscreen);
@@ -121,23 +138,27 @@ export const SketchModal = ({
     >
       <animated.div
         className={styles.SketchModal}
-        style={{
-          width: modalX.to(
-            [0, 1],
-            [tileWidth, window.innerWidth - modalMargin * 2]
-          ),
-          height: modalX.to(
-            [0, 1],
-            [tileHeight, window.innerHeight - modalMargin * 2]
-          ),
-          left: modalX.to([0, 1], [left, modalMargin]),
-          top: modalX.to([0, 1], [top, modalMargin]),
-          scale: modalX.to([0, 1], [1.03, 1]),
-          paddingRight: modalX.to([0, 1], [15, modalPadding]),
-          paddingTop: modalX.to([0, 1], [15, modalPadding]),
-          paddingBottom: modalX.to([0, 1], [15, modalPadding]),
-          paddingLeft: modalX.to([0, 1], [0, 4]),
-        }}
+        style={
+          {
+            width: modalX.to(
+              [0, 1],
+              [tileWidth, window.innerWidth - modalMargin * 2]
+            ),
+            height: modalX.to(
+              [0, 1],
+              [tileHeight, window.innerHeight - modalMargin * 2]
+            ),
+            left: modalX.to([0, 1], [left, modalMargin]),
+            top: modalX.to([0, 1], [top, modalMargin]),
+            scale: modalX.to([0, 1], [1.03, 1]),
+            paddingRight: modalX.to([0, 1], [15, modalPadding]),
+            paddingTop: modalX.to([0, 1], [15, modalPadding]),
+            paddingBottom: modalX.to([0, 1], [15, modalPadding]),
+            paddingLeft: modalX.to([0, 1], [0, borderWidth]),
+            "--borderWidth": borderWidth + "px",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any
+        }
       >
         <div className={styles.Horizontal}>
           <animated.div
@@ -178,16 +199,14 @@ export const SketchModal = ({
                     onParamChange={changeParam}
                   />
                 </div>
-                <SketchModalFooter
-                  onPlayPause={playPause}
-                  playing={playing}
-                  onBackClick={onBackClick}
-                  onFullscreenToggle={openInFullscreen}
-                />
               </>
             )}
           </animated.div>
-          <div className={classNames(styles.Vertical, styles.Right)}>
+          <div
+            className={classNames(styles.Vertical, styles.Right)}
+            onMouseEnter={showPlaybackControls}
+            onMouseLeave={hidePlaybackControls}
+          >
             <div className={styles.RightTop}>
               <SketchCanvas
                 size={size}
@@ -198,6 +217,21 @@ export const SketchModal = ({
                 presetName={presetName}
               />
             </div>
+            <animated.div
+              style={{
+                translateY: playbackControlsX
+                  .to([0, 1], [100, 0])
+                  .to((x) => x + `%`),
+                opacity: playbackControlsX,
+              }}
+              className={styles.PlaybackControlsBlock}
+            >
+              <PlaybackControls
+                onPlayPause={playPause}
+                playing={playing}
+                onFullscreenToggle={openInFullscreen}
+              />
+            </animated.div>
             <animated.div
               className={styles.RightBottom}
               style={{

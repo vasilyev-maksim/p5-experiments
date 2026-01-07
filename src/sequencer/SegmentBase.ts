@@ -18,6 +18,10 @@ export class SegmentBase {
     return this.__phase >= SegmentPhase.Running;
   }
 
+  public get completed() {
+    return this.__phase === SegmentPhase.Completed;
+  }
+
   public constructor(
     public readonly id: string,
     public readonly delay: number = 0,

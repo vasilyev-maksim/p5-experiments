@@ -53,5 +53,6 @@ export function useSequence<Id extends string = string, Context = unknown>(
     useStart,
     useSegment,
     start: seq.start,
+    reset: seq.reset,
   };
 }

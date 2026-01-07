@@ -6,12 +6,16 @@
   display: inline-block;
   height: var(--size);
   width: var(--size);
-  background-color: var(--bgPrimaryColor);
+  background-color: var(--controlButtonBgColor);
   overflow: hidden;
   transition: 200ms;
 
   &:hover {
-    background-color: var(--primaryColorFaded);
+    background-color: var(--controlButtonHoverBgColor);
+  }
+
+  &:active {
+    background-color: var(--controlButtonActiveBgColor);
   }
 }
 
@@ -25,7 +29,7 @@
 }
 
 .Layer {
-  background-color: var(--primaryColor);
+  background-color: var(--fontColor);
   position: absolute;
   left: 0;
   top: 0;
