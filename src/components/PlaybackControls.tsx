@@ -2,11 +2,15 @@ import classNames from "classnames";
 import { PlayPauseButton } from "./PlayPauseButton";
 import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
+import { useLongPress } from "../utils";
 
 export function PlaybackControls(props: {
   onPlayPause: () => void;
   playing: boolean;
   onFullscreenToggle: () => void;
+  jumpNFrames: (N: number) => () => void;
+  playWithCustomDelta: (delta: number) => () => void;
+  stopPlayingWithCustomDelta: () => void;
 }) {
   return (
     <div className={styles.PlaybackControls}>
@@ -20,11 +24,31 @@ export function PlaybackControls(props: {
         <button className={styles.TextButton}>Capture</button>
       </div>
       <div className={styles.InnerWrapper}>
-        <JumpNFramesButton n={-10} />
-        <JumpNFramesButton n={-1} />
+        <JumpNFramesButton
+          n={-10}
+          onClick={props.jumpNFrames(-10)}
+          onLongPress={props.playWithCustomDelta(-2)}
+          onLongPressRelease={props.stopPlayingWithCustomDelta}
+        />
+        <JumpNFramesButton
+          n={-1}
+          onClick={props.jumpNFrames(-1)}
+          onLongPress={props.playWithCustomDelta(-0.5)}
+          onLongPressRelease={props.stopPlayingWithCustomDelta}
+        />
         <PlayPauseButton playing={props.playing} onClick={props.onPlayPause} />
-        <JumpNFramesButton n={1} />
-        <JumpNFramesButton n={10} />
+        <JumpNFramesButton
+          n={1}
+          onClick={props.jumpNFrames(1)}
+          onLongPress={props.playWithCustomDelta(0.5)}
+          onLongPressRelease={props.stopPlayingWithCustomDelta}
+        />
+        <JumpNFramesButton
+          n={10}
+          onClick={props.jumpNFrames(10)}
+          onLongPress={props.playWithCustomDelta(2)}
+          onLongPressRelease={props.stopPlayingWithCustomDelta}
+        />
       </div>
       <div className={styles.InnerWrapper}>
         <Slider
@@ -42,11 +66,29 @@ export function PlaybackControls(props: {
   );
 }
 
-export function JumpNFramesButton(props: { n: number }) {
+const HOLD_TIMEOUT = 500;
+
+export function JumpNFramesButton(props: {
+  n: number;
+  onClick: () => void;
+  onLongPress: () => void;
+  onLongPressRelease: () => void;
+}) {
   const sign = Math.sign(props.n);
   const abs = Math.abs(props.n);
+  const { handlePress, handleRelease } = useLongPress(
+    HOLD_TIMEOUT,
+    props.onLongPress,
+    props.onLongPressRelease
+  );
+
   return (
-    <button className={styles.IconButton}>
+    <button
+      className={styles.IconButton}
+      onClick={props.onClick}
+      onMouseDown={handlePress}
+      onMouseUp={handleRelease}
+    >
       <svg
         width="25"
         height="20"
@@ -71,8 +113,8 @@ export function JumpNFramesButton(props: { n: number }) {
             fontWeight: "1000",
             fill: "currentColor",
           }}
-          text-anchor="middle"
-          dominant-baseline="middle"
+          textAnchor="middle"
+          dominantBaseline="middle"
         >
           {sign > 0 ? "+" : "-"}
           {abs}

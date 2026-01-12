@@ -2,9 +2,13 @@
 
 # 📋 TODO
 
+- each preset may have a timestamp to play animation from (for better showiness)
+- rerender paused sketch on param change
+- make timedelta separate param
+
+  - restore old value after long press
+
 - add save as image button
-- move play controls to sketch bottom-center (show up on mouse hover)
-  - move playback speed there as well
 - use query params for direct sketch links
 - add randomize button for controls
 - move sequences declaration code to separate file/folder
@@ -27,6 +31,9 @@
 
 # ✅ DONE
 
+- move play controls to sketch bottom-center (show up on mouse hover)
+  - move playback speed there as well
+- call `draw()` manually on preset change
 - refactor oscillateBetween (or better signature)
 - auto-select first preset by default
 - fix links to sketches on prod (`base` config is ignored)

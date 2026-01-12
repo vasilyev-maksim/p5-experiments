@@ -92,7 +92,7 @@ export function useKeyboardShortcuts(
 ) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "p" || e.key === "P" || e.key === " ") onPlayPause();
+      if (e.key === "p" || e.key === "P") onPlayPause();
       if (e.key === "f" || e.key === "F") onFullscreenToggle();
     };
     window.addEventListener("keydown", handleKeyDown);

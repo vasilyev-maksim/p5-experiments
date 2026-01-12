@@ -15,6 +15,7 @@ export const SketchCanvas = forwardRef<
     playing: boolean;
     params: IParams;
     presetName?: string;
+    manualTimeDelta?: number;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -58,8 +59,6 @@ export const SketchCanvas = forwardRef<
     } else if (curr === "tile") {
       api.set({ x: 0 });
     }
-
-    return () => {};
   }, [props.size, api]);
 
   const scale = x.to([0, 1], [canvasTileSize / previewSize, 1]);
@@ -92,6 +91,7 @@ export const SketchCanvas = forwardRef<
           sketch={p5Sketch}
           playing={props.playing}
           presetName={props.presetName}
+          manualTimeDelta={props.manualTimeDelta}
         />
       </animated.div>
     </animated.div>

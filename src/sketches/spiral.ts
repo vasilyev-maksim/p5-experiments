@@ -5,7 +5,7 @@ import type {
   ISketchFactory,
   ExtractParams,
 } from "../models";
-import { range } from "../utils";
+import { range, ValueWithHistory } from "../utils";
 
 const controls = {
   POLYGON_N: {
@@ -113,7 +113,9 @@ const factory: ISketchFactory<Params> =
   (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
     const POLYGONS_COUNT = 500,
       // BORDER_COLOR = "#ff0000ff",
-      BG_COLOR = "black";
+      BG_COLOR = "black",
+      MANUAL_TIME_DELTA = new ValueWithHistory<number | undefined>(),
+      PRESET_NAME = new ValueWithHistory<string | undefined>();
 
     let time: number = timeShift,
       POLYGON_N: number,
@@ -145,6 +147,21 @@ const factory: ISketchFactory<Params> =
       ROTATION_SPEED = props.ROTATION_SPEED;
       COLOR_CHANGE_SPEED = props.COLOR_CHANGE_SPEED;
       TIME_DELTA = props.TIME_DELTA;
+      MANUAL_TIME_DELTA.value = props.manualTimeDelta;
+      PRESET_NAME.value = props.presetName;
+
+      if (
+        MANUAL_TIME_DELTA.hasChanged &&
+        MANUAL_TIME_DELTA.value !== undefined
+      ) {
+        const delta = MANUAL_TIME_DELTA.value - (MANUAL_TIME_DELTA.prev ?? 0);
+        time += delta;
+        draw();
+      }
+
+      if (PRESET_NAME.hasChanged) {
+        draw();
+      }
 
       if (props.playing) {
         p.loop();
@@ -196,8 +213,7 @@ const factory: ISketchFactory<Params> =
       p.pop();
     }
 
-    p.draw = () => {
-      time += TIME_DELTA;
+    function draw() {
       p.background(BG_COLOR);
 
       getNodes().forEach((x, i, arr) => {
@@ -217,6 +233,11 @@ const factory: ISketchFactory<Params> =
           drawPolygon(x);
         }
       });
+    }
+
+    p.draw = () => {
+      time += TIME_DELTA;
+      draw();
     };
   };
 

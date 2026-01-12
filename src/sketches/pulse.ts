@@ -116,8 +116,6 @@ const factory: ISketchFactory<Params> =
       JOINT_TYPE = props.JOINT_TYPE;
       PRESET_NAME.value = props.presetName;
 
-      console.log(props.presetName);
-
       if (CURVE_RESOLUTION.hasChanged) {
         updateYCoords();
       }

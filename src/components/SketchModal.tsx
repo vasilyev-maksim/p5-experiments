@@ -78,6 +78,8 @@ export const SketchModal = ({
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(sketch.defaultParams);
   const [presetName, setPresetName] = useState<string>();
+  const [manualTimeDelta, setManualTimeDelta] = useState<number>();
+
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
   };
@@ -102,6 +104,31 @@ export const SketchModal = ({
   };
 
   useEffect(() => {
+    console.log("manualTimeDelta", manualTimeDelta);
+  }, [manualTimeDelta]);
+
+  const jumpNFrames = (N: number) => () => {
+    if (playing) {
+      setPlaying(false);
+    }
+    setManualTimeDelta((x) => (x ?? 0) + N);
+  };
+
+  const playWithCustomDelta = (delta: number) => () => {
+    changeParam("TIME_DELTA", delta);
+    if (!playing) {
+      setPlaying(true);
+    }
+  };
+
+  const stopPlayingWithCustomDelta = () => {
+    changeParam("TIME_DELTA", 1);
+    if (playing) {
+      setPlaying(false);
+    }
+  };
+
+  useEffect(() => {
     console.log(params);
   }, [params]);
 
@@ -120,7 +147,7 @@ export const SketchModal = ({
   const hidePlaybackControls = () => {
     if (playbackControlsEnabled) {
       api.start({
-        playbackControlsX: 1,
+        playbackControlsX: 0,
         config: { duration: 300, easing: easings.easeInOutCubic },
       });
     }
@@ -215,6 +242,7 @@ export const SketchModal = ({
                 playing={playing}
                 ref={sketchCanvasRef}
                 presetName={presetName}
+                manualTimeDelta={manualTimeDelta}
               />
             </div>
             <animated.div
@@ -230,6 +258,9 @@ export const SketchModal = ({
                 onPlayPause={playPause}
                 playing={playing}
                 onFullscreenToggle={openInFullscreen}
+                jumpNFrames={jumpNFrames}
+                playWithCustomDelta={playWithCustomDelta}
+                stopPlayingWithCustomDelta={stopPlayingWithCustomDelta}
               />
             </animated.div>
             <animated.div
