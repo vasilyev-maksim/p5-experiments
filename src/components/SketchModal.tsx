@@ -78,7 +78,8 @@ export const SketchModal = ({
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(sketch.defaultParams);
   const [presetName, setPresetName] = useState<string>();
-  const [manualTimeDelta, setManualTimeDelta] = useState<number>();
+  const [manualTimeShift, setManualTimeShift] = useState<number>();
+  const [timeDelta, setTimeDelta] = useState(1);
 
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
@@ -103,15 +104,11 @@ export const SketchModal = ({
     }
   };
 
-  useEffect(() => {
-    console.log("manualTimeDelta", manualTimeDelta);
-  }, [manualTimeDelta]);
-
   const jumpNFrames = (N: number) => () => {
     if (playing) {
       setPlaying(false);
     }
-    setManualTimeDelta((x) => (x ?? 0) + N);
+    setManualTimeShift((x) => (x ?? 0) + N);
   };
 
   const playWithCustomDelta = (delta: number) => () => {
@@ -242,7 +239,8 @@ export const SketchModal = ({
                 playing={playing}
                 ref={sketchCanvasRef}
                 presetName={presetName}
-                manualTimeDelta={manualTimeDelta}
+                manualTimeShift={manualTimeShift}
+                timeDelta={timeDelta}
               />
             </div>
             <animated.div
@@ -255,12 +253,13 @@ export const SketchModal = ({
               className={styles.PlaybackControlsBlock}
             >
               <PlaybackControls
-                onPlayPause={playPause}
                 playing={playing}
+                onPlayPause={playPause}
                 onFullscreenToggle={openInFullscreen}
-                jumpNFrames={jumpNFrames}
-                playWithCustomDelta={playWithCustomDelta}
-                stopPlayingWithCustomDelta={stopPlayingWithCustomDelta}
+                onJumpNFrames={jumpNFrames}
+                onPlayWithCustomDelta={playWithCustomDelta}
+                onStopPlayingWithCustomDelta={stopPlayingWithCustomDelta}
+                onTimeDeltaChange={setTimeDelta}
               />
             </animated.div>
             <animated.div

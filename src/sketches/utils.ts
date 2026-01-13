@@ -1,4 +1,7 @@
+import type { P5CanvasInstance } from "@p5-wrapper/react";
 import p5 from "p5";
+import type { ISketchFactory, ISketchProps } from "../models";
+import { ValueWithHistory } from "../utils";
 
 export function getQsParam(key: string, defaultValue: string): string {
   return new URLSearchParams(window.location.search).get(key) ?? defaultValue;
@@ -214,6 +217,7 @@ export function linearOscillateBetween(
   const normalized = (oscillation + 1) / 2; // от 0 до 1
   return p.lerp(min, max, normalized);
 }
+
 export class AnimatedValue {
   private prev: number | undefined;
   private interpolated: number | undefined;
@@ -260,4 +264,79 @@ export class AnimatedValue {
   public getNextValue() {
     return this.next;
   }
+}
+
+type FactoryArgs = {
+  canvasWidth: number;
+  canvasHeight: number;
+  randomSeed: number;
+  timeShift: number;
+};
+
+type P<Params extends string> = P5CanvasInstance<ISketchProps<Params>>;
+
+export type DrawArgs<Params extends string> = {
+  time: number;
+  props: ISketchProps<Params>;
+  p: P<Params>;
+  args: FactoryArgs;
+};
+
+export function createFactory<Params extends string = string>(
+  fn: () => {
+    setup: (p: P<Params>, args: FactoryArgs) => void;
+    draw: (drawArgs: DrawArgs<Params>) => void;
+    updateWithProps: (
+      props: ISketchProps<Params>,
+      p: P<Params>,
+      args: FactoryArgs
+    ) => void;
+  }
+): ISketchFactory<Params> {
+  const { setup, draw, updateWithProps } = fn();
+  return (canvasWidth, canvasHeight, randomSeed, timeShift) => (p) => {
+    const args = {
+      canvasWidth,
+      canvasHeight,
+      randomSeed,
+      timeShift,
+    };
+    let time = timeShift;
+    let props: ISketchProps<Params>;
+    const manualTimeShift = new ValueWithHistory<number | undefined>(),
+      presetName = new ValueWithHistory<string | undefined>();
+
+    p.setup = () => {
+      p.randomSeed(randomSeed);
+      p.noiseSeed(randomSeed);
+      setup(p, args);
+    };
+
+    p.draw = () => {
+      draw({ time, props, p, args });
+      console.log("time", time);
+      time += props.timeDelta;
+    };
+
+    p.updateWithProps = (newProps) => {
+      props = newProps;
+      manualTimeShift.value = props.manualTimeShift;
+      presetName.value = props.presetName;
+
+      if (manualTimeShift.hasChanged && manualTimeShift.value !== undefined) {
+        const delta = manualTimeShift.value - (manualTimeShift.prev ?? 0);
+        time += delta;
+        draw({ time, props, p, args });
+      }
+
+      if (props.playing) {
+        p.loop();
+      } else {
+        p.noLoop();
+      }
+
+      updateWithProps(props, p, args);
+      draw({ time, props, p, args });
+    };
+  };
 }

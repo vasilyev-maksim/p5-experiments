@@ -2,7 +2,12 @@ import type { P5CanvasInstance } from "@p5-wrapper/react";
 
 export type ISketchProps<ParamKey extends string = string> = {
   [K in ParamKey]: number;
-} & { playing: boolean; presetName?: string; manualTimeDelta?: number };
+} & {
+  playing: boolean;
+  presetName?: string;
+  manualTimeShift?: number;
+  timeDelta: number;
+};
 
 export type ISketchFactory<ParamKey extends string = string> = (
   width: number,

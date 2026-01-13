@@ -1,11 +1,6 @@
-import type {
-  IControls,
-  IPreset,
-  ISketch,
-  ISketchFactory,
-  ExtractParams,
-} from "../models";
-import { range, ValueWithHistory } from "../utils";
+import type { IControls, IPreset, ISketch, ExtractParams } from "../models";
+import { range } from "../utils";
+import { createFactory, type DrawArgs } from "./utils";
 
 const controls = {
   POLYGON_N: {
@@ -101,7 +96,6 @@ const controls = {
       ["#ff4b4bff", "#f0f689ff"],
       ["#13005fff", "#a3ff9aff"],
       ["#000", "#ffffffff"],
-      // ["#003e49ff", "#8aee98ff"],
     ],
     label: "Fill colors",
   },
@@ -109,115 +103,80 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory: ISketchFactory<Params> =
-  (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
-    const POLYGONS_COUNT = 500,
-      // BORDER_COLOR = "#ff0000ff",
-      BG_COLOR = "black",
-      MANUAL_TIME_DELTA = new ValueWithHistory<number | undefined>(),
-      PRESET_NAME = new ValueWithHistory<string | undefined>();
+const factory = createFactory<Params>(() => {
+  const POLYGONS_COUNT = 500,
+    BG_COLOR = "black";
+  let THICKNESS = 1,
+    COIL_SPEED = 1;
 
-    let time: number = timeShift,
-      POLYGON_N: number,
-      THICKNESS: number,
-      COIL_FACTOR: number,
-      COLOR_CHANGE_SPEED: number,
-      ZOOM: number,
-      COIL_SPEED: number,
-      ROTATION_SPEED: number,
-      TIME_DELTA: number,
-      FILL_COLORS_INDEX: number,
-      BORDER_COLOR_INDEX: number;
+  function getNodes({
+    p,
+    time,
+    props: { ZOOM, COIL_FACTOR, ROTATION_SPEED },
+  }: DrawArgs<Params>): [number, number][] {
+    return range(POLYGONS_COUNT).map((i) => {
+      return [
+        i * ZOOM,
+        i * COIL_FACTOR * (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
+          time * ROTATION_SPEED,
+      ];
+    });
+  }
 
-    p.updateWithProps = (props) => {
-      POLYGON_N = props.POLYGON_N;
-      THICKNESS =
-        controls.THICKNESS.max + controls.THICKNESS.min - props.THICKNESS;
-      COIL_FACTOR = props.COIL_FACTOR;
-      FILL_COLORS_INDEX = props.FILL_COLORS;
-      BORDER_COLOR_INDEX = props.BORDER_COLOR;
-      COIL_SPEED =
-        props.COIL_SPEED === 0
-          ? 0
-          : controls.COIL_SPEED.max +
-            controls.COIL_SPEED.min -
-            props.COIL_SPEED +
-            1;
-      ZOOM = props.ZOOM;
-      ROTATION_SPEED = props.ROTATION_SPEED;
-      COLOR_CHANGE_SPEED = props.COLOR_CHANGE_SPEED;
-      TIME_DELTA = props.TIME_DELTA;
-      MANUAL_TIME_DELTA.value = props.manualTimeDelta;
-      PRESET_NAME.value = props.presetName;
+  function drawCircle(
+    { p, args: { canvasWidth, canvasHeight } }: DrawArgs<Params>,
+    [d, angle]: [number, number]
+  ) {
+    const x = d * p.cos(angle);
+    const y = d * p.sin(angle);
+    p.circle(canvasWidth / 2 + x, canvasHeight / 2 + y, (d * 2) / THICKNESS);
+  }
 
-      if (
-        MANUAL_TIME_DELTA.hasChanged &&
-        MANUAL_TIME_DELTA.value !== undefined
-      ) {
-        const delta = MANUAL_TIME_DELTA.value - (MANUAL_TIME_DELTA.prev ?? 0);
-        time += delta;
-        draw();
+  function drawPolygon(
+    {
+      p,
+      args: { canvasWidth, canvasHeight },
+      props: { POLYGON_N },
+    }: DrawArgs<Params>,
+    [d, angle]: [number, number]
+  ) {
+    const x = d * p.cos(angle) + canvasWidth / 2;
+    const y = d * p.sin(angle) + canvasHeight / 2;
+    const adelta = 360 / POLYGON_N;
+
+    p.push();
+    {
+      p.translate(x, y);
+      p.beginShape();
+      for (let a = 0; a < 360; a += adelta) {
+        const sx = (p.cos(a) * d) / THICKNESS;
+        const sy = (p.sin(a) * d) / THICKNESS;
+        p.vertex(sx, sy);
       }
+      p.endShape("close");
+    }
+    p.pop();
+  }
 
-      if (PRESET_NAME.hasChanged) {
-        draw();
-      }
-
-      if (props.playing) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
-    };
-
-    p.setup = () => {
-      p.createCanvas(WIDTH, HEIGHT);
+  return {
+    setup: (p, { canvasWidth, canvasHeight }) => {
+      p.createCanvas(canvasWidth, canvasHeight);
       p.background("black");
       p.fill(255, 0, 0, 10);
       p.strokeWeight(1);
       p.angleMode("degrees");
-    };
+    },
+    draw: (drawArgs) => {
+      const {
+        p,
+        props: { BORDER_COLOR, FILL_COLORS, COLOR_CHANGE_SPEED, POLYGON_N },
+        time,
+      } = drawArgs;
 
-    function getNodes(): [number, number][] {
-      return range(POLYGONS_COUNT).map((i) => {
-        return [
-          i * ZOOM,
-          i * COIL_FACTOR * (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
-            time * ROTATION_SPEED,
-        ];
-      });
-    }
-
-    function drawCircle([d, angle]: [number, number]) {
-      const x = d * p.cos(angle);
-      const y = d * p.sin(angle);
-      p.circle(WIDTH / 2 + x, HEIGHT / 2 + y, (d * 2) / THICKNESS);
-    }
-
-    function drawPolygon([d, angle]: [number, number]) {
-      const x = d * p.cos(angle) + WIDTH / 2;
-      const y = d * p.sin(angle) + HEIGHT / 2;
-      const adelta = 360 / POLYGON_N;
-
-      p.push();
-      {
-        p.translate(x, y);
-        p.beginShape();
-        for (let a = 0; a < 360; a += adelta) {
-          const sx = (p.cos(a) * d) / THICKNESS;
-          const sy = (p.sin(a) * d) / THICKNESS;
-          p.vertex(sx, sy);
-        }
-        p.endShape("close");
-      }
-      p.pop();
-    }
-
-    function draw() {
       p.background(BG_COLOR);
 
-      getNodes().forEach((x, i, arr) => {
-        const [colorA, colorB] = controls.FILL_COLORS.colors[FILL_COLORS_INDEX];
+      getNodes(drawArgs).forEach((x, i, arr) => {
+        const [colorA, colorB] = controls.FILL_COLORS.colors[FILL_COLORS];
         const fillColor = p.lerpColor(
           p.color(colorA),
           p.color(colorB),
@@ -225,21 +184,28 @@ const factory: ISketchFactory<Params> =
         );
 
         p.fill(fillColor);
-        p.stroke(controls.BORDER_COLOR.colors[BORDER_COLOR_INDEX][0]);
+        p.stroke(controls.BORDER_COLOR.colors[BORDER_COLOR][0]);
 
         if (POLYGON_N === controls.POLYGON_N.max) {
-          drawCircle(x);
+          drawCircle(drawArgs, x);
         } else {
-          drawPolygon(x);
+          drawPolygon(drawArgs, x);
         }
       });
-    }
-
-    p.draw = () => {
-      time += TIME_DELTA;
-      draw();
-    };
+    },
+    updateWithProps: (props) => {
+      THICKNESS =
+        controls.THICKNESS.max + controls.THICKNESS.min - props.THICKNESS;
+      COIL_SPEED =
+        props.COIL_SPEED === 0
+          ? 0
+          : controls.COIL_SPEED.max +
+            controls.COIL_SPEED.min -
+            props.COIL_SPEED +
+            1;
+    },
   };
+});
 
 const presets: IPreset<Params>[] = [
   {
@@ -491,7 +457,7 @@ export const spiralSketch: ISketch<Params> = {
   preview: {
     size: 515,
   },
-  timeShift: 1000,
+  timeShift: 1002,
   controls,
   presets,
   defaultParams: presets[0].params,

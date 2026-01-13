@@ -2,15 +2,16 @@ import classNames from "classnames";
 import { PlayPauseButton } from "./PlayPauseButton";
 import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
-import { useLongPress } from "../utils";
+import { useLongPress } from "../hooks";
 
 export function PlaybackControls(props: {
-  onPlayPause: () => void;
   playing: boolean;
+  onPlayPause: () => void;
   onFullscreenToggle: () => void;
-  jumpNFrames: (N: number) => () => void;
-  playWithCustomDelta: (delta: number) => () => void;
-  stopPlayingWithCustomDelta: () => void;
+  onTimeDeltaChange: (val: number) => void;
+  onJumpNFrames: (N: number) => () => void;
+  onPlayWithCustomDelta: (delta: number) => () => void;
+  onStopPlayingWithCustomDelta: () => void;
 }) {
   return (
     <div className={styles.PlaybackControls}>
@@ -26,28 +27,28 @@ export function PlaybackControls(props: {
       <div className={styles.InnerWrapper}>
         <JumpNFramesButton
           n={-10}
-          onClick={props.jumpNFrames(-10)}
-          onLongPress={props.playWithCustomDelta(-2)}
-          onLongPressRelease={props.stopPlayingWithCustomDelta}
+          onClick={props.onJumpNFrames(-10)}
+          onLongPress={props.onPlayWithCustomDelta(-2)}
+          onLongPressRelease={props.onStopPlayingWithCustomDelta}
         />
         <JumpNFramesButton
           n={-1}
-          onClick={props.jumpNFrames(-1)}
-          onLongPress={props.playWithCustomDelta(-0.5)}
-          onLongPressRelease={props.stopPlayingWithCustomDelta}
+          onClick={props.onJumpNFrames(-1)}
+          onLongPress={props.onPlayWithCustomDelta(-0.5)}
+          onLongPressRelease={props.onStopPlayingWithCustomDelta}
         />
         <PlayPauseButton playing={props.playing} onClick={props.onPlayPause} />
         <JumpNFramesButton
           n={1}
-          onClick={props.jumpNFrames(1)}
-          onLongPress={props.playWithCustomDelta(0.5)}
-          onLongPressRelease={props.stopPlayingWithCustomDelta}
+          onClick={props.onJumpNFrames(1)}
+          onLongPress={props.onPlayWithCustomDelta(0.5)}
+          onLongPressRelease={props.onStopPlayingWithCustomDelta}
         />
         <JumpNFramesButton
           n={10}
-          onClick={props.jumpNFrames(10)}
-          onLongPress={props.playWithCustomDelta(2)}
-          onLongPressRelease={props.stopPlayingWithCustomDelta}
+          onClick={props.onJumpNFrames(10)}
+          onLongPress={props.onPlayWithCustomDelta(2)}
+          onLongPressRelease={props.onStopPlayingWithCustomDelta}
         />
       </div>
       <div className={styles.InnerWrapper}>
@@ -56,9 +57,7 @@ export function PlaybackControls(props: {
           min={0}
           max={100}
           step={1}
-          onChange={function (): void {
-            throw new Error("Function not implemented.");
-          }}
+          onChange={props.onTimeDeltaChange}
           label={"Playback speed: x1"}
         />
       </div>

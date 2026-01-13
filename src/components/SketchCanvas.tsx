@@ -14,8 +14,9 @@ export const SketchCanvas = forwardRef<
     size: SketchCanvasSize;
     playing: boolean;
     params: IParams;
+    timeDelta?: number;
     presetName?: string;
-    manualTimeDelta?: number;
+    manualTimeShift?: number;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -91,7 +92,8 @@ export const SketchCanvas = forwardRef<
           sketch={p5Sketch}
           playing={props.playing}
           presetName={props.presetName}
-          manualTimeDelta={props.manualTimeDelta}
+          manualTimeShift={props.manualTimeShift}
+          timeDelta={props.timeDelta ?? 0}
         />
       </animated.div>
     </animated.div>
