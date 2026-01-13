@@ -30,7 +30,8 @@ class Circle {
 }
 
 export const lungs: ISketchFactory =
-  (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
+  ({ canvasWidth, canvasHeight }) =>
+  (p) => {
     function getDirection(i: number) {
       return [
         p.createVector(1, 0),
@@ -40,9 +41,9 @@ export const lungs: ISketchFactory =
       ][i % 2];
     }
 
-    const CENTER_VEC = p.createVector(WIDTH / 2, HEIGHT / 2),
+    const CENTER_VEC = p.createVector(canvasWidth / 2, canvasHeight / 2),
       RINGS_COUNT = 20,
-      RD = WIDTH / 120,
+      RD = canvasWidth / 120,
       CIRCLES = range(RINGS_COUNT).map((i) => {
         const dir = getDirection(i);
         const rotationShiftDelta = (RD / 2) * (i + 1);
@@ -66,7 +67,7 @@ export const lungs: ISketchFactory =
       TRACK_MOUSE = false;
 
     p.setup = () => {
-      p.createCanvas(WIDTH, HEIGHT);
+      p.createCanvas(canvasWidth, canvasHeight);
       p.noStroke();
       p.angleMode("degrees");
     };
@@ -81,7 +82,7 @@ export const lungs: ISketchFactory =
 
     p.draw = () => {
       let angle;
-      const time = timeShift + p.frameCount;
+      const time = p.frameCount;
 
       if (TRACK_MOUSE) {
         const mouseVec = p.createVector(

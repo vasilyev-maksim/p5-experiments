@@ -16,7 +16,7 @@ export const SketchCanvas = forwardRef<
     params: IParams;
     timeDelta?: number;
     presetName?: string;
-    manualTimeShift?: number;
+    timeShift?: number;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -24,17 +24,16 @@ export const SketchCanvas = forwardRef<
   const prevSize = useRef<SketchCanvasSize>(null);
 
   const p5Sketch = useMemo(() => {
-    const width =
+    const canvasWidth =
       props.size === "fullscreen" ? window.innerWidth : canvasModalWidth;
-    const height =
+    const canvasHeight =
       props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
 
-    return props.sketch.factory(
-      width,
-      height,
-      props.sketch.randomSeed ?? 0,
-      props.sketch.timeShift ?? 0
-    );
+    return props.sketch.factory({
+      canvasWidth,
+      canvasHeight,
+      randomSeed: props.sketch.randomSeed ?? 0,
+    });
   }, [props.sketch, props.size, canvasModalWidth, canvasModalHeight]);
 
   const { duration } =
@@ -92,7 +91,7 @@ export const SketchCanvas = forwardRef<
           sketch={p5Sketch}
           playing={props.playing}
           presetName={props.presetName}
-          manualTimeShift={props.manualTimeShift}
+          timeShift={props.timeShift}
           timeDelta={props.timeDelta ?? 0}
         />
       </animated.div>

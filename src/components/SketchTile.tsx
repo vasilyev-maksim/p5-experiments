@@ -60,6 +60,7 @@ export const SketchTile = forwardRef<
           playing={false}
           size="tile"
           params={sketch.defaultParams}
+          timeShift={sketch.timeShift}
         />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>

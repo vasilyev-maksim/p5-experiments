@@ -5,15 +5,18 @@ export type ISketchProps<ParamKey extends string = string> = {
 } & {
   playing: boolean;
   presetName?: string;
-  manualTimeShift?: number;
+  timeShift?: number;
   timeDelta: number;
 };
 
+export type FactoryArgs = {
+  canvasWidth: number;
+  canvasHeight: number;
+  randomSeed: number;
+};
+
 export type ISketchFactory<ParamKey extends string = string> = (
-  width: number,
-  height: number,
-  randomSeed: number,
-  timeShift: number // nice game btw
+  args: FactoryArgs
 ) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
 interface IControlBase {

@@ -76,14 +76,15 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
-  (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
-    const W_MEAN_RANGE = [WIDTH / 25, WIDTH / 3],
+  ({ canvasWidth, canvasHeight, randomSeed }) =>
+  (p) => {
+    const W_MEAN_RANGE = [canvasWidth / 25, canvasWidth / 3],
       W_MIN = 15,
       W_MEAN = new ValueWithHistory<number>(),
       W_DISPERSION = new ValueWithHistory<number>();
 
     let PARTS: number[];
-    let time = timeShift,
+    let time = 0,
       GAP_X: number,
       GAP_Y: number,
       TIME_DELTA: number,
@@ -113,7 +114,7 @@ const factory: ISketchFactory<Params> =
     };
 
     p.setup = () => {
-      p.createCanvas(WIDTH, HEIGHT);
+      p.createCanvas(canvasWidth, canvasHeight);
       p.noStroke();
       p.randomSeed(randomSeed);
       // initParts();
@@ -125,21 +126,21 @@ const factory: ISketchFactory<Params> =
       p.background("black");
 
       const totalWidth = PARTS.reduce((acc, x) => acc + x, 0) - GAP_X;
-      let start = (WIDTH - totalWidth) / 2;
+      let start = (canvasWidth - totalWidth) / 2;
 
       PARTS.forEach((_w, i) => {
         const x = start,
           y = 0,
           w = _w - GAP_X,
-          h = HEIGHT,
+          h = canvasHeight,
           gapX =
-            HEIGHT / 2 +
+            canvasHeight / 2 +
             p.map(
               AMPLITUDE,
               controls.AMPLITUDE.min,
               controls.AMPLITUDE.max,
               0,
-              HEIGHT / 2
+              canvasHeight / 2
             ) *
               p.sin((p.TWO_PI * PERIOD * i) / PARTS.length + time);
 
@@ -173,7 +174,7 @@ const factory: ISketchFactory<Params> =
           p.color(controls.COLOR.colors[COLOR][1]),
           // p.color("#340998ff"),
           // p.color("#ea72f7ff"),
-          h / HEIGHT
+          h / canvasHeight
         );
 
         p.fill(color);
@@ -222,9 +223,9 @@ const factory: ISketchFactory<Params> =
       );
       const min = Math.max(mean * (1 - W_DISPERSION.value!), W_MIN);
       const max = Math.max(mean * (1 + W_DISPERSION.value!), W_MIN);
-      PARTS = getRandomPartition(WIDTH, min, max, () => p.random()).filter(
-        (x) => x >= W_MIN + GAP_X
-      );
+      PARTS = getRandomPartition(canvasWidth, min, max, () =>
+        p.random()
+      ).filter((x) => x >= W_MIN + GAP_X);
     }
   };
 

@@ -89,14 +89,15 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
-  (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
+  ({ canvasWidth, canvasHeight, randomSeed }) =>
+  (p) => {
     const CURVE_RESOLUTION = new ValueWithHistory<number>(),
       JOINT_SIZE = 10,
       TIME_DELTA: number = 1,
       PRESET_NAME = new ValueWithHistory<string | undefined>();
 
     let Y_COORDS: number[] = [],
-      time = timeShift,
+      time = 0,
       GAP: number,
       COLOR_INDEX: number,
       CURVES_COUNT: number,
@@ -138,8 +139,8 @@ const factory: ISketchFactory<Params> =
           p.noise(i, time * NOISE_DELTA),
           0,
           1,
-          (HEIGHT / 2) * (1 - DISPERSION),
-          (HEIGHT / 2) * (1 + DISPERSION)
+          (canvasHeight / 2) * (1 - DISPERSION),
+          (canvasHeight / 2) * (1 + DISPERSION)
         )
       );
     }
@@ -158,7 +159,7 @@ const factory: ISketchFactory<Params> =
 
         p.beginShape();
         Y_COORDS.forEach((_y, i, arr) => {
-          const x = (WIDTH * (i - 1)) / (arr.length - 3);
+          const x = (canvasWidth * (i - 1)) / (arr.length - 3);
           const y = _y + yOffset;
           const j = JOINT_SIZE,
             j2 = JOINT_SIZE / 2;
@@ -186,7 +187,7 @@ const factory: ISketchFactory<Params> =
     }
 
     p.setup = () => {
-      p.createCanvas(WIDTH, HEIGHT);
+      p.createCanvas(canvasWidth, canvasHeight);
       p.strokeWeight(2);
       p.randomSeed(randomSeed);
       p.noiseSeed(randomSeed);

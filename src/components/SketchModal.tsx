@@ -71,15 +71,18 @@ export const SketchModal = ({
   }, []);
 
   useListener(onProgress);
-  // useStart({ ctx });
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(sketch.defaultParams);
   const [presetName, setPresetName] = useState<string>();
-  const [manualTimeShift, setManualTimeShift] = useState<number>();
+  // initially used for sketch timeShift (to match preview tile) and then for playback controls
+  const [timeShift, setTimeShift] = useState<number>(sketch.timeShift ?? 0);
+  // time delta is a speed of animation set by user
   const [timeDelta, setTimeDelta] = useState(1);
+  // manual time delta is used by playback controls and takes precedence over timeDelta (if former is set)
+  const [manualTimeDelta, setManualTimeDelta] = useState<number>();
 
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
@@ -108,17 +111,18 @@ export const SketchModal = ({
     if (playing) {
       setPlaying(false);
     }
-    setManualTimeShift((x) => (x ?? 0) + N);
+    setTimeShift((x) => (x ?? 0) + N);
   };
 
   const playWithCustomDelta = (delta: number) => () => {
-    changeParam("TIME_DELTA", delta);
+    setManualTimeDelta(delta);
     if (!playing) {
       setPlaying(true);
     }
   };
 
   const stopPlayingWithCustomDelta = () => {
+    setManualTimeDelta(undefined);
     changeParam("TIME_DELTA", 1);
     if (playing) {
       setPlaying(false);
@@ -126,7 +130,7 @@ export const SketchModal = ({
   };
 
   useEffect(() => {
-    console.log(params);
+    console.log("preset", params);
   }, [params]);
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
@@ -239,8 +243,8 @@ export const SketchModal = ({
                 playing={playing}
                 ref={sketchCanvasRef}
                 presetName={presetName}
-                manualTimeShift={manualTimeShift}
-                timeDelta={timeDelta}
+                timeShift={timeShift}
+                timeDelta={manualTimeDelta || timeDelta}
               />
             </div>
             <animated.div

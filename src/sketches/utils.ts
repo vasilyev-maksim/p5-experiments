@@ -1,6 +1,6 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import p5 from "p5";
-import type { ISketchFactory, ISketchProps } from "../models";
+import type { FactoryArgs, ISketchFactory, ISketchProps } from "../models";
 import { ValueWithHistory } from "../utils";
 
 export function getQsParam(key: string, defaultValue: string): string {
@@ -266,13 +266,6 @@ export class AnimatedValue {
   }
 }
 
-type FactoryArgs = {
-  canvasWidth: number;
-  canvasHeight: number;
-  randomSeed: number;
-  timeShift: number;
-};
-
 type P<Params extends string> = P5CanvasInstance<ISketchProps<Params>>;
 
 export type DrawArgs<Params extends string> = {
@@ -294,37 +287,31 @@ export function createFactory<Params extends string = string>(
   }
 ): ISketchFactory<Params> {
   const { setup, draw, updateWithProps } = fn();
-  return (canvasWidth, canvasHeight, randomSeed, timeShift) => (p) => {
-    const args = {
-      canvasWidth,
-      canvasHeight,
-      randomSeed,
-      timeShift,
-    };
-    let time = timeShift;
+  return (args) => (p) => {
+    let time = 0;
     let props: ISketchProps<Params>;
-    const manualTimeShift = new ValueWithHistory<number | undefined>(),
+    const timeShift = new ValueWithHistory<number | undefined>(),
       presetName = new ValueWithHistory<string | undefined>();
 
     p.setup = () => {
-      p.randomSeed(randomSeed);
-      p.noiseSeed(randomSeed);
+      p.randomSeed(args.randomSeed);
+      p.noiseSeed(args.randomSeed);
       setup(p, args);
     };
 
     p.draw = () => {
       draw({ time, props, p, args });
-      console.log("time", time);
       time += props.timeDelta;
     };
 
     p.updateWithProps = (newProps) => {
       props = newProps;
-      manualTimeShift.value = props.manualTimeShift;
+      timeShift.value = props.timeShift;
       presetName.value = props.presetName;
 
-      if (manualTimeShift.hasChanged && manualTimeShift.value !== undefined) {
-        const delta = manualTimeShift.value - (manualTimeShift.prev ?? 0);
+      if (timeShift.hasChanged && timeShift.value !== undefined) {
+        const delta = timeShift.value - (timeShift.prev ?? 0);
+        console.log("delta", delta);
         time += delta;
         draw({ time, props, p, args });
       }

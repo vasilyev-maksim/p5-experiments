@@ -8,12 +8,13 @@ import { easeInOutQuad, getQsParam } from "../utils";
 import type { ISketchFactory } from "../../models";
 
 export const tiles: ISketchFactory =
-  (WIDTH, HEIGHT, randomSeed, timeShift) => (p) => {
+  ({ canvasWidth, canvasHeight, randomSeed }) =>
+  (p) => {
     const GRID_CELLS_Y = Number(getQsParam("y", "20")),
       CANVAS_PADDING = 3,
       PADDING = 3,
       GRID_SIZE = new Size(
-        Math.round((GRID_CELLS_Y * WIDTH) / HEIGHT),
+        Math.round((GRID_CELLS_Y * canvasWidth) / canvasHeight),
         GRID_CELLS_Y
       ),
       GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
@@ -23,8 +24,8 @@ export const tiles: ISketchFactory =
       grid = new Grid(p, {
         origin: GRID_ORIGIN,
         gridSizeInPixels: new Size(
-          WIDTH - CANVAS_PADDING * 2,
-          HEIGHT - CANVAS_PADDING * 2
+          canvasWidth - CANVAS_PADDING * 2,
+          canvasHeight - CANVAS_PADDING * 2
         ),
         gridSizeInCells: GRID_SIZE,
         color: "#CCC",
@@ -34,7 +35,7 @@ export const tiles: ISketchFactory =
       animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
 
     p.setup = () => {
-      p.createCanvas(WIDTH, HEIGHT);
+      p.createCanvas(canvasWidth, canvasHeight);
       p.randomSeed(randomSeed);
 
       while (spawnTurtle()) {
@@ -97,7 +98,7 @@ export const tiles: ISketchFactory =
 
       (REVERSE ? rectsToDraw.slice().reverse() : rectsToDraw).forEach(
         (cellRect, i, arr) => {
-          const time = p.frameCount + timeShift;
+          const time = p.frameCount;
           const canvasRect = grid.getCanvasRectangleFromVertexCells(cellRect);
           const animationProgress =
             time < 0 ? 1 : animation.getAnimationProgress(time, i);

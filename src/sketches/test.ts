@@ -22,19 +22,16 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
-  (WIDTH, HEIGHT, _randomSeed, timeShift) => (p) => {
+  ({ canvasWidth, canvasHeight }) =>
+  (p) => {
     const R = 50;
     const N = 25;
     const A = 120;
     const arr: p5.Vector[] = range(N).map((i) =>
-      p.createVector(WIDTH / 2 + R * i, HEIGHT / 2)
+      p.createVector(canvasWidth / 2 + R * i, canvasHeight / 2)
     );
-    let time = timeShift,
-      TIME_DELTA: number;
 
     p.updateWithProps = (props) => {
-      TIME_DELTA = props.TIME_DELTA;
-
       if (props.playing) {
         p.loop();
       } else {
@@ -43,7 +40,7 @@ const factory: ISketchFactory<Params> =
     };
 
     p.setup = () => {
-      p.createCanvas(WIDTH, HEIGHT);
+      p.createCanvas(canvasWidth, canvasHeight);
       p.angleMode("degrees");
     };
 
@@ -77,7 +74,6 @@ const factory: ISketchFactory<Params> =
 
     p.draw = () => {
       p.background("black");
-      time += TIME_DELTA;
       // console.log(time);
 
       // renderNodes(p);
