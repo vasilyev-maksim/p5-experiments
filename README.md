@@ -4,9 +4,8 @@
 
 - make animations independent from canvas size (?)
 - catch particular sketch errors (to show other more successful ones)
-- convert all props to `ValueWithHistory`
 - each preset may have a timestamp to play animation from (for better showiness)
-- add save as image button
+- add "save as image" button
 - use query params for direct sketch links
 - add randomize button for controls
 - remove param controls margin-top if no presets
@@ -18,14 +17,15 @@
 
 # 💡 NICE TO HAVE
 
-- mobile version (?)
+- move left side bar to the right (?)
+- mobile version (?), at least info message inviting to desktop version
 - perf opt: use cache for init data (like precomputed partitions array in TILES)
-- next/prev animation modal (using keyboard arrows)
 - position of preview fragment (in px)
 - worm like transition of site header when scrolling down
 
 # ✅ DONE
 
+- convert all props to `ValueWithHistory`
 - remove animation delay for modal footer when no presets/controls provided
 - move sequences declaration code to separate file/folder
 - make timedelta separate param
@@ -52,5 +52,6 @@
 
 # ❌ CANCELED
 
+- next/prev animation modal (using keyboard arrows)
 - more advanced controls: transformers, l/r arrows
 - Smooth animation start (with easing)
