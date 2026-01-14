@@ -48,7 +48,7 @@ export interface IChoiceControl extends IControlBase {
 export type IParams<ParamKey extends string = string> = Record<
   ParamKey,
   number
->;
+> & { timeDelta?: number };
 
 export type IControl =
   | IRangeControl

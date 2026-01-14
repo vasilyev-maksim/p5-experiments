@@ -80,7 +80,9 @@ export const SketchModal = ({
   /** initially used for sketch timeShift (to match preview tile) and then for playback controls */
   const [timeShift, setTimeShift] = useState<number>(sketch.timeShift ?? 0);
   /** time delta is a speed of animation set by user */
-  const [timeDelta, setTimeDelta] = useState(1);
+  const [timeDelta, setTimeDelta] = useState(
+    sketch.defaultParams.timeDelta ?? 1
+  );
   /** manual time delta is used by playback controls and takes precedence over timeDelta (if former is set) */
   const [manualTimeDelta, setManualTimeDelta] = useState<number>();
 
@@ -90,6 +92,7 @@ export const SketchModal = ({
   const applyPreset = (preset: IPreset) => {
     setPresetName(preset.name);
     setParams(preset.params);
+    setTimeDelta(preset.params.timeDelta ?? 1);
   };
   const playPause = () => setPlaying((x) => !x);
   const openInFullscreen = () => {
@@ -258,12 +261,13 @@ export const SketchModal = ({
             >
               <PlaybackControls
                 playing={playing}
+                timeDelta={timeDelta}
+                onTimeDeltaChange={setTimeDelta}
                 onPlayPause={playPause}
                 onFullscreenToggle={openInFullscreen}
                 onJumpNFrames={jumpNFrames}
                 onPlayWithCustomDelta={playWithCustomDelta}
                 onStopPlayingWithCustomDelta={stopPlayingWithCustomDelta}
-                onTimeDeltaChange={setTimeDelta}
               />
             </animated.div>
             <animated.div

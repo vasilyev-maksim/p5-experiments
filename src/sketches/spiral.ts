@@ -68,14 +68,6 @@ const controls = {
     step: 1,
     type: "range",
   },
-  TIME_DELTA: {
-    type: "range",
-    min: -2,
-    max: 2,
-    step: 0.1,
-    label: "Playback speed",
-    valueFormatter: (x) => x.toFixed(1),
-  },
   BORDER_COLOR: {
     type: "color",
     colors: [
@@ -103,94 +95,96 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createFactory<Params>((p, getProp, getTime) => {
-  const POLYGONS_COUNT = 500,
-    BG_COLOR = "black";
-  let THICKNESS = 1,
-    COIL_SPEED = 1;
+const factory = createFactory<Params>(
+  (p,{ canvasHeight, canvasWidth }, getProp, getTime, ) => {
+    const POLYGONS_COUNT = 500,
+      BG_COLOR = "black";
+    let THICKNESS = 1,
+      COIL_SPEED = 1;
 
-  function getNodes(): [number, number][] {
-    const time = getTime();
-    return range(POLYGONS_COUNT).map((i) => {
-      return [
-        i * getProp("ZOOM"),
-        i *
-          getProp("COIL_FACTOR") *
-          (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
-          time * getProp("ROTATION_SPEED"),
-      ];
-    });
-  }
-
-  function drawCircle([d, angle]: [number, number]) {
-    const x = d * p.cos(angle);
-    const y = d * p.sin(angle);
-    p.circle(p.width / 2 + x, p.height / 2 + y, (d * 2) / THICKNESS);
-  }
-
-  function drawPolygon([d, angle]: [number, number]) {
-    const x = d * p.cos(angle) + p.width / 2;
-    const y = d * p.sin(angle) + p.height / 2;
-    const adelta = 360 / getProp("POLYGON_N");
-
-    p.push();
-    {
-      p.translate(x, y);
-      p.beginShape();
-      for (let a = 0; a < 360; a += adelta) {
-        const sx = (p.cos(a) * d) / THICKNESS;
-        const sy = (p.sin(a) * d) / THICKNESS;
-        p.vertex(sx, sy);
-      }
-      p.endShape("close");
-    }
-    p.pop();
-  }
-
-  return {
-    setup: () => {
-      p.background("black");
-      p.fill(255, 0, 0, 10);
-      p.strokeWeight(1);
-      p.angleMode("degrees");
-    },
-    draw: (time) => {
-      p.background(BG_COLOR);
-
-      getNodes().forEach((node, i, arr) => {
-        const [colorA, colorB] =
-          controls.FILL_COLORS.colors[getProp("FILL_COLORS")];
-        const fillColor = p.lerpColor(
-          p.color(colorA),
-          p.color(colorB),
-          p.sin(
-            time * getProp("COLOR_CHANGE_SPEED") + (i / arr.length) * 360 * 4
-          )
-        );
-
-        p.fill(fillColor);
-        p.stroke(controls.BORDER_COLOR.colors[getProp("BORDER_COLOR")][0]);
-
-        if (getProp("POLYGON_N") === controls.POLYGON_N.max) {
-          drawCircle(node);
-        } else {
-          drawPolygon(node);
-        }
+    function getNodes(): [number, number][] {
+      const time = getTime();
+      return range(POLYGONS_COUNT).map((i) => {
+        return [
+          i * getProp("ZOOM"),
+          i *
+            getProp("COIL_FACTOR") *
+            (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
+            time * getProp("ROTATION_SPEED"),
+        ];
       });
-    },
-    updateWithProps: (props) => {
-      THICKNESS =
-        controls.THICKNESS.max + controls.THICKNESS.min - props.THICKNESS;
-      COIL_SPEED =
-        props.COIL_SPEED === 0
-          ? 0
-          : controls.COIL_SPEED.max +
-            controls.COIL_SPEED.min -
-            props.COIL_SPEED +
-            1;
-    },
-  };
-});
+    }
+
+    function drawCircle([d, angle]: [number, number]) {
+      const x = d * p.cos(angle);
+      const y = d * p.sin(angle);
+      p.circle(canvasWidth / 2 + x, canvasHeight / 2 + y, (d * 2) / THICKNESS);
+    }
+
+    function drawPolygon([d, angle]: [number, number]) {
+      const x = d * p.cos(angle) + canvasWidth / 2;
+      const y = d * p.sin(angle) + canvasHeight / 2;
+      const adelta = 360 / getProp("POLYGON_N");
+
+      p.push();
+      {
+        p.translate(x, y);
+        p.beginShape();
+        for (let a = 0; a < 360; a += adelta) {
+          const sx = (p.cos(a) * d) / THICKNESS;
+          const sy = (p.sin(a) * d) / THICKNESS;
+          p.vertex(sx, sy);
+        }
+        p.endShape("close");
+      }
+      p.pop();
+    }
+
+    return {
+      setup: () => {
+        p.background("black");
+        p.fill(255, 0, 0, 10);
+        p.strokeWeight(1);
+        p.angleMode("degrees");
+      },
+      draw: (time) => {
+        p.background(BG_COLOR);
+
+        getNodes().forEach((node, i, arr) => {
+          const [colorA, colorB] =
+            controls.FILL_COLORS.colors[getProp("FILL_COLORS")];
+          const fillColor = p.lerpColor(
+            p.color(colorA),
+            p.color(colorB),
+            p.sin(
+              time * getProp("COLOR_CHANGE_SPEED") + (i / arr.length) * 360 * 4
+            )
+          );
+
+          p.fill(fillColor);
+          p.stroke(controls.BORDER_COLOR.colors[getProp("BORDER_COLOR")][0]);
+
+          if (getProp("POLYGON_N") === controls.POLYGON_N.max) {
+            drawCircle(node);
+          } else {
+            drawPolygon(node);
+          }
+        });
+      },
+      updateWithProps: (props) => {
+        THICKNESS =
+          controls.THICKNESS.max + controls.THICKNESS.min - props.THICKNESS;
+        COIL_SPEED =
+          props.COIL_SPEED === 0
+            ? 0
+            : controls.COIL_SPEED.max +
+              controls.COIL_SPEED.min -
+              props.COIL_SPEED +
+              1;
+      },
+    };
+  }
+);
 
 const presets: IPreset<Params>[] = [
   {
@@ -202,9 +196,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 1.5,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 0,
       BORDER_COLOR: 0,
+      timeDelta: 1,
     },
     name: "spiral",
   },
@@ -217,9 +211,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 4,
       ROTATION_SPEED: 4,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 2,
       BORDER_COLOR: 4,
+      timeDelta: 1,
     },
     name: "peach",
   },
@@ -232,9 +226,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 4,
       BORDER_COLOR: 5,
+      timeDelta: 1,
     },
     name: "glimmer",
   },
@@ -247,9 +241,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 3,
       BORDER_COLOR: 3,
+      timeDelta: 1,
     },
     name: "reptile",
   },
@@ -262,9 +256,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 1.5,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 3,
       BORDER_COLOR: 2,
+      timeDelta: 1,
     },
     name: "cyclone",
   },
@@ -277,9 +271,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 0,
       BORDER_COLOR: 5,
+      timeDelta: 1,
     },
     name: "black hole",
   },
@@ -292,9 +286,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: -10,
-      TIME_DELTA: 1,
       FILL_COLORS: 0,
       BORDER_COLOR: 5,
+      timeDelta: 1,
     },
     name: "white hole",
   },
@@ -307,9 +301,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 0.1,
       COLOR_CHANGE_SPEED: 1,
-      TIME_DELTA: 0.2,
       FILL_COLORS: 4,
       BORDER_COLOR: 4,
+      timeDelta: 0.2,
     },
     name: "space odyssey",
   },
@@ -322,9 +316,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 20,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 0.1,
       FILL_COLORS: 1,
       BORDER_COLOR: 5,
+      timeDelta: 0.1,
     },
     name: "hexornado",
   },
@@ -337,9 +331,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 6,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 0,
       BORDER_COLOR: 0,
+      timeDelta: 1,
     },
     name: "mandala",
   },
@@ -352,9 +346,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 1,
       FILL_COLORS: 1,
       BORDER_COLOR: 5,
+      timeDelta: 1,
     },
     name: "subatomic",
   },
@@ -367,9 +361,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 10,
       COLOR_CHANGE_SPEED: 1,
-      TIME_DELTA: 1,
       FILL_COLORS: 0,
       BORDER_COLOR: 0,
+      timeDelta: 1,
     },
     name: "phase space",
   },
@@ -382,9 +376,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 1,
       ROTATION_SPEED: 0,
       COLOR_CHANGE_SPEED: 1,
-      TIME_DELTA: 1,
       FILL_COLORS: 0,
       BORDER_COLOR: 3,
+      timeDelta: 1,
     },
     name: "radiation",
   },
@@ -397,9 +391,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 3,
       ROTATION_SPEED: 2,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 0.1,
       FILL_COLORS: 3,
       BORDER_COLOR: 0,
+      timeDelta: 0.1,
     },
     name: "toxic",
   },
@@ -412,9 +406,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 2,
       ROTATION_SPEED: 4,
       COLOR_CHANGE_SPEED: 10,
-      TIME_DELTA: 0.1,
       FILL_COLORS: 0,
       BORDER_COLOR: 3,
+      timeDelta: 0.1,
     },
     name: "purple lambo",
   },
@@ -427,9 +421,9 @@ const presets: IPreset<Params>[] = [
       ZOOM: 1.4,
       ROTATION_SPEED: 0.05,
       COLOR_CHANGE_SPEED: -1,
-      TIME_DELTA: -1,
       FILL_COLORS: 4,
       BORDER_COLOR: 0,
+      timeDelta: -1,
     },
     name: "spiderverse",
   },

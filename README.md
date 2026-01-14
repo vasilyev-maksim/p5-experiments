@@ -2,18 +2,12 @@
 
 # 📋 TODO
 
+- convert all props to `ValueWithHistory`
 - each preset may have a timestamp to play animation from (for better showiness)
-- rerender paused sketch on param change
-- make timedelta separate param
-
-  - restore old value after long press
-
 - add save as image button
 - use query params for direct sketch links
 - add randomize button for controls
-- move sequences declaration code to separate file/folder
 - remove param controls margin-top if no presets
-- remove animation delay for modal footer when no presets/controls provided
 - focus trap for modal (home page links are accessible)
 - make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - FIX: links are not clickable in app header
@@ -31,6 +25,11 @@
 
 # ✅ DONE
 
+- remove animation delay for modal footer when no presets/controls provided
+- move sequences declaration code to separate file/folder
+- make timedelta separate param
+  - restore old value after long press
+- rerender paused sketch on param change
 - move play controls to sketch bottom-center (show up on mouse hover)
   - move playback speed there as well
 - call `draw()` manually on preset change

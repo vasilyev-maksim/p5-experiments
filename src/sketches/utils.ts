@@ -171,8 +171,8 @@ export function getGrid2D(args: GetGrid2DArgs): Grid2DCallbackArgs[] {
   const grid: Grid2DCallbackArgs[] = [];
   grid2D({
     ...args,
-    callback: (cargs) => {
-      grid.push(cargs);
+    callback: (cArgs) => {
+      grid.push(cArgs);
     },
   });
   return grid;
@@ -269,6 +269,7 @@ export class AnimatedValue {
 export function createFactory<Prop extends string = string>(
   fn: (
     p: P5CanvasInstance<ISketchProps<Prop>>,
+    args: FactoryArgs,
     getPropValue: (propName: Prop) => number,
     getTime: () => number
   ) => {
@@ -290,7 +291,7 @@ export function createFactory<Prop extends string = string>(
 
     const getPropValue = (propName: Prop) => props[propName];
     const getTime = () => time;
-    const { setup, draw, updateWithProps } = fn(p, getPropValue, getTime);
+    const { setup, draw, updateWithProps } = fn(p, args, getPropValue, getTime);
 
     p.setup = () => {
       p.createCanvas(args.canvasWidth, args.canvasHeight);

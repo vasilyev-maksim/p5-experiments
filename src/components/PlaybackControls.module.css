@@ -13,7 +13,7 @@
   /* flex: 1; */
 }
 
-.InnerWrapper {
+.Section {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -62,4 +62,9 @@
     position: relative;
     top: -1px;
   }
+}
+
+.SpeedValue {
+  display: inline-block;
+  width: 23px;
 }

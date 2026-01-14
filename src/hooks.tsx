@@ -118,7 +118,9 @@ export function useSliderBehavior(
   const animatedValue = useSpringValue(value, {
     config: { duration: 150 },
   });
-  const handleLeft = animatedValue.to((v) => ((v - min) / (max - min)) * 100);
+  const handleLeft = animatedValue.to(
+    (v) => Math.min(1, Math.max(0, (v - min) / (max - min))) * 100
+  );
 
   useEffect(() => {
     animatedValue.start(value);

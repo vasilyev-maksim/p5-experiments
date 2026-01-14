@@ -6,16 +6,17 @@ import { useLongPress } from "../hooks";
 
 export function PlaybackControls(props: {
   playing: boolean;
+  timeDelta: number;
+  onTimeDeltaChange: (val: number) => void;
   onPlayPause: () => void;
   onFullscreenToggle: () => void;
-  onTimeDeltaChange: (val: number) => void;
   onJumpNFrames: (N: number) => () => void;
   onPlayWithCustomDelta: (delta: number) => () => void;
   onStopPlayingWithCustomDelta: () => void;
 }) {
   return (
     <div className={styles.PlaybackControls}>
-      <div className={styles.InnerWrapper}>
+      <div className={styles.Section}>
         <button
           className={classNames(styles.Fullscreen, styles.IconButton)}
           onClick={props.onFullscreenToggle}
@@ -24,7 +25,7 @@ export function PlaybackControls(props: {
         </button>
         <button className={styles.TextButton}>Capture</button>
       </div>
-      <div className={styles.InnerWrapper}>
+      <div className={styles.Section}>
         <JumpNFramesButton
           n={-10}
           onClick={props.onJumpNFrames(-10)}
@@ -51,14 +52,21 @@ export function PlaybackControls(props: {
           onLongPressRelease={props.onStopPlayingWithCustomDelta}
         />
       </div>
-      <div className={styles.InnerWrapper}>
+      <div className={styles.Section}>
         <Slider
-          value={50}
+          value={props.timeDelta}
           min={0}
-          max={100}
-          step={1}
+          max={3}
+          step={0.1}
           onChange={props.onTimeDeltaChange}
-          label={"Playback speed: x1"}
+          label={
+            <>
+              Playback speed: x
+              <span className={styles.SpeedValue}>
+                {props.timeDelta.toFixed(1)}
+              </span>
+            </>
+          }
         />
       </div>
     </div>

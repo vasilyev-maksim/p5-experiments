@@ -145,9 +145,6 @@ const factory: ISketchFactory<Params> =
         r
       );
 
-      // joiner.renderPoints(p);
-      // const pLen = joiner.points.length;
-
       const render =
         (curvatureSign: 1 | -1) =>
         (a: p5.Vector, b: p5.Vector, i: number, n: number) => {
