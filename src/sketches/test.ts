@@ -60,7 +60,6 @@ const factory: ISketchFactory<Params> =
         const bc = p5.Vector.sub(c, b);
         const angle = p5.Vector.angleBetween(ba, bc);
         if (p.abs(angle) < A) {
-          console.log(angle);
           const n = ba
             .copy()
             .rotate(Math.sign(angle) * A)

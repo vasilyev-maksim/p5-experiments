@@ -266,30 +266,32 @@ export class AnimatedValue {
   }
 }
 
-type P<Params extends string> = P5CanvasInstance<ISketchProps<Params>>;
-
 export type DrawArgs<Params extends string> = {
   time: number;
   props: ISketchProps<Params>;
-  p: P<Params>;
+  p: P5CanvasInstance<ISketchProps<Params>>;
   args: FactoryArgs;
 };
 
 export function createFactory<Params extends string = string>(
   fn: () => {
-    setup: (p: P<Params>, args: FactoryArgs) => void;
+    setup: (
+      p: P5CanvasInstance<ISketchProps<Params>>,
+      args: FactoryArgs
+    ) => void;
     draw: (drawArgs: DrawArgs<Params>) => void;
     updateWithProps: (
       props: ISketchProps<Params>,
-      p: P<Params>,
+      p: P5CanvasInstance<ISketchProps<Params>>,
       args: FactoryArgs
     ) => void;
   }
 ): ISketchFactory<Params> {
   const { setup, draw, updateWithProps } = fn();
   return (args) => (p) => {
-    let time = 0;
-    let props: ISketchProps<Params>;
+    let time = 0,
+      props: ISketchProps<Params>,
+      initialPropsUpdate = true;
     const timeShift = new ValueWithHistory<number | undefined>(),
       presetName = new ValueWithHistory<string | undefined>();
 
@@ -309,11 +311,18 @@ export function createFactory<Params extends string = string>(
       timeShift.value = props.timeShift;
       presetName.value = props.presetName;
 
+      const drawIfNotInitialUpdate = () => {
+        // updateProps's first call happens before `p.setup` call,
+        // so calling `draw` triggers a runtime error (`p` is not "well defined" yet)
+        if (!initialPropsUpdate) {
+          draw({ time, props, p, args });
+        }
+      };
+
       if (timeShift.hasChanged && timeShift.value !== undefined) {
         const delta = timeShift.value - (timeShift.prev ?? 0);
-        console.log("delta", delta);
         time += delta;
-        draw({ time, props, p, args });
+        drawIfNotInitialUpdate();
       }
 
       if (props.playing) {
@@ -323,7 +332,9 @@ export function createFactory<Params extends string = string>(
       }
 
       updateWithProps(props, p, args);
-      draw({ time, props, p, args });
+      drawIfNotInitialUpdate();
+
+      initialPropsUpdate = false;
     };
   };
 }

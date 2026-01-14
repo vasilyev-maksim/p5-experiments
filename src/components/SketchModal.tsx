@@ -77,11 +77,11 @@ export const SketchModal = ({
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(sketch.defaultParams);
   const [presetName, setPresetName] = useState<string>();
-  // initially used for sketch timeShift (to match preview tile) and then for playback controls
+  /** initially used for sketch timeShift (to match preview tile) and then for playback controls */
   const [timeShift, setTimeShift] = useState<number>(sketch.timeShift ?? 0);
-  // time delta is a speed of animation set by user
+  /** time delta is a speed of animation set by user */
   const [timeDelta, setTimeDelta] = useState(1);
-  // manual time delta is used by playback controls and takes precedence over timeDelta (if former is set)
+  /** manual time delta is used by playback controls and takes precedence over timeDelta (if former is set) */
   const [manualTimeDelta, setManualTimeDelta] = useState<number>();
 
   const changeParam = (key: string, value: number) => {
