@@ -1,6 +1,6 @@
 import type { IControls, IPreset, ISketch, ExtractParams } from "../models";
 import { range } from "../utils";
-import { createFactory, type DrawArgs } from "./utils";
+import { createFactory } from "./utils";
 
 const controls = {
   POLYGON_N: {
@@ -103,46 +103,35 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createFactory<Params>(() => {
+const factory = createFactory<Params>((p, getProp, getTime) => {
   const POLYGONS_COUNT = 500,
     BG_COLOR = "black";
   let THICKNESS = 1,
     COIL_SPEED = 1;
 
-  function getNodes({
-    p,
-    time,
-    props: { ZOOM, COIL_FACTOR, ROTATION_SPEED },
-  }: DrawArgs<Params>): [number, number][] {
+  function getNodes(): [number, number][] {
+    const time = getTime();
     return range(POLYGONS_COUNT).map((i) => {
       return [
-        i * ZOOM,
-        i * COIL_FACTOR * (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
-          time * ROTATION_SPEED,
+        i * getProp("ZOOM"),
+        i *
+          getProp("COIL_FACTOR") *
+          (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
+          time * getProp("ROTATION_SPEED"),
       ];
     });
   }
 
-  function drawCircle(
-    { p, args: { canvasWidth, canvasHeight } }: DrawArgs<Params>,
-    [d, angle]: [number, number]
-  ) {
+  function drawCircle([d, angle]: [number, number]) {
     const x = d * p.cos(angle);
     const y = d * p.sin(angle);
-    p.circle(canvasWidth / 2 + x, canvasHeight / 2 + y, (d * 2) / THICKNESS);
+    p.circle(p.width / 2 + x, p.height / 2 + y, (d * 2) / THICKNESS);
   }
 
-  function drawPolygon(
-    {
-      p,
-      args: { canvasWidth, canvasHeight },
-      props: { POLYGON_N },
-    }: DrawArgs<Params>,
-    [d, angle]: [number, number]
-  ) {
-    const x = d * p.cos(angle) + canvasWidth / 2;
-    const y = d * p.sin(angle) + canvasHeight / 2;
-    const adelta = 360 / POLYGON_N;
+  function drawPolygon([d, angle]: [number, number]) {
+    const x = d * p.cos(angle) + p.width / 2;
+    const y = d * p.sin(angle) + p.height / 2;
+    const adelta = 360 / getProp("POLYGON_N");
 
     p.push();
     {
@@ -159,37 +148,33 @@ const factory = createFactory<Params>(() => {
   }
 
   return {
-    setup: (p, { canvasWidth, canvasHeight }) => {
-      p.createCanvas(canvasWidth, canvasHeight);
+    setup: () => {
       p.background("black");
       p.fill(255, 0, 0, 10);
       p.strokeWeight(1);
       p.angleMode("degrees");
     },
-    draw: (drawArgs) => {
-      const {
-        p,
-        props: { BORDER_COLOR, FILL_COLORS, COLOR_CHANGE_SPEED, POLYGON_N },
-        time,
-      } = drawArgs;
-
+    draw: (time) => {
       p.background(BG_COLOR);
 
-      getNodes(drawArgs).forEach((x, i, arr) => {
-        const [colorA, colorB] = controls.FILL_COLORS.colors[FILL_COLORS];
+      getNodes().forEach((node, i, arr) => {
+        const [colorA, colorB] =
+          controls.FILL_COLORS.colors[getProp("FILL_COLORS")];
         const fillColor = p.lerpColor(
           p.color(colorA),
           p.color(colorB),
-          p.sin(time * COLOR_CHANGE_SPEED + (i / arr.length) * 360 * 4)
+          p.sin(
+            time * getProp("COLOR_CHANGE_SPEED") + (i / arr.length) * 360 * 4
+          )
         );
 
         p.fill(fillColor);
-        p.stroke(controls.BORDER_COLOR.colors[BORDER_COLOR][0]);
+        p.stroke(controls.BORDER_COLOR.colors[getProp("BORDER_COLOR")][0]);
 
-        if (POLYGON_N === controls.POLYGON_N.max) {
-          drawCircle(drawArgs, x);
+        if (getProp("POLYGON_N") === controls.POLYGON_N.max) {
+          drawCircle(node);
         } else {
-          drawPolygon(drawArgs, x);
+          drawPolygon(node);
         }
       });
     },
