@@ -2,6 +2,8 @@
 
 # 📋 TODO
 
+- make animations independent from canvas size (?)
+- catch particular sketch errors (to show other more successful ones)
 - convert all props to `ValueWithHistory`
 - each preset may have a timestamp to play animation from (for better showiness)
 - add save as image button
@@ -20,7 +22,6 @@
 - perf opt: use cache for init data (like precomputed partitions array in TILES)
 - next/prev animation modal (using keyboard arrows)
 - position of preview fragment (in px)
-- make animations independent from canvas size (?)
 - worm like transition of site header when scrolling down
 
 # ✅ DONE

@@ -95,96 +95,99 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createFactory<Params>(
-  (p,{ canvasHeight, canvasWidth }, getProp, getTime, ) => {
-    const POLYGONS_COUNT = 500,
-      BG_COLOR = "black";
-    let THICKNESS = 1,
-      COIL_SPEED = 1;
+const factory = createFactory<Params>((p, getProp, getTime) => {
+  const POLYGONS_COUNT = 500,
+    BG_COLOR = "black";
+  let THICKNESS = 1,
+    COIL_SPEED = 1;
 
-    function getNodes(): [number, number][] {
-      const time = getTime();
-      return range(POLYGONS_COUNT).map((i) => {
-        return [
-          i * getProp("ZOOM"),
-          i *
-            getProp("COIL_FACTOR") *
-            (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
-            time * getProp("ROTATION_SPEED"),
-        ];
-      });
-    }
-
-    function drawCircle([d, angle]: [number, number]) {
-      const x = d * p.cos(angle);
-      const y = d * p.sin(angle);
-      p.circle(canvasWidth / 2 + x, canvasHeight / 2 + y, (d * 2) / THICKNESS);
-    }
-
-    function drawPolygon([d, angle]: [number, number]) {
-      const x = d * p.cos(angle) + canvasWidth / 2;
-      const y = d * p.sin(angle) + canvasHeight / 2;
-      const adelta = 360 / getProp("POLYGON_N");
-
-      p.push();
-      {
-        p.translate(x, y);
-        p.beginShape();
-        for (let a = 0; a < 360; a += adelta) {
-          const sx = (p.cos(a) * d) / THICKNESS;
-          const sy = (p.sin(a) * d) / THICKNESS;
-          p.vertex(sx, sy);
-        }
-        p.endShape("close");
-      }
-      p.pop();
-    }
-
-    return {
-      setup: () => {
-        p.background("black");
-        p.fill(255, 0, 0, 10);
-        p.strokeWeight(1);
-        p.angleMode("degrees");
-      },
-      draw: (time) => {
-        p.background(BG_COLOR);
-
-        getNodes().forEach((node, i, arr) => {
-          const [colorA, colorB] =
-            controls.FILL_COLORS.colors[getProp("FILL_COLORS")];
-          const fillColor = p.lerpColor(
-            p.color(colorA),
-            p.color(colorB),
-            p.sin(
-              time * getProp("COLOR_CHANGE_SPEED") + (i / arr.length) * 360 * 4
-            )
-          );
-
-          p.fill(fillColor);
-          p.stroke(controls.BORDER_COLOR.colors[getProp("BORDER_COLOR")][0]);
-
-          if (getProp("POLYGON_N") === controls.POLYGON_N.max) {
-            drawCircle(node);
-          } else {
-            drawPolygon(node);
-          }
-        });
-      },
-      updateWithProps: (props) => {
-        THICKNESS =
-          controls.THICKNESS.max + controls.THICKNESS.min - props.THICKNESS;
-        COIL_SPEED =
-          props.COIL_SPEED === 0
-            ? 0
-            : controls.COIL_SPEED.max +
-              controls.COIL_SPEED.min -
-              props.COIL_SPEED +
-              1;
-      },
-    };
+  function getNodes(): [number, number][] {
+    const time = getTime();
+    return range(POLYGONS_COUNT).map((i) => {
+      return [
+        i * getProp("ZOOM").value!,
+        i *
+          getProp("COIL_FACTOR").value! *
+          (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
+          time * getProp("ROTATION_SPEED").value!,
+      ];
+    });
   }
-);
+
+  function drawCircle([d, angle]: [number, number]) {
+    const x = d * p.cos(angle);
+    const y = d * p.sin(angle);
+    p.circle(p.width / 2 + x, p.height / 2 + y, (d * 2) / THICKNESS);
+  }
+
+  function drawPolygon([d, angle]: [number, number]) {
+    const x = d * p.cos(angle) + p.width / 2;
+    const y = d * p.sin(angle) + p.height / 2;
+    const adelta = 360 / getProp("POLYGON_N").value!;
+
+    p.push();
+    {
+      p.translate(x, y);
+      p.beginShape();
+      for (let a = 0; a < 360; a += adelta) {
+        const sx = (p.cos(a) * d) / THICKNESS;
+        const sy = (p.sin(a) * d) / THICKNESS;
+        p.vertex(sx, sy);
+      }
+      p.endShape("close");
+    }
+    p.pop();
+  }
+
+  return {
+    setup: () => {
+      p.background("black");
+      p.fill(255, 0, 0, 10);
+      p.strokeWeight(1);
+      p.angleMode("degrees");
+    },
+    draw: (time) => {
+      p.background(BG_COLOR);
+
+      getNodes().forEach((node, i, arr) => {
+        const [colorA, colorB] =
+          controls.FILL_COLORS.colors[getProp("FILL_COLORS").value!];
+        const fillColor = p.lerpColor(
+          p.color(colorA),
+          p.color(colorB),
+          p.sin(
+            time * getProp("COLOR_CHANGE_SPEED").value! +
+              (i / arr.length) * 360 * 4
+          )
+        );
+
+        p.fill(fillColor);
+        p.stroke(
+          controls.BORDER_COLOR.colors[getProp("BORDER_COLOR").value!][0]
+        );
+
+        if (getProp("POLYGON_N").value! === controls.POLYGON_N.max) {
+          drawCircle(node);
+        } else {
+          drawPolygon(node);
+        }
+      });
+    },
+    updateWithProps: () => {
+      THICKNESS =
+        controls.THICKNESS.max +
+        controls.THICKNESS.min -
+        getProp("THICKNESS").value!;
+      COIL_SPEED =
+        getProp("COIL_SPEED").value! === 0
+          ? 0
+          : controls.COIL_SPEED.max +
+            controls.COIL_SPEED.min -
+            getProp("COIL_SPEED").value! +
+            1;
+    },
+  };
+});
 
 const presets: IPreset<Params>[] = [
   {

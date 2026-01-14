@@ -7,12 +7,15 @@ export type ISketchProps<ParamKey extends string = string> = {
   presetName?: string;
   timeShift?: number;
   timeDelta: number;
-};
-
-export type FactoryArgs = {
   canvasWidth: number;
   canvasHeight: number;
   randomSeed: number;
+};
+
+export type FactoryArgs = {
+  initialCanvasWidth: number;
+  initialCanvasHeight: number;
+  initialRandomSeed: number;
 };
 
 export type ISketchFactory<ParamKey extends string = string> = (

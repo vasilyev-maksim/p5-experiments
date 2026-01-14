@@ -1,7 +1,7 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import p5 from "p5";
-import type { FactoryArgs, ISketchFactory, ISketchProps } from "../models";
-import { ValueWithHistory } from "../utils";
+import type { ISketchFactory, ISketchProps } from "../models";
+import { TrackedValue } from "../utils";
 
 export function getQsParam(key: string, defaultValue: string): string {
   return new URLSearchParams(window.location.search).get(key) ?? defaultValue;
@@ -252,7 +252,6 @@ export class AnimatedValue {
     ) {
       const delta = (this.next - this.prev) / this.stepsCount;
       this.interpolated += delta;
-      // console.log({ step: this.currentStep });
       this.currentStep--;
     }
   }
@@ -266,74 +265,100 @@ export class AnimatedValue {
   }
 }
 
-export function createFactory<Prop extends string = string>(
+type Props<Param extends string = string> = keyof ISketchProps<Param>;
+type TrackedProps<Param extends string = string> = {
+  [k in Props<Param>]: TrackedValue<ISketchProps<Param>[k]>;
+};
+
+export function createFactory<Param extends string = string>(
   fn: (
-    p: P5CanvasInstance<ISketchProps<Prop>>,
-    args: FactoryArgs,
-    getPropValue: (propName: Prop) => number,
+    p: P5CanvasInstance<ISketchProps<Param>>,
+    getProp: <K extends Props<Param>>(propName: K) => TrackedProps<Param>[K],
     getTime: () => number
   ) => {
     setup: () => void;
     draw: (time: number) => void;
-    updateWithProps: (
-      props: ISketchProps<Prop>,
-      p: P5CanvasInstance<ISketchProps<Prop>>,
-      args: FactoryArgs
-    ) => void;
+    updateWithProps: () => void;
   }
-): ISketchFactory<Prop> {
-  return (args) => (p) => {
-    let time = 0,
-      props: ISketchProps<Prop>,
-      initialPropsUpdate = true;
-    const timeShift = new ValueWithHistory<number | undefined>(),
-      presetName = new ValueWithHistory<string | undefined>();
+): ISketchFactory<Param> {
+  return ({ initialCanvasHeight, initialCanvasWidth, initialRandomSeed }) =>
+    (p) => {
+      let time = 0,
+        initialPropsUpdate = true,
+        props: TrackedProps<Param>;
 
-    const getPropValue = (propName: Prop) => props[propName];
-    const getTime = () => time;
-    const { setup, draw, updateWithProps } = fn(p, args, getPropValue, getTime);
+      const getProp = <K extends Props<Param>>(propName: K) => props[propName]!;
+      const getTime = () => time;
+      const { setup, draw, updateWithProps } = fn(p, getProp, getTime);
 
-    p.setup = () => {
-      p.createCanvas(args.canvasWidth, args.canvasHeight);
-      p.randomSeed(args.randomSeed);
-      p.noiseSeed(args.randomSeed);
-      setup();
-    };
-
-    p.draw = () => {
-      draw(time);
-      time += props.timeDelta;
-    };
-
-    p.updateWithProps = (newProps) => {
-      props = newProps;
-      timeShift.value = props.timeShift;
-      presetName.value = props.presetName;
-
-      const drawIfNotInitialUpdate = () => {
-        // updateProps's first call happens before `p.setup` call,
-        // so calling `draw` triggers a runtime error (`p` is not "well defined" yet)
-        if (!initialPropsUpdate) {
-          draw(time);
+      const _updateProps = (newRawProps: ISketchProps<Param>) => {
+        if (!props) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          props = {} as any;
         }
+
+        (Object.keys(newRawProps) as Props<Param>[]).forEach((key) => {
+          if (props[key] === undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            props[key] = new TrackedValue(newRawProps[key] as any) as any;
+          } else {
+            props[key].value = newRawProps[key];
+          }
+        });
       };
 
-      if (timeShift.hasChanged && timeShift.value !== undefined) {
-        const delta = timeShift.value - (timeShift.prev ?? 0);
-        time += delta;
+      p.setup = () => {
+        console.log("setup");
+        p.createCanvas(initialCanvasWidth, initialCanvasHeight);
+        p.randomSeed(initialRandomSeed);
+        p.noiseSeed(initialRandomSeed);
+
+        setup();
+      };
+
+      p.draw = () => {
+        draw(time);
+        time += getProp("timeDelta").value!;
+      };
+
+      p.updateWithProps = (newRawProps) => {
+        console.log("updateWithProps");
+
+        const drawIfNotInitialUpdate = () => {
+          // updateWithProps's first call happens before `p.setup` call,
+          // so calling `draw` triggers a runtime error (`p` is not "well defined" yet)
+          if (!initialPropsUpdate) {
+            draw(time);
+          }
+        };
+
+        _updateProps(newRawProps);
+
+        const timeShift = getProp("timeShift");
+        if (timeShift.hasChanged && timeShift.value !== undefined) {
+          const delta = timeShift.value - (timeShift.prevValue ?? 0);
+          time += delta;
+          drawIfNotInitialUpdate();
+        }
+
+        const playing = getProp("playing").value!;
+        if (playing) {
+          p.loop();
+        } else {
+          p.noLoop();
+        }
+
+        const canvasHeight = getProp("canvasHeight");
+        const canvasWidth = getProp("canvasWidth");
+        if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
+          p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
+          drawIfNotInitialUpdate();
+        }
+
+        updateWithProps();
         drawIfNotInitialUpdate();
-      }
 
-      if (props.playing) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
-
-      updateWithProps(props, p, args);
-      drawIfNotInitialUpdate();
-
-      initialPropsUpdate = false;
+        initialPropsUpdate = false;
+      };
     };
-  };
 }

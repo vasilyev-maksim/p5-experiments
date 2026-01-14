@@ -3,7 +3,7 @@ import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useKeyboardShortcuts, useModalBehavior, useViewport } from "../hooks";
 import classNames from "classnames";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
@@ -132,9 +132,9 @@ export const SketchModal = ({
     }
   };
 
-  useEffect(() => {
-    console.log("preset", params);
-  }, [params]);
+  // useEffect(() => {
+  //   console.log("preset", params);
+  // }, [params]);
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, playbackControlsX: 0 },

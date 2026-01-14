@@ -81,39 +81,37 @@ export function asyncWhile(
   f();
 }
 
-export class ValueWithHistory<T> {
+export class TrackedValue<T> {
   private static DEFAULT_COMPARATOR = <T>(a: T | undefined, b: T | undefined) =>
     a === b;
-  private __value?: T;
-  private __prev?: T;
+  private _value?: T;
+  private _prevValue?: T;
 
   public set value(val: T) {
-    this.__prev = this.__value;
-    this.__value = val;
+    this._prevValue = this._value;
+    this._value = val;
   }
 
   public get value(): T | undefined {
-    return this.__value;
+    return this._value;
   }
 
-  public get prev() {
-    return this.__prev;
+  public get prevValue() {
+    return this._prevValue;
   }
 
   public get hasChanged() {
-    return this.__comparator(this.__prev, this.__value) === false;
+    return this._comparator(this._prevValue, this._value) === false;
   }
 
   public constructor(
     initValue?: T,
-    private readonly __comparator: (
+    private readonly _comparator: (
       a: T | undefined,
       b: T | undefined
-    ) => boolean = ValueWithHistory.DEFAULT_COMPARATOR
+    ) => boolean = TrackedValue.DEFAULT_COMPARATOR
   ) {
-    if (initValue) {
-      this.__value = initValue;
-    }
+    this._value = initValue;
   }
 }
 

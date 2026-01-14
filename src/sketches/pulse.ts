@@ -5,7 +5,7 @@ import type {
   ISketch,
   ISketchFactory,
 } from "../models";
-import { range, ValueWithHistory } from "../utils";
+import { range, TrackedValue } from "../utils";
 
 const controls = {
   CURVE_RESOLUTION: {
@@ -89,12 +89,12 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
-  ({ canvasWidth, canvasHeight, randomSeed }) =>
+  ({ initialCanvasWidth, initialCanvasHeight, initialRandomSeed }) =>
   (p) => {
-    const CURVE_RESOLUTION = new ValueWithHistory<number>(),
+    const CURVE_RESOLUTION = new TrackedValue<number>(),
       JOINT_SIZE = 10,
       TIME_DELTA: number = 1,
-      PRESET_NAME = new ValueWithHistory<string | undefined>();
+      PRESET_NAME = new TrackedValue<string | undefined>();
 
     let Y_COORDS: number[] = [],
       time = 0,
@@ -139,8 +139,8 @@ const factory: ISketchFactory<Params> =
           p.noise(i, time * NOISE_DELTA),
           0,
           1,
-          (canvasHeight / 2) * (1 - DISPERSION),
-          (canvasHeight / 2) * (1 + DISPERSION)
+          (initialCanvasHeight / 2) * (1 - DISPERSION),
+          (initialCanvasHeight / 2) * (1 + DISPERSION)
         )
       );
     }
@@ -159,7 +159,7 @@ const factory: ISketchFactory<Params> =
 
         p.beginShape();
         Y_COORDS.forEach((_y, i, arr) => {
-          const x = (canvasWidth * (i - 1)) / (arr.length - 3);
+          const x = (initialCanvasWidth * (i - 1)) / (arr.length - 3);
           const y = _y + yOffset;
           const j = JOINT_SIZE,
             j2 = JOINT_SIZE / 2;
@@ -187,10 +187,10 @@ const factory: ISketchFactory<Params> =
     }
 
     p.setup = () => {
-      p.createCanvas(canvasWidth, canvasHeight);
+      p.createCanvas(initialCanvasWidth, initialCanvasHeight);
       p.strokeWeight(2);
-      p.randomSeed(randomSeed);
-      p.noiseSeed(randomSeed);
+      p.randomSeed(initialRandomSeed);
+      p.noiseSeed(initialRandomSeed);
       p.background("black");
     };
 

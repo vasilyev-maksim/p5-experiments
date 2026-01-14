@@ -22,19 +22,18 @@ export const SketchCanvas = forwardRef<
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
   const previewSize = props.sketch.preview.size;
   const prevSize = useRef<SketchCanvasSize>(null);
+  const initialCanvasWidth =
+    props.size === "fullscreen" ? window.innerWidth : canvasModalWidth;
+  const initialCanvasHeight =
+    props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
 
   const p5Sketch = useMemo(() => {
-    const canvasWidth =
-      props.size === "fullscreen" ? window.innerWidth : canvasModalWidth;
-    const canvasHeight =
-      props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
-
     return props.sketch.factory({
-      canvasWidth,
-      canvasHeight,
-      randomSeed: props.sketch.randomSeed ?? 0,
+      initialCanvasWidth,
+      initialCanvasHeight,
+      initialRandomSeed: props.sketch.randomSeed ?? 0,
     });
-  }, [props.sketch, props.size, canvasModalWidth, canvasModalHeight]);
+  }, []);
 
   const { duration } =
     useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
@@ -93,6 +92,9 @@ export const SketchCanvas = forwardRef<
           presetName={props.presetName}
           timeShift={props.timeShift}
           timeDelta={props.timeDelta ?? 0}
+          canvasWidth={initialCanvasWidth}
+          canvasHeight={initialCanvasHeight}
+          randomSeed={props.sketch.randomSeed ?? 0}
         />
       </animated.div>
     </animated.div>

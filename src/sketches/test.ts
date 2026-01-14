@@ -22,13 +22,13 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
-  ({ canvasWidth, canvasHeight }) =>
+  ({ initialCanvasWidth, initialCanvasHeight }) =>
   (p) => {
     const R = 50;
     const N = 25;
     const A = 120;
     const arr: p5.Vector[] = range(N).map((i) =>
-      p.createVector(canvasWidth / 2 + R * i, canvasHeight / 2)
+      p.createVector(initialCanvasWidth / 2 + R * i, initialCanvasHeight / 2)
     );
 
     p.updateWithProps = (props) => {
@@ -40,7 +40,7 @@ const factory: ISketchFactory<Params> =
     };
 
     p.setup = () => {
-      p.createCanvas(canvasWidth, canvasHeight);
+      p.createCanvas(initialCanvasWidth, initialCanvasHeight);
       p.angleMode("degrees");
     };
 
@@ -67,15 +67,11 @@ const factory: ISketchFactory<Params> =
           // p.circle(n.x, n.y, 5);
           arr[i + 1] = n;
         }
-        // console.log(angle);
       }
     }
 
     p.draw = () => {
       p.background("black");
-      // console.log(time);
-
-      // renderNodes(p);
       p.noFill();
       p.stroke("white");
 
