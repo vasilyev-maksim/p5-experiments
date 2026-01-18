@@ -104,8 +104,9 @@ const factory = createFactory<Params>((p, getProp, getTime) => {
   function getNodes(): [number, number][] {
     const time = getTime();
     return range(POLYGONS_COUNT).map((i) => {
+      const d = (getProp("ZOOM").value! * p.width) / 1158;
       return [
-        i * getProp("ZOOM").value!,
+        i * d,
         i *
           getProp("COIL_FACTOR").value! *
           (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
@@ -149,7 +150,8 @@ const factory = createFactory<Params>((p, getProp, getTime) => {
     draw: (time) => {
       p.background(BG_COLOR);
 
-      getNodes().forEach((node, i, arr) => {
+      const nodes = getNodes();
+      nodes.forEach((node, i, arr) => {
         const [colorA, colorB] =
           controls.FILL_COLORS.colors[getProp("FILL_COLORS").value!];
         const fillColor = p.lerpColor(
