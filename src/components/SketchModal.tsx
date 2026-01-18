@@ -37,7 +37,13 @@ export const SketchModal = ({
     modalSidebarWidth,
     modalSidebarPadding,
     borderWidth,
+    // canvasModalWidth,
+    // canvasModalHeight,
   } = useViewport();
+
+  // useEffect(() => {
+  //   console.log({ canvasModalWidth, canvasModalHeight });
+  // }, [canvasModalWidth, canvasModalHeight]);
 
   const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE

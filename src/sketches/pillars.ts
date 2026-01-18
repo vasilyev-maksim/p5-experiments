@@ -8,6 +8,13 @@ import type {
 } from "../models";
 
 const controls = {
+  RESOLUTION: {
+    label: "Pillars count",
+    max: 20,
+    min: 1,
+    step: 1,
+    type: "range",
+  },
   AMPLITUDE: {
     label: "Wave amplitude",
     max: 10,
@@ -36,16 +43,9 @@ const controls = {
     step: 1,
     type: "range",
   },
-  W_MEAN: {
-    label: "Pillar width average",
-    max: 10,
-    min: 1,
-    step: 1,
-    type: "range",
-  },
   W_DISPERSION: {
     label: "Pillar width dispersion",
-    max: 1,
+    max: 0.8,
     min: 0,
     step: 0.1,
     type: "range",
@@ -67,7 +67,7 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
-  const W_MIN = 15;
+  // const W_MIN = 15;
 
   let PARTS: number[];
 
@@ -79,12 +79,14 @@ const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
     w: number,
     h: number,
     gapY: number,
-    gapH: number
+    gapHeight: number
   ) {
-    const gd = gapH / 2;
+    const gd = gapHeight / 2;
     drawPill(x, y, w, gapY - gd, "down", "circle");
     drawPill(x, gapY + gd, w, h - gapY + gd, "up", "circle");
   }
+
+  // 811 - canvas height
 
   function drawPill(
     x: number,
@@ -134,46 +136,37 @@ const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
   }
 
   function initParts() {
-    const GAP_X = getProp("GAP_X").value!;
-    const W_MEAN = getProp("W_MEAN").value!;
     const W_DISPERSION = getProp("W_DISPERSION").value!;
-    const W_MEAN_RANGE = [p.width / 25, p.height / 3];
-    const mean = p.map(
-      W_MEAN,
-      controls.W_MEAN.min,
-      controls.W_MEAN.max,
-      W_MEAN_RANGE[0],
-      W_MEAN_RANGE[1]
-    );
-    const min = Math.max(mean * (1 - W_DISPERSION), W_MIN);
-    const max = Math.max(mean * (1 + W_DISPERSION), W_MIN);
-    PARTS = getRandomPartition(p.width, min, max, () => p.random()).filter(
-      (x) => x >= W_MIN + GAP_X
-    );
+    const RESOLUTION = getProp("RESOLUTION").value!;
+
+    PARTS = getRandomPartition(p, RESOLUTION, W_DISPERSION);
   }
 
   return {
     updateWithProps: () => {
-      if (getProp("W_MEAN").hasChanged || getProp("W_DISPERSION").hasChanged) {
+      if (
+        getProp("RESOLUTION").hasChanged ||
+        getProp("W_DISPERSION").hasChanged
+      ) {
         initParts();
       }
     },
     setup: () => p.noStroke(),
     draw: (time) => {
-      const GAP_X = getProp("GAP_X").value!,
-        GAP_Y = getProp("GAP_Y").value!,
+      const GAP_X = (getProp("GAP_X").value! * p.width) / 1158,
+        GAP_Y = (getProp("GAP_Y").value! * p.height) / 811,
         AMPLITUDE = getProp("AMPLITUDE").value!,
         PERIOD = getProp("PERIOD").value!;
 
       p.background("black");
 
-      const totalWidth = PARTS.reduce((acc, x) => acc + x, 0) - GAP_X;
-      let start = (p.width - totalWidth) / 2;
+      const totalWidth = p.width - GAP_X;
+      let start = GAP_X;
 
       PARTS.forEach((_w, i) => {
         const x = start,
           y = 0,
-          w = _w - GAP_X,
+          w = _w * totalWidth - GAP_X,
           h = p.height,
           gapX =
             p.height / 2 +
@@ -187,7 +180,7 @@ const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
               p.sin((p.TWO_PI * PERIOD * i) / PARTS.length + time * 0.015);
 
         drawColumn(x, y, w, h, gapX, GAP_Y);
-        start += _w;
+        start += _w * totalWidth;
       });
     },
   };
@@ -196,11 +189,11 @@ const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
 const presets: IPreset<Params>[] = [
   {
     params: {
+      RESOLUTION: 15,
       AMPLITUDE: 6,
       PERIOD: 1,
       GAP_X: 6,
       GAP_Y: 6,
-      W_MEAN: 2,
       W_DISPERSION: 0.5,
       COLOR: 0,
       timeDelta: 1,
@@ -209,11 +202,11 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
+      RESOLUTION: 25,
       AMPLITUDE: 1,
       PERIOD: 2,
       GAP_X: 1,
       GAP_Y: 200,
-      W_MEAN: 1,
       W_DISPERSION: 0,
       COLOR: 1,
       timeDelta: 3,
@@ -222,11 +215,11 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
+      RESOLUTION: 5,
       AMPLITUDE: 7,
       PERIOD: 1,
       GAP_X: 25,
       GAP_Y: 25,
-      W_MEAN: 8,
       W_DISPERSION: 0.3,
       COLOR: 0,
       timeDelta: 0.3,
@@ -235,11 +228,11 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
+      RESOLUTION: 25,
       AMPLITUDE: 10,
       PERIOD: 1,
       GAP_X: 8,
       GAP_Y: 8,
-      W_MEAN: 1,
       W_DISPERSION: 0,
       COLOR: 2,
       timeDelta: 3,
@@ -248,11 +241,11 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
+      RESOLUTION: 25,
       AMPLITUDE: 10,
       PERIOD: 4,
       GAP_X: 23,
       GAP_Y: 25,
-      W_MEAN: 1,
       W_DISPERSION: 0,
       COLOR: 0,
       timeDelta: 0.3,
@@ -261,11 +254,11 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
+      RESOLUTION: 6,
       AMPLITUDE: 10,
       PERIOD: 3,
       GAP_X: 10,
       GAP_Y: 12,
-      W_MEAN: 5,
       W_DISPERSION: 0,
       COLOR: 3,
       timeDelta: 1,
@@ -274,11 +267,11 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
+      RESOLUTION: 25,
       AMPLITUDE: 1,
       PERIOD: 1,
       GAP_X: 10,
       GAP_Y: 35,
-      W_MEAN: 1,
       W_DISPERSION: 0,
       COLOR: 1,
       timeDelta: 0.8,
@@ -292,7 +285,7 @@ export const pillarsSketch: ISketch<Params> = {
   id: "pillars",
   name: "pillars",
   preview: {
-    size: 420,
+    size: 390,
   },
   timeShift: 25.5,
   randomSeed: 44,

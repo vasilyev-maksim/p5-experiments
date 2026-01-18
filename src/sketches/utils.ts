@@ -179,21 +179,37 @@ export function getGrid2D(args: GetGrid2DArgs): Grid2DCallbackArgs[] {
 }
 
 export function getRandomPartition(
-  n: number,
-  minPart: number,
-  maxPart: number,
-  randomProvider: () => number
+  p: p5,
+  partsCount: number,
+  dispersion: number
 ): number[] {
-  if (n <= 0) {
-    return [];
+  if (dispersion < 0 || dispersion > 1) {
+    throw Error(
+      `Invalid dispersion value "${dispersion}", should be < 0 and > 1`
+    );
   }
-  const part = Math.floor(
-    Math.min(minPart + randomProvider() * (maxPart - minPart), n)
-  );
-  return [
-    part,
-    ...getRandomPartition(n - part, minPart, maxPart, randomProvider),
-  ];
+
+  const min = (1 - dispersion) / partsCount;
+  const max = (1 + dispersion) / partsCount;
+
+  function r(n: number, remainder: number): number[] {
+    if (n <= 1) {
+      return [remainder];
+    }
+
+    const _max = Math.min(max, remainder - min * (n - 1));
+    if (min - _max > 0.00001) {
+      throw Error(
+        `No sufficient range left for partition (for n = ${n}, reminder = ${remainder}, min = ${min}, _max = ${_max})`
+      );
+    }
+    const curr = p.map(p.random(), 0, 1, min, _max);
+
+    return [curr, ...r(n - 1, remainder - curr)];
+  }
+
+  const res = r(partsCount, 1);
+  return res;
 }
 
 export function oscillateBetween(
@@ -308,7 +324,6 @@ export function createFactory<Param extends string = string>(
       };
 
       p.setup = () => {
-        console.log("setup");
         p.createCanvas(initialCanvasWidth, initialCanvasHeight);
         p.randomSeed(initialRandomSeed);
         p.noiseSeed(initialRandomSeed);
@@ -322,8 +337,6 @@ export function createFactory<Param extends string = string>(
       };
 
       p.updateWithProps = (newRawProps) => {
-        console.log("updateWithProps");
-
         const drawIfNotInitialUpdate = () => {
           // updateWithProps's first call happens before `p.setup` call,
           // so calling `draw` triggers a runtime error (`p` is not "well defined" yet)
