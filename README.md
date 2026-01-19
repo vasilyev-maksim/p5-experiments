@@ -2,6 +2,8 @@
 
 # 📋 TODO
 
+- add onScreenResize callback to factory (for pulse bg black on resize)
+- make preview sizes in percentages
 - make animations independent from canvas size (?)
 - catch particular sketch errors (to show other more successful ones)
 - each preset may have a timestamp to play animation from (for better showiness)

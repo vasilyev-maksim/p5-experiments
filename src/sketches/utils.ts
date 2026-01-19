@@ -347,6 +347,7 @@ export function createFactory<Param extends string = string>(
 
         _updateProps(newRawProps);
 
+        // for playback controls
         const timeShift = getProp("timeShift");
         if (timeShift.hasChanged && timeShift.value !== undefined) {
           const delta = timeShift.value - (timeShift.prevValue ?? 0);
@@ -354,6 +355,7 @@ export function createFactory<Param extends string = string>(
           drawIfNotInitialUpdate();
         }
 
+        // play/pause
         const playing = getProp("playing").value!;
         if (playing) {
           p.loop();
@@ -361,11 +363,14 @@ export function createFactory<Param extends string = string>(
           p.noLoop();
         }
 
-        const canvasHeight = getProp("canvasHeight");
-        const canvasWidth = getProp("canvasWidth");
-        if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
-          p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
-          drawIfNotInitialUpdate();
+        // respond to canvas size changes
+        if (!initialPropsUpdate) {
+          const canvasHeight = getProp("canvasHeight");
+          const canvasWidth = getProp("canvasWidth");
+
+          if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
+            p.resizeCanvas(canvasWidth.value!, canvasHeight.value!); // calls `p.draw` automatically
+          }
         }
 
         updateWithProps();

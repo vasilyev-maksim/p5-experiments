@@ -1,11 +1,6 @@
-import type {
-  ExtractParams,
-  IControls,
-  IPreset,
-  ISketch,
-  ISketchFactory,
-} from "../models";
-import { range, TrackedValue } from "../utils";
+import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
+import { range } from "../utils";
+import { createFactory } from "./utils";
 
 const controls = {
   CURVE_RESOLUTION: {
@@ -88,123 +83,100 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory: ISketchFactory<Params> =
-  ({ initialCanvasWidth, initialCanvasHeight, initialRandomSeed }) =>
-  (p) => {
-    const CURVE_RESOLUTION = new TrackedValue<number>(),
-      JOINT_SIZE = 10,
-      TIME_DELTA: number = 1,
-      PRESET_NAME = new TrackedValue<string | undefined>();
+const factory = createFactory<Params>((p, getProp, getTime) => {
+  const JOINT_SIZE = 10;
 
-    let Y_COORDS: number[] = [],
-      time = 0,
-      GAP: number,
-      COLOR_INDEX: number,
-      CURVES_COUNT: number,
-      TRACE_FACTOR: number,
-      DISPERSION: number,
-      CHAOS_FACTOR: number,
-      JOINT_TYPE: number;
+  let Y_COORDS: number[] = [];
 
-    p.updateWithProps = (props) => {
-      COLOR_INDEX = props.COLOR;
-      GAP = props.GAP;
-      CURVES_COUNT = props.CURVES_COUNT;
-      TRACE_FACTOR = props.TRACE_FACTOR;
-      CURVE_RESOLUTION.value = props.CURVE_RESOLUTION;
-      DISPERSION = props.DISPERSION;
-      CHAOS_FACTOR = props.CHAOS_FACTOR;
-      JOINT_TYPE = props.JOINT_TYPE;
-      PRESET_NAME.value = props.presetName;
+  function updateYCoords() {
+    const CHAOS_FACTOR = getProp("CHAOS_FACTOR").value!,
+      CURVE_RESOLUTION = getProp("CURVE_RESOLUTION").value!,
+      DISPERSION = getProp("DISPERSION").value!,
+      time = getTime();
+    const NOISE_DELTA = p.map(CHAOS_FACTOR, 0, 100, 0.001, 0.05);
 
-      if (CURVE_RESOLUTION.hasChanged) {
+    Y_COORDS = range(CURVE_RESOLUTION + 2).map((i) =>
+      p.map(
+        p.noise(i, time * NOISE_DELTA),
+        0,
+        1,
+        (p.height / 2) * (1 - DISPERSION),
+        (p.height / 2) * (1 + DISPERSION)
+      )
+    );
+  }
+
+  function drawLines() {
+    p.strokeWeight((2 * p.width) / 1158);
+
+    const CURVES_COUNT = getProp("CURVES_COUNT").value!,
+      COLOR = getProp("COLOR").value!,
+      JOINT_TYPE = getProp("JOINT_TYPE").value!,
+      GAP = (getProp("GAP").value! * p.width) / 1158;
+
+    const twinMidIndex = Math.round((CURVES_COUNT - 1) / 2);
+
+    for (let t = -twinMidIndex; t <= twinMidIndex; t++) {
+      const yOffset = t * GAP;
+      const alpha = t === 0 ? 255 : p.map(p.abs(t), 0, twinMidIndex + 1, 20, 0);
+
+      const color = p.color(controls.COLOR.colors[COLOR][0]);
+      color.setAlpha(alpha);
+      p.stroke(color);
+
+      p.beginShape();
+      Y_COORDS.forEach((_y, i, arr) => {
+        const x = (p.width * (i - 1)) / (arr.length - 3);
+        const y = _y + yOffset;
+        const j = JOINT_SIZE,
+          j2 = JOINT_SIZE / 2;
+        switch (JOINT_TYPE) {
+          case 1:
+            p.rect(x - j2, y - j2, j, j);
+            break;
+          case 2:
+            p.circle(x, y, j);
+            break;
+          case 3:
+            p.line(x, y - j2, x, y + j2);
+            p.line(x - j2, y, x + j2, y);
+            break;
+          case 4: {
+            p.line(x - j2, y - j2, x + j2, y + j2);
+            p.line(x - j2, y + j2, x + j2, y - j2);
+            break;
+          }
+        }
+        p.curveVertex(x, y);
+      });
+      p.endShape();
+    }
+  }
+
+  return {
+    updateWithProps: () => {
+      if (getProp("CURVE_RESOLUTION").hasChanged) {
         updateYCoords();
       }
 
-      if (PRESET_NAME.hasChanged) {
+      if (getProp("presetName").hasChanged) {
         p.background("black");
       }
-
-      if (props.playing) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
-    };
-
-    function updateYCoords() {
-      const NOISE_DELTA = p.map(CHAOS_FACTOR, 0, 100, 0.001, 0.05);
-      Y_COORDS = range(CURVE_RESOLUTION.value! + 2).map((i) =>
-        p.map(
-          p.noise(i, time * NOISE_DELTA),
-          0,
-          1,
-          (initialCanvasHeight / 2) * (1 - DISPERSION),
-          (initialCanvasHeight / 2) * (1 + DISPERSION)
-        )
-      );
-    }
-
-    function drawLines() {
-      const twinMidIndex = Math.round((CURVES_COUNT - 1) / 2);
-
-      for (let t = -twinMidIndex; t <= twinMidIndex; t++) {
-        const yOffset = t * GAP;
-        const alpha =
-          t === 0 ? 255 : p.map(p.abs(t), 0, twinMidIndex + 1, 20, 0);
-
-        const color = p.color(controls.COLOR.colors[COLOR_INDEX][0]);
-        color.setAlpha(alpha);
-        p.stroke(color);
-
-        p.beginShape();
-        Y_COORDS.forEach((_y, i, arr) => {
-          const x = (initialCanvasWidth * (i - 1)) / (arr.length - 3);
-          const y = _y + yOffset;
-          const j = JOINT_SIZE,
-            j2 = JOINT_SIZE / 2;
-          switch (JOINT_TYPE) {
-            case 1:
-              p.rect(x - j2, y - j2, j, j);
-              break;
-            case 2:
-              p.circle(x, y, j);
-              break;
-            case 3:
-              p.line(x, y - j2, x, y + j2);
-              p.line(x - j2, y, x + j2, y);
-              break;
-            case 4: {
-              p.line(x - j2, y - j2, x + j2, y + j2);
-              p.line(x - j2, y + j2, x + j2, y - j2);
-              break;
-            }
-          }
-          p.curveVertex(x, y);
-        });
-        p.endShape();
-      }
-    }
-
-    p.setup = () => {
-      p.createCanvas(initialCanvasWidth, initialCanvasHeight);
-      p.strokeWeight(2);
-      p.randomSeed(initialRandomSeed);
-      p.noiseSeed(initialRandomSeed);
+    },
+    setup: () => {
       p.background("black");
-    };
-
-    p.draw = () => {
-      p.noStroke();
+    },
+    draw: () => {
+      const TRACE_FACTOR = getProp("TRACE_FACTOR").value!;
       const OPACITY = p.map(TRACE_FACTOR, 0, 100, 100, 5);
       p.background(p.color(0, 0, 0, OPACITY));
       p.noFill();
 
       drawLines();
       updateYCoords();
-      time += TIME_DELTA;
-    };
+    },
   };
+});
 
 const presets: IPreset<Params>[] = [
   {

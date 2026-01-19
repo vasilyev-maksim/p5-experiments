@@ -67,11 +67,7 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
-  // const W_MIN = 15;
-
   let PARTS: number[];
-
-  p.setup = () => {};
 
   function drawColumn(
     x: number,
