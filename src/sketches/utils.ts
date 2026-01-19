@@ -292,9 +292,9 @@ export function createFactory<Param extends string = string>(
     getProp: <K extends Props<Param>>(propName: K) => TrackedProps<Param>[K],
     getTime: () => number
   ) => {
-    setup: () => void;
+    setup?: () => void;
     draw: (time: number) => void;
-    updateWithProps: () => void;
+    updateWithProps?: () => void;
   }
 ): ISketchFactory<Param> {
   return (initialProps) => (p) => {
@@ -328,7 +328,7 @@ export function createFactory<Param extends string = string>(
       p.randomSeed(initialProps.randomSeed);
       p.noiseSeed(initialProps.randomSeed);
 
-      setup();
+      setup?.();
     };
 
     p.draw = () => {
@@ -338,6 +338,7 @@ export function createFactory<Param extends string = string>(
 
     p.updateWithProps = (newRawProps) => {
       _updateProps(newRawProps);
+      updateWithProps?.();
 
       // updateWithProps's first call happens before `p.setup` call
       if (!initialPropsUpdate) {
@@ -346,7 +347,6 @@ export function createFactory<Param extends string = string>(
         if (timeShift.hasChanged && timeShift.value !== undefined) {
           const delta = timeShift.value - (timeShift.prevValue ?? 0);
           time += delta;
-          draw(time);
         }
 
         // respond to canvas size changes
@@ -357,8 +357,9 @@ export function createFactory<Param extends string = string>(
           // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
           // The reason is that `p.draw` implies time increase, which is unintentional, we just want to redraw.
           p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
-          draw(time);
         }
+
+        draw(time);
       } else {
         // set time using initial time shift (for pretty previews)
         time = getProp("timeShift").value ?? 0;
@@ -372,8 +373,6 @@ export function createFactory<Param extends string = string>(
       } else {
         p.noLoop();
       }
-
-      updateWithProps();
     };
   };
 }

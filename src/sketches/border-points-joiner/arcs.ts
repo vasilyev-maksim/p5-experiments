@@ -1,12 +1,6 @@
 import p5 from "p5";
-import type {
-  ExtractParams,
-  IControls,
-  IPreset,
-  ISketch,
-  ISketchFactory,
-} from "../../models";
-import { oscillateBetween } from "../utils";
+import type { ExtractParams, IControls, IPreset, ISketch } from "../../models";
+import { createFactory, oscillateBetween } from "../utils";
 import { SquareBorderPointsJoiner, type JoinRenderCallback } from "./joiner";
 
 const controls = {
@@ -65,14 +59,6 @@ const controls = {
     type: "boolean",
     label: "Invert colors",
   },
-  TIME_DELTA: {
-    type: "range",
-    min: 0,
-    max: 3,
-    step: 0.1,
-    label: "Playback speed",
-    valueFormatter: (x) => x.toFixed(1),
-  },
   COLOR: {
     type: "color",
     colors: [
@@ -88,56 +74,33 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory: ISketchFactory<Params> =
-  ({ canvasWidth, canvasHeight }) =>
-  (p) => {
-    const SIZE = Math.min(canvasWidth, canvasHeight),
-      BG_COLOR = "black";
-
-    let time: number = 0,
-      COLOR_INDEX: number,
-      TIME_DELTA: number,
-      RESOLUTION: number,
-      PADDING_PERCENT: number,
-      PATTERN_TYPE: number,
-      MAX_CURVATURE: number,
-      MAX_NEGATIVE_CURVATURE: number,
-      INVERT_COLORS: number,
-      CURVATURE_TYPE: number;
-
-    p.setup = () => {
-      p.createCanvas(canvasWidth, canvasHeight);
+const factory = createFactory<Params>((p, getProp) => {
+  return {
+    setup: () => {
       p.angleMode("radians");
-    };
+      // p.background('black');
+    },
+    draw: (time) => {
+      p.background("black");
+      const PADDING_PERCENT = getProp("PADDING_PERCENT").value!,
+        RESOLUTION = getProp("RESOLUTION").value!,
+        CURVATURE_TYPE = getProp("CURVATURE_TYPE").value!,
+        MAX_NEGATIVE_CURVATURE = getProp("MAX_NEGATIVE_CURVATURE").value!,
+        MAX_CURVATURE = getProp("MAX_CURVATURE").value!,
+        COLOR_INDEX = getProp("COLOR").value!,
+        PATTERN_TYPE = getProp("PATTERN_TYPE").value!,
+        INVERT_COLORS = getProp("INVERT_COLORS").value!;
 
-    p.updateWithProps = (props) => {
-      COLOR_INDEX = props.COLOR;
-      TIME_DELTA = props.TIME_DELTA;
-      RESOLUTION = props.RESOLUTION;
-      PATTERN_TYPE = props.PATTERN_TYPE;
-      MAX_CURVATURE = props.MAX_CURVATURE;
-      MAX_NEGATIVE_CURVATURE = props.MAX_NEGATIVE_CURVATURE;
-      PADDING_PERCENT = props.PADDING_PERCENT;
-      CURVATURE_TYPE = props.CURVATURE_TYPE;
-      INVERT_COLORS = props.INVERT_COLORS;
+      const SIZE = Math.min(p.width, p.height),
+        ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100),
+        x0 = (p.width - ACTUAL_SIZE) / 2,
+        y0 = (p.height - ACTUAL_SIZE) / 2;
 
-      if (props.playing) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
-    };
-
-    p.draw = () => {
-      p.background(BG_COLOR);
-
-      const ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100);
       const r = RESOLUTION,
         r2 = r * 2,
         r3 = r * 3,
         r4 = r * 4;
-      const x0 = (canvasWidth - ACTUAL_SIZE) / 2;
-      const y0 = (canvasHeight - ACTUAL_SIZE) / 2;
+
       const joiner = new SquareBorderPointsJoiner(
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
@@ -219,10 +182,9 @@ const factory: ISketchFactory<Params> =
       intervals.forEach(([starts, ends, cb]) => {
         joiner.renderJoints(starts, ends, cb);
       });
-
-      time += TIME_DELTA;
-    };
+    },
   };
+});
 
 function drawArc({
   p,
@@ -255,7 +217,7 @@ function drawArc({
     p.stroke(p.lerpColor(p.color(colorA), p.color(colorB), colorIntensity));
     p.translate(m.x, m.y);
     p.rotate(angle);
-    p.strokeWeight(2);
+    p.strokeWeight((2 * p.width) / 1158);
     p.arc(
       0,
       0,
@@ -271,7 +233,7 @@ function drawArc({
 const presets: IPreset<Params>[] = [
   {
     params: {
-      TIME_DELTA: 1,
+      timeDelta: 1,
       COLOR: 0,
       RESOLUTION: 60,
       MAX_CURVATURE: 1,
@@ -285,7 +247,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1,
+      timeDelta: 1,
       COLOR: 0,
       RESOLUTION: 18,
       MAX_CURVATURE: 1,
@@ -299,7 +261,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1,
+      timeDelta: 1,
       RESOLUTION: 6,
       MAX_CURVATURE: 2,
       MAX_NEGATIVE_CURVATURE: 0.6,
@@ -313,10 +275,10 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1.5,
+      timeDelta: 1.5,
       COLOR: 0,
       RESOLUTION: 60,
-      MAX_CURVATURE: 0.7999999999999997,
+      MAX_CURVATURE: 0.8,
       MAX_NEGATIVE_CURVATURE: 0,
       PADDING_PERCENT: 34,
       INVERT_COLORS: 0,
@@ -327,7 +289,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1,
+      timeDelta: 1,
       RESOLUTION: 20,
       MAX_CURVATURE: 0.1,
       MAX_NEGATIVE_CURVATURE: 3,
@@ -341,7 +303,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1.5,
+      timeDelta: 1.5,
       RESOLUTION: 60,
       MAX_CURVATURE: 1.2,
       MAX_NEGATIVE_CURVATURE: 0,
@@ -355,7 +317,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1,
+      timeDelta: 1,
       RESOLUTION: 60,
       MAX_CURVATURE: 0.5,
       MAX_NEGATIVE_CURVATURE: 1.5,
@@ -369,7 +331,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1,
+      timeDelta: 1,
       RESOLUTION: 6,
       MAX_CURVATURE: 0.025,
       MAX_NEGATIVE_CURVATURE: 0.025,
@@ -383,7 +345,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1.2000000000000002,
+      timeDelta: 1.2,
       RESOLUTION: 30,
       MAX_CURVATURE: 0.9,
       MAX_NEGATIVE_CURVATURE: 0.5,
@@ -397,7 +359,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 0.8,
+      timeDelta: 0.8,
       RESOLUTION: 60,
       MAX_CURVATURE: 0.5,
       MAX_NEGATIVE_CURVATURE: 0.5,
@@ -411,7 +373,7 @@ const presets: IPreset<Params>[] = [
   },
   {
     params: {
-      TIME_DELTA: 1.2,
+      timeDelta: 1.2,
       RESOLUTION: 24,
       MAX_CURVATURE: 0.7,
       MAX_NEGATIVE_CURVATURE: 0.5,
