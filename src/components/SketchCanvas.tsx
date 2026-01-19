@@ -36,7 +36,7 @@ export const SketchCanvas = forwardRef<
     ...props.params,
     playing: props.playing,
     presetName: props.presetName,
-    timeShift: props.timeShift ?? props.sketch.timeShift ?? 0,
+    timeShift: props.timeShift ?? 0,
     timeDelta: props.timeDelta ?? 0,
     canvasWidth: canvasWidth,
     canvasHeight: canvasHeight,
