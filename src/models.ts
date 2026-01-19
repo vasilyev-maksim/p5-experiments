@@ -12,14 +12,8 @@ export type ISketchProps<ParamKey extends string = string> = {
   randomSeed: number;
 };
 
-export type FactoryArgs = {
-  initialCanvasWidth: number;
-  initialCanvasHeight: number;
-  initialRandomSeed: number;
-};
-
 export type ISketchFactory<ParamKey extends string = string> = (
-  args: FactoryArgs
+  initialProps: ISketchProps<ParamKey>
 ) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
 interface IControlBase {

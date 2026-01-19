@@ -297,86 +297,83 @@ export function createFactory<Param extends string = string>(
     updateWithProps: () => void;
   }
 ): ISketchFactory<Param> {
-  return ({ initialCanvasHeight, initialCanvasWidth, initialRandomSeed }) =>
-    (p) => {
-      let time = 0,
-        initialPropsUpdate = true,
-        props: TrackedProps<Param>;
+  return (initialProps) => (p) => {
+    let time = 0,
+      initialPropsUpdate = true,
+      props: TrackedProps<Param>;
 
-      const getProp = <K extends Props<Param>>(propName: K) => props[propName]!;
-      const getTime = () => time;
-      const { setup, draw, updateWithProps } = fn(p, getProp, getTime);
+    const getProp = <K extends Props<Param>>(propName: K) => props[propName]!;
+    const getTime = () => time;
+    const { setup, draw, updateWithProps } = fn(p, getProp, getTime);
 
-      const _updateProps = (newRawProps: ISketchProps<Param>) => {
-        if (!props) {
+    const _updateProps = (newRawProps: ISketchProps<Param>) => {
+      if (!props) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        props = {} as any;
+      }
+
+      (Object.keys(newRawProps) as Props<Param>[]).forEach((key) => {
+        if (props[key] === undefined) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          props = {} as any;
+          props[key] = new TrackedValue(newRawProps[key] as any) as any;
+        } else {
+          props[key].value = newRawProps[key];
         }
+      });
+    };
 
-        (Object.keys(newRawProps) as Props<Param>[]).forEach((key) => {
-          if (props[key] === undefined) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            props[key] = new TrackedValue(newRawProps[key] as any) as any;
-          } else {
-            props[key].value = newRawProps[key];
-          }
-        });
-      };
+    p.setup = () => {
+      _updateProps(initialProps);
+      p.createCanvas(initialProps.canvasWidth, initialProps.canvasHeight);
+      p.randomSeed(initialProps.randomSeed);
+      p.noiseSeed(initialProps.randomSeed);
 
-      p.setup = () => {
-        p.createCanvas(initialCanvasWidth, initialCanvasHeight);
-        p.randomSeed(initialRandomSeed);
-        p.noiseSeed(initialRandomSeed);
+      setup();
+    };
 
-        setup();
-      };
+    p.draw = () => {
+      draw(time);
+      time += getProp("timeDelta").value!;
+    };
 
-      p.draw = () => {
-        draw(time);
-        time += getProp("timeDelta").value!;
-      };
+    p.updateWithProps = (newRawProps) => {
+      _updateProps(newRawProps);
 
-      p.updateWithProps = (newRawProps) => {
-        const drawIfNotInitialUpdate = () => {
-          // updateWithProps's first call happens before `p.setup` call,
-          // so calling `draw` triggers a runtime error (`p` is not "well defined" yet)
-          if (!initialPropsUpdate) {
-            draw(time);
-          }
-        };
-
-        _updateProps(newRawProps);
-
+      // updateWithProps's first call happens before `p.setup` call
+      if (!initialPropsUpdate) {
         // for playback controls
         const timeShift = getProp("timeShift");
         if (timeShift.hasChanged && timeShift.value !== undefined) {
           const delta = timeShift.value - (timeShift.prevValue ?? 0);
           time += delta;
-          drawIfNotInitialUpdate();
-        }
-
-        // play/pause
-        const playing = getProp("playing").value!;
-        if (playing) {
-          p.loop();
-        } else {
-          p.noLoop();
+          draw(time);
         }
 
         // respond to canvas size changes
-        if (!initialPropsUpdate) {
-          const canvasHeight = getProp("canvasHeight");
-          const canvasWidth = getProp("canvasWidth");
+        const canvasHeight = getProp("canvasHeight");
+        const canvasWidth = getProp("canvasWidth");
 
-          if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
-            p.resizeCanvas(canvasWidth.value!, canvasHeight.value!); // calls `p.draw` automatically
-          }
+        if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
+          // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
+          // The reason is that `p.draw` implies time increase, which is unintentional, we just want to redraw.
+          p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
+          draw(time);
         }
-
-        updateWithProps();
-        drawIfNotInitialUpdate();
-
+      } else {
+        // set time using initial time shift (for pretty previews)
+        time = getProp("timeShift").value ?? 0;
         initialPropsUpdate = false;
-      };
+      }
+
+      // play/pause
+      const playing = getProp("playing").value!;
+      if (playing) {
+        p.loop();
+      } else {
+        p.noLoop();
+      }
+
+      updateWithProps();
     };
+  };
 }

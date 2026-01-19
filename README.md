@@ -2,7 +2,8 @@
 
 # 📋 TODO
 
-- add onScreenResize callback to factory (for pulse bg black on resize)
+- sketch previews (tiles) are super buggy when changing screen size / going fullscreen
+- add onScreenResize callback to factory (for pulse bg = black on resize)
 - make preview sizes in percentages
 - make animations independent from canvas size (?)
 - catch particular sketch errors (to show other more successful ones)
@@ -27,6 +28,7 @@
 
 # ✅ DONE
 
+- pass props to factory as init args
 - convert all props to `ValueWithHistory`
 - remove animation delay for modal footer when no presets/controls provided
 - move sequences declaration code to separate file/folder

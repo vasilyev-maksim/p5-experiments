@@ -3,7 +3,7 @@ import { lungs } from "./lungs";
 import { pillarsSketch } from "./pillars";
 import { pulseSketch } from "./pulse";
 import { spiralSketch } from "./spiral";
-import { tiles } from "./tiles/tiles";
+// import { tiles } from "./tiles/tiles";
 import { arcSketch } from "./border-points-joiner/arcs";
 import { escalatorSketch } from "./border-points-joiner/zigzags";
 import { testSketch } from "./test";
@@ -27,20 +27,20 @@ export const sketchList: ISketch<any>[] = [
   spiralSketch,
   pulseSketch,
   pillarsSketch,
-  {
-    id: "tiles",
-    name: "tiles",
-    preview: {
-      size: 420,
-    },
-    factory: tiles,
-    timeShift: -20,
-    randomSeed: 123,
-    presets: [],
-    controls: {},
-    defaultParams: {},
-    // randomSeed: 12,
-    // randomSeed: 45,
-  },
+  // {
+  //   id: "tiles",
+  //   name: "tiles",
+  //   preview: {
+  //     size: 420,
+  //   },
+  //   factory: tiles,
+  //   timeShift: -20,
+  //   randomSeed: 123,
+  //   presets: [],
+  //   controls: {},
+  //   defaultParams: {},
+  //   // randomSeed: 12,
+  //   // randomSeed: 45,
+  // },
   testSketch,
 ];

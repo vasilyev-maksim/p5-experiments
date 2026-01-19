@@ -1,5 +1,10 @@
 import { useMemo, forwardRef, useEffect, useRef } from "react";
-import type { ISketch, IParams, SketchCanvasSize } from "../models";
+import type {
+  ISketch,
+  IParams,
+  SketchCanvasSize,
+  ISketchProps,
+} from "../models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "../hooks";
@@ -14,25 +19,33 @@ export const SketchCanvas = forwardRef<
     size: SketchCanvasSize;
     playing: boolean;
     params: IParams;
-    timeDelta?: number;
     presetName?: string;
+    timeDelta?: number;
     timeShift?: number;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
   const previewSize = props.sketch.preview.size;
   const prevSize = useRef<SketchCanvasSize>(null);
-  const initialCanvasWidth =
+  const canvasWidth =
     props.size === "fullscreen" ? window.innerWidth : canvasModalWidth;
-  const initialCanvasHeight =
+  const canvasHeight =
     props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
 
+  const sketchProps = {
+    ...props.params,
+    playing: props.playing,
+    presetName: props.presetName,
+    timeShift: props.timeShift ?? props.sketch.timeShift ?? 0,
+    timeDelta: props.timeDelta ?? 0,
+    canvasWidth: canvasWidth,
+    canvasHeight: canvasHeight,
+    randomSeed: props.sketch.randomSeed ?? 0,
+  } as ISketchProps;
+
   const p5Sketch = useMemo(() => {
-    return props.sketch.factory({
-      initialCanvasWidth,
-      initialCanvasHeight,
-      initialRandomSeed: props.sketch.randomSeed ?? 0,
-    });
+    // this time `sketchProps` are initial props
+    return props.sketch.factory(sketchProps);
   }, []);
 
   const { duration } =
@@ -85,17 +98,7 @@ export const SketchCanvas = forwardRef<
           ),
         }}
       >
-        <ReactP5Wrapper
-          {...props.params}
-          sketch={p5Sketch}
-          playing={props.playing}
-          presetName={props.presetName}
-          timeShift={props.timeShift}
-          timeDelta={props.timeDelta ?? 0}
-          canvasWidth={initialCanvasWidth}
-          canvasHeight={initialCanvasHeight}
-          randomSeed={props.sketch.randomSeed ?? 0}
-        />
+        <ReactP5Wrapper sketch={p5Sketch} {...sketchProps} />
       </animated.div>
     </animated.div>
   );

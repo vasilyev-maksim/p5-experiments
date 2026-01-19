@@ -164,6 +164,7 @@ const factory = createFactory<Params>((p, getProp, getTime) => {
       }
     },
     setup: () => {
+      updateYCoords();
       p.background("black");
     },
     draw: () => {

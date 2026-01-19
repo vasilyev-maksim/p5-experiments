@@ -147,7 +147,10 @@ const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
         initParts();
       }
     },
-    setup: () => p.noStroke(),
+    setup: () => {
+      p.noStroke();
+      initParts();
+    },
     draw: (time) => {
       const GAP_X = (getProp("GAP_X").value! * p.width) / 1158,
         GAP_Y = (getProp("GAP_Y").value! * p.height) / 811,
@@ -284,7 +287,7 @@ export const pillarsSketch: ISketch<Params> = {
     size: 390,
   },
   timeShift: 25.5,
-  randomSeed: 44,
+  randomSeed: 144,
   controls,
   presets,
   defaultParams: presets[0].params,

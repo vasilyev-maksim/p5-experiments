@@ -89,9 +89,9 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
-  ({ initialCanvasWidth, initialCanvasHeight }) =>
+  ({ canvasWidth, canvasHeight }) =>
   (p) => {
-    const SIZE = Math.min(initialCanvasWidth, initialCanvasHeight),
+    const SIZE = Math.min(canvasWidth, canvasHeight),
       BG_COLOR = "black";
 
     let time: number = 0,
@@ -106,7 +106,7 @@ const factory: ISketchFactory<Params> =
       CURVATURE_TYPE: number;
 
     p.setup = () => {
-      p.createCanvas(initialCanvasWidth, initialCanvasHeight);
+      p.createCanvas(canvasWidth, canvasHeight);
       p.angleMode("radians");
     };
 
@@ -136,8 +136,8 @@ const factory: ISketchFactory<Params> =
         r2 = r * 2,
         r3 = r * 3,
         r4 = r * 4;
-      const x0 = (initialCanvasWidth - ACTUAL_SIZE) / 2;
-      const y0 = (initialCanvasHeight - ACTUAL_SIZE) / 2;
+      const x0 = (canvasWidth - ACTUAL_SIZE) / 2;
+      const y0 = (canvasHeight - ACTUAL_SIZE) / 2;
       const joiner = new SquareBorderPointsJoiner(
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
