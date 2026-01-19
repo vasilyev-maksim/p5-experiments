@@ -1,4 +1,4 @@
-import { createFactory, getRandomPartition } from "./utils";
+import { createSketchFactory } from "./utils/sketchFactory";
 import type {
   ExtractParams,
   IControls,
@@ -6,6 +6,7 @@ import type {
   ISketch,
   ISketchFactory,
 } from "../models";
+import type p5 from "p5";
 
 const controls = {
   RESOLUTION: {
@@ -58,7 +59,6 @@ const controls = {
       ["#ff4b4bff", "#f0f689ff"],
       ["#13005fff", "#a3ff9aff"],
       ["#000", "#ffffffff"],
-      // ["#003e49ff", "#8aee98ff"],
     ],
     label: "Color",
   },
@@ -66,124 +66,158 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory: ISketchFactory<Params> = createFactory<Params>((p, getProp) => {
-  let PARTS: number[];
+const factory: ISketchFactory<Params> = createSketchFactory<Params>(
+  (p, getProp) => {
+    let PARTS: number[];
 
-  function drawColumn(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    gapY: number,
-    gapHeight: number
-  ) {
-    const gd = gapHeight / 2;
-    drawPill(x, y, w, gapY - gd, "down", "circle");
-    drawPill(x, gapY + gd, w, h - gapY + gd, "up", "circle");
-  }
-
-  // 811 - canvas height
-
-  function drawPill(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    direction: "up" | "down",
-    endStyle: "circle" | "polygon"
-  ) {
-    const COLOR = getProp("COLOR").value!;
-    const color = p.lerpColor(
-      p.color(controls.COLOR.colors[COLOR][0]),
-      p.color(controls.COLOR.colors[COLOR][1]),
-      h / p.height
-    );
-
-    p.fill(color);
-
-    const tl = p.createVector(x, y);
-    const r = w / 2;
-    const c = tl
-      .copy()
-      .add(p.createVector(...(direction === "up" ? [r, r] : [w - r, h - r])));
-    switch (endStyle) {
-      default:
-      case "circle":
-        p.circle(c.x, c.y, r * 2);
-        break;
-      case "polygon":
-        p.push();
-        {
-          p.translate(c.x, c.y);
-          p.beginShape();
-          for (let a = 0; a <= p.PI; a += p.PI / 3) {
-            const sx = p.cos(a) * r;
-            const sy = p.sin(a) * r * (direction === "up" ? -1 : 1);
-            p.vertex(sx, sy);
-          }
-          p.endShape("close");
-        }
-        p.pop();
-        break;
+    function drawColumn(
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      gapY: number,
+      gapHeight: number
+    ) {
+      const gd = gapHeight / 2;
+      drawPill(x, y, w, gapY - gd, "down", "circle");
+      drawPill(x, gapY + gd, w, h - gapY + gd, "up", "circle");
     }
 
-    const rtl = direction === "up" ? tl.copy().add(p.createVector(0, r)) : tl;
-    p.rect(rtl.x, rtl.y, w, Math.max(h - r, 0));
-  }
+    function drawPill(
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      direction: "up" | "down",
+      endStyle: "circle" | "polygon"
+    ) {
+      const COLOR = getProp("COLOR").value!;
+      const color = p.lerpColor(
+        p.color(controls.COLOR.colors[COLOR][0]),
+        p.color(controls.COLOR.colors[COLOR][1]),
+        h / p.height
+      );
 
-  function initParts() {
-    const W_DISPERSION = getProp("W_DISPERSION").value!;
-    const RESOLUTION = getProp("RESOLUTION").value!;
+      p.fill(color);
 
-    PARTS = getRandomPartition(p, RESOLUTION, W_DISPERSION);
-  }
-
-  return {
-    updateWithProps: () => {
-      if (
-        getProp("RESOLUTION").hasChanged ||
-        getProp("W_DISPERSION").hasChanged
-      ) {
-        initParts();
+      const tl = p.createVector(x, y);
+      const r = w / 2;
+      const c = tl
+        .copy()
+        .add(p.createVector(...(direction === "up" ? [r, r] : [w - r, h - r])));
+      switch (endStyle) {
+        default:
+        case "circle":
+          p.circle(c.x, c.y, r * 2);
+          break;
+        case "polygon":
+          p.push();
+          {
+            p.translate(c.x, c.y);
+            p.beginShape();
+            for (let a = 0; a <= p.PI; a += p.PI / 3) {
+              const sx = p.cos(a) * r;
+              const sy = p.sin(a) * r * (direction === "up" ? -1 : 1);
+              p.vertex(sx, sy);
+            }
+            p.endShape("close");
+          }
+          p.pop();
+          break;
       }
-    },
-    setup: () => {
-      p.noStroke();
-      initParts();
-    },
-    draw: (time) => {
-      const GAP_X = (getProp("GAP_X").value! * p.width) / 1158,
-        GAP_Y = (getProp("GAP_Y").value! * p.height) / 811,
-        AMPLITUDE = getProp("AMPLITUDE").value!,
-        PERIOD = getProp("PERIOD").value!;
 
-      p.background("black");
+      const rtl = direction === "up" ? tl.copy().add(p.createVector(0, r)) : tl;
+      p.rect(rtl.x, rtl.y, w, Math.max(h - r, 0));
+    }
 
-      const totalWidth = p.width - GAP_X;
-      let start = GAP_X;
+    function initParts() {
+      const W_DISPERSION = getProp("W_DISPERSION").value!;
+      const RESOLUTION = getProp("RESOLUTION").value!;
 
-      PARTS.forEach((_w, i) => {
-        const x = start,
-          y = 0,
-          w = _w * totalWidth - GAP_X,
-          h = p.height,
-          gapX =
-            p.height / 2 +
-            p.map(
-              AMPLITUDE,
-              controls.AMPLITUDE.min,
-              controls.AMPLITUDE.max,
-              0,
-              p.height / 2
-            ) *
-              p.sin((p.TWO_PI * PERIOD * i) / PARTS.length + time * 0.015);
+      PARTS = getRandomPartition(p, RESOLUTION, W_DISPERSION);
+    }
 
-        drawColumn(x, y, w, h, gapX, GAP_Y);
-        start += _w * totalWidth;
-      });
-    },
-  };
-});
+    return {
+      updateWithProps: () => {
+        if (
+          getProp("RESOLUTION").hasChanged ||
+          getProp("W_DISPERSION").hasChanged
+        ) {
+          initParts();
+        }
+      },
+      setup: () => {
+        p.noStroke();
+        initParts();
+      },
+      draw: (time) => {
+        const GAP_X = (getProp("GAP_X").value! * p.width) / 1158,
+          GAP_Y = (getProp("GAP_Y").value! * p.height) / 811,
+          AMPLITUDE = getProp("AMPLITUDE").value!,
+          PERIOD = getProp("PERIOD").value!;
+
+        p.background("black");
+
+        const totalWidth = p.width - GAP_X;
+        let start = GAP_X;
+
+        PARTS.forEach((_w, i) => {
+          const x = start,
+            y = 0,
+            w = _w * totalWidth - GAP_X,
+            h = p.height,
+            gapX =
+              p.height / 2 +
+              p.map(
+                AMPLITUDE,
+                controls.AMPLITUDE.min,
+                controls.AMPLITUDE.max,
+                0,
+                p.height / 2
+              ) *
+                p.sin((p.TWO_PI * PERIOD * i) / PARTS.length + time * 0.015);
+
+          drawColumn(x, y, w, h, gapX, GAP_Y);
+          start += _w * totalWidth;
+        });
+      },
+    };
+  }
+);
+
+export function getRandomPartition(
+  p: p5,
+  partsCount: number,
+  dispersion: number
+): number[] {
+  if (dispersion < 0 || dispersion > 1) {
+    throw Error(
+      `Invalid dispersion value "${dispersion}", should be < 0 and > 1`
+    );
+  }
+
+  const min = (1 - dispersion) / partsCount;
+  const max = (1 + dispersion) / partsCount;
+
+  function r(n: number, remainder: number): number[] {
+    if (n <= 1) {
+      return [remainder];
+    }
+
+    const _max = Math.min(max, remainder - min * (n - 1));
+    if (min - _max > 0.00001) {
+      throw Error(
+        `No sufficient range left for partition (for n = ${n}, reminder = ${remainder}, min = ${min}, _max = ${_max})`
+      );
+    }
+    const curr = p.map(p.random(), 0, 1, min, _max);
+
+    return [curr, ...r(n - 1, remainder - curr)];
+  }
+
+  const res = r(partsCount, 1);
+  return res;
+}
 
 const presets: IPreset<Params>[] = [
   {

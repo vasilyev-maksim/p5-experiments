@@ -1,6 +1,6 @@
 import type { IControls, IPreset, ISketch, ExtractParams } from "../models";
 import { range } from "../utils";
-import { createFactory } from "./utils";
+import { createSketchFactory } from "./utils/sketchFactory";
 
 const controls = {
   POLYGON_N: {
@@ -95,7 +95,7 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createFactory<Params>((p, getProp, getTime) => {
+const factory = createSketchFactory<Params>((p, getProp, getTime) => {
   const POLYGONS_COUNT = 500,
     BG_COLOR = "black";
   let THICKNESS = 1,

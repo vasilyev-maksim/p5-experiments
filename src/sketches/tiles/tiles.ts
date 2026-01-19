@@ -4,7 +4,7 @@ import { Matrix } from "./Matrix";
 import { Turtle } from "./Turtle";
 import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
-import { easeInOutQuad, getQsParam } from "../utils";
+import { easeInOutQuad, getQsParam } from "../utils/misc";
 import type { ISketchFactory } from "../../models";
 
 export const tiles: ISketchFactory =

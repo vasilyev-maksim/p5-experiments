@@ -1,7 +1,9 @@
 import p5 from "p5";
-import type { ExtractParams, IControls, IPreset, ISketch } from "../../models";
-import { createFactory, oscillateBetween } from "../utils";
-import { SquareBorderPointsJoiner, type JoinRenderCallback } from "./joiner";
+import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
+import { SquareBorderPointsJoiner, type JointRenderCallback } from "./utils/BorderPointsJoiner";
+import { createSketchFactory } from "./utils/sketchFactory";
+import { oscillateBetween } from "./utils/misc";
+
 
 const controls = {
   RESOLUTION: {
@@ -74,7 +76,7 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createFactory<Params>((p, getProp) => {
+const factory = createSketchFactory<Params>((p, getProp) => {
   return {
     setup: () => {
       p.angleMode("radians");
@@ -141,7 +143,7 @@ const factory = createFactory<Params>((p, getProp) => {
           });
         };
 
-      let intervals: [[number, number], [number, number], JoinRenderCallback][];
+      let intervals: [[number, number], [number, number], JointRenderCallback][];
       if (PATTERN_TYPE === 0) {
         intervals = [
           [[0, r], [r2, r], render(1)],

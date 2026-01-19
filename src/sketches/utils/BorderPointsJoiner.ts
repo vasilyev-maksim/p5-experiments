@@ -1,6 +1,6 @@
 import p5 from "p5";
 
-export type JoinRenderCallback = (
+export type JointRenderCallback = (
   start: p5.Vector,
   end: p5.Vector,
   index: number,
@@ -37,6 +37,21 @@ export class SquareBorderPointsJoiner {
     }
   }
 
+  // private initPoints(): void {
+  //   const r = p5.Vector.sub(this.a, this.b).mag() / 2;
+  //   const center = p5.Vector.lerp(this.a, this.b, 0.5);
+  //   const d = (Math.PI * 2) / this.stepsX;
+
+  //   for (let i = 0; i < this.stepsX; i++) {
+  //     this.points.push(
+  //       new p5.Vector(
+  //         center.x + r * Math.cos(i * d),
+  //         center.y + r * Math.sin(i * d)
+  //       )
+  //     );
+  //   }
+  // }
+
   public renderPoints(p: p5) {
     p.push();
     {
@@ -51,7 +66,7 @@ export class SquareBorderPointsJoiner {
   public renderJoints(
     startPointsInterval: [number, number],
     endPointsInterval: [number, number],
-    cb: JoinRenderCallback
+    cb: JointRenderCallback
   ) {
     const starts = this.cyclicSubset(...startPointsInterval);
     const ends = this.cyclicSubset(...endPointsInterval);

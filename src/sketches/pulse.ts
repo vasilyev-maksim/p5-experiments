@@ -1,6 +1,6 @@
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import { range } from "../utils";
-import { createFactory } from "./utils";
+import { createSketchFactory } from "./utils/sketchFactory";
 
 const controls = {
   CURVE_RESOLUTION: {
@@ -83,7 +83,7 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createFactory<Params>((p, getProp, getTime) => {
+const factory = createSketchFactory<Params>((p, getProp, getTime) => {
   const JOINT_SIZE = 10;
 
   let Y_COORDS: number[] = [];

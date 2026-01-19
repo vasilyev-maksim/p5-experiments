@@ -5,8 +5,8 @@ import type {
   IPreset,
   ISketch,
   ISketchFactory,
-} from "../../models";
-import { SquareBorderPointsJoiner } from "./joiner";
+} from "../models";
+import { SquareBorderPointsJoiner } from "./utils/BorderPointsJoiner";
 
 const controls = {
   RESOLUTION: {
