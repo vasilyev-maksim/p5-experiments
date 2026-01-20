@@ -1,7 +1,18 @@
 import p5 from "p5";
 import { oscillateBetween } from "./utils/misc";
-import type { ISketchFactory } from "../models";
+import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import { range } from "../utils";
+import { createSketchFactory } from "./utils/sketchFactory";
+
+const controls = {
+  COLOR: {
+    type: "color",
+    colors: [["#ff0000ff"], ["#00fbffff"], ["#36ff1fff"], ["#ffffffff"]],
+    label: "Color",
+  },
+} as const satisfies IControls;
+
+type Params = ExtractParams<typeof controls>;
 
 class Circle {
   public constructor(
@@ -29,63 +40,43 @@ class Circle {
   };
 }
 
-export const lungs: ISketchFactory =
-  ({ initialCanvasWidth, initialCanvasHeight }) =>
-  (p) => {
-    function getDirection(i: number) {
-      return [
+const factory = createSketchFactory<Params>((p, getProp) => {
+  const canvasWidth = getProp("canvasWidth").value!,
+    canvasHeight = getProp("canvasHeight").value!,
+    CENTER_VEC = p.createVector(canvasWidth / 2, canvasHeight / 2),
+    RINGS_COUNT = 20,
+    RD = canvasWidth / 120,
+    CIRCLES = range(RINGS_COUNT).map((i) => {
+      const dir = [
         p.createVector(1, 0),
         p.createVector(-1, 0),
         p.createVector(0, 1),
         p.createVector(0, -1),
       ][i % 2];
-    }
-
-    const CENTER_VEC = p.createVector(
-        initialCanvasWidth / 2,
-        initialCanvasHeight / 2
-      ),
-      RINGS_COUNT = 20,
-      RD = initialCanvasWidth / 120,
-      CIRCLES = range(RINGS_COUNT).map((i) => {
-        const dir = getDirection(i);
-        const rotationShiftDelta = (RD / 2) * (i + 1);
-        return new Circle(
+      const rotationShiftDelta = (RD / 2) * (i + 1);
+      return new Circle(
+        CENTER_VEC,
+        RD * (i + 1),
+        p.lerpColor(
+          p.color("#ea72f7ff"),
+          p.color("#530984ff"),
+          i / RINGS_COUNT
+        ),
+        p5.Vector.add(
           CENTER_VEC,
-          RD * (i + 1),
-          p.lerpColor(
-            p.color("#ea72f7ff"),
-            p.color("#530984ff"),
-            i / RINGS_COUNT
-          ),
-          p5.Vector.add(
-            CENTER_VEC,
-            p.createVector(
-              dir.x * rotationShiftDelta,
-              dir.y * rotationShiftDelta
-            )
-          )
-        );
-      }),
-      TRACK_MOUSE = false;
+          p.createVector(dir.x * rotationShiftDelta, dir.y * rotationShiftDelta)
+        )
+      );
+    }),
+    TRACK_MOUSE = false;
 
-    p.setup = () => {
-      p.createCanvas(initialCanvasWidth, initialCanvasHeight);
+  return {
+    setup: () => {
       p.noStroke();
       p.angleMode("degrees");
-    };
-
-    p.updateWithProps = (props) => {
-      if (props.playing) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
-    };
-
-    p.draw = () => {
+    },
+    draw: (time) => {
       let angle;
-      const time = p.frameCount;
 
       if (TRACK_MOUSE) {
         const mouseVec = p.createVector(
@@ -104,5 +95,21 @@ export const lungs: ISketchFactory =
         const ang = (angle + delta) * (i % 2 == 0 ? 1 : -1);
         r.render(p, ang);
       });
-    };
+    },
   };
+});
+
+const presets: IPreset<Params>[] = [{ params: { COLOR: 0 } }];
+
+export const lungsSketch: ISketch<Params> = {
+  factory,
+  id: "lungs",
+  name: "lungs",
+  preview: {
+    size: 420,
+  },
+  timeShift: 50,
+  controls,
+  presets,
+  defaultParams: presets[0].params,
+};

@@ -23,10 +23,8 @@ export function createSketchFactory<Param extends string = string>(
       initialPropsUpdate = true,
       props: TrackedProps<Param>;
 
-    const getProp = <K extends Props<Param>>(propName: K) => props[propName]!;
     const getTime = () => time;
-    const { setup, draw, updateWithProps } = fn(p, getProp, getTime);
-
+    const getProp = <K extends Props<Param>>(propName: K) => props[propName]!;
     const _updateProps = (newRawProps: ISketchProps<Param>) => {
       if (!props) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,9 +40,11 @@ export function createSketchFactory<Param extends string = string>(
         }
       });
     };
+    _updateProps(initialProps); // initialize trackable props immediately
+
+    const { setup, draw, updateWithProps } = fn(p, getProp, getTime);
 
     p.setup = () => {
-      _updateProps(initialProps);
       p.createCanvas(initialProps.canvasWidth, initialProps.canvasHeight);
       p.randomSeed(initialProps.randomSeed);
       p.noiseSeed(initialProps.randomSeed);
