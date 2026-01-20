@@ -1,9 +1,11 @@
 import p5 from "p5";
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
-import { SquareBorderPointsJoiner, type JointRenderCallback } from "./utils/BorderPointsJoiner";
+import {
+  SquareBorderPointsJoiner,
+  type JointRenderCallback,
+} from "./utils/BorderPointsJoiner";
 import { createSketchFactory } from "./utils/sketchFactory";
 import { oscillateBetween } from "./utils/misc";
-
 
 const controls = {
   RESOLUTION: {
@@ -143,7 +145,11 @@ const factory = createSketchFactory<Params>((p, getProp) => {
           });
         };
 
-      let intervals: [[number, number], [number, number], JointRenderCallback][];
+      let intervals: [
+        [number, number],
+        [number, number],
+        JointRenderCallback
+      ][];
       if (PATTERN_TYPE === 0) {
         intervals = [
           [[0, r], [r2, r], render(1)],

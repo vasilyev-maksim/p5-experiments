@@ -1,12 +1,7 @@
 import p5 from "p5";
-import type {
-  ExtractParams,
-  IControls,
-  IPreset,
-  ISketch,
-  ISketchFactory,
-} from "../models";
+import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import { SquareBorderPointsJoiner } from "./utils/BorderPointsJoiner";
+import { createSketchFactory } from "./utils/sketchFactory";
 
 const controls = {
   RESOLUTION: {
@@ -24,14 +19,6 @@ const controls = {
     label: "Padding",
     valueFormatter: (x) => x + "%",
   },
-  TIME_DELTA: {
-    type: "range",
-    min: 0,
-    max: 3,
-    step: 0.1,
-    label: "Playback speed",
-    valueFormatter: (x) => x.toFixed(1),
-  },
   COLOR: {
     type: "color",
     colors: [
@@ -48,55 +35,31 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory: ISketchFactory<Params> =
-  ({ initialCanvasWidth, initialCanvasHeight }) =>
-  (p) => {
-    const SIZE = Math.min(initialCanvasWidth, initialCanvasHeight);
-
-    let time: number = 0,
-      COLOR_INDEX: number,
-      TIME_DELTA: number,
-      RESOLUTION: number,
-      PADDING_PERCENT: number;
-
-    p.setup = () => {
-      p.createCanvas(initialCanvasWidth, initialCanvasHeight);
+const factory = createSketchFactory<Params>((p, getProp) => {
+  return {
+    setup: () => {
       p.angleMode("radians");
-    };
-
-    p.updateWithProps = (props) => {
-      COLOR_INDEX = props.COLOR;
-      TIME_DELTA = props.TIME_DELTA;
-      RESOLUTION = props.RESOLUTION;
-      PADDING_PERCENT = props.PADDING_PERCENT;
-
-      if (props.playing) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
-    };
-
-    p.draw = () => {
-      // p.noLoop();
-      time += TIME_DELTA;
+    },
+    draw: (time) => {
       p.background("black");
+      const PADDING_PERCENT = getProp("PADDING_PERCENT").value!,
+        RESOLUTION = getProp("RESOLUTION").value!,
+        COLOR_INDEX = getProp("COLOR").value!;
 
       const color = controls.COLOR.colors[COLOR_INDEX][0];
       p.stroke(color);
 
-      const ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100);
+      const SIZE = Math.min(p.width, p.height),
+        ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100),
+        x0 = (p.width - ACTUAL_SIZE) / 2,
+        y0 = (p.height - ACTUAL_SIZE) / 2;
       const r = RESOLUTION;
-      const x0 = (initialCanvasWidth - ACTUAL_SIZE) / 2;
-      const y0 = (initialCanvasHeight - ACTUAL_SIZE) / 2;
       const joiner = new SquareBorderPointsJoiner(
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
         r,
         r
       );
-
-      // joiner.renderPoints(p);
 
       const [intervals, intervals2] = [
         [
@@ -134,8 +97,9 @@ const factory: ISketchFactory<Params> =
 
       joiner.renderJoints(intervals[0], intervals[1], cb);
       joiner.renderJoints(intervals2[0], intervals2[1], cb);
-    };
+    },
   };
+});
 
 function drawZigzag({
   p,
@@ -195,7 +159,7 @@ function drawZigzag({
 const presets: IPreset<Params>[] = [
   {
     params: {
-      TIME_DELTA: 1,
+      timeDelta: 1,
       COLOR: 5,
       RESOLUTION: 60,
       PADDING_PERCENT: 20,
@@ -204,14 +168,14 @@ const presets: IPreset<Params>[] = [
   },
 ];
 
-export const escalatorSketch: ISketch<Params> = {
+export const zigzagsSketch: ISketch<Params> = {
   factory,
   id: "zigzags",
   name: "zigzags",
   preview: {
     size: 300,
   },
-  timeShift: 60,
+  timeShift: 179,
   controls,
   presets,
   defaultParams: presets[0].params,

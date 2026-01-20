@@ -210,8 +210,8 @@ export const SketchModal = ({
                 <animated.h2
                   className={styles.ModalTitle}
                   style={{
-                    marginBottom: modalPadding / 2,
-                    marginTop: modalPadding,
+                    marginBottom: modalPadding,
+                    marginTop: (modalPadding * 3) / 2,
                     marginLeft: modalSidebarPadding,
                     translateY: headerX.to([0, 1], [15, 0]),
                     opacity: headerX,

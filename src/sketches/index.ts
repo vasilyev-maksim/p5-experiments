@@ -5,7 +5,7 @@ import { pulseSketch } from "./pulse";
 import { spiralSketch } from "./spiral";
 // import { tiles } from "./tiles/tiles";
 import { arcSketch } from "./arcs";
-// import { escalatorSketch } from "./border-points-joiner/zigzags";
+import { zigzagsSketch } from "./zigzags";
 // import { testSketch } from "./test";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,11 +22,11 @@ export const sketchList: ISketch<any>[] = [
   //   controls: {},
   //   defaultParams: {},
   // },
-  // escalatorSketch,
-  arcSketch,
   spiralSketch,
-  pulseSketch,
   pillarsSketch,
+  arcSketch,
+  pulseSketch,
+  zigzagsSketch,
   // {
   //   id: "tiles",
   //   name: "tiles",
