@@ -1,7 +1,7 @@
 import p5 from "p5";
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import { SquareBorderPointsJoiner } from "./utils/BorderPointsJoiner";
-import { createSketchFactory } from "./utils/sketchFactory";
+import { createSketch } from "./utils/createSketch";
 
 const controls = {
   RESOLUTION: {
@@ -35,16 +35,16 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createSketchFactory<Params>((p, getProp) => {
+const factory = createSketch<Params>((p, getProp) => {
   return {
     setup: () => {
       p.angleMode("radians");
     },
     draw: (time) => {
       p.background("black");
-      const PADDING_PERCENT = getProp("PADDING_PERCENT").value!,
-        RESOLUTION = getProp("RESOLUTION").value!,
-        COLOR_INDEX = getProp("COLOR").value!;
+      const PADDING_PERCENT = getProp("PADDING_PERCENT").value,
+        RESOLUTION = getProp("RESOLUTION").value,
+        COLOR_INDEX = getProp("COLOR").value;
 
       const color = controls.COLOR.colors[COLOR_INDEX][0];
       p.stroke(color);

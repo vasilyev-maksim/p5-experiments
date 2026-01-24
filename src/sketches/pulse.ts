@@ -1,6 +1,6 @@
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
-import { range } from "../utils";
-import { createSketchFactory } from "./utils/sketchFactory";
+import { range } from "../utils/misc";
+import { createSketch } from "./utils/createSketch";
 
 const controls = {
   CURVE_RESOLUTION: {
@@ -83,15 +83,15 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createSketchFactory<Params>((p, getProp, getTime) => {
+const factory = createSketch<Params>((p, getProp, getTime) => {
   const JOINT_SIZE = 10;
 
   let Y_COORDS: number[] = [];
 
   function updateYCoords() {
-    const CHAOS_FACTOR = getProp("CHAOS_FACTOR").value!,
-      CURVE_RESOLUTION = getProp("CURVE_RESOLUTION").value!,
-      DISPERSION = getProp("DISPERSION").value!,
+    const CHAOS_FACTOR = getProp("CHAOS_FACTOR").value,
+      CURVE_RESOLUTION = getProp("CURVE_RESOLUTION").value,
+      DISPERSION = getProp("DISPERSION").value,
       time = getTime();
     const NOISE_DELTA = p.map(CHAOS_FACTOR, 0, 100, 0.001, 0.05);
 
@@ -109,10 +109,10 @@ const factory = createSketchFactory<Params>((p, getProp, getTime) => {
   function drawLines() {
     p.strokeWeight((2 * p.width) / 1158);
 
-    const CURVES_COUNT = getProp("CURVES_COUNT").value!,
-      COLOR = getProp("COLOR").value!,
-      JOINT_TYPE = getProp("JOINT_TYPE").value!,
-      GAP = (getProp("GAP").value! * p.width) / 1158;
+    const CURVES_COUNT = getProp("CURVES_COUNT").value,
+      COLOR = getProp("COLOR").value,
+      JOINT_TYPE = getProp("JOINT_TYPE").value,
+      GAP = (getProp("GAP").value * p.width) / 1158;
 
     const twinMidIndex = Math.round((CURVES_COUNT - 1) / 2);
 
@@ -168,7 +168,7 @@ const factory = createSketchFactory<Params>((p, getProp, getTime) => {
       p.background("black");
     },
     draw: () => {
-      const TRACE_FACTOR = getProp("TRACE_FACTOR").value!;
+      const TRACE_FACTOR = getProp("TRACE_FACTOR").value;
       const OPACITY = p.map(TRACE_FACTOR, 0, 100, 100, 5);
       p.background(p.color(0, 0, 0, OPACITY));
       p.noFill();

@@ -1,6 +1,6 @@
 import styles from "./OptionSelector.module.css";
 import { Fragment, useEffect, useState } from "react";
-import { delay, range } from "../utils";
+import { delay, range } from "../utils/misc";
 
 export function OptionSelector(props: {
   valuesCount: number;

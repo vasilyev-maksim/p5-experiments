@@ -22,6 +22,7 @@ export const SketchCanvas = forwardRef<
     presetName?: string;
     timeDelta?: number;
     timeShift?: number;
+    id: string;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -32,16 +33,33 @@ export const SketchCanvas = forwardRef<
   const canvasHeight =
     props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
 
-  const sketchProps = {
-    ...props.params,
-    playing: props.playing,
-    presetName: props.presetName,
-    timeShift: props.timeShift ?? 0,
-    timeDelta: props.timeDelta ?? 0,
-    canvasWidth: canvasWidth,
-    canvasHeight: canvasHeight,
-    randomSeed: props.sketch.randomSeed ?? 0,
-  } as ISketchProps;
+  const sketchProps = useMemo(
+    () =>
+      ({
+        ...props.params,
+        playing: props.playing,
+        presetName: props.presetName,
+        timeShift: props.timeShift ?? 0,
+        timeDelta: props.timeDelta ?? 0,
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
+        randomSeed: props.sketch.randomSeed ?? 0,
+      } as ISketchProps),
+    [
+      props.params,
+      props.playing,
+      props.presetName,
+      props.timeShift,
+      props.timeDelta,
+      canvasWidth,
+      canvasHeight,
+      props.sketch.randomSeed,
+    ]
+  );
+
+  useEffect(() => {
+    console.log("props update", props.id, sketchProps);
+  }, [sketchProps, props.id]);
 
   const p5Sketch = useMemo(() => {
     // this time `sketchProps` are initial props

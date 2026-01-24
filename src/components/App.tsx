@@ -13,7 +13,7 @@ import {
 } from "../animations";
 import { SketchTilesGrid } from "./SketchTilesGrid";
 import { useURLParams } from "../hooks";
-import { delay } from "../utils";
+import { delay } from "../utils/misc";
 import { sketchList } from "../sketches";
 
 function App() {

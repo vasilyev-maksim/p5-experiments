@@ -246,6 +246,7 @@ export const SketchModal = ({
           >
             <div className={styles.RightTop}>
               <SketchCanvas
+                id="modal"
                 size={size}
                 sketch={sketch}
                 params={params}

@@ -1,4 +1,4 @@
-import { createSketchFactory } from "./utils/sketchFactory";
+import { createSketch } from "./utils/createSketch";
 import type {
   ExtractParams,
   IControls,
@@ -7,6 +7,7 @@ import type {
   ISketchFactory,
 } from "../models";
 import type p5 from "p5";
+import { AnimatedValue } from "./utils/AnimatedValue";
 
 const controls = {
   RESOLUTION: {
@@ -66,9 +67,23 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory: ISketchFactory<Params> = createSketchFactory<Params>(
-  (p, getProp) => {
-    let PARTS: number[];
+const factory: ISketchFactory<Params> = createSketch<Params>(
+  (p, getProp, _getTime, createMemoizedValue) => {
+    // let animatedParts: AnimatedValue[] = [];
+    const PARTS = createMemoizedValue(
+      (resolution: number, dispersion: number) => {
+        console.log(resolution, dispersion, "recalc");
+        const parts = getRandomPartition(p, resolution, dispersion);
+        // if (!animatedParts) {
+        //   animatedParts = parts.map((x) => new AnimatedValue(10, x));
+        // }
+        // parts.forEach((x, i) => {
+        //   animatedParts[i].animateTo(x);
+        // });
+        return parts;
+      },
+      [getProp("RESOLUTION"), getProp("W_DISPERSION")]
+    );
 
     function drawColumn(
       x: number,
@@ -91,7 +106,7 @@ const factory: ISketchFactory<Params> = createSketchFactory<Params>(
       direction: "up" | "down",
       endStyle: "circle" | "polygon"
     ) {
-      const COLOR = getProp("COLOR").value!;
+      const COLOR = getProp("COLOR").value;
       const color = p.lerpColor(
         p.color(controls.COLOR.colors[COLOR][0]),
         p.color(controls.COLOR.colors[COLOR][1]),
@@ -130,41 +145,27 @@ const factory: ISketchFactory<Params> = createSketchFactory<Params>(
       p.rect(rtl.x, rtl.y, w, Math.max(h - r, 0));
     }
 
-    function initParts() {
-      const W_DISPERSION = getProp("W_DISPERSION").value!;
-      const RESOLUTION = getProp("RESOLUTION").value!;
-
-      PARTS = getRandomPartition(p, RESOLUTION, W_DISPERSION);
-    }
-
     return {
-      updateWithProps: () => {
-        if (
-          getProp("RESOLUTION").hasChanged ||
-          getProp("W_DISPERSION").hasChanged
-        ) {
-          initParts();
-        }
-      },
       setup: () => {
         p.noStroke();
-        initParts();
       },
       draw: (time) => {
-        const GAP_X = (getProp("GAP_X").value! * p.width) / 1158,
-          GAP_Y = (getProp("GAP_Y").value! * p.height) / 811,
-          AMPLITUDE = getProp("AMPLITUDE").value!,
-          PERIOD = getProp("PERIOD").value!;
+        const GAP_X = (getProp("GAP_X").value * p.width) / 1158,
+          GAP_Y = (getProp("GAP_Y").value * p.height) / 811,
+          AMPLITUDE = getProp("AMPLITUDE").value,
+          PERIOD = getProp("PERIOD").value;
 
         p.background("black");
 
         const totalWidth = p.width - GAP_X;
         let start = GAP_X;
 
-        PARTS.forEach((_w, i) => {
+        PARTS.value.forEach((_w, i, { length }) => {
           const x = start,
             y = 0,
-            w = _w * totalWidth - GAP_X,
+            widthNormalized = _w,
+            // widthNormalized = animatedWidthNormalized.getCurrentValue()!,
+            w = widthNormalized * totalWidth - GAP_X,
             h = p.height,
             gapX =
               p.height / 2 +
@@ -175,10 +176,12 @@ const factory: ISketchFactory<Params> = createSketchFactory<Params>(
                 0,
                 p.height / 2
               ) *
-                p.sin((p.TWO_PI * PERIOD * i) / PARTS.length + time * 0.015);
+                p.sin((p.TWO_PI * PERIOD * i) / length + time * 0.015);
 
           drawColumn(x, y, w, h, gapX, GAP_Y);
-          start += _w * totalWidth;
+          start += widthNormalized * totalWidth;
+
+          // animatedWidthNormalized.nextStep();
         });
       },
     };

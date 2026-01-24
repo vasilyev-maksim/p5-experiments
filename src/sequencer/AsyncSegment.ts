@@ -1,4 +1,4 @@
-import { Deferred } from "../utils";
+import { Deferred } from "../utils/Deffered";
 import { SegmentBase } from "./SegmentBase";
 
 export class AsyncSegment<Payload = unknown> extends SegmentBase {

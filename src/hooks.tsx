@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
 import { ViewportContext } from "./components/ViewportContext";
 import type { ISketch } from "./models";
-import { getClosestDiscreteValue } from "./utils";
+import { getClosestDiscreteValue } from "./utils/misc";
 
 export function useViewport() {
   const ctx = useContext(ViewportContext);

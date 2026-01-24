@@ -56,6 +56,7 @@ export const SketchTile = forwardRef<
         }
       >
         <SketchCanvas
+          id="tile"
           sketch={sketch}
           playing={false}
           size="tile"

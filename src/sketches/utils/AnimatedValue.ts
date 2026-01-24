@@ -1,7 +1,7 @@
 export class AnimatedValue {
-  private prev: number | undefined;
+  private start: number | undefined;
   private interpolated: number | undefined;
-  private next: number | undefined;
+  private destination: number | undefined;
   private currentStep: number = 0;
 
   public constructor(
@@ -9,28 +9,28 @@ export class AnimatedValue {
     initialValue?: number
   ) {
     if (initialValue) {
-      this.prev = initialValue;
+      this.start = initialValue;
       this.interpolated = initialValue;
-      this.next = initialValue;
+      this.destination = initialValue;
     }
   }
 
   public animateTo(val: number) {
-    this.prev = this.prev === undefined ? val : this.interpolated;
-    this.interpolated = this.prev;
-    this.next = val;
-    this.currentStep = this.prev === this.next ? 0 : this.stepsCount;
+    this.start = this.start === undefined ? val : this.interpolated;
+    this.interpolated = this.start;
+    this.destination = val;
+    this.currentStep = this.start === this.destination ? 0 : this.stepsCount;
   }
 
   public nextStep() {
     if (
-      this.next !== undefined &&
-      this.prev !== undefined &&
-      this.next !== this.prev &&
+      this.destination !== undefined &&
+      this.start !== undefined &&
+      this.destination !== this.start &&
       this.interpolated !== undefined &&
       this.currentStep > 0
     ) {
-      const delta = (this.next - this.prev) / this.stepsCount;
+      const delta = (this.destination - this.start) / this.stepsCount;
       this.interpolated += delta;
       this.currentStep--;
     }
@@ -40,7 +40,7 @@ export class AnimatedValue {
     return this.interpolated;
   }
 
-  public getNextValue() {
-    return this.next;
+  public getDestinationValue() {
+    return this.destination;
   }
 }

@@ -4,7 +4,7 @@ import {
   SquareBorderPointsJoiner,
   type JointRenderCallback,
 } from "./utils/BorderPointsJoiner";
-import { createSketchFactory } from "./utils/sketchFactory";
+import { createSketch } from "./utils/createSketch";
 import { oscillateBetween } from "./utils/misc";
 
 const controls = {
@@ -78,7 +78,7 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createSketchFactory<Params>((p, getProp) => {
+const factory = createSketch<Params>((p, getProp) => {
   return {
     setup: () => {
       p.angleMode("radians");
@@ -86,14 +86,14 @@ const factory = createSketchFactory<Params>((p, getProp) => {
     },
     draw: (time) => {
       p.background("black");
-      const PADDING_PERCENT = getProp("PADDING_PERCENT").value!,
-        RESOLUTION = getProp("RESOLUTION").value!,
-        CURVATURE_TYPE = getProp("CURVATURE_TYPE").value!,
-        MAX_NEGATIVE_CURVATURE = getProp("MAX_NEGATIVE_CURVATURE").value!,
-        MAX_CURVATURE = getProp("MAX_CURVATURE").value!,
-        COLOR_INDEX = getProp("COLOR").value!,
-        PATTERN_TYPE = getProp("PATTERN_TYPE").value!,
-        INVERT_COLORS = getProp("INVERT_COLORS").value!;
+      const PADDING_PERCENT = getProp("PADDING_PERCENT").value,
+        RESOLUTION = getProp("RESOLUTION").value,
+        CURVATURE_TYPE = getProp("CURVATURE_TYPE").value,
+        MAX_NEGATIVE_CURVATURE = getProp("MAX_NEGATIVE_CURVATURE").value,
+        MAX_CURVATURE = getProp("MAX_CURVATURE").value,
+        COLOR_INDEX = getProp("COLOR").value,
+        PATTERN_TYPE = getProp("PATTERN_TYPE").value,
+        INVERT_COLORS = getProp("INVERT_COLORS").value;
 
       const SIZE = Math.min(p.width, p.height),
         ACTUAL_SIZE = SIZE * (1 - PADDING_PERCENT / 100),

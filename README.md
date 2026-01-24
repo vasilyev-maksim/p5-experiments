@@ -2,6 +2,12 @@
 
 # 📋 TODO
 
+- add callback to `TrackedValue.ArrayUtils.someHasChanged` signature as 2nd arg
+- add diff to `TrackedValue`
+- returning `TrackedValue` from `getProp()` call makes sense only in `p.updateWithProps`, so pass `getTrackedValue` fn as arg to `updateWithProps` factory method
+- добавить в метод draw аргумент playing (иногда надо по разному реагировать)
+- добавить в AnimatedValue возможность ориентироваться на time, потому что если на паузе, то получится сдвиг (тк вызов nextStep)
+
 - draw fullscreen icon by myself (renders differently on windows)
 - sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - add onScreenResize callback to factory (for pulse bg = black on resize)
@@ -14,7 +20,6 @@
 - add randomize button for controls
 - remove param controls margin-top if no presets
 - focus trap for modal (home page links are accessible)
-- make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - tabIndex everywhere
 - make opening by link more smooth + disable list animation in bg
 
@@ -28,6 +33,7 @@
 
 # ✅ DONE
 
+- make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - FIX: links are not clickable in app header (was fixed by itself somehow...)
 - pass props to factory as init args
 - convert all props to `ValueWithHistory`

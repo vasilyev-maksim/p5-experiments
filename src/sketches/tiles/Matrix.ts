@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { Size } from "./Size";
-import { range } from "../../utils";
+import { range } from "../../utils/misc";
 
 export interface IMatrix {
   get(cell: p5.Vector): boolean;

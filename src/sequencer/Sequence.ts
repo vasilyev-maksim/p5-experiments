@@ -1,4 +1,5 @@
-import { asyncWhile, delay, Event } from "../utils";
+import { asyncWhile, delay } from "../utils/misc";
+import { Event } from "../utils/Event";
 import { AsyncSegment } from "./AsyncSegment";
 import { SegmentPhase } from "./models";
 import type { SegmentBase } from "./SegmentBase";
