@@ -11,9 +11,16 @@ type TrackedProps<Param extends string> = {
 
 type Api<Param extends string, Memos extends MemosConfig> = {
   p: P5CanvasInstance<ISketchProps<Param>>;
-  getProp: <K extends Props<Param>>(propName: K) => TrackedProps<Param>[K];
+  getProp: <K extends Props<Param> | keyof Memos>(
+    propName: K,
+  ) => K extends Props<Param> ? ISketchProps<Param>[K] : Memos[K];
+  getTrackedProp: <K extends Props<Param> | keyof Memos>(
+    propName: K,
+  ) => K extends Props<Param>
+    ? TrackedValue<ISketchProps<Param>[K]>
+    : TrackedValue<Memos[K]>;
   getTime: () => number;
-  getMemo: <K extends keyof Memos>(memoKey: K) => Memos[K] | undefined;
+  // getMemo: <K extends keyof Memos>(memoKey: K) => Memos[K] | undefined;
 };
 
 type MemosConfig = Record<string, any>;
@@ -33,7 +40,10 @@ export type CreateSketchArgs<
   memosFactory?: (api: Api<Param, Memos>) => MemoizedDict<Memos>;
 };
 
-export function createSketch<Param extends string, Memos extends MemosConfig>(
+export function createSketch<
+  Param extends string,
+  Memos extends MemosConfig = never,
+>(
   // Why a factory? it allows us to use closures to create shared vars.
   // Note that `api` is not available in the topmost scope to avoid issues with p5 instance init order.
   argsFactory: () => CreateSketchArgs<Param, Memos>,
@@ -42,16 +52,24 @@ export function createSketch<Param extends string, Memos extends MemosConfig>(
     let time = 0,
       initialPropsUpdate = true,
       props: TrackedProps<Param>,
-      draw: ReturnType<CreateSketchArgs<Param, Memos>["drawFactory"]>;
+      draw: ReturnType<CreateSketchArgs<Param, Memos>["drawFactory"]>,
+      memos: MemoizedDict<Memos> | undefined;
 
     const api: Api<Param, Memos> = {
       p,
-      getProp: (k) => props[k],
+      getProp: (k) => {
+        return api.getTrackedProp(k).value as any;
+      },
+      getTrackedProp: (k) => {
+        if (memos && Object.hasOwn(memos, k)) {
+          return memos![k] as any;
+        } else {
+          return props[k as Props<Param>];
+        }
+      },
       getTime: () => time,
-      getMemo: <K extends keyof Memos>(k: K) => memos?.[k]?.value, // as MemoizedDict<Memos>[K],
     };
     const args = argsFactory();
-    let memos: MemoizedDict<Memos> | undefined;
 
     const _updateTrackedProps = (newRawProps: ISketchProps<Param>) => {
       if (!props) {
@@ -83,24 +101,24 @@ export function createSketch<Param extends string, Memos extends MemosConfig>(
       p.noiseSeed(initialProps.randomSeed);
 
       // set time using initial time shift (for pretty previews)
-      time = api.getProp("timeShift").value ?? 0;
+      time = api.getProp("timeShift") ?? 0;
 
-      if (api.getProp("playing").value) {
+      if (api.getProp("playing")) {
         p.loop();
       } else {
         p.noLoop();
       }
 
       args.setup?.(api);
-
       memos = args.memosFactory?.(api);
+
       // init draw func with p5 instance (as part of `api`) guaranteed to be initialized properly
       draw = args.drawFactory(api);
     };
 
     p.draw = () => {
       draw();
-      time += api.getProp("timeDelta").value;
+      time += api.getProp("timeDelta");
     };
 
     p.updateWithProps = (newRawProps) => {
@@ -111,8 +129,8 @@ export function createSketch<Param extends string, Memos extends MemosConfig>(
 
         args.onPropsChanged?.(api);
 
-        const playing = api.getProp("playing").value;
-        const timeShift = api.getProp("timeShift");
+        const playing = api.getProp("playing");
+        const timeShift = api.getTrackedProp("timeShift");
 
         // for playback controls
         if (timeShift.hasChanged && timeShift.value !== undefined) {
@@ -121,8 +139,8 @@ export function createSketch<Param extends string, Memos extends MemosConfig>(
         }
 
         // respond to canvas size changes
-        const canvasHeight = api.getProp("canvasHeight");
-        const canvasWidth = api.getProp("canvasWidth");
+        const canvasHeight = api.getTrackedProp("canvasHeight");
+        const canvasWidth = api.getTrackedProp("canvasWidth");
 
         if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
           // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.

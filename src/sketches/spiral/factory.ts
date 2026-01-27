@@ -12,18 +12,18 @@ export const factory = createSketch<
     BG_COLOR = "black";
 
   return {
-    memosFactory: ({ getProp }) =>
+    memosFactory: ({ getTrackedProp }) =>
       ({
         THICKNESS: new MemoizedValue(
           (x) => controls.THICKNESS.max + controls.THICKNESS.min - x,
-          [getProp("THICKNESS")],
+          [getTrackedProp("THICKNESS")],
         ),
         COIL_SPEED: new MemoizedValue(
           (x) =>
             x === 0
               ? 0
               : controls.COIL_SPEED.max + controls.COIL_SPEED.min - x + 1,
-          [getProp("COIL_SPEED")],
+          [getTrackedProp("COIL_SPEED")],
         ),
       }) as const,
     setup: ({ p }) => {
@@ -32,34 +32,34 @@ export const factory = createSketch<
       p.strokeWeight(1);
       p.angleMode("degrees");
     },
-    drawFactory: ({ p, getProp, getTime, getMemo }) => {
+    drawFactory: ({ p, getProp, getTime }) => {
       function getNodes(): [number, number][] {
         const time = getTime();
-        const COIL_SPEED = getMemo("COIL_SPEED")!;
+        const COIL_SPEED = getProp("COIL_SPEED");
         return range(POLYGONS_COUNT).map((i) => {
-          const d = (getProp("ZOOM").value * p.width) / 1158;
+          const d = (getProp("ZOOM") * p.width) / 1158;
           return [
             i * d,
             i *
-              getProp("COIL_FACTOR").value *
+              getProp("COIL_FACTOR") *
               (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
-              time * getProp("ROTATION_SPEED").value,
+              time * getProp("ROTATION_SPEED"),
           ];
         });
       }
 
       function drawCircle([d, angle]: [number, number]) {
-        const THICKNESS = getMemo("THICKNESS")!;
+        const THICKNESS = getProp("THICKNESS");
         const x = d * p.cos(angle);
         const y = d * p.sin(angle);
         p.circle(p.width / 2 + x, p.height / 2 + y, (d * 2) / THICKNESS);
       }
 
       function drawPolygon([d, angle]: [number, number]) {
-        const THICKNESS = getMemo("THICKNESS")!;
+        const THICKNESS = getProp("THICKNESS");
         const x = d * p.cos(angle) + p.width / 2;
         const y = d * p.sin(angle) + p.height / 2;
-        const adelta = 360 / getProp("POLYGON_N").value;
+        const adelta = 360 / getProp("POLYGON_N");
 
         p.push();
         {
@@ -81,22 +81,20 @@ export const factory = createSketch<
         const nodes = getNodes();
         nodes.forEach((node, i, arr) => {
           const [colorA, colorB] =
-            controls.FILL_COLORS.colors[getProp("FILL_COLORS").value];
+            controls.FILL_COLORS.colors[getProp("FILL_COLORS")];
           const fillColor = p.lerpColor(
             p.color(colorA),
             p.color(colorB),
             p.sin(
-              getTime() * getProp("COLOR_CHANGE_SPEED").value +
+              getTime() * getProp("COLOR_CHANGE_SPEED") +
                 (i / arr.length) * 360 * 4,
             ),
           );
 
           p.fill(fillColor);
-          p.stroke(
-            controls.BORDER_COLOR.colors[getProp("BORDER_COLOR").value][0],
-          );
+          p.stroke(controls.BORDER_COLOR.colors[getProp("BORDER_COLOR")][0]);
 
-          if (getProp("POLYGON_N").value === controls.POLYGON_N.max) {
+          if (getProp("POLYGON_N") === controls.POLYGON_N.max) {
             drawCircle(node);
           } else {
             drawPolygon(node);

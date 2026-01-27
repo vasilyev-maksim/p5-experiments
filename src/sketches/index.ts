@@ -1,6 +1,6 @@
 import type { ISketch } from "../models";
 import { spiralSketch } from "./spiral";
-// import { pillarsSketch } from "./pillars";
+import { pillarsSketch } from "./pillars";
 // import { pulseSketch } from "./pulse";
 // // import { tiles } from "./tiles/tiles";
 // import { arcSketch } from "./arcs";
@@ -11,7 +11,7 @@ import { testSketch } from "./test";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
   spiralSketch,
-  // pillarsSketch,
+  pillarsSketch,
   // arcSketch,
   // pulseSketch,
   // zigzagsSketch,
