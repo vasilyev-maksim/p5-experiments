@@ -3,28 +3,35 @@ import type { ISketchFactory } from "../../models";
 import { MemoizedValue } from "../../utils/MemoizedValue";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
+import { AnimatedValue } from "../utils/AnimatedValue";
 
 export const factory: ISketchFactory<Params> = createSketch<
   Params,
   { PARTS: number[] }
 >(() => {
-  // let animatedParts: AnimatedValue[] = [];
+  const animatedParts: AnimatedValue[] = [];
 
   return {
     setup: ({ p }) => {
       p.noStroke();
     },
-    memosFactory: ({ p, getTrackedProp }) => {
+    memosFactory: ({ p, getTrackedProp, getTime }) => {
       return {
         PARTS: new MemoizedValue(
           (resolution: number, dispersion: number) => {
             const parts = getRandomPartition(p, resolution, dispersion);
-            // if (!animatedParts) {
-            //   animatedParts = parts.map((x) => new AnimatedValue(10, x));
-            // }
-            // parts.forEach((x, i) => {
-            //   animatedParts[i].animateTo(x);
-            // });
+            const time = getTime();
+
+            console.log({ parts });
+
+            parts.forEach((x, i) => {
+              if (!animatedParts[i]) {
+                animatedParts[i] = new AnimatedValue(10, x);
+              } else {
+                animatedParts[i].animateTo(x, time);
+              }
+            });
+
             return parts;
           },
           [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
@@ -99,18 +106,19 @@ export const factory: ISketchFactory<Params> = createSketch<
         const GAP_X = (getProp("GAP_X") * p.width) / 1158,
           GAP_Y = (getProp("GAP_Y") * p.height) / 811,
           AMPLITUDE = getProp("AMPLITUDE"),
-          PERIOD = getProp("PERIOD");
+          PERIOD = getProp("PERIOD"),
+          time = getTime();
 
         p.background("black");
 
         const totalWidth = p.width - GAP_X;
         let start = GAP_X;
 
-        getProp("PARTS").forEach((_w, i, { length }) => {
+        animatedParts.forEach((animatedWidthNormalized, i, { length }) => {
           const x = start,
             y = 0,
-            widthNormalized = _w,
-            // widthNormalized = animatedWidthNormalized.getCurrentValue()!,
+            // widthNormalized = _w,
+            widthNormalized = animatedWidthNormalized.getCurrentValue()!,
             w = widthNormalized * totalWidth - GAP_X,
             h = p.height,
             gapX =
@@ -122,11 +130,14 @@ export const factory: ISketchFactory<Params> = createSketch<
                 0,
                 p.height / 2,
               ) *
-                p.sin((p.TWO_PI * PERIOD * i) / length + getTime() * 0.015);
+                p.sin((p.TWO_PI * PERIOD * i) / length + time * 0.015);
 
           drawColumn(x, y, w, h, gapX, GAP_Y);
           start += widthNormalized * totalWidth;
 
+          // console.log(animatedWidthNormalized.getCurrentValue()!);
+
+          animatedWidthNormalized.runAnimationStep(time);
           // animatedWidthNormalized.nextStep();
         });
       };

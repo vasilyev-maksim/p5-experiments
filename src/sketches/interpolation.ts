@@ -22,16 +22,16 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
-  const animatedX = new AnimatedValue(0);
-  const animatedY = new AnimatedValue(0);
+  const animatedX = new AnimatedValue(0, 20);
+  const animatedY = new AnimatedValue(0, 20);
   return {
     setup: ({ p, getTime }) => {
       p.noStroke();
 
       p.mouseClicked = () => {
         const time = getTime();
-        animatedX.animateTo(p.mouseX, time, 20);
-        animatedY.animateTo(p.mouseY, time, 20);
+        animatedX.animateTo(p.mouseX, time);
+        animatedY.animateTo(p.mouseY, time);
       };
     },
     drawFactory: ({ p, getTime }) => {
@@ -83,10 +83,10 @@ const presets: IPreset<Params>[] = [
   },
 ];
 
-export const testSketch: ISketch<Params> = {
+export const interpolationSketch: ISketch<Params> = {
   factory,
-  id: "test",
-  name: "test",
+  id: "interpolation",
+  name: "interpolation",
   preview: {
     size: 520,
   },

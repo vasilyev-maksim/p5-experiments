@@ -20,7 +20,6 @@ type Api<Param extends string, Memos extends MemosConfig> = {
     ? TrackedValue<ISketchProps<Param>[K]>
     : TrackedValue<Memos[K]>;
   getTime: () => number;
-  // getMemo: <K extends keyof Memos>(memoKey: K) => Memos[K] | undefined;
 };
 
 type MemosConfig = Record<string, any>;
@@ -110,8 +109,8 @@ export function createSketch<
       }
 
       args.setup?.(api);
+      
       memos = args.memosFactory?.(api);
-
       // init draw func with p5 instance (as part of `api`) guaranteed to be initialized properly
       draw = args.drawFactory(api);
     };

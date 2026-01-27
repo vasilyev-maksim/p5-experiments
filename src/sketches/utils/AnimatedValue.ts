@@ -2,37 +2,42 @@ export class AnimatedValue {
   private start: number | undefined;
   private interpolated: number | undefined;
   private destination: number | undefined;
-  private currentStep: number = 0;
+  private startTime: number | undefined;
+  private endTime: number | undefined;
 
   public constructor(
-    private readonly stepsCount: number,
-    initialValue?: number
+    private readonly animationDuration: number,
+    initialValue?: number,
   ) {
-    if (initialValue) {
+    if (initialValue !== undefined) {
       this.start = initialValue;
       this.interpolated = initialValue;
       this.destination = initialValue;
     }
   }
 
-  public animateTo(val: number) {
+  public animateTo(val: number, startTime: number, animationDuration?: number) {
+    this.startTime = startTime;
+    this.endTime = startTime + (animationDuration ?? this.animationDuration);
     this.start = this.start === undefined ? val : this.interpolated;
     this.interpolated = this.start;
     this.destination = val;
-    this.currentStep = this.start === this.destination ? 0 : this.stepsCount;
   }
 
-  public nextStep() {
+  public runAnimationStep(currentTime: number) {
     if (
+      this.startTime !== undefined &&
+      this.endTime !== undefined &&
+      this.startTime <= currentTime &&
+      this.endTime >= currentTime &&
       this.destination !== undefined &&
       this.start !== undefined &&
       this.destination !== this.start &&
-      this.interpolated !== undefined &&
-      this.currentStep > 0
+      this.interpolated !== undefined
     ) {
-      const delta = (this.destination - this.start) / this.stepsCount;
-      this.interpolated += delta;
-      this.currentStep--;
+      const ratio =
+        (currentTime - this.startTime) / (this.endTime - this.startTime);
+      this.interpolated = this.start + ratio * (this.destination - this.start);
     }
   }
 
