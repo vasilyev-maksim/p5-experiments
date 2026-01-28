@@ -44,7 +44,7 @@ export const SketchCanvas = forwardRef<
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
         randomSeed: props.sketch.randomSeed ?? 0,
-      } as ISketchProps),
+      }) as ISketchProps,
     [
       props.params,
       props.playing,
@@ -54,12 +54,8 @@ export const SketchCanvas = forwardRef<
       canvasWidth,
       canvasHeight,
       props.sketch.randomSeed,
-    ]
+    ],
   );
-
-  useEffect(() => {
-    console.log("props update", props.id, sketchProps);
-  }, [sketchProps, props.id]);
 
   const p5Sketch = useMemo(() => {
     // this time `sketchProps` are initial props
@@ -68,7 +64,7 @@ export const SketchCanvas = forwardRef<
 
   const { duration } =
     useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
-      "TILE_GOES_MODAL"
+      "TILE_GOES_MODAL",
     );
   const [{ x }, api] = useSpring(() => ({
     from: { x: 0 },
@@ -112,7 +108,7 @@ export const SketchCanvas = forwardRef<
           transformOrigin: "top left",
           transform: to(
             [scale, translateX, translateY],
-            (s, tx, ty) => `scale(${s}) translate(${tx}px, ${ty}px)`
+            (s, tx, ty) => `scale(${s}) translate(${tx}px, ${ty}px)`,
           ),
         }}
       >

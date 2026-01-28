@@ -1,31 +1,24 @@
-import { MemoizedValue } from "../utils/MemoizedValue";
+// import { MemoizedValue } from "../utils/MemoizedValue";
 import { range } from "../../utils/misc";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const factory = createSketch<
-  Params,
-  { THICKNESS: number; COIL_SPEED: number }
->(() => {
+export const factory = createSketch<Params>(({ createMemo, getProp }) => {
   const POLYGONS_COUNT = 500,
     BG_COLOR = "black";
 
+  const THICKNESS = createMemo(
+    (x) => controls.THICKNESS.max + controls.THICKNESS.min - x,
+    [getProp("THICKNESS", true)],
+  );
+
+  const COIL_SPEED = createMemo(
+    (x) =>
+      x === 0 ? 0 : controls.COIL_SPEED.max + controls.COIL_SPEED.min - x + 1,
+    [getProp("COIL_SPEED", true)],
+  );
+
   return {
-    memosFactory: ({ getTrackedProp }) =>
-      ({
-        THICKNESS: new MemoizedValue(
-          (x) => controls.THICKNESS.max + controls.THICKNESS.min - x,
-          [getTrackedProp("THICKNESS")],
-        ),
-        COIL_SPEED: new MemoizedValue(
-          (x) =>
-            x === 0
-              ? 0
-              : controls.COIL_SPEED.max + controls.COIL_SPEED.min - x + 1,
-          [getTrackedProp("COIL_SPEED")],
-        ),
-      }) as const,
     setup: ({ p }) => {
       p.background("black");
       p.fill(255, 0, 0, 10);
@@ -35,28 +28,27 @@ export const factory = createSketch<
     drawFactory: ({ p, getProp, getTime }) => {
       function getNodes(): [number, number][] {
         const time = getTime();
-        const COIL_SPEED = getProp("COIL_SPEED");
         return range(POLYGONS_COUNT).map((i) => {
           const d = (getProp("ZOOM") * p.width) / 1158;
           return [
             i * d,
             i *
               getProp("COIL_FACTOR") *
-              (COIL_SPEED === 0 ? 1 : p.sin(time / COIL_SPEED)) +
+              (COIL_SPEED.value === 0 ? 1 : p.sin(time / COIL_SPEED.value)) +
               time * getProp("ROTATION_SPEED"),
           ];
         });
       }
 
       function drawCircle([d, angle]: [number, number]) {
-        const THICKNESS = getProp("THICKNESS");
+        // const THICKNESS = getProp("THICKNESS");
         const x = d * p.cos(angle);
         const y = d * p.sin(angle);
-        p.circle(p.width / 2 + x, p.height / 2 + y, (d * 2) / THICKNESS);
+        p.circle(p.width / 2 + x, p.height / 2 + y, (d * 2) / THICKNESS.value);
       }
 
       function drawPolygon([d, angle]: [number, number]) {
-        const THICKNESS = getProp("THICKNESS");
+        // const THICKNESS = getProp("THICKNESS");
         const x = d * p.cos(angle) + p.width / 2;
         const y = d * p.sin(angle) + p.height / 2;
         const adelta = 360 / getProp("POLYGON_N");
@@ -66,8 +58,8 @@ export const factory = createSketch<
           p.translate(x, y);
           p.beginShape();
           for (let a = 0; a < 360; a += adelta) {
-            const sx = (p.cos(a) * d) / THICKNESS;
-            const sy = (p.sin(a) * d) / THICKNESS;
+            const sx = (p.cos(a) * d) / THICKNESS.value;
+            const sy = (p.sin(a) * d) / THICKNESS.value;
             p.vertex(sx, sy);
           }
           p.endShape("close");

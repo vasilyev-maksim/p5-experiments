@@ -14,17 +14,18 @@ export class MemoizedValue<
     private readonly deps: TrackedArray<ArgsType>,
     comparator?: TrackedValueComparator<ValueType>,
   ) {
-    const initialValue = fn(
-      ...(TrackedValue.ArrayUtils.unbox(deps) as ArgsType),
-    );
-    super(initialValue, comparator);
+    // Sometimes we need a reference to `MemoizedValue` instance
+    // before it can actually be initialized by a real value,
+    // that's why there is `undefined` as first arg
+    super(undefined as any, comparator);
   }
 
-  /** Calculates new value if some of args changed */
-  public recalc(): this {
-    this.value = TrackedValue.ArrayUtils.someHasChanged(this.deps)
-      ? this.fn(...(TrackedValue.ArrayUtils.unbox(this.deps) as ArgsType))
-      : this.value;
+  /** Calculates new value if some of args changed (or if `force` is true) */
+  public recalc(force = false): this {
+    this.value =
+      force || TrackedValue.ArrayUtils.someHasChanged(this.deps)
+        ? this.fn(...(TrackedValue.ArrayUtils.unbox(this.deps) as ArgsType))
+        : this.value;
 
     return this;
   }

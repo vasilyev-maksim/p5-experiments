@@ -1,139 +1,92 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type { ISketchProps, ISketchFactory } from "../../models";
-import { TrackedValue } from "./TrackedValue";
+import {
+  TrackedValue,
+  type TrackedArray,
+  type TrackedValueComparator,
+} from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
-import type { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
 
-type Props<Param extends string> = keyof ISketchProps<Param>;
-type TrackedProps<Param extends string> = {
-  [k in Props<Param>]: TrackedValue<ISketchProps<Param>[k]>;
+type PropNames<Params extends string> = keyof ISketchProps<Params>;
+type TrackedProps<Params extends string> = {
+  [k in PropNames<Params>]: TrackedValue<ISketchProps<Params>[k]>;
 };
 
-type Api<
-  Param extends string,
-  Memos extends MemosConfig,
-  Animations extends AnimationsConfig,
-> = {
-  p: P5CanvasInstance<ISketchProps<Param>>;
-  getProp: <K extends Props<Param> | keyof Memos | keyof Animations>(
-    propName: K,
-  ) => K extends Props<Param>
-    ? ISketchProps<Param>[K]
-    : K extends keyof Memos
-      ? Memos[K]
-      : Animations[K];
-  getTrackedProp: <K extends Props<Param> | keyof Memos | keyof Animations>(
-    propName: K,
-  ) => K extends Props<Param>
-    ? TrackedValue<ISketchProps<Param>[K]>
-    : K extends keyof Memos
-      ? TrackedValue<Memos[K]>
-      : TrackedValue<Animations[K]>;
+type Api<Params extends string> = {
+  p: P5CanvasInstance<ISketchProps<Params>>;
+  // Oh boy, look at this cool syntax for function overload!
+  getProp: {
+    <K extends PropNames<Params>>(propName: K): ISketchProps<Params>[K];
+    <K extends PropNames<Params>>(
+      propName: K,
+      returnTrackedValue: true,
+    ): TrackedValue<ISketchProps<Params>[K]>;
+  };
   getTime: () => number;
+  createMemo: <ArgsType extends any[], ValueType>(
+    fn: (...args: ArgsType) => ValueType,
+    deps: TrackedArray<ArgsType>,
+    comparator?: TrackedValueComparator<ValueType>,
+  ) => MemoizedValue<ArgsType, ValueType>;
 };
 
-type MemosConfig = Record<string, any>;
-type AnimationsConfig = Record<string, any>;
-
-type MemoizedDict<T extends MemosConfig> = {
-  [k in keyof T]: MemoizedValue<any, T[k]>;
-};
-type AnimationsDict<T extends AnimationsConfig> = {
-  [k in keyof T]: MemoizedAnimatedValue<any, T[k]>;
-};
-
-export type CreateSketchArgs<
-  Param extends string,
-  Memos extends MemosConfig,
-  Animations extends AnimationsConfig,
-> = {
-  setup?: (api: Api<Param, Memos, Animations>) => void;
+export type CreateSketchArgs<Params extends string> = {
+  setup?: (api: Api<Params>) => void;
   // Why a factory? it allows us define helper render functions in closure with `api` var available.
-  drawFactory: (api: Api<Param, Memos, Animations>) => () => void;
-  onPropsChanged?: (api: Api<Param, Memos, Animations>) => void;
-  memosFactory?: (api: Api<Param, Memos, Animations>) => MemoizedDict<Memos>;
-  animationsFactory?: (
-    api: Api<Param, Memos, Animations>,
-  ) => AnimationsDict<Animations>;
+  drawFactory: (api: Api<Params>) => () => void;
+  onPropsChanged?: (api: Api<Params>) => void;
 };
 
-export function createSketch<
-  Param extends string,
-  Memos extends MemosConfig = never,
-  Animations extends AnimationsConfig = never,
->(
+export function createSketch<Params extends string>(
   // Why a factory? it allows us to use closures to create shared vars.
   // Note that `api` is not available in the topmost scope to avoid issues with p5 instance init order.
-  argsFactory: () => CreateSketchArgs<Param, Memos, Animations>,
-): ISketchFactory<Param> {
+  argsFactory: (api: Api<Params>) => CreateSketchArgs<Params>,
+): ISketchFactory<Params> {
   return (initialProps) => (p) => {
     let time = 0,
       initialPropsUpdate = true,
-      props: TrackedProps<Param>,
-      draw: ReturnType<
-        CreateSketchArgs<Param, Memos, Animations>["drawFactory"]
-      >,
-      memos: MemoizedDict<Memos> | undefined,
-      animations: AnimationsDict<AnimationsConfig> | undefined;
+      props: TrackedProps<Params>,
+      draw: ReturnType<CreateSketchArgs<Params>["drawFactory"]>;
 
-    const api: Api<Param, Memos, Animations> = {
+    const memos: MemoizedValue<any, any>[] = [];
+
+    const api: Api<Params> = {
       p,
-      getProp: (k) => {
-        return api.getTrackedProp(k).value as any;
-      },
-      getTrackedProp: (k) => {
-        if (animations && Object.hasOwn(animations, k)) {
-          return animations![k] as any;
-        } else if (memos && Object.hasOwn(memos, k)) {
-          return memos![k] as any;
-        } else {
-          return props[k as Props<Param>];
-        }
+      getProp: (k, returnTrackedValue: boolean = false) => {
+        const trackedValue = props[k];
+        return returnTrackedValue ? trackedValue : trackedValue.value;
       },
       getTime: () => time,
+      createMemo: (fn, deps, comparator) => {
+        const memo = new MemoizedValue(fn, deps, comparator);
+        memos.push(memo);
+        return memo;
+      },
     };
-    const args = argsFactory();
 
-    const _updateTrackedProps = (newRawProps: ISketchProps<Param>) => {
+    function updateTrackedProps(newRawProps: ISketchProps<Params>) {
       if (!props) {
         props = {} as any;
       }
 
-      (Object.keys(newRawProps) as Props<Param>[]).forEach((key) => {
+      (Object.keys(newRawProps) as PropNames<Params>[]).forEach((key) => {
         if (props[key] === undefined) {
           props[key] = new TrackedValue(newRawProps[key] as any) as any;
         } else {
           props[key].value = newRawProps[key];
         }
       });
-    };
+    }
 
-    const _updateMemos = () => {
-      if (memos) {
-        Object.values(memos).forEach((memo) => {
-          memo.recalc();
-        });
-      }
-    };
+    function updateMemos(force: boolean = false) {
+      Object.values(memos).forEach((memo) => {
+        memo.recalc(force);
+      });
+    }
 
-    const _updateAnimations = () => {
-      if (animations) {
-        Object.values(animations).forEach((animation) => {
-          animation.recalc(time);
-        });
-      }
-    };
-
-    const _runAnimations = () => {
-      if (animations) {
-        Object.values(animations).forEach((animation) => {
-          animation.runAnimationStep(time);
-        });
-      }
-    };
-
-    _updateTrackedProps(initialProps); // initialize trackable props immediately, don't move this line
+    updateTrackedProps(initialProps); // initialize trackable props immediately, don't move this line
+    const args = argsFactory(api);
 
     p.setup = () => {
       p.createCanvas(initialProps.canvasWidth, initialProps.canvasHeight);
@@ -143,22 +96,23 @@ export function createSketch<
       // set time using initial time shift (for pretty previews)
       time = api.getProp("timeShift") ?? 0;
 
-      if (api.getProp("playing")) {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
+      // [potential bug] hope `args.setup` won't need initialized memos any time soon lol
+      // Context: in pillars sketch we calculate memo based on p5's random seed,
+      // so memos can't be initialized before `p.randomSeed(...)` in setup,
+      // that's why the line below is there and `force` arg = true
+      updateMemos(true);
 
       args.setup?.(api);
 
-      memos = args.memosFactory?.(api);
-      animations = args.animationsFactory?.(api);
       //init draw func with p5 instance (as part of `api`) guaranteed to be initialized properly
       draw = args.drawFactory(api);
+
+      if (api.getProp("playing") === false) {
+        p.noLoop();
+      }
     };
 
     p.draw = () => {
-      _runAnimations();
       draw();
       time += api.getProp("timeDelta");
     };
@@ -166,14 +120,13 @@ export function createSketch<
     p.updateWithProps = (newRawProps) => {
       // updateWithProps's first call happens before `p.setup` call
       if (!initialPropsUpdate) {
-        _updateTrackedProps(newRawProps);
-        _updateMemos();
-        _updateAnimations();
+        updateTrackedProps(newRawProps);
+        updateMemos();
 
         args.onPropsChanged?.(api);
 
         const playing = api.getProp("playing");
-        const timeShift = api.getTrackedProp("timeShift");
+        const timeShift = api.getProp("timeShift", true);
 
         // for playback controls
         if (timeShift.hasChanged && timeShift.value !== undefined) {
@@ -182,13 +135,13 @@ export function createSketch<
         }
 
         // respond to canvas size changes
-        const canvasHeight = api.getTrackedProp("canvasHeight");
-        const canvasWidth = api.getTrackedProp("canvasWidth");
+        const canvasHeight = api.getProp("canvasHeight", true);
+        const canvasWidth = api.getProp("canvasWidth", true);
 
         if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
           // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
           // The reason is that `p.draw` implies time increase, which is unintentional, we just want to redraw.
-          p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
+          p.resizeCanvas(canvasWidth.value, canvasHeight.value, true);
         }
 
         // play/pause

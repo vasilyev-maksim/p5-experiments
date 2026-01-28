@@ -37,16 +37,10 @@ export const SketchModal = ({
     modalSidebarWidth,
     modalSidebarPadding,
     borderWidth,
-    // canvasModalWidth,
-    // canvasModalHeight,
   } = useViewport();
 
-  // useEffect(() => {
-  //   console.log({ canvasModalWidth, canvasModalHeight });
-  // }, [canvasModalWidth, canvasModalHeight]);
-
   const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
-    MODAL_OPEN_SEQUENCE
+    MODAL_OPEN_SEQUENCE,
   );
   const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
   const playbackControlsEnabled = useSegment("START_PLAYING").completed;
@@ -87,7 +81,7 @@ export const SketchModal = ({
   const [timeShift, setTimeShift] = useState<number>(sketch.timeShift ?? 0);
   /** time delta is a speed of animation set by user */
   const [timeDelta, setTimeDelta] = useState(
-    sketch.defaultParams.timeDelta ?? 1
+    sketch.defaultParams.timeDelta ?? 1,
   );
   /** manual time delta is used by playback controls and takes precedence over timeDelta (if former is set) */
   const [manualTimeDelta, setManualTimeDelta] = useState<number>();
@@ -179,11 +173,11 @@ export const SketchModal = ({
           {
             width: modalX.to(
               [0, 1],
-              [tileWidth, window.innerWidth - modalMargin * 2]
+              [tileWidth, window.innerWidth - modalMargin * 2],
             ),
             height: modalX.to(
               [0, 1],
-              [tileHeight, window.innerHeight - modalMargin * 2]
+              [tileHeight, window.innerHeight - modalMargin * 2],
             ),
             left: modalX.to([0, 1], [left, modalMargin]),
             top: modalX.to([0, 1], [top, modalMargin]),

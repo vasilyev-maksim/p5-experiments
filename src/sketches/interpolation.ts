@@ -51,30 +51,6 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
   };
 });
 
-// const factory: ISketchFactory<Params> =
-//   ({ canvasWidth, canvasHeight }) =>
-//   (p) => {
-//     p.updateWithProps = (props) => {
-//       // console.log("updateWithProps");
-//     };
-
-//     p.setup = () => {
-//       // console.log("setup");
-//       p.noLoop();
-//       p.createCanvas(canvasWidth, canvasHeight);
-//     };
-
-//     p.draw = () => {
-//       // console.log("draw");
-
-//       p.background("black");
-//     };
-
-//     p.mouseClicked = () => {
-//       animatedX.animateTo(p.mouseX);
-//     };
-//   };
-
 const presets: IPreset<Params>[] = [
   {
     params: {
