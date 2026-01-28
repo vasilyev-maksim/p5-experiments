@@ -3,7 +3,7 @@ import { oscillateBetween } from "./utils/misc";
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import { range } from "../utils/misc";
 import { createSketch } from "./utils/createSketch";
-import { MemoizedValue } from "../utils/MemoizedValue";
+import { MemoizedValue } from "./utils/MemoizedValue";
 
 const controls = {
   COLOR: {
@@ -20,7 +20,7 @@ class Circle {
     private readonly center: p5.Vector,
     private readonly radius: number,
     private readonly fillColor: p5.Color,
-    private readonly rotationCenter: p5.Vector
+    private readonly rotationCenter: p5.Vector,
   ) {}
 
   public render = (p: p5, angle: number) => {
@@ -62,19 +62,19 @@ const factory = createSketch<Params>((p, getProp) => {
             p.lerpColor(
               p.color("#ea72f7ff"),
               p.color("#530984ff"),
-              i / RINGS_COUNT
+              i / RINGS_COUNT,
             ),
             p5.Vector.add(
               CENTER_VEC,
               p.createVector(
                 dir.x * rotationShiftDelta,
-                dir.y * rotationShiftDelta
-              )
-            )
+                dir.y * rotationShiftDelta,
+              ),
+            ),
           );
         });
       },
-      [getProp("canvasWidth"), getProp("canvasHeight")]
+      [getProp("canvasWidth"), getProp("canvasHeight")],
     );
 
   return {

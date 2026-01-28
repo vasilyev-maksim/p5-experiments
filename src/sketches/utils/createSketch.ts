@@ -1,66 +1,91 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type { ISketchProps, ISketchFactory } from "../../models";
-import { TrackedValue } from "../../utils/TrackedValue";
-import { MemoizedValue } from "../../utils/MemoizedValue";
+import { TrackedValue } from "./TrackedValue";
+import { MemoizedValue } from "./MemoizedValue";
+import type { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
 
 type Props<Param extends string> = keyof ISketchProps<Param>;
 type TrackedProps<Param extends string> = {
   [k in Props<Param>]: TrackedValue<ISketchProps<Param>[k]>;
 };
 
-type Api<Param extends string, Memos extends MemosConfig> = {
+type Api<
+  Param extends string,
+  Memos extends MemosConfig,
+  Animations extends AnimationsConfig,
+> = {
   p: P5CanvasInstance<ISketchProps<Param>>;
-  getProp: <K extends Props<Param> | keyof Memos>(
+  getProp: <K extends Props<Param> | keyof Memos | keyof Animations>(
     propName: K,
-  ) => K extends Props<Param> ? ISketchProps<Param>[K] : Memos[K];
-  getTrackedProp: <K extends Props<Param> | keyof Memos>(
+  ) => K extends Props<Param>
+    ? ISketchProps<Param>[K]
+    : K extends keyof Memos
+      ? Memos[K]
+      : Animations[K];
+  getTrackedProp: <K extends Props<Param> | keyof Memos | keyof Animations>(
     propName: K,
   ) => K extends Props<Param>
     ? TrackedValue<ISketchProps<Param>[K]>
-    : TrackedValue<Memos[K]>;
+    : K extends keyof Memos
+      ? TrackedValue<Memos[K]>
+      : TrackedValue<Animations[K]>;
   getTime: () => number;
 };
 
 type MemosConfig = Record<string, any>;
+type AnimationsConfig = Record<string, any>;
 
 type MemoizedDict<T extends MemosConfig> = {
   [k in keyof T]: MemoizedValue<any, T[k]>;
+};
+type AnimationsDict<T extends AnimationsConfig> = {
+  [k in keyof T]: MemoizedAnimatedValue<any, T[k]>;
 };
 
 export type CreateSketchArgs<
   Param extends string,
   Memos extends MemosConfig,
+  Animations extends AnimationsConfig,
 > = {
-  setup?: (api: Api<Param, Memos>) => void;
-  // Why a factory? it allows us define helper render functions in closure with `api` available.
-  drawFactory: (api: Api<Param, Memos>) => () => void;
-  onPropsChanged?: (api: Api<Param, Memos>) => void;
-  memosFactory?: (api: Api<Param, Memos>) => MemoizedDict<Memos>;
+  setup?: (api: Api<Param, Memos, Animations>) => void;
+  // Why a factory? it allows us define helper render functions in closure with `api` var available.
+  drawFactory: (api: Api<Param, Memos, Animations>) => () => void;
+  onPropsChanged?: (api: Api<Param, Memos, Animations>) => void;
+  memosFactory?: (api: Api<Param, Memos, Animations>) => MemoizedDict<Memos>;
+  animationsFactory?: (
+    api: Api<Param, Memos, Animations>,
+  ) => AnimationsDict<Animations>;
 };
 
 export function createSketch<
   Param extends string,
   Memos extends MemosConfig = never,
+  Animations extends AnimationsConfig = never,
 >(
   // Why a factory? it allows us to use closures to create shared vars.
   // Note that `api` is not available in the topmost scope to avoid issues with p5 instance init order.
-  argsFactory: () => CreateSketchArgs<Param, Memos>,
+  argsFactory: () => CreateSketchArgs<Param, Memos, Animations>,
 ): ISketchFactory<Param> {
   return (initialProps) => (p) => {
     let time = 0,
       initialPropsUpdate = true,
       props: TrackedProps<Param>,
-      draw: ReturnType<CreateSketchArgs<Param, Memos>["drawFactory"]>,
-      memos: MemoizedDict<Memos> | undefined;
+      draw: ReturnType<
+        CreateSketchArgs<Param, Memos, Animations>["drawFactory"]
+      >,
+      memos: MemoizedDict<Memos> | undefined,
+      animations: AnimationsDict<AnimationsConfig> | undefined;
 
-    const api: Api<Param, Memos> = {
+    const api: Api<Param, Memos, Animations> = {
       p,
       getProp: (k) => {
         return api.getTrackedProp(k).value as any;
       },
       getTrackedProp: (k) => {
-        if (memos && Object.hasOwn(memos, k)) {
+        if (animations && Object.hasOwn(animations, k)) {
+          return animations![k] as any;
+        } else if (memos && Object.hasOwn(memos, k)) {
           return memos![k] as any;
         } else {
           return props[k as Props<Param>];
@@ -92,6 +117,22 @@ export function createSketch<
       }
     };
 
+    const _updateAnimations = () => {
+      if (animations) {
+        Object.values(animations).forEach((animation) => {
+          animation.recalc(time);
+        });
+      }
+    };
+
+    const _runAnimations = () => {
+      if (animations) {
+        Object.values(animations).forEach((animation) => {
+          animation.runAnimationStep(time);
+        });
+      }
+    };
+
     _updateTrackedProps(initialProps); // initialize trackable props immediately, don't move this line
 
     p.setup = () => {
@@ -109,13 +150,15 @@ export function createSketch<
       }
 
       args.setup?.(api);
-      
+
       memos = args.memosFactory?.(api);
-      // init draw func with p5 instance (as part of `api`) guaranteed to be initialized properly
+      animations = args.animationsFactory?.(api);
+      //init draw func with p5 instance (as part of `api`) guaranteed to be initialized properly
       draw = args.drawFactory(api);
     };
 
     p.draw = () => {
+      _runAnimations();
       draw();
       time += api.getProp("timeDelta");
     };
@@ -125,6 +168,7 @@ export function createSketch<
       if (!initialPropsUpdate) {
         _updateTrackedProps(newRawProps);
         _updateMemos();
+        _updateAnimations();
 
         args.onPropsChanged?.(api);
 

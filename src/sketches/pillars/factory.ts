@@ -1,13 +1,15 @@
 import type p5 from "p5";
 import type { ISketchFactory } from "../../models";
-import { MemoizedValue } from "../../utils/MemoizedValue";
+import { MemoizedValue } from "../utils/MemoizedValue";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
 import { AnimatedValue } from "../utils/AnimatedValue";
+import { MemoizedAnimatedValue } from "../utils/MemoizedAnimatedValue";
 
 export const factory: ISketchFactory<Params> = createSketch<
   Params,
-  { PARTS: number[] }
+  { PARTS: number[] },
+  { gapY: number; gapX: number; period: number; amplitude: number }
 >(() => {
   const animatedParts: AnimatedValue[] = [];
 
@@ -36,6 +38,18 @@ export const factory: ISketchFactory<Params> = createSketch<
           },
           [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
         ),
+      };
+    },
+    animationsFactory: ({ getTrackedProp }) => {
+      return {
+        gapY: new MemoizedAnimatedValue(5, (x) => x, [getTrackedProp("GAP_Y")]),
+        gapX: new MemoizedAnimatedValue(5, (x) => x, [getTrackedProp("GAP_X")]),
+        period: new MemoizedAnimatedValue(30, (x) => x, [
+          getTrackedProp("PERIOD"),
+        ]),
+        amplitude: new MemoizedAnimatedValue(10, (x) => x, [
+          getTrackedProp("AMPLITUDE"),
+        ]),
       };
     },
     drawFactory: ({ p, getProp, getTime }) => {
@@ -103,10 +117,10 @@ export const factory: ISketchFactory<Params> = createSketch<
       }
 
       return () => {
-        const GAP_X = (getProp("GAP_X") * p.width) / 1158,
-          GAP_Y = (getProp("GAP_Y") * p.height) / 811,
-          AMPLITUDE = getProp("AMPLITUDE"),
-          PERIOD = getProp("PERIOD"),
+        const GAP_X = (getProp("gapX") * p.width) / 1158,
+          GAP_Y = (getProp("gapY") * p.height) / 811,
+          AMPLITUDE = getProp("amplitude"),
+          PERIOD = getProp("period"),
           time = getTime();
 
         p.background("black");

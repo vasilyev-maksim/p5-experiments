@@ -12,12 +12,12 @@ export class MemoizedValue<
   public constructor(
     private readonly fn: (...args: ArgsType) => ValueType,
     private readonly deps: TrackedArray<ArgsType>,
-    valueComparator?: TrackedValueComparator<ValueType>,
+    comparator?: TrackedValueComparator<ValueType>,
   ) {
     const initialValue = fn(
       ...(TrackedValue.ArrayUtils.unbox(deps) as ArgsType),
     );
-    super(initialValue, valueComparator);
+    super(initialValue, comparator);
   }
 
   /** Calculates new value if some of args changed */

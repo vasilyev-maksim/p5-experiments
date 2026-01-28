@@ -1,4 +1,4 @@
-import { MemoizedValue } from "../../utils/MemoizedValue";
+import { MemoizedValue } from "../utils/MemoizedValue";
 import { range } from "../../utils/misc";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
