@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type { ISketchProps, ISketchFactory } from "../../models";
-import {
-  TrackedValue,
-  type TrackedArray,
-  type TrackedValueComparator,
-} from "./TrackedValue";
+import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
+import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
 
 type PropNames<Params extends string> = keyof ISketchProps<Params>;
 type TrackedProps<Params extends string> = {
@@ -25,10 +22,13 @@ type Api<Params extends string> = {
   };
   getTime: () => number;
   createMemo: <ArgsType extends any[], ValueType>(
-    fn: (...args: ArgsType) => ValueType,
-    deps: TrackedArray<ArgsType>,
-    comparator?: TrackedValueComparator<ValueType>,
+    ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
   ) => MemoizedValue<ArgsType, ValueType>;
+  createAnimation: <ArgsType extends any[], ValueType extends number>(
+    ...args: ConstructorParameters<
+      typeof MemoizedAnimatedValue<ArgsType, ValueType>
+    >
+  ) => MemoizedAnimatedValue<ArgsType, ValueType>;
 };
 
 export type CreateSketchArgs<Params extends string> = {
@@ -50,6 +50,7 @@ export function createSketch<Params extends string>(
       draw: ReturnType<CreateSketchArgs<Params>["drawFactory"]>;
 
     const memos: MemoizedValue<any, any>[] = [];
+    const animations: MemoizedAnimatedValue<any, any>[] = [];
 
     const api: Api<Params> = {
       p,
@@ -58,10 +59,15 @@ export function createSketch<Params extends string>(
         return returnTrackedValue ? trackedValue : trackedValue.value;
       },
       getTime: () => time,
-      createMemo: (fn, deps, comparator) => {
-        const memo = new MemoizedValue(fn, deps, comparator);
+      createMemo: (...args) => {
+        const memo = new MemoizedValue(...args);
         memos.push(memo);
         return memo;
+      },
+      createAnimation: (...args) => {
+        const animation = new MemoizedAnimatedValue(...args);
+        animations.push(animation);
+        return animation;
       },
     };
 
@@ -80,12 +86,26 @@ export function createSketch<Params extends string>(
     }
 
     function updateMemos(force: boolean = false) {
-      Object.values(memos).forEach((memo) => {
+      memos.forEach((memo) => {
         memo.recalc(force);
       });
     }
 
-    updateTrackedProps(initialProps); // initialize trackable props immediately, don't move this line
+    function updateAnimations(force: boolean = false) {
+      animations.forEach((animations) => {
+        animations.recalc(time, force);
+      });
+    }
+
+    function runAnimations() {
+      animations.forEach((animations) => {
+        animations.runAnimationStep(time);
+      });
+    }
+
+    // initialize tracked props immediately (even before setups), don't move this line
+    updateTrackedProps(initialProps);
+
     const args = argsFactory(api);
 
     p.setup = () => {
@@ -101,10 +121,12 @@ export function createSketch<Params extends string>(
       // so memos can't be initialized before `p.randomSeed(...)` in setup,
       // that's why the line below is there and `force` arg = true
       updateMemos(true);
+      updateAnimations(true);
 
       args.setup?.(api);
 
-      //init draw func with p5 instance (as part of `api`) guaranteed to be initialized properly
+      // initialize draw func passing p5 instance (`api.p`),
+      // which is guaranteed to be initialized properly at this moment
       draw = args.drawFactory(api);
 
       if (api.getProp("playing") === false) {
@@ -115,6 +137,7 @@ export function createSketch<Params extends string>(
     p.draw = () => {
       draw();
       time += api.getProp("timeDelta");
+      runAnimations();
     };
 
     p.updateWithProps = (newRawProps) => {
@@ -122,6 +145,7 @@ export function createSketch<Params extends string>(
       if (!initialPropsUpdate) {
         updateTrackedProps(newRawProps);
         updateMemos();
+        updateAnimations();
 
         args.onPropsChanged?.(api);
 
@@ -151,7 +175,7 @@ export function createSketch<Params extends string>(
           p.noLoop();
         }
 
-        // we need to redraw PAUSED sketch to see new params applied
+        // we need to manually redraw PAUSED sketch to see new params applied
         if (!playing) {
           draw();
         }

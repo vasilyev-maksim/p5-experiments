@@ -17,15 +17,13 @@ export class MemoizedAnimatedValue<
     comparator?: TrackedValueComparator<ValueType>,
   ) {
     this.memoizedValue = new MemoizedValue(fn, deps, comparator);
-    this.animatedValue = new AnimatedValue(
-      animationDuration,
-      this.memoizedValue.value,
-    );
+    // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
+    this.animatedValue = new AnimatedValue(animationDuration);
   }
 
-  public recalc(time: number): this {
-    this.memoizedValue.recalc();
-    if (this.memoizedValue.hasChanged) {
+  public recalc(time: number, force = false): this {
+    this.memoizedValue.recalc(force);
+    if (force || this.memoizedValue.hasChanged) {
       this.animatedValue.animateTo(this.memoizedValue.value, time);
     }
     return this;

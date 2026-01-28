@@ -5,7 +5,6 @@ import type {
   ISketch,
   ISketchFactory,
 } from "../models";
-import { AnimatedValue } from "./utils/AnimatedValue";
 import { createSketch } from "./utils/createSketch";
 
 const controls = {
@@ -22,58 +21,18 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
-  const animatedX = new AnimatedValue(0);
-  const animatedY = new AnimatedValue(0);
   return {
-    setup: ({ p, getTime }) => {
+    setup: ({ p }) => {
       p.noStroke();
-
-      p.mouseClicked = () => {
-        const time = getTime();
-        animatedX.animateTo(p.mouseX, time, 20);
-        animatedY.animateTo(p.mouseY, time, 20);
-      };
     },
-    drawFactory: ({ p, getTime }) => {
+    drawFactory: ({ p }) => {
       return () => {
         p.background("black");
         p.stroke("white");
-        const time = getTime();
-        p.circle(
-          animatedX.getCurrentValue()!,
-          animatedY.getCurrentValue()!,
-          10,
-        );
-        animatedX.runAnimationStep(time);
-        animatedY.runAnimationStep(time);
       };
     },
   };
 });
-
-// const factory: ISketchFactory<Params> =
-//   ({ canvasWidth, canvasHeight }) =>
-//   (p) => {
-//     p.updateWithProps = (props) => {
-//       // console.log("updateWithProps");
-//     };
-
-//     p.setup = () => {
-//       // console.log("setup");
-//       p.noLoop();
-//       p.createCanvas(canvasWidth, canvasHeight);
-//     };
-
-//     p.draw = () => {
-//       // console.log("draw");
-
-//       p.background("black");
-//     };
-
-//     p.mouseClicked = () => {
-//       animatedX.animateTo(p.mouseX);
-//     };
-//   };
 
 const presets: IPreset<Params>[] = [
   {

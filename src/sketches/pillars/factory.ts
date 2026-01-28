@@ -2,68 +2,24 @@ import type p5 from "p5";
 import type { ISketchFactory } from "../../models";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
-import { AnimatedValue } from "../utils/AnimatedValue";
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
-  ({ createMemo, getTime, getProp, p }) => {
-    const animatedParts: AnimatedValue[] = [];
+  ({ createMemo, createAnimation, getProp, p }) => {
     const PARTS = createMemo(
-      (resolution, dispersion) => {
-        const parts = getRandomPartition(p, resolution, dispersion);
-        const time = getTime();
-
-        parts.forEach((x, i) => {
-          if (!animatedParts[i]) {
-            animatedParts[i] = new AnimatedValue(10, x);
-          } else {
-            animatedParts[i].animateTo(x, time);
-          }
-        });
-
-        return parts;
-      },
+      (resolution, dispersion) => getRandomPartition(p, resolution, dispersion),
       [getProp("RESOLUTION", true), getProp("W_DISPERSION", true)],
     );
+    const gapXAnimated = createAnimation(20, (x) => (x * p.width) / 1158, [
+      getProp("GAP_X", true),
+    ]);
+    const gapYAnimated = createAnimation(20, (x) => (x * p.height) / 811, [
+      getProp("GAP_Y", true),
+    ]);
 
     return {
       setup: ({ p }) => {
         p.noStroke();
       },
-      // memosFactory: ({ p, getProp, getTime }) => {
-      //   return {
-      //     PARTS: new MemoizedValue(
-      //       (resolution: number, dispersion: number) => {
-      //         const parts = getRandomPartition(p, resolution, dispersion);
-      //         const time = getTime();
-
-      //         console.log({ parts });
-
-      //         parts.forEach((x, i) => {
-      //           if (!animatedParts[i]) {
-      //             animatedParts[i] = new AnimatedValue(10, x);
-      //           } else {
-      //             animatedParts[i].animateTo(x, time);
-      //           }
-      //         });
-
-      //         return parts;
-      //       },
-      //       [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
-      //     ),
-      //   };
-      // },
-      // animationsFactory: ({ getTrackedProp }) => {
-      //   return {
-      //     gapY: new MemoizedAnimatedValue(5, (x) => x, [getTrackedProp("GAP_Y")]),
-      //     gapX: new MemoizedAnimatedValue(5, (x) => x, [getTrackedProp("GAP_X")]),
-      //     period: new MemoizedAnimatedValue(30, (x) => x, [
-      //       getTrackedProp("PERIOD"),
-      //     ]),
-      //     amplitude: new MemoizedAnimatedValue(10, (x) => x, [
-      //       getTrackedProp("AMPLITUDE"),
-      //     ]),
-      //   };
-      // },
       drawFactory: ({ p, getProp, getTime }) => {
         function drawColumn(
           x: number,
@@ -129,8 +85,8 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
         }
 
         return () => {
-          const GAP_X = (getProp("GAP_X") * p.width) / 1158,
-            GAP_Y = (getProp("GAP_Y") * p.height) / 811,
+          const GAP_X = gapXAnimated.value!,
+            GAP_Y = gapYAnimated.value!,
             AMPLITUDE = getProp("AMPLITUDE"),
             PERIOD = getProp("PERIOD"),
             time = getTime();
@@ -144,7 +100,6 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
             const x = start,
               y = 0,
               widthNormalized = animatedWidthNormalized,
-              // widthNormalized = animatedWidthNormalized.getCurrentValue()!,
               w = widthNormalized * totalWidth - GAP_X,
               h = p.height,
               gapX =
@@ -160,8 +115,6 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
 
             drawColumn(x, y, w, h, gapX, GAP_Y);
             start += widthNormalized * totalWidth;
-
-            // animatedWidthNormalized.runAnimationStep(time);
           });
         };
       },

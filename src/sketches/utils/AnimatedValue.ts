@@ -37,7 +37,9 @@ export class AnimatedValue {
     ) {
       const ratio =
         (currentTime - this.startTime) / (this.endTime - this.startTime);
+      const old = this.interpolated;
       this.interpolated = this.start + ratio * (this.destination - this.start);
+      console.log({ diff: this.interpolated - old });
     }
   }
 
