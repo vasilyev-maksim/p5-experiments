@@ -12,14 +12,12 @@ type TrackedProps<Params extends string> = {
 
 type Api<Params extends string> = {
   p: P5CanvasInstance<ISketchProps<Params>>;
-  // Oh boy, look at this cool syntax for function overload!
-  getProp: {
-    <K extends PropNames<Params>>(propName: K): ISketchProps<Params>[K];
-    <K extends PropNames<Params>>(
-      propName: K,
-      returnTrackedValue: true,
-    ): TrackedValue<ISketchProps<Params>[K]>;
-  };
+  getProp: <K extends PropNames<Params>>(
+    propName: K,
+  ) => ISketchProps<Params>[K];
+  getTrackedProp: <K extends PropNames<Params>>(
+    propName: K,
+  ) => TrackedValue<ISketchProps<Params>[K]>;
   getTime: () => number;
   createMemo: <ArgsType extends any[], ValueType>(
     ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
@@ -54,9 +52,11 @@ export function createSketch<Params extends string>(
 
     const api: Api<Params> = {
       p,
-      getProp: (k, returnTrackedValue: boolean = false) => {
-        const trackedValue = props[k];
-        return returnTrackedValue ? trackedValue : trackedValue.value;
+      getTrackedProp: (k) => {
+        return props[k];
+      },
+      getProp: (k) => {
+        return api.getTrackedProp(k).value!;
       },
       getTime: () => time,
       createMemo: (...args) => {
@@ -150,7 +150,7 @@ export function createSketch<Params extends string>(
         args.onPropsChanged?.(api);
 
         const playing = api.getProp("playing");
-        const timeShift = api.getProp("timeShift", true);
+        const timeShift = api.getTrackedProp("timeShift");
 
         // for playback controls
         if (timeShift.hasChanged && timeShift.value !== undefined) {
@@ -159,8 +159,8 @@ export function createSketch<Params extends string>(
         }
 
         // respond to canvas size changes
-        const canvasHeight = api.getProp("canvasHeight", true);
-        const canvasWidth = api.getProp("canvasWidth", true);
+        const canvasHeight = api.getTrackedProp("canvasHeight");
+        const canvasWidth = api.getTrackedProp("canvasWidth");
 
         if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
           // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
