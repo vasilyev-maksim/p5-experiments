@@ -144,9 +144,9 @@ export function createSketch<Params extends string>(
     };
 
     p.draw = () => {
+      runAnimations();
       draw();
       time += api.getProp("timeDelta");
-      runAnimations();
     };
 
     p.updateWithProps = (newRawProps) => {

@@ -4,18 +4,33 @@ import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
-  ({ createAnimatedValue, createAnimatedArray, getTrackedProp, p }) => {
-    const PARTS = createAnimatedArray(
-      20,
+  ({
+    createAnimatedValue,
+    createAnimatedArray,
+    createMemo,
+    getTrackedProp,
+    p,
+  }) => {
+    const widthData = createMemo(
       (resolution, dispersion) => getRandomPartition(p, resolution, dispersion),
       [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
     );
-    const gapXAnimated = createAnimatedValue(
+    const widthsAnimated = createAnimatedArray(20, (x) => x, [widthData]);
+    const amplitudeAnimated = createAnimatedValue(20, (x) => x, [
+      getTrackedProp("AMPLITUDE"),
+    ]);
+    const gapYAnimated = createAnimatedArray(
+      20,
+      (parts, period) =>
+        parts.map((_, i, { length }) => (p.TWO_PI * period * i) / length),
+      [widthData, getTrackedProp("PERIOD")],
+    );
+    const gapWidthAnimated = createAnimatedValue(
       20,
       (x, canvasWidth) => (x * canvasWidth) / 1158,
       [getTrackedProp("GAP_X"), getTrackedProp("canvasWidth")],
     );
-    const gapYAnimated = createAnimatedValue(
+    const gapHeightAnimated = createAnimatedValue(
       20,
       (x, canvasHeight) => (x * canvasHeight) / 811,
       [getTrackedProp("GAP_Y"), getTrackedProp("canvasHeight")],
@@ -90,24 +105,23 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
         }
 
         return () => {
-          const GAP_X = gapXAnimated.value!,
-            GAP_Y = gapYAnimated.value!,
-            AMPLITUDE = getProp("AMPLITUDE"),
-            PERIOD = getProp("PERIOD"),
+          const GAP_WIDTH = gapWidthAnimated.value!,
+            gapHeight = gapHeightAnimated.value!,
+            AMPLITUDE = amplitudeAnimated.value!,
             time = getTime();
 
           p.background("black");
 
-          const totalWidth = p.width - GAP_X;
-          let start = GAP_X;
+          const totalWidth = p.width - GAP_WIDTH;
+          let start = GAP_WIDTH;
 
-          PARTS.value.forEach((animatedWidthNormalized, i, { length }) => {
+          widthsAnimated.value.forEach((widthAnimated, i) => {
             const x = start,
               y = 0,
-              widthNormalized = animatedWidthNormalized,
-              w = widthNormalized * totalWidth - GAP_X,
+              width = widthAnimated * totalWidth,
+              w = width - GAP_WIDTH,
               h = p.height,
-              gapX =
+              gapY =
                 p.height / 2 +
                 p.map(
                   AMPLITUDE,
@@ -116,10 +130,10 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
                   0,
                   p.height / 2,
                 ) *
-                  p.sin((p.TWO_PI * PERIOD * i) / length + time * 0.015);
+                  p.sin(gapYAnimated.value[i] + time * 0.015);
 
-            drawColumn(x, y, w, h, gapX, GAP_Y);
-            start += widthNormalized * totalWidth;
+            drawColumn(x, y, w, h, gapY, gapHeight);
+            start += width;
           });
         };
       },

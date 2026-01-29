@@ -18,8 +18,8 @@ export const controls = {
   PERIOD: {
     label: "Wave period",
     max: 4,
-    min: 1,
-    step: 1,
+    min: 0.5,
+    step: 0.5,
     type: "range",
   },
   GAP_X: {

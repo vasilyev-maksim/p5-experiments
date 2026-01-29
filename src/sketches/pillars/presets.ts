@@ -89,7 +89,7 @@ export const presets: IPreset<Params>[] = [
       GAP_Y: 35,
       W_DISPERSION: 0,
       COLOR: 1,
-      timeDelta: 3,
+      timeDelta: 0.8,
     },
     name: "scoliosis",
   },

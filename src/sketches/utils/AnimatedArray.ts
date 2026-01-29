@@ -1,11 +1,12 @@
-import { AnimatedValue, type IAnimatedValue } from "./AnimatedValue";
+import { AnimatedValue } from "./AnimatedValue";
 
-export class AnimatedArray implements IAnimatedValue<number[]> {
+export class AnimatedArray {
   private array: AnimatedValue[] = [];
 
   public constructor(
     private readonly animationDuration: number,
     initialValues?: number[],
+    private readonly initialValueForItem?: number,
   ) {
     if (initialValues) {
       this.array = initialValues.map(
@@ -14,25 +15,45 @@ export class AnimatedArray implements IAnimatedValue<number[]> {
     }
   }
 
-  public animateTo(
-    values: number[],
-    startTime: number,
-    initialValueForItem: number,
-    animationDuration?: number,
-  ) {
-    this.array = values.map((v, i) => {
-      let item = this.array[i];
-      const duration = animationDuration ?? this.animationDuration;
+  public animateTo({
+    values,
+    startTime,
+  }: {
+    values: number[];
+    startTime: number;
+  }) {
+    const len = Math.max(values.length, this.array.length);
+    for (let i = 0; i < len; i++) {
+      const newValue = values[i];
+      const animatedValue = this.array[i];
 
-      if (!item) {
-        item = new AnimatedValue(duration, initialValueForItem ?? v);
-        this.array[i] = item;
+      if (animatedValue !== undefined && newValue !== undefined) {
+        animatedValue.animateTo({
+          value: newValue,
+          startTime,
+        });
+      } else if (animatedValue === undefined) {
+        // add new animation value fro new item, start from  `initialValueForItem` then grow up to `newValue`
+        const newAnimatedValue = new AnimatedValue(
+          this.animationDuration,
+          this.initialValueForItem ?? newValue,
+        );
+        newAnimatedValue.animateTo({
+          value: newValue,
+          startTime,
+        });
+        this.array.push(newAnimatedValue);
+      } else if (newValue === undefined) {
+        // animate down to `initialValueForItem`, then remove item from array
+        animatedValue.animateTo({
+          value: this.initialValueForItem ?? animatedValue.getCurrentValue()!,
+          startTime,
+          onAnimationEnd: () => {
+            this.array.splice(values.length);
+          },
+        });
       }
-
-      item.animateTo(v, startTime, duration);
-
-      return item;
-    });
+    }
   }
 
   public runAnimationStep(currentTime: number) {

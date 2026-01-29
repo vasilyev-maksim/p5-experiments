@@ -11,10 +11,15 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
     animationDuration: number,
     fn: (...args: ArgsType) => number[],
     deps: ArrayOfTrackedValues<ArgsType>,
+    initialValueForItem?: number,
   ) {
     this.memoizedArray = new MemoizedArray(fn, deps, undefined);
     // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
-    this.animatedArray = new AnimatedArray(animationDuration);
+    this.animatedArray = new AnimatedArray(
+      animationDuration,
+      undefined,
+      initialValueForItem,
+    );
 
     // TODO: написать AnimatedArray + полумать использовать композиция (вместо наследования) в классах
   }
@@ -22,7 +27,10 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
   public recalc(time: number, force = false): this {
     this.memoizedArray.recalc(force);
     if (force || this.memoizedArray.hasChanged) {
-      this.animatedArray.animateTo(this.memoizedArray.value, time, 0);
+      this.animatedArray.animateTo({
+        values: this.memoizedArray.value,
+        startTime: time,
+      });
     }
     return this;
   }

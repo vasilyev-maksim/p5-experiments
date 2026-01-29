@@ -22,7 +22,10 @@ export class MemoizedAnimatedValue<ArgsType extends any[]> {
   public recalc(time: number, force = false): this {
     this.memoizedValue.recalc(force);
     if (force || this.memoizedValue.hasChanged) {
-      this.animatedValue.animateTo(this.memoizedValue.value, time);
+      this.animatedValue.animateTo({
+        value: this.memoizedValue.value,
+        startTime: time,
+      });
     }
     return this;
   }
