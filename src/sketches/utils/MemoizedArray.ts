@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TrackedArray, type ArrayOfTrackedValues } from "./TrackedArray";
-import { TrackedValue, type TrackedValueComparator } from "./TrackedValue";
+import {
+  TrackedArray,
+  type ArrayOfTrackedValues,
+  type TrackedArrayComparator,
+} from "./TrackedArray";
 
-export class MemoizedValue<
+export class MemoizedArray<
   ArgsType extends any[],
   ValueType,
-> extends TrackedValue<ValueType> {
+> extends TrackedArray<ValueType> {
   public constructor(
-    private readonly fn: (...args: ArgsType) => ValueType,
+    private readonly fn: (...args: ArgsType) => ValueType[],
     private readonly deps: ArrayOfTrackedValues<ArgsType>,
-    comparator?: TrackedValueComparator<ValueType>,
+    comparator?: TrackedArrayComparator<ValueType>,
   ) {
     // Sometimes we need a reference to `MemoizedValue` instance
     // before it can actually be initialized with a real value,

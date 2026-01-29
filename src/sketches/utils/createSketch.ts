@@ -22,11 +22,11 @@ type Api<Params extends string> = {
   createMemo: <ArgsType extends any[], ValueType>(
     ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
   ) => MemoizedValue<ArgsType, ValueType>;
-  createAnimation: <ArgsType extends any[], ValueType extends number>(
+  createAnimation: <ArgsType extends any[]>(
     ...args: ConstructorParameters<
-      typeof MemoizedAnimatedValue<ArgsType, ValueType>
+      typeof MemoizedAnimatedValue<ArgsType>
     >
-  ) => MemoizedAnimatedValue<ArgsType, ValueType>;
+  ) => MemoizedAnimatedValue<ArgsType>;
 };
 
 export type CreateSketchArgs<Params extends string> = {
@@ -48,7 +48,7 @@ export function createSketch<Params extends string>(
       draw: ReturnType<CreateSketchArgs<Params>["drawFactory"]>;
 
     const memos: MemoizedValue<any, any>[] = [];
-    const animations: MemoizedAnimatedValue<any, any>[] = [];
+    const animations: MemoizedAnimatedValue<any>[] = [];
 
     const api: Api<Params> = {
       p,
