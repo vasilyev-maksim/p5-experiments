@@ -45,6 +45,7 @@ export function createSketch<Params extends string>(
 ): ISketchFactory<Params> {
   return (initialProps) => (p) => {
     let time = 0,
+      animationsTime = 0,
       initialPropsUpdate = true,
       props: TrackedProps<Params>,
       draw: ReturnType<CreateSketchArgs<Params>["drawFactory"]>;
@@ -102,13 +103,13 @@ export function createSketch<Params extends string>(
 
     function updateAnimations(force: boolean = false) {
       animations.forEach((animations) => {
-        animations.recalc(time, force);
+        animations.recalc(animationsTime, force);
       });
     }
 
     function runAnimations() {
       animations.forEach((animations) => {
-        animations.runAnimationStep(time);
+        animations.runAnimationStep(animationsTime);
       });
     }
 
@@ -147,6 +148,7 @@ export function createSketch<Params extends string>(
       runAnimations();
       draw();
       time += api.getProp("timeDelta");
+      animationsTime++;
     };
 
     p.updateWithProps = (newRawProps) => {

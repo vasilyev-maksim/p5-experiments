@@ -3,6 +3,8 @@ import type { ISketchFactory } from "../../models";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
 
+const ANIMATION_SPEED = 50;
+
 export const factory: ISketchFactory<Params> = createSketch<Params>(
   ({
     createAnimatedValue,
@@ -15,23 +17,25 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       (resolution, dispersion) => getRandomPartition(p, resolution, dispersion),
       [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
     );
-    const widthsAnimated = createAnimatedArray(20, (x) => x, [widthData]);
-    const amplitudeAnimated = createAnimatedValue(20, (x) => x, [
+    const widthsAnimated = createAnimatedArray(ANIMATION_SPEED, (x) => x, [
+      widthData,
+    ]);
+    const amplitudeAnimated = createAnimatedValue(ANIMATION_SPEED, (x) => x, [
       getTrackedProp("AMPLITUDE"),
     ]);
     const gapYAnimated = createAnimatedArray(
-      20,
+      ANIMATION_SPEED,
       (parts, period) =>
         parts.map((_, i, { length }) => (p.TWO_PI * period * i) / length),
       [widthData, getTrackedProp("PERIOD")],
     );
     const gapWidthAnimated = createAnimatedValue(
-      20,
+      ANIMATION_SPEED,
       (x, canvasWidth) => (x * canvasWidth) / 1158,
       [getTrackedProp("GAP_X"), getTrackedProp("canvasWidth")],
     );
     const gapHeightAnimated = createAnimatedValue(
-      20,
+      ANIMATION_SPEED,
       (x, canvasHeight) => (x * canvasHeight) / 811,
       [getTrackedProp("GAP_Y"), getTrackedProp("canvasHeight")],
     );
