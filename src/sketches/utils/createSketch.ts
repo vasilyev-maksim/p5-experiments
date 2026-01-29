@@ -4,6 +4,7 @@ import type { ISketchProps, ISketchFactory } from "../../models";
 import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
 import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
+import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 
 type PropNames<Params extends string> = keyof ISketchProps<Params>;
 type TrackedProps<Params extends string> = {
@@ -22,11 +23,12 @@ type Api<Params extends string> = {
   createMemo: <ArgsType extends any[], ValueType>(
     ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
   ) => MemoizedValue<ArgsType, ValueType>;
-  createAnimation: <ArgsType extends any[]>(
-    ...args: ConstructorParameters<
-      typeof MemoizedAnimatedValue<ArgsType>
-    >
+  createAnimatedValue: <ArgsType extends any[]>(
+    ...args: ConstructorParameters<typeof MemoizedAnimatedValue<ArgsType>>
   ) => MemoizedAnimatedValue<ArgsType>;
+  createAnimatedArray: <ArgsType extends any[]>(
+    ...args: ConstructorParameters<typeof MemoizedAnimatedArray<ArgsType>>
+  ) => MemoizedAnimatedArray<ArgsType>;
 };
 
 export type CreateSketchArgs<Params extends string> = {
@@ -48,7 +50,9 @@ export function createSketch<Params extends string>(
       draw: ReturnType<CreateSketchArgs<Params>["drawFactory"]>;
 
     const memos: MemoizedValue<any, any>[] = [];
-    const animations: MemoizedAnimatedValue<any>[] = [];
+    const animations: Array<
+      MemoizedAnimatedValue<any> | MemoizedAnimatedArray<any>
+    > = [];
 
     const api: Api<Params> = {
       p,
@@ -64,8 +68,13 @@ export function createSketch<Params extends string>(
         memos.push(memo);
         return memo;
       },
-      createAnimation: (...args) => {
+      createAnimatedValue: (...args) => {
         const animation = new MemoizedAnimatedValue(...args);
+        animations.push(animation);
+        return animation;
+      },
+      createAnimatedArray: (...args) => {
+        const animation = new MemoizedAnimatedArray(...args);
         animations.push(animation);
         return animation;
       },

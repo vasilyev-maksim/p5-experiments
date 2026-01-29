@@ -4,17 +4,18 @@ import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
-  ({ createMemo, createAnimation, getTrackedProp, p }) => {
-    const PARTS = createMemo(
+  ({ createAnimatedValue, createAnimatedArray, getTrackedProp, p }) => {
+    const PARTS = createAnimatedArray(
+      20,
       (resolution, dispersion) => getRandomPartition(p, resolution, dispersion),
       [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
     );
-    const gapXAnimated = createAnimation(
+    const gapXAnimated = createAnimatedValue(
       20,
       (x, canvasWidth) => (x * canvasWidth) / 1158,
       [getTrackedProp("GAP_X"), getTrackedProp("canvasWidth")],
     );
-    const gapYAnimated = createAnimation(
+    const gapYAnimated = createAnimatedValue(
       20,
       (x, canvasHeight) => (x * canvasHeight) / 811,
       [getTrackedProp("GAP_Y"), getTrackedProp("canvasHeight")],

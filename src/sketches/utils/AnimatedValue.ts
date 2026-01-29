@@ -1,4 +1,11 @@
-export class AnimatedValue {
+export interface IAnimatedValue<T = number> {
+  animateTo(value: T, startTime: number, animationDuration?: number): void;
+  runAnimationStep(currentTime: number): void;
+  getCurrentValue(): T | undefined;
+  getDestinationValue(): T | undefined;
+}
+
+export class AnimatedValue implements IAnimatedValue<number> {
   private start: number | undefined;
   private interpolated: number | undefined;
   private destination: number | undefined;
