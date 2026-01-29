@@ -9,12 +9,16 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       (resolution, dispersion) => getRandomPartition(p, resolution, dispersion),
       [getProp("RESOLUTION", true), getProp("W_DISPERSION", true)],
     );
-    const gapXAnimated = createAnimation(20, (x) => (x * p.width) / 1158, [
-      getProp("GAP_X", true),
-    ]);
-    const gapYAnimated = createAnimation(20, (x) => (x * p.height) / 811, [
-      getProp("GAP_Y", true),
-    ]);
+    const gapXAnimated = createAnimation(
+      20,
+      (x, canvasWidth) => (x * canvasWidth) / 1158,
+      [getProp("GAP_X", true), getProp("canvasWidth", true)],
+    );
+    const gapYAnimated = createAnimation(
+      20,
+      (x, canvasHeight) => (x * canvasHeight) / 811,
+      [getProp("GAP_Y", true), getProp("canvasHeight", true)],
+    );
 
     return {
       setup: ({ p }) => {
