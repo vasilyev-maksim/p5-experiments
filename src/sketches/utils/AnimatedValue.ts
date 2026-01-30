@@ -9,6 +9,8 @@ export class AnimatedValue {
   public constructor(
     private readonly animationDuration: number,
     initialValue?: number,
+    private readonly timingFunction = AnimatedValue.TIMING_FUNCTIONS
+      .EASE_IN_OUT,
   ) {
     if (initialValue !== undefined) {
       this.start = initialValue;
@@ -52,8 +54,10 @@ export class AnimatedValue {
       ) {
         const ratio =
           (currentTime - this.startTime) / (this.endTime - this.startTime);
+
         this.interpolated =
-          this.start + ratio * (this.destination - this.start);
+          this.start +
+          this.timingFunction(ratio) * (this.destination - this.start);
 
         if (ratio === 1 && this.onAnimationEnd !== undefined) {
           this.onAnimationEnd(this.interpolated);
@@ -84,4 +88,18 @@ export class AnimatedValue {
       return (this.interpolated - this.start) / (this.destination - this.start);
     }
   }
+
+  public static TIMING_FUNCTIONS = class {
+    public static LINEAR(x: number) {
+      return x;
+    }
+
+    public static QUADRATIC(x: number) {
+      return x * x;
+    }
+
+    public static EASE_IN_OUT(x: number) {
+      return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+    }
+  };
 }
