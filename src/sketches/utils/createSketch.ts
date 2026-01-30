@@ -5,6 +5,7 @@ import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
 import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
+import { MemoizedAnimatedColor } from "./MemoizedAnimatedColor";
 
 type PropNames<Params extends string> = keyof ISketchProps<Params>;
 type TrackedProps<Params extends string> = {
@@ -29,6 +30,9 @@ type Api<Params extends string> = {
   createAnimatedArray: <ArgsType extends any[]>(
     ...args: ConstructorParameters<typeof MemoizedAnimatedArray<ArgsType>>
   ) => MemoizedAnimatedArray<ArgsType>;
+  createAnimatedColor: (
+    ...args: ConstructorParameters<typeof MemoizedAnimatedColor>
+  ) => MemoizedAnimatedColor;
 };
 
 export type CreateSketchArgs<Params extends string> = {
@@ -52,7 +56,9 @@ export function createSketch<Params extends string>(
 
     const memos: MemoizedValue<any, any>[] = [];
     const animations: Array<
-      MemoizedAnimatedValue<any> | MemoizedAnimatedArray<any>
+      | MemoizedAnimatedValue<any>
+      | MemoizedAnimatedArray<any>
+      | MemoizedAnimatedColor
     > = [];
 
     const api: Api<Params> = {
@@ -76,6 +82,11 @@ export function createSketch<Params extends string>(
       },
       createAnimatedArray: (...args) => {
         const animation = new MemoizedAnimatedArray(...args);
+        animations.push(animation);
+        return animation;
+      },
+      createAnimatedColor: (...args) => {
+        const animation = new MemoizedAnimatedColor(...args);
         animations.push(animation);
         return animation;
       },

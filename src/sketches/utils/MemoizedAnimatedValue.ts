@@ -5,7 +5,7 @@ import type { ArrayOfTrackedValues } from "./TrackedArray";
 import type { TrackedValueComparator } from "./TrackedValue";
 
 export class MemoizedAnimatedValue<ArgsType extends any[]> {
-  private readonly animatedValue: AnimatedValue;
+  public readonly animatedValue: AnimatedValue;
   private readonly memoizedValue: MemoizedValue<ArgsType, number>;
 
   public constructor(
@@ -16,7 +16,7 @@ export class MemoizedAnimatedValue<ArgsType extends any[]> {
   ) {
     this.memoizedValue = new MemoizedValue(fn, deps, comparator);
     // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
-    this.animatedValue = new AnimatedValue(animationDuration);
+    this.animatedValue = new AnimatedValue(animationDuration, undefined);
   }
 
   public recalc(time: number, force = false): this {

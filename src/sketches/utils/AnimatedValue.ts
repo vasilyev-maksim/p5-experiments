@@ -70,4 +70,18 @@ export class AnimatedValue {
   public getDestinationValue() {
     return this.destination;
   }
+
+  public getStartValue() {
+    return this.start;
+  }
+
+  public getProgress() {
+    if (
+      this.interpolated !== undefined &&
+      this.start !== undefined &&
+      this.destination !== undefined
+    ) {
+      return (this.interpolated - this.start) / (this.destination - this.start);
+    }
+  }
 }

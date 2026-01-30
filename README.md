@@ -17,7 +17,7 @@
 - each preset may have a timestamp to play animation from (for better showiness)
 - add "save as image" button
 - use query params for direct sketch links
-- add randomize button for controls
+- add randomize button for controls and random seed
 - remove param controls margin-top if no presets
 - focus trap for modal (home page links are accessible)
 - tabIndex everywhere

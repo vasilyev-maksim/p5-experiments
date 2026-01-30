@@ -3,7 +3,7 @@ import type { ISketchFactory } from "../../models";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
 
-const ANIMATION_SPEED = 50;
+const ANIMATION_SPEED = 30;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
   ({
@@ -11,6 +11,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
     createAnimatedArray,
     createMemo,
     getTrackedProp,
+    createAnimatedColor,
     p,
   }) => {
     const widthData = createMemo(
@@ -39,12 +40,18 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       (x, canvasHeight) => (x * canvasHeight) / 811,
       [getTrackedProp("GAP_Y"), getTrackedProp("canvasHeight")],
     );
+    const colorsAnimated = createAnimatedColor(
+      ANIMATION_SPEED,
+      getTrackedProp("COLOR"),
+      controls.COLOR.colors,
+      p,
+    );
 
     return {
       setup: ({ p }) => {
         p.noStroke();
       },
-      drawFactory: ({ p, getProp, getTime }) => {
+      drawFactory: ({ p, getTime }) => {
         function drawColumn(
           x: number,
           y: number,
@@ -66,10 +73,10 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
           direction: "up" | "down",
           endStyle: "circle" | "polygon",
         ) {
-          const COLOR = getProp("COLOR");
+          const [colorA, colorB] = colorsAnimated.value;
           const color = p.lerpColor(
-            p.color(controls.COLOR.colors[COLOR][0]),
-            p.color(controls.COLOR.colors[COLOR][1]),
+            p.color(colorA),
+            p.color(colorB),
             h / p.height,
           );
 
