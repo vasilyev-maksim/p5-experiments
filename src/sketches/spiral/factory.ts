@@ -4,6 +4,8 @@ import { createSketch } from "@core/createSketch";
 import { type Params, controls } from "./controls";
 
 const ANIMATION_SPEED = 30;
+const POLYGONS_COUNT = 500,
+  BG_COLOR = "black";
 
 export const factory = createSketch<Params>(
   ({
@@ -15,9 +17,6 @@ export const factory = createSketch<Params>(
     getTrackedProp,
     p,
   }) => {
-    const POLYGONS_COUNT = 500,
-      BG_COLOR = "black";
-
     const THICKNESS = createMemo(
       (x) => controls.THICKNESS.max + controls.THICKNESS.min - x,
       [getTrackedProp("THICKNESS")],
