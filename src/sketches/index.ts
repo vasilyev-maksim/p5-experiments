@@ -5,7 +5,7 @@ import { curveSketch } from "./curve";
 // // import { tiles } from "./tiles/tiles";
 import { arcSketch } from "./arcs";
 // import { zigzagsSketch } from "./zigzags";
-// import { lungsSketch } from "./lungs";
+import { lungsSketch } from "./lungs";
 import { testSketch } from "./test";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +15,7 @@ export const sketchList: ISketch<any>[] = [
   arcSketch,
   curveSketch,
   // zigzagsSketch,
-  // lungsSketch,
+  lungsSketch,
   // {
   //   id: "tiles",
   //   name: "tiles",

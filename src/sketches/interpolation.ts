@@ -29,9 +29,9 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
       p.noStroke();
 
       p.mouseClicked = () => {
-        const time = getTime();
-        animatedX.animateTo(p.mouseX, time);
-        animatedY.animateTo(p.mouseY, time);
+        const startTime = getTime();
+        animatedX.animateTo({ value: p.mouseX, startTime });
+        animatedY.animateTo({ value: p.mouseY, startTime });
       };
     },
     draw: ({ p, getTime }) => {
