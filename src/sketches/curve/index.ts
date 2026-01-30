@@ -3,10 +3,10 @@ import { controls, type Params } from "./controls";
 import { factory } from "./factory";
 import { presets } from "./presets";
 
-export const pulseSketch: ISketch<Params> = {
+export const curveSketch: ISketch<Params> = {
   factory,
-  id: "pulse",
-  name: "pulse",
+  id: "curve",
+  name: "curve",
   preview: {
     size: 520,
   },
