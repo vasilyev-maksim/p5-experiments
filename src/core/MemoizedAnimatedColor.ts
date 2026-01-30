@@ -1,37 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type p5 from "p5";
-import type { IColorControl } from "../models";
-import type { TrackedValue } from "./TrackedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import type { AnimatedValue } from "./AnimatedValue";
+import type { ArrayOfTrackedValues } from "./TrackedArray";
 
-export class MemoizedAnimatedColor {
-  private readonly memoizedAnimatedArray: MemoizedAnimatedArray<[number]>;
+export class MemoizedAnimatedColors<ArgsType extends any[]> {
+  private readonly memoizedAnimatedArray: MemoizedAnimatedArray<ArgsType>;
 
   public constructor(
     animationDuration: number,
-    color: TrackedValue<number>,
-    colors: IColorControl["colors"],
+    deps: ArrayOfTrackedValues<ArgsType>,
+    colorProvider: (...args: ArgsType) => string[],
     private readonly p: p5,
     timingFunction?: AnimatedValue["timingFunction"],
   ) {
-    this.memoizedAnimatedArray = new MemoizedAnimatedArray(
+    this.memoizedAnimatedArray = new MemoizedAnimatedArray<ArgsType>(
       animationDuration,
-      (x) => {
-        const [colorAStr, colorBStr] = colors[x];
-        const colorA = p.color(colorAStr);
-        const colorB = p.color(colorBStr ?? colorAStr);
-
-        return [
-          p.red(colorA),
-          p.green(colorA),
-          p.blue(colorA),
-          p.red(colorB),
-          p.green(colorB),
-          p.blue(colorB),
-        ];
+      (...args) => {
+        return colorProvider(...args).flatMap((colorStr) => {
+          const color = p.color(colorStr);
+          return [p.red(color), p.green(color), p.blue(color)];
+        });
       },
-      [color],
+      deps,
       undefined,
       timingFunction,
     );

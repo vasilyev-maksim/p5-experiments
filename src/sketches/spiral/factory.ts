@@ -32,14 +32,14 @@ export const factory = createSketch<Params>(
     ]);
     const fillColorsAnimated = createAnimatedColors(
       ANIMATION_SPEED,
-      getTrackedProp("FILL_COLORS"),
-      controls.FILL_COLORS.colors,
+      [getTrackedProp("FILL_COLORS")],
+      (x) => controls.FILL_COLORS.colors[x],
       p,
     );
     const borderColorAnimated = createAnimatedColors(
       ANIMATION_SPEED,
-      getTrackedProp("BORDER_COLOR"),
-      controls.BORDER_COLOR.colors,
+      [getTrackedProp("BORDER_COLOR")],
+      (x) => controls.BORDER_COLOR.colors[x],
       p,
     );
 
@@ -50,7 +50,7 @@ export const factory = createSketch<Params>(
         p.strokeWeight(1);
         p.angleMode("degrees");
       },
-      drawFactory: () => {
+      draw: () => {
         function getNodes(): [number, number][] {
           const time = getTime();
           return range(POLYGONS_COUNT).map((i) => {

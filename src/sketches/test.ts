@@ -25,7 +25,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
     setup: ({ p }) => {
       p.noStroke();
     },
-    drawFactory: ({ p }) => {
+    draw: ({ p }) => {
       return () => {
         p.background("black");
         p.stroke("white");

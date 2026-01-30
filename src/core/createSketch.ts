@@ -5,11 +5,18 @@ import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
 import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
-import { MemoizedAnimatedColor } from "./MemoizedAnimatedColor";
+import { MemoizedAnimatedColors } from "./MemoizedAnimatedColor";
 
 type PropNames<Params extends string> = keyof ISketchProps<Params>;
 type TrackedProps<Params extends string> = {
   [k in PropNames<Params>]: TrackedValue<ISketchProps<Params>[k]>;
+};
+
+export type CreateSketchArgs<Params extends string> = {
+  setup?: (api: Api<Params>) => void;
+  // Why a factory? it allows us define helper render functions in closure with `api` var available.
+  draw: (api: Api<Params>) => () => void;
+  onPropsChanged?: (api: Api<Params>) => void;
 };
 
 type Api<Params extends string> = {
@@ -30,16 +37,9 @@ type Api<Params extends string> = {
   createAnimatedArray: <ArgsType extends any[]>(
     ...args: ConstructorParameters<typeof MemoizedAnimatedArray<ArgsType>>
   ) => MemoizedAnimatedArray<ArgsType>;
-  createAnimatedColors: (
-    ...args: ConstructorParameters<typeof MemoizedAnimatedColor>
-  ) => MemoizedAnimatedColor;
-};
-
-export type CreateSketchArgs<Params extends string> = {
-  setup?: (api: Api<Params>) => void;
-  // Why a factory? it allows us define helper render functions in closure with `api` var available.
-  drawFactory: (api: Api<Params>) => () => void;
-  onPropsChanged?: (api: Api<Params>) => void;
+  createAnimatedColors: <ArgsType extends any[]>(
+    ...args: ConstructorParameters<typeof MemoizedAnimatedColors<ArgsType>>
+  ) => MemoizedAnimatedColors<ArgsType>;
 };
 
 export function createSketch<Params extends string>(
@@ -52,13 +52,13 @@ export function createSketch<Params extends string>(
       animationsTime = 0,
       initialPropsUpdate = true,
       props: TrackedProps<Params>,
-      draw: ReturnType<CreateSketchArgs<Params>["drawFactory"]>;
+      draw: ReturnType<CreateSketchArgs<Params>["draw"]>;
 
     const memos: MemoizedValue<any, any>[] = [];
     const animations: Array<
       | MemoizedAnimatedValue<any>
       | MemoizedAnimatedArray<any>
-      | MemoizedAnimatedColor
+      | MemoizedAnimatedColors<any>
     > = [];
 
     const api: Api<Params> = {
@@ -86,7 +86,7 @@ export function createSketch<Params extends string>(
         return animation;
       },
       createAnimatedColors: (...args) => {
-        const animation = new MemoizedAnimatedColor(...args);
+        const animation = new MemoizedAnimatedColors(...args);
         animations.push(animation);
         return animation;
       },
@@ -148,7 +148,7 @@ export function createSketch<Params extends string>(
 
       // initialize draw func passing p5 instance (`api.p`),
       // which is guaranteed to be initialized properly at this moment
-      draw = args.drawFactory(api);
+      draw = args.draw(api);
 
       if (api.getProp("playing") === false) {
         p.noLoop();

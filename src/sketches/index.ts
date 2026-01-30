@@ -3,7 +3,7 @@ import { spiralSketch } from "./spiral";
 import { pillarsSketch } from "./pillars";
 // import { pulseSketch } from "./pulse";
 // // import { tiles } from "./tiles/tiles";
-// import { arcSketch } from "./arcs";
+import { arcSketch } from "./arcs";
 // import { zigzagsSketch } from "./zigzags";
 // import { lungsSketch } from "./lungs";
 import { testSketch } from "./test";
@@ -12,7 +12,7 @@ import { testSketch } from "./test";
 export const sketchList: ISketch<any>[] = [
   spiralSketch,
   pillarsSketch,
-  // arcSketch,
+  arcSketch,
   // pulseSketch,
   // zigzagsSketch,
   // lungsSketch,

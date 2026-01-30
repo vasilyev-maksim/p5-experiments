@@ -43,8 +43,8 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
     );
     const colorsAnimated = createAnimatedColors(
       ANIMATION_SPEED,
-      getTrackedProp("COLOR"),
-      controls.COLOR.colors,
+      [getTrackedProp("COLOR")],
+      (x) => controls.COLOR.colors[x],
       p,
     );
 
@@ -52,7 +52,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       setup: () => {
         p.noStroke();
       },
-      drawFactory: () => {
+      draw: () => {
         function drawColumn(
           x: number,
           y: number,

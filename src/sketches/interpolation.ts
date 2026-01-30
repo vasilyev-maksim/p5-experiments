@@ -34,7 +34,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
         animatedY.animateTo(p.mouseY, time);
       };
     },
-    drawFactory: ({ p, getTime }) => {
+    draw: ({ p, getTime }) => {
       return () => {
         p.background("black");
         p.stroke("white");
