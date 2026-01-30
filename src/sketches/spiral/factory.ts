@@ -3,8 +3,18 @@ import { range } from "../../utils/misc";
 import { createSketch } from "../utils/createSketch";
 import { type Params, controls } from "./controls";
 
+const ANIMATION_SPEED = 30;
+
 export const factory = createSketch<Params>(
-  ({ createMemo, getTrackedProp }) => {
+  ({
+    createAnimatedColors,
+    createAnimatedValue,
+    createMemo,
+    getProp,
+    getTime,
+    getTrackedProp,
+    p,
+  }) => {
     const POLYGONS_COUNT = 500,
       BG_COLOR = "black";
 
@@ -12,25 +22,39 @@ export const factory = createSketch<Params>(
       (x) => controls.THICKNESS.max + controls.THICKNESS.min - x,
       [getTrackedProp("THICKNESS")],
     );
-
     const COIL_SPEED = createMemo(
       (x) =>
         x === 0 ? 0 : controls.COIL_SPEED.max + controls.COIL_SPEED.min - x + 1,
       [getTrackedProp("COIL_SPEED")],
     );
+    const zoomAnimated = createAnimatedValue(ANIMATION_SPEED, (x) => x, [
+      getTrackedProp("ZOOM"),
+    ]);
+    const fillColorsAnimated = createAnimatedColors(
+      ANIMATION_SPEED,
+      getTrackedProp("FILL_COLORS"),
+      controls.FILL_COLORS.colors,
+      p,
+    );
+    const borderColorAnimated = createAnimatedColors(
+      ANIMATION_SPEED,
+      getTrackedProp("BORDER_COLOR"),
+      controls.BORDER_COLOR.colors,
+      p,
+    );
 
     return {
-      setup: ({ p }) => {
-        p.background("black");
+      setup: () => {
+        p.background(BG_COLOR);
         p.fill(255, 0, 0, 10);
         p.strokeWeight(1);
         p.angleMode("degrees");
       },
-      drawFactory: ({ p, getProp, getTime }) => {
+      drawFactory: () => {
         function getNodes(): [number, number][] {
           const time = getTime();
           return range(POLYGONS_COUNT).map((i) => {
-            const d = (getProp("ZOOM") * p.width) / 1158;
+            const d = (zoomAnimated.value! * p.width) / 1158;
             return [
               i * d,
               i *
@@ -42,7 +66,6 @@ export const factory = createSketch<Params>(
         }
 
         function drawCircle([d, angle]: [number, number]) {
-          // const THICKNESS = getProp("THICKNESS");
           const x = d * p.cos(angle);
           const y = d * p.sin(angle);
           p.circle(
@@ -53,7 +76,6 @@ export const factory = createSketch<Params>(
         }
 
         function drawPolygon([d, angle]: [number, number]) {
-          // const THICKNESS = getProp("THICKNESS");
           const x = d * p.cos(angle) + p.width / 2;
           const y = d * p.sin(angle) + p.height / 2;
           const adelta = 360 / getProp("POLYGON_N");
@@ -77,8 +99,7 @@ export const factory = createSketch<Params>(
 
           const nodes = getNodes();
           nodes.forEach((node, i, arr) => {
-            const [colorA, colorB] =
-              controls.FILL_COLORS.colors[getProp("FILL_COLORS")];
+            const [colorA, colorB] = fillColorsAnimated.value!;
             const fillColor = p.lerpColor(
               p.color(colorA),
               p.color(colorB),
@@ -89,7 +110,7 @@ export const factory = createSketch<Params>(
             );
 
             p.fill(fillColor);
-            p.stroke(controls.BORDER_COLOR.colors[getProp("BORDER_COLOR")][0]);
+            p.stroke(borderColorAnimated.value[0]);
 
             if (getProp("POLYGON_N") === controls.POLYGON_N.max) {
               drawCircle(node);

@@ -7,11 +7,12 @@ const ANIMATION_SPEED = 30;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
   ({
-    createAnimatedValue,
     createAnimatedArray,
+    createAnimatedColors,
+    createAnimatedValue,
     createMemo,
+    getTime,
     getTrackedProp,
-    createAnimatedColor,
     p,
   }) => {
     const widthData = createMemo(
@@ -40,7 +41,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       (x, canvasHeight) => (x * canvasHeight) / 811,
       [getTrackedProp("GAP_Y"), getTrackedProp("canvasHeight")],
     );
-    const colorsAnimated = createAnimatedColor(
+    const colorsAnimated = createAnimatedColors(
       ANIMATION_SPEED,
       getTrackedProp("COLOR"),
       controls.COLOR.colors,
@@ -48,10 +49,10 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
     );
 
     return {
-      setup: ({ p }) => {
+      setup: () => {
         p.noStroke();
       },
-      drawFactory: ({ p, getTime }) => {
+      drawFactory: () => {
         function drawColumn(
           x: number,
           y: number,

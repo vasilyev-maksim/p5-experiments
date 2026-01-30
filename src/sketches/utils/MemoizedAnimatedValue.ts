@@ -13,10 +13,15 @@ export class MemoizedAnimatedValue<ArgsType extends any[]> {
     fn: (...args: ArgsType) => number,
     deps: ArrayOfTrackedValues<ArgsType>,
     comparator?: TrackedValueComparator<number>,
+    timingFunction?: AnimatedValue["timingFunction"],
   ) {
     this.memoizedValue = new MemoizedValue(fn, deps, comparator);
     // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
-    this.animatedValue = new AnimatedValue(animationDuration, undefined);
+    this.animatedValue = new AnimatedValue(
+      animationDuration,
+      undefined,
+      timingFunction,
+    );
   }
 
   public recalc(time: number, force = false): this {

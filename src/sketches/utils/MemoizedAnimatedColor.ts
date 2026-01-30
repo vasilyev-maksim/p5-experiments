@@ -3,6 +3,7 @@ import type p5 from "p5";
 import type { IColorControl } from "../../models";
 import type { TrackedValue } from "./TrackedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
+import type { AnimatedValue } from "./AnimatedValue";
 
 export class MemoizedAnimatedColor {
   private readonly memoizedAnimatedArray: MemoizedAnimatedArray<[number]>;
@@ -12,13 +13,14 @@ export class MemoizedAnimatedColor {
     color: TrackedValue<number>,
     colors: IColorControl["colors"],
     private readonly p: p5,
+    timingFunction?: AnimatedValue["timingFunction"],
   ) {
     this.memoizedAnimatedArray = new MemoizedAnimatedArray(
       animationDuration,
       (x) => {
         const [colorAStr, colorBStr] = colors[x];
         const colorA = p.color(colorAStr);
-        const colorB = p.color(colorBStr);
+        const colorB = p.color(colorBStr ?? colorAStr);
 
         return [
           p.red(colorA),
@@ -30,6 +32,8 @@ export class MemoizedAnimatedColor {
         ];
       },
       [color],
+      undefined,
+      timingFunction,
     );
   }
 

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatedArray } from "./AnimatedArray";
+import type { AnimatedValue } from "./AnimatedValue";
 import { MemoizedArray } from "./MemoizedArray";
 import type { ArrayOfTrackedValues } from "./TrackedArray";
 
@@ -12,6 +13,7 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
     fn: (...args: ArgsType) => number[],
     deps: ArrayOfTrackedValues<ArgsType>,
     initialValueForItem?: number,
+    timingFunction?: AnimatedValue["timingFunction"],
   ) {
     this.memoizedArray = new MemoizedArray(fn, deps, undefined);
     // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
@@ -19,6 +21,7 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
       animationDuration,
       undefined,
       initialValueForItem,
+      timingFunction,
     );
 
     // TODO: написать AnimatedArray + полумать использовать композиция (вместо наследования) в классах

@@ -30,7 +30,7 @@ type Api<Params extends string> = {
   createAnimatedArray: <ArgsType extends any[]>(
     ...args: ConstructorParameters<typeof MemoizedAnimatedArray<ArgsType>>
   ) => MemoizedAnimatedArray<ArgsType>;
-  createAnimatedColor: (
+  createAnimatedColors: (
     ...args: ConstructorParameters<typeof MemoizedAnimatedColor>
   ) => MemoizedAnimatedColor;
 };
@@ -85,7 +85,7 @@ export function createSketch<Params extends string>(
         animations.push(animation);
         return animation;
       },
-      createAnimatedColor: (...args) => {
+      createAnimatedColors: (...args) => {
         const animation = new MemoizedAnimatedColor(...args);
         animations.push(animation);
         return animation;

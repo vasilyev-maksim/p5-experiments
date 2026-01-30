@@ -8,9 +8,9 @@ export class AnimatedValue {
 
   public constructor(
     private readonly animationDuration: number,
-    initialValue?: number,
-    private readonly timingFunction = AnimatedValue.TIMING_FUNCTIONS
-      .EASE_IN_OUT,
+    initialValue: number | undefined,
+    private readonly timingFunction: (x: number) => number = AnimatedValue
+      .TIMING_FUNCTIONS.EASE_IN_OUT,
   ) {
     if (initialValue !== undefined) {
       this.start = initialValue;

@@ -7,10 +7,11 @@ export class AnimatedArray {
     private readonly animationDuration: number,
     initialValues?: number[],
     private readonly initialValueForItem?: number,
+    private readonly timingFunction?: AnimatedValue["timingFunction"],
   ) {
     if (initialValues) {
       this.array = initialValues.map(
-        (v) => new AnimatedValue(animationDuration, v),
+        (v) => new AnimatedValue(animationDuration, v, timingFunction),
       );
     }
   }
@@ -37,6 +38,7 @@ export class AnimatedArray {
         const newAnimatedValue = new AnimatedValue(
           this.animationDuration,
           this.initialValueForItem ?? newValue,
+          this.timingFunction,
         );
         newAnimatedValue.animateTo({
           value: newValue,
