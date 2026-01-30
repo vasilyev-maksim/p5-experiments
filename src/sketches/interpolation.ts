@@ -5,8 +5,8 @@ import type {
   ISketch,
   ISketchFactory,
 } from "../models";
-import { AnimatedValue } from "./utils/AnimatedValue";
-import { createSketch } from "./utils/createSketch";
+import { AnimatedValue } from "@core/AnimatedValue";
+import { createSketch } from "@core/createSketch";
 
 const controls = {
   TIME_DELTA: {

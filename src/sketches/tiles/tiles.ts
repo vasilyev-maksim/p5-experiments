@@ -4,7 +4,7 @@ import { Matrix } from "./Matrix";
 import { Turtle } from "./Turtle";
 import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
-import { easeInOutQuad, getQsParam } from "../utils/misc";
+import { easeInOutQuad, getQsParam } from "../@core/utils";
 import type { ISketchFactory } from "../../models";
 
 export const tiles: ISketchFactory =
@@ -15,7 +15,7 @@ export const tiles: ISketchFactory =
       PADDING = 3,
       GRID_SIZE = new Size(
         Math.round((GRID_CELLS_Y * initialCanvasWidth) / initialCanvasHeight),
-        GRID_CELLS_Y
+        GRID_CELLS_Y,
       ),
       GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
       MAX_AREA = 0.08,
@@ -25,7 +25,7 @@ export const tiles: ISketchFactory =
         origin: GRID_ORIGIN,
         gridSizeInPixels: new Size(
           initialCanvasWidth - CANVAS_PADDING * 2,
-          initialCanvasHeight - CANVAS_PADDING * 2
+          initialCanvasHeight - CANVAS_PADDING * 2,
         ),
         gridSizeInCells: GRID_SIZE,
         color: "#CCC",
@@ -112,9 +112,9 @@ export const tiles: ISketchFactory =
             i % 3 == 0
               ? p.color("red")
               : i % 3 == 1
-              ? p.color("teal")
-              : p.color("purple"),
-            REVERSE ? colorValue : 1 - colorValue
+                ? p.color("teal")
+                : p.color("purple"),
+            REVERSE ? colorValue : 1 - colorValue,
             // 1 - area / (MAX_AREA * gridArea)
           );
           p.fill(color);
@@ -134,9 +134,9 @@ export const tiles: ISketchFactory =
             scaledRect.topLeft.y + PADDING + direction.y * (1 - scale) * 200,
             Math.max(scaledRect.width - 2 - PADDING * 2, 0), // TODO: fix this (-2)
             Math.max(scaledRect.height - 2 - PADDING * 2, 0),
-            10
+            10,
           );
-        }
+        },
       );
     };
   };

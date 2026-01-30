@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
-import type { ISketchProps, ISketchFactory } from "../../models";
+import type { ISketchProps, ISketchFactory } from "../models";
 import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
 import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";

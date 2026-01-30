@@ -1,9 +1,9 @@
 import p5 from "p5";
-import { oscillateBetween } from "./utils/misc";
+import { oscillateBetween } from "@core/utils";
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import { range } from "../utils/misc";
-import { createSketch } from "./utils/createSketch";
-import { MemoizedValue } from "./utils/MemoizedValue";
+import { createSketch } from "@core/createSketch";
+import { MemoizedValue } from "@core/MemoizedValue";
 
 const controls = {
   COLOR: {

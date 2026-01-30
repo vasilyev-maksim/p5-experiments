@@ -21,7 +21,12 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "paths": {
+        "@/*": ["./src/*"],
+        "@core/*": ["./src/core/*"],
+        "@components/*": ["./src/components/*"]
+      }
   },
-  "include": ["src"]
+  "include": ["src"],
 }

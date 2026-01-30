@@ -1,6 +1,6 @@
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import { range } from "../utils/misc";
-import { createSketch } from "./utils/createSketch";
+import { createSketch } from "@core/createSketch";
 
 const controls = {
   CURVE_RESOLUTION: {
@@ -101,8 +101,8 @@ const factory = createSketch<Params>((p, getProp, getTime) => {
         0,
         1,
         (p.height / 2) * (1 - DISPERSION),
-        (p.height / 2) * (1 + DISPERSION)
-      )
+        (p.height / 2) * (1 + DISPERSION),
+      ),
     );
   }
 

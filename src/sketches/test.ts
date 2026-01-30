@@ -5,7 +5,7 @@ import type {
   ISketch,
   ISketchFactory,
 } from "../models";
-import { createSketch } from "./utils/createSketch";
+import { createSketch } from "@core/createSketch";
 
 const controls = {
   TIME_DELTA: {

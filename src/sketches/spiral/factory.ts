@@ -1,6 +1,6 @@
 // import { MemoizedValue } from "../utils/MemoizedValue";
 import { range } from "../../utils/misc";
-import { createSketch } from "../utils/createSketch";
+import { createSketch } from "@core/createSketch";
 import { type Params, controls } from "./controls";
 
 const ANIMATION_SPEED = 30;

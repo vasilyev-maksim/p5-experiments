@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type p5 from "p5";
-import type { IColorControl } from "../../models";
+import type { IColorControl } from "../models";
 import type { TrackedValue } from "./TrackedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import type { AnimatedValue } from "./AnimatedValue";

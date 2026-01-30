@@ -1,7 +1,7 @@
 import p5 from "p5";
 import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
-import { SquareBorderPointsJoiner } from "./utils/BorderPointsJoiner";
-import { createSketch } from "./utils/createSketch";
+import { SquareBorderPointsJoiner } from "@core/BorderPointsJoiner";
+import { createSketch } from "@core/createSketch";
 
 const controls = {
   RESOLUTION: {
@@ -58,7 +58,7 @@ const factory = createSketch<Params>((p, getProp) => {
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
         r,
-        r
+        r,
       );
 
       const [intervals, intervals2] = [
@@ -80,7 +80,7 @@ const factory = createSketch<Params>((p, getProp) => {
           0,
           60,
           startToEndAngle,
-          p.PI / 4
+          p.PI / 4,
         );
         drawZigzag({
           p,

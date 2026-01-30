@@ -1,6 +1,6 @@
 import type p5 from "p5";
 import type { ISketchFactory } from "../../models";
-import { createSketch } from "../utils/createSketch";
+import { createSketch } from "@core/createSketch";
 import { type Params, controls } from "./controls";
 
 const ANIMATION_SPEED = 30;

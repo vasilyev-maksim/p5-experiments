@@ -3,9 +3,9 @@ import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
 import {
   SquareBorderPointsJoiner,
   type JointRenderCallback,
-} from "./utils/BorderPointsJoiner";
-import { createSketch } from "./utils/createSketch";
-import { oscillateBetween } from "./utils/misc";
+} from "@core/BorderPointsJoiner";
+import { createSketch } from "@core/createSketch";
+import { oscillateBetween } from "@core/utils";
 
 const controls = {
   RESOLUTION: {
@@ -109,7 +109,7 @@ const factory = createSketch<Params>((p, getProp) => {
         p.createVector(x0, y0),
         p.createVector(x0 + ACTUAL_SIZE, y0 + ACTUAL_SIZE),
         r,
-        r
+        r,
       );
 
       const render =
@@ -127,12 +127,12 @@ const factory = createSketch<Params>((p, getProp) => {
             distanceToDiagonal * MAX_NEGATIVE_CURVATURE * -1,
             distanceToDiagonal * MAX_CURVATURE,
             0.02,
-            time
+            time,
           );
           const colorIntensity = p.map(p.abs(curvature), 0, halfDiagonal, 1, 0);
           const [c1, c2] = controls.COLOR.colors[COLOR_INDEX];
-          const colorA = INVERT_COLORS ? c2 ?? c1 : c1;
-          const colorB = INVERT_COLORS ? c1 ?? c2 : c2 ?? c1;
+          const colorA = INVERT_COLORS ? (c2 ?? c1) : c1;
+          const colorB = INVERT_COLORS ? (c1 ?? c2) : (c2 ?? c1);
 
           drawArc({
             p,
@@ -148,7 +148,7 @@ const factory = createSketch<Params>((p, getProp) => {
       let intervals: [
         [number, number],
         [number, number],
-        JointRenderCallback
+        JointRenderCallback,
       ][];
       if (PATTERN_TYPE === 0) {
         intervals = [
@@ -232,7 +232,7 @@ function drawArc({
       amMag * 2,
       curAbs,
       curSign > 0 ? 0 : p.PI,
-      curSign > 0 ? p.PI : p.TWO_PI
+      curSign > 0 ? p.PI : p.TWO_PI,
     );
   }
   p.pop();
