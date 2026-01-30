@@ -6,7 +6,7 @@ import type { TrackedValueComparator } from "./TrackedValue";
 
 export class MemoizedAnimatedValue<ArgsType extends any[]> {
   public readonly animatedValue: AnimatedValue;
-  private readonly memoizedValue: MemoizedValue<ArgsType, number>;
+  public readonly memoizedValue: MemoizedValue<ArgsType, number>;
 
   public constructor(
     animationDuration: number,

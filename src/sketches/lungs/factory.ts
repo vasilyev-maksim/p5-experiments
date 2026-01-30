@@ -2,48 +2,56 @@ import { createSketch } from "@/core/createSketch";
 import { oscillateBetween } from "@/core/utils";
 import { range } from "@/utils/misc";
 import p5 from "p5";
-import { Circle } from "./Circle";
-import type { Params } from "./controls";
+import { controls, type Params } from "./controls";
 import type { ISketchFactory } from "@/models";
 
-const RINGS_COUNT = 20;
+const ANIMATION_SPEED = 30;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
-  ({ createMemo, getTime, getTrackedProp, p }) => {
-    const CIRCLES = createMemo(
-      (canvasWidth: number, canvasHeight: number) => {
-        const RD = canvasWidth / 120,
-          CENTER_VEC = p.createVector(canvasWidth / 2, canvasHeight / 2);
-
-        return range(RINGS_COUNT, true).map((i) => {
-          const dir = [
-            p.createVector(1, 0),
-            p.createVector(-1, 0),
-            p.createVector(0, 1),
-            p.createVector(0, -1),
-          ][i % 2];
-          const rotationShiftDelta = (RD / 2) * (i + 1);
-
-          return new Circle(
-            CENTER_VEC,
-            RD * (i + 1),
-            p.lerpColor(
-              p.color("#ea72f7ff"),
-              p.color("#530984ff"),
-              i / RINGS_COUNT,
-            ),
-            p5.Vector.add(
-              CENTER_VEC,
-              p.createVector(
-                dir.x * rotationShiftDelta,
-                dir.y * rotationShiftDelta,
-              ),
-            ),
-          );
-        });
-      },
-      [getTrackedProp("canvasWidth"), getTrackedProp("canvasHeight")],
-    );
+  ({
+    createAnimatedColors,
+    createAnimatedValue,
+    createMemo,
+    getProp,
+    getTime,
+    getTrackedProp,
+    p,
+  }) => {
+    const animatedRadius = createAnimatedValue(
+        ANIMATION_SPEED,
+        (canvasWidth, zoom) => (canvasWidth * zoom) / 120,
+        [getTrackedProp("canvasWidth"), getTrackedProp("ZOOM")],
+      ),
+      gap = createMemo(
+        (x) => p.map(x, controls.GAP.min, controls.GAP.max, 0.1, 3),
+        [getTrackedProp("GAP")],
+      ),
+      coilSpeed = createMemo(
+        (x) => p.map(x, controls.COIL_SPEED.min, controls.COIL_SPEED.max, 0, 5),
+        [getTrackedProp("COIL_SPEED")],
+      ),
+      coilFactor = createMemo(
+        (x) =>
+          p.map(x, controls.COIL_FACTOR.min, controls.COIL_FACTOR.max, 0, 400),
+        [getTrackedProp("COIL_FACTOR")],
+      ),
+      rotationSpeed = createMemo(
+        (x) =>
+          p.map(
+            x,
+            controls.ROTATION_SPEED.min,
+            controls.ROTATION_SPEED.max,
+            0,
+            10,
+          ),
+        [getTrackedProp("ROTATION_SPEED")],
+      ),
+      colorsAnimated = createAnimatedColors(
+        ANIMATION_SPEED,
+        [getTrackedProp("COLOR")],
+        (x) => controls.COLOR.colors[x],
+        p,
+      );
 
     return {
       setup: () => {
@@ -51,15 +59,51 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
         p.angleMode("degrees");
       },
       draw: () => () => {
-        p.background("#530984ff");
-
+        const [colorB, colorA] = colorsAnimated.value;
+        const canvasWidth = getProp("canvasWidth"),
+          canvasHeight = getProp("canvasHeight"),
+          resolution = getProp("RESOLUTION"),
+          radius = animatedRadius.value!,
+          CENTER_VEC = p.createVector(canvasWidth / 2, canvasHeight / 2);
         const time = getTime();
-        const angle = (time * 2) % 360;
+        const baseAngle = (time * rotationSpeed.value!) % 360;
 
-        CIRCLES.value!.forEach((r, i) => {
-          const delta = 9 * (i + 1) * oscillateBetween(p, 0, 1, 3, time); // change last param to 3 for more chaos
-          const ang = (angle + delta) * (i % 2 == 0 ? 1 : -1);
-          r.render(p, ang);
+        p.background(colorB);
+
+        range(resolution, true).forEach((i) => {
+          const dir = [
+            p.createVector(1, 0),
+            p.createVector(-1, 0),
+            p.createVector(0, 1),
+            p.createVector(0, -1),
+          ][i % 2];
+          const rotationShiftDelta = radius * gap.value! * i;
+          const rotationCenter = p5.Vector.add(
+            CENTER_VEC,
+            p.createVector(
+              dir.x * rotationShiftDelta,
+              dir.y * rotationShiftDelta,
+            ),
+          );
+          const diameter = radius * 2 * (i + 1);
+          const fillColor = p.lerpColor(colorA, colorB, i / resolution);
+
+          const delta =
+            -coilFactor.value! *
+            (i + 1) *
+            oscillateBetween(p, 0, 1, coilSpeed.value!, time); // change last param to 3 for more chaos
+          const angle = (baseAngle + delta) * (i % 2 == 1 ? 1 : -1);
+          const localX = CENTER_VEC.x - rotationCenter.x;
+          const localY = CENTER_VEC.y - rotationCenter.y;
+
+          p.push();
+          {
+            p.translate(rotationCenter.x, rotationCenter.y);
+            p.rotate(angle);
+            p.fill(fillColor);
+            p.circle(localX, localY, diameter);
+          }
+          p.pop();
         });
       },
     };
