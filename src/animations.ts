@@ -7,9 +7,12 @@ export type MODAL_OPEN_SEGMENTS =
   | "START_PLAYING"
   | "SHOW_SIDEBAR"
   | "SHOW_HEADER"
+  | "SHOW_PRESET_HEADER"
   | "SHOW_PRESETS"
   | "SHOW_CONTROLS"
-  | "SHOW_FOOTER";
+  | "SHOW_CONTROLS_HEADER"
+  | "INIT_CONTROLS_AND_PRESETS"
+  | "SHOW_BOTTOM_ACTIONS";
 export const HOME_PAGE_SEQUENCE = "HOME_PAGE";
 export type HOME_PAGE_SEGMENTS = "HEADER" | "TILES";
 export type PresetsAnimationParams = {
@@ -19,7 +22,6 @@ export type PresetsAnimationParams = {
 export type ControlsAnimationParams = {
   itemDelay: number;
   itemDuration: number;
-  slidersInitDelay: number;
 };
 export type Ctx = {
   presetsPresent: boolean;
@@ -49,21 +51,31 @@ export const sequences = [
       },
       disabledIf: (ctx) => !(ctx as Ctx).presetsPresent,
     }),
+    Sequence.syncSegment({ id: "SHOW_PRESET_HEADER", duration: 300 }),
     Sequence.asyncSegment<ControlsAnimationParams>({
       id: "SHOW_CONTROLS",
       timingPayload: {
         itemDelay: 50,
         itemDuration: 300,
-        slidersInitDelay: 700,
       },
       disabledIf: (ctx) => !(ctx as Ctx).controlsPresent,
+    }),
+    Sequence.syncSegment({ id: "SHOW_BOTTOM_ACTIONS", delay: 0 }),
+    Sequence.syncSegment({
+      id: "SHOW_CONTROLS_HEADER",
+      duration: 300,
+    }),
+    Sequence.syncSegment({
+      id: "INIT_CONTROLS_AND_PRESETS",
+      delay: 100,
+      duration: 200,
     }),
   ]),
   new Sequence(HOME_PAGE_SEQUENCE, [
     Sequence.syncSegment({
       id: "HEADER",
       delay: 700,
-      duration: 400,
+      duration: 200,
     }),
     Sequence.asyncSegment<GridAnimationParams>({
       id: "TILES",

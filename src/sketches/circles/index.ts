@@ -3,14 +3,14 @@ import { controls, type Params } from "./controls";
 import { factory } from "./factory";
 import { presets } from "./presets";
 
-export const lungsSketch: ISketch<Params> = {
+export const circlesSketch: ISketch<Params> = {
   factory,
-  id: "lungs",
-  name: "lungs",
+  id: "circles",
+  name: "circles",
   preview: {
-    size: 420,
+    size: 700,
   },
-  timeShift: 50,
+  timeShift: 85,
   controls,
   presets,
   defaultParams: presets[0].params,

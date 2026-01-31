@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type p5 from "p5";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
-import type { AnimatedValue } from "./AnimatedValue";
+import { AnimatedValue } from "./AnimatedValue";
 import type { ArrayOfTrackedValues } from "./TrackedArray";
 
 export class MemoizedAnimatedColors<ArgsType extends any[]> {
@@ -12,7 +12,8 @@ export class MemoizedAnimatedColors<ArgsType extends any[]> {
     deps: ArrayOfTrackedValues<ArgsType>,
     colorProvider: (...args: ArgsType) => string[],
     private readonly p: p5,
-    timingFunction?: AnimatedValue["timingFunction"],
+    timingFunction: AnimatedValue["timingFunction"] = AnimatedValue
+      .TIMING_FUNCTIONS.LINEAR,
   ) {
     this.memoizedAnimatedArray = new MemoizedAnimatedArray<ArgsType>(
       animationDuration,

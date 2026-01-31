@@ -6,6 +6,7 @@ import { controls, type Params } from "./controls";
 import type { ISketchFactory } from "@/models";
 
 const ANIMATION_SPEED = 30;
+const COLOR_ANIMATION_SPEED = 50;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
   ({
@@ -26,10 +27,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
         (x) => p.map(x, controls.GAP.min, controls.GAP.max, 0.1, 3),
         [getTrackedProp("GAP")],
       ),
-      coilSpeed = createMemo(
-        (x) => p.map(x, controls.COIL_SPEED.min, controls.COIL_SPEED.max, 0, 5),
-        [getTrackedProp("COIL_SPEED")],
-      ),
+      coilSpeed = createMemo((x) => x, [getTrackedProp("COIL_SPEED")]),
       coilFactor = createMemo(
         (x) =>
           p.map(x, controls.COIL_FACTOR.min, controls.COIL_FACTOR.max, 0, 400),
@@ -47,7 +45,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
         [getTrackedProp("ROTATION_SPEED")],
       ),
       colorsAnimated = createAnimatedColors(
-        ANIMATION_SPEED,
+        COLOR_ANIMATION_SPEED,
         [getTrackedProp("COLOR")],
         (x) => controls.COLOR.colors[x],
         p,

@@ -7,11 +7,15 @@ export const ColorOptionButton = (props: {
   onClick: () => void;
   colorA: string;
   colorB: string;
+  animationDuration: number;
 }) => {
   const { x } = useSpring({
-    from: { x: props.active ? 0 : 1 },
+    from: { x: 0 },
     to: { x: props.active ? 1 : 0 },
-    config: { duration: 200, easing: easings.easeInOutCubic },
+    config: {
+      duration: props.animationDuration,
+      easing: easings.easeInOutCubic,
+    },
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

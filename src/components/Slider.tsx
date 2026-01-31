@@ -15,13 +15,13 @@ export function Slider(props: {
   step: number;
   onChange: (val: number) => void;
   label: ReactNode;
-  initDelay?: number;
+  active: boolean;
+  activationAnimationDuration: number;
 }) {
   const { initX } = useSpring({
     from: { initX: 0 },
-    to: { initX: 1 },
-    config: { duration: 400, easing: easings.easeInOutCubic },
-    delay: props.initDelay ?? 0,
+    to: { initX: props.active ? 1 : 0 },
+    config: { duration: props.activationAnimationDuration, easing: easings.easeInOutCubic },
   });
   const {
     trackRef,

@@ -1,26 +1,20 @@
 import classNames from "classnames";
-import styles from "./OptionButton.module.css";
+import styles from "./Button.module.css";
 import type { PropsWithChildren } from "react";
 
-export const OptionButton = (
+export const Button = (
   props: PropsWithChildren<{
-    active?: boolean;
     onClick: () => void;
     label: string;
     mini?: boolean;
-    animationDuration: number;
   }>,
 ) => {
   return (
     <button
       tabIndex={1}
-      className={classNames(styles.OptionButton, {
-        [styles.Active]: props.active,
+      className={classNames(styles.Button, {
         [styles.Mini]: props.mini,
       })}
-      style={{
-        transitionDuration: props.animationDuration + "ms",
-      }}
       onClick={props.onClick}
     >
       {props.label}

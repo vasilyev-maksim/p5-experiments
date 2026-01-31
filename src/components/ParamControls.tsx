@@ -3,7 +3,6 @@ import { SectionLayout } from "./SectionLayout";
 import styles from "./ParamControls.module.css";
 import { Slider } from "./Slider";
 import { animated, easings, useSprings } from "react-spring";
-import { useState } from "react";
 import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
@@ -21,10 +20,9 @@ export function ParamControls(props: {
 }) {
   const segment =
     useSequence<MODAL_OPEN_SEGMENTS>(
-      MODAL_OPEN_SEQUENCE
+      MODAL_OPEN_SEQUENCE,
     ).useSegment<ControlsAnimationParams>("SHOW_CONTROLS");
-  const { itemDelay, itemDuration, slidersInitDelay } = segment.timingPayload;
-  const [showHeader, setShowHeader] = useState(false);
+  const { itemDelay, itemDuration } = segment.timingPayload;
   const entries = Object.entries(props.sketch.controls ?? {});
   const entriesCount = entries.length;
   const [springs] = useSprings(
@@ -40,13 +38,18 @@ export function ParamControls(props: {
       onRest: async () => {
         if (i === entriesCount - 1) {
           // await delay(150);
-          setShowHeader(true);
+          segment.complete();
         }
       },
     }),
-    [segment.wasRun]
+    [segment.wasRun],
   );
-  const controlsInitDelay = entriesCount * itemDelay + slidersInitDelay;
+  const showHeader = useSequence<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+  ).useSegment("SHOW_CONTROLS_HEADER");
+  const initControls = useSequence<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+  ).useSegment("INIT_CONTROLS_AND_PRESETS");
 
   return (
     segment.wasRun && (
@@ -54,8 +57,8 @@ export function ParamControls(props: {
         header="Parameters"
         className={styles.Controls}
         bodyClassName={styles.ItemsWrapper}
-        showHeader={showHeader}
-        onHeaderAnimationEnd={segment.complete}
+        showHeader={showHeader.wasRun}
+        animationDuration={showHeader.duration}
       >
         {springs.map(({ x }, i) => {
           const [key, c] = entries[i];
@@ -67,7 +70,6 @@ export function ParamControls(props: {
             const valueStr = c.valueFormatter?.(value, c) ?? value;
             body = (
               <Slider
-                initDelay={controlsInitDelay}
                 label={
                   <>
                     {label}: {valueStr}
@@ -78,6 +80,8 @@ export function ParamControls(props: {
                 max={c.max}
                 min={c.min}
                 step={c.step}
+                active={initControls.wasRun}
+                activationAnimationDuration={initControls.duration}
               />
             );
           } else if (c.type === "color") {
@@ -87,23 +91,25 @@ export function ParamControls(props: {
                 colors={c.colors}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}
-                initDelay={controlsInitDelay}
+                active={initControls.wasRun}
+                animationDuration={initControls.duration}
               />
             );
           } else if (c.type === "boolean") {
             body = (
               <OptionSelector
+                active={initControls.wasRun}
                 valuesCount={2}
                 title={c.label}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}
-                initDelay={controlsInitDelay}
                 renderOption={(value, active, onClick) => (
                   <OptionButton
                     mini
                     active={active}
                     onClick={onClick}
                     label={["Nope", "Yeap"][value]}
+                    animationDuration={initControls.duration}
                   />
                 )}
                 gap={5}
@@ -119,12 +125,13 @@ export function ParamControls(props: {
                     onClick={onClick}
                     label={c.options[value].label}
                     mini
+                    animationDuration={initControls.duration}
                   />
                 )}
                 title={c.label}
                 value={props.params[key]}
                 onChange={(val) => props.onParamChange(key, val)}
-                initDelay={controlsInitDelay}
+                active={initControls.wasRun}
                 gap={5}
               />
             );

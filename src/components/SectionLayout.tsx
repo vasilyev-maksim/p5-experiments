@@ -11,13 +11,17 @@ export function SectionLayout(
     bodyClassName?: string;
     showHeader?: boolean;
     onHeaderAnimationEnd?: () => void;
-  }>
+    animationDuration: number;
+  }>,
 ) {
   const { modalSidebarPadding } = useViewport();
   const { x } = useSpring({
     from: { x: 0 },
     to: { x: props.showHeader ? 1 : 0 },
-    config: { duration: 300, easing: easings.easeInOutCubic },
+    config: {
+      duration: props.animationDuration,
+      easing: easings.easeInOutCubic,
+    },
     onRest: props.onHeaderAnimationEnd,
   });
 

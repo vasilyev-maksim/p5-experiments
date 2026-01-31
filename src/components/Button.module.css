@@ -1,0 +1,17 @@
+.Button {
+  display: inline-flex;
+  padding: 3px 6px;
+  background-color: var(--bgPrimaryColor);
+  border-radius: 5px;
+  transition: 200ms all;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: var(--primaryColorFaded);
+  }
+
+  &.Mini {
+    padding: 0px 5px;
+    font-size: 0.85rem;
+  }
+}

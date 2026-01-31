@@ -19,7 +19,7 @@ export function getClosestDiscreteValue(
   min: number,
   max: number,
   step: number,
-  value: number
+  value: number,
 ): number {
   if (value >= max) {
     return max;
@@ -40,7 +40,7 @@ export function checkExhaustiveness(x: never, message?: string): never {
 export function asyncWhile(
   condition: () => boolean,
   cb: () => Promise<unknown>,
-  cleanup?: () => void
+  cleanup?: () => void,
 ) {
   const f = () => {
     if (condition()) {
@@ -55,6 +55,21 @@ export function asyncWhile(
 
 export function range(len: number, reversed = false): number[] {
   return Array.from({ length: len }).map((_, i) =>
-    reversed ? len - 1 - i : i
+    reversed ? len - 1 - i : i,
   );
+}
+
+export async function copyToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log("Copied!", text);
+  } catch (err) {
+    console.error("Failed to copy:", err);
+  }
+}
+
+export function copyPresetCodeToClipboard(params: IParams) {
+  const name = prompt("Preset name:")?.trim();
+  const code = JSON.stringify({ params, ...(name ? { name } : {}) }, null, 4);
+  return copyToClipboard(code);
 }

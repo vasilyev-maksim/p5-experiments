@@ -148,7 +148,39 @@ export function createSketch<Params extends string>(
 
       // initialize draw func passing p5 instance (`api.p`),
       // which is guaranteed to be initialized properly at this moment
-      draw = args.draw(api);
+
+      const argDraw = args.draw(api);
+      draw =
+        import.meta.env.VITE_DEV_TOOLS === "1"
+          ? () => {
+              argDraw();
+
+              p.push();
+              {
+                // p.stroke("white");
+                p.fill("white");
+                p.text(time, 10, 10, 20, 20);
+                p.stroke("white");
+                p.strokeWeight(1);
+                p.noFill();
+
+                p.translate(p.width / 2, p.height / 2);
+                const size = Math.max(
+                  p.width - p.mouseX * 2,
+                  p.height - p.mouseY * 2,
+                );
+                const tl = [-size / 2, -size / 2] as const;
+                p.rect(...tl, size, size);
+                p.fill("white");
+
+                p.textSize(20);
+                p.strokeWeight(1);
+
+                p.text(size, ...tl);
+              }
+              p.pop();
+            }
+          : argDraw;
 
       if (api.getProp("playing") === false) {
         p.noLoop();

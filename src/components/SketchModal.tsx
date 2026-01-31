@@ -3,7 +3,7 @@ import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useKeyboardShortcuts, useModalBehavior, useViewport } from "../hooks";
 import classNames from "classnames";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
@@ -16,6 +16,8 @@ import {
 import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
+import { Button } from "./Button";
+import { copyPresetCodeToClipboard } from "@/utils/misc";
 
 export const SketchModal = ({
   sketch,
@@ -43,6 +45,7 @@ export const SketchModal = ({
     MODAL_OPEN_SEQUENCE,
   );
   const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
+  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS").wasRun;
   const playbackControlsEnabled = useSegment("START_PLAYING").completed;
 
   const onProgress = useCallback((seg: SegmentBase) => {
@@ -132,9 +135,9 @@ export const SketchModal = ({
     }
   };
 
-  useEffect(() => {
-    console.log("preset", params);
-  }, [params]);
+  // useEffect(() => {
+  //   console.log("preset", params);
+  // }, [params]);
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
@@ -229,6 +232,19 @@ export const SketchModal = ({
                     params={params}
                     onParamChange={changeParam}
                   />
+                  {showBottomActions && (
+                    <div
+                      style={{
+                        paddingLeft: modalSidebarPadding,
+                      }}
+                      className={styles.BottomActionsBlock}
+                    >
+                      <Button
+                        onClick={() => copyPresetCodeToClipboard(params)}
+                        label={"Export preset"}
+                      />
+                    </div>
+                  )}
                 </div>
               </>
             )}

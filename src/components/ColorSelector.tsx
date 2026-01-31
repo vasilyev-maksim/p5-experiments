@@ -7,7 +7,8 @@ export function ColorSelector(props: {
   value: number;
   onChange: (val: number) => void;
   title?: string;
-  initDelay?: number;
+  active: boolean;
+  animationDuration: number;
 }) {
   const { colors, ...rest } = props;
   return (
@@ -21,6 +22,7 @@ export function ColorSelector(props: {
             onClick={onClick}
             colorA={colorA}
             colorB={colorB}
+            animationDuration={props.animationDuration}
           />
         );
       }}

@@ -33,10 +33,11 @@ export const controls = {
   },
   COIL_SPEED: {
     label: "Coil speed",
-    max: 100,
+    max: 5,
     min: 0,
-    step: 1,
+    step: 0.1,
     type: "range",
+    valueFormatter: (x) => x.toFixed(1),
   },
   GAP: {
     label: "Gap",
@@ -49,7 +50,7 @@ export const controls = {
     type: "color",
     colors: [
       ["rgb(47, 0, 78)", "#ea72f7ff"],
-      ["rgb(0, 46, 17)", "rgb(242, 255, 0)"],
+      ["rgb(0, 37, 14)", "rgb(242, 255, 0)"],
       ["#13005fff", "rgb(97, 255, 83)"],
       ["#000", "#ffffffff"],
     ],

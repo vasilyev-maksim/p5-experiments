@@ -1,9 +1,8 @@
 import type { IParams, IPreset, ISketch } from "../models";
 import styles from "./Presets.module.css";
-import { areParamsEqual, delay } from "../utils/misc";
+import { areParamsEqual } from "../utils/misc";
 import { SectionLayout } from "./SectionLayout";
 import { animated, easings, useSprings } from "react-spring";
-import { useState } from "react";
 import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
@@ -19,10 +18,9 @@ export function Presets(props: {
 }) {
   const segment =
     useSequence<MODAL_OPEN_SEGMENTS>(
-      MODAL_OPEN_SEQUENCE
+      MODAL_OPEN_SEQUENCE,
     ).useSegment<PresetsAnimationParams>("SHOW_PRESETS");
   const { itemDelay, itemDuration } = segment.timingPayload;
-  const [showHeader, setShowHeader] = useState(false);
   const paramsCount = props.sketch.presets?.length ?? 0;
   const [springs] = useSprings(
     paramsCount,
@@ -36,27 +34,35 @@ export function Presets(props: {
       delay: i * itemDelay,
       onRest: async () => {
         if (i === paramsCount - 1) {
-          await delay(50);
-          setShowHeader(true);
+          segment.complete();
         }
       },
     }),
-    [segment.wasRun]
+    [segment.wasRun],
   );
+
+  const showHeader =
+    useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
+      "SHOW_PRESET_HEADER",
+    );
+  const controlsActivated = useSequence<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+  ).useSegment("INIT_CONTROLS_AND_PRESETS");
 
   return (
     paramsCount > 0 &&
     segment.wasRun && (
       <SectionLayout
         header="Presets"
-        showHeader={showHeader}
-        onHeaderAnimationEnd={segment.complete}
+        showHeader={showHeader.wasRun}
+        animationDuration={showHeader.duration}
       >
         <div className={styles.Presets}>
           {springs.map(({ x }, i) => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             const p = props.sketch.presets?.[i]!;
-            const isActive = areParamsEqual(props.params, p.params);
+            const isActive =
+              controlsActivated.wasRun && areParamsEqual(props.params, p.params);
             return (
               <animated.div
                 tabIndex={1}
@@ -71,6 +77,7 @@ export function Presets(props: {
                   label={p.name ?? i.toString()}
                   active={isActive}
                   onClick={() => props.onApply(p)}
+                  animationDuration={controlsActivated.duration}
                 />
               </animated.div>
             );

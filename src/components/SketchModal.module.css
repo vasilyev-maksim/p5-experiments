@@ -44,7 +44,8 @@
       var(--secondaryColor)
     );
     background-position: 0 0;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -138,4 +139,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.BottomActionsBlock {
+  margin-top: 20px;
 }
