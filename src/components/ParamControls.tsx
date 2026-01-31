@@ -12,6 +12,7 @@ import {
 import { ColorSelector } from "./ColorSelector";
 import { OptionSelector } from "./OptionSelector";
 import { OptionButton } from "./OptionButton";
+import { BooleanParamControl } from "./BooleanParamControl";
 
 export function ParamControls(props: {
   sketch: ISketch<string>;
@@ -63,18 +64,14 @@ export function ParamControls(props: {
         {springs.map(({ x }, i) => {
           const [key, c] = entries[i];
           let body = null;
+          const value = props.params[key];
 
           if (c.type === "range") {
-            const value = props.params[key];
-            const label = c.label ?? key;
             const valueStr = c.valueFormatter?.(value, c) ?? value;
+            const label = c.label ?? key;
             body = (
               <Slider
-                label={
-                  <>
-                    {label}: {valueStr}
-                  </>
-                }
+                label={label + ": " + valueStr}
                 value={value}
                 onChange={(val) => props.onParamChange(key, val)}
                 max={c.max}
@@ -87,32 +84,24 @@ export function ParamControls(props: {
           } else if (c.type === "color") {
             body = (
               <ColorSelector
-                title={c.label}
+                title={c.label + ": " + value}
                 colors={c.colors}
-                value={props.params[key]}
+                value={value}
                 onChange={(val) => props.onParamChange(key, val)}
                 active={initControls.wasRun}
                 animationDuration={initControls.duration}
+                shuffle={c.shuffle}
+                shuffleSwitchLabel={c.shuffleSwitchLabel}
               />
             );
           } else if (c.type === "boolean") {
             body = (
-              <OptionSelector
+              <BooleanParamControl
+                label={c.label}
+                value={value === 1}
                 active={initControls.wasRun}
-                valuesCount={2}
-                title={c.label}
-                value={props.params[key]}
-                onChange={(val) => props.onParamChange(key, val)}
-                renderOption={(value, active, onClick) => (
-                  <OptionButton
-                    mini
-                    active={active}
-                    onClick={onClick}
-                    label={["Nope", "Yeap"][value]}
-                    animationDuration={initControls.duration}
-                  />
-                )}
-                gap={5}
+                animationDuration={initControls.duration}
+                onChange={(val) => props.onParamChange(key, val ? 1 : 0)}
               />
             );
           } else if (c.type === "choice") {
@@ -129,7 +118,7 @@ export function ParamControls(props: {
                   />
                 )}
                 title={c.label}
-                value={props.params[key]}
+                value={value}
                 onChange={(val) => props.onParamChange(key, val)}
                 active={initControls.wasRun}
                 gap={5}

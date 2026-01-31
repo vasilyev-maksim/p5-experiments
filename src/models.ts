@@ -13,12 +13,11 @@ export type ISketchProps<ParamKey extends string = string> = {
 };
 
 export type ISketchFactory<ParamKey extends string = string> = (
-  initialProps: ISketchProps<ParamKey>
+  initialProps: ISketchProps<ParamKey>,
 ) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
 interface IControlBase {
   label: string;
-  valueFormatter?: (value: number, control: this) => string;
 }
 
 export interface IRangeControl extends IControlBase {
@@ -26,6 +25,7 @@ export interface IRangeControl extends IControlBase {
   min: number;
   max: number;
   step: number;
+  valueFormatter?: (value: number, control: this) => string;
 }
 
 export interface IBooleanControl extends IControlBase {
@@ -35,6 +35,11 @@ export interface IBooleanControl extends IControlBase {
 export interface IColorControl extends IControlBase {
   type: "color";
   colors: string[][];
+  /** -1 = not visible in UI;
+   * 0 = visible in UI, initially turned OFF;
+   * 1 = visible in UI, initially turned ON */
+  shuffle?: -1 | 0 | 1;
+  shuffleSwitchLabel?: string;
 }
 
 export interface IChoiceControl extends IControlBase {

@@ -17,7 +17,7 @@ import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
-import { copyPresetCodeToClipboard } from "@/utils/misc";
+import { copyPresetCodeToClipboard, getRandomParams } from "@/utils/misc";
 
 export const SketchModal = ({
   sketch,
@@ -135,9 +135,10 @@ export const SketchModal = ({
     }
   };
 
-  // useEffect(() => {
-  //   console.log("preset", params);
-  // }, [params]);
+  const randomizeParams = () => {
+    const newParams = getRandomParams(sketch.controls);
+    setParams(newParams);
+  };
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
@@ -243,6 +244,8 @@ export const SketchModal = ({
                         onClick={() => copyPresetCodeToClipboard(params)}
                         label={"Export preset"}
                       />
+                      &nbsp;
+                      <Button onClick={randomizeParams} label={"Randomize"} />
                     </div>
                   )}
                 </div>

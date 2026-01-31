@@ -53,7 +53,11 @@ export const controls = {
       ["rgb(0, 37, 14)", "rgb(242, 255, 0)"],
       ["#13005fff", "rgb(97, 255, 83)"],
       ["#000", "#ffffffff"],
+      ["rgb(74, 0, 186)", "rgb(108, 255, 255)"],
+      ["rgb(58, 24, 0)", "rgb(255, 172, 100)"],
+      ["rgb(3, 0, 201)", "rgb(231, 255, 47)"],
     ],
     label: "Color",
+    shuffle: 0,
   },
 } as const satisfies IControls;

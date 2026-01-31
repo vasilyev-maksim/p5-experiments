@@ -6,7 +6,7 @@ import { controls, type Params } from "./controls";
 import type { ISketchFactory } from "@/models";
 
 const ANIMATION_SPEED = 30;
-const COLOR_ANIMATION_SPEED = 50;
+const COLOR_ANIMATION_SPEED = 60;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(
   ({

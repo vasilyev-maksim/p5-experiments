@@ -2,17 +2,13 @@
 
 # 📋 TODO
 
-- add callback to `TrackedValue.ArrayUtils.someHasChanged` signature as 2nd arg
-- add diff to `TrackedValue`
+- don't mismatch preset on the first change (mark it with \*)
 - returning `TrackedValue` from `getProp()` call makes sense only in `p.updateWithProps`, so pass `getTrackedValue` fn as arg to `updateWithProps` factory method
-- добавить в метод draw аргумент playing (иногда надо по разному реагировать)
-- добавить в AnimatedValue возможность ориентироваться на time, потому что если на паузе, то получится сдвиг (тк вызов nextStep)
-
+- make animations independent from canvas size (?)
 - draw fullscreen icon by myself (renders differently on windows)
 - sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - add onScreenResize callback to factory (for pulse bg = black on resize)
 - make preview sizes in percentages
-- make animations independent from canvas size (?)
 - catch particular sketch errors (to show other more successful ones)
 - each preset may have a timestamp to play animation from (for better showiness)
 - add "save as image" button
@@ -33,6 +29,8 @@
 
 # ✅ DONE
 
+- "export preset" button
+- добавить в AnimatedValue возможность ориентироваться на time, потому что если на паузе, то получится сдвиг (тк вызов nextStep)
 - make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)
 - FIX: links are not clickable in app header (was fixed by itself somehow...)
 - pass props to factory as init args
@@ -66,3 +64,6 @@
 - next/prev animation modal (using keyboard arrows)
 - more advanced controls: transformers, l/r arrows
 - Smooth animation start (with easing)
+- add diff to `TrackedValue`
+- добавить в метод draw аргумент playing (иногда надо по разному реагировать)
+- add callback to `TrackedValue.ArrayUtils.someHasChanged` signature as 2nd arg

@@ -1,4 +1,4 @@
-import type { IParams } from "../models";
+import { type IControl, type IControls, type IParams } from "../models";
 
 function serializeParams(params: IParams): string {
   return Object.entries(params)
@@ -9,6 +9,29 @@ function serializeParams(params: IParams): string {
 
 export function areParamsEqual(a: IParams, b: IParams): boolean {
   return serializeParams(a) === serializeParams(b);
+}
+
+function getRandomValueFromControl(c: IControl): number {
+  switch (c.type) {
+    case "boolean":
+      return Math.round(Math.random());
+    case "choice":
+      return Math.round(Math.random() * (c.options.length - 1));
+    case "color":
+      return Math.round(Math.random() * (c.colors.length - 1));
+    case "range":
+      return (
+        Math.floor((Math.random() * (c.max - c.min)) / c.step) * c.step + c.min
+      );
+  }
+}
+
+export function getRandomParams<ParamKey extends string = string>(
+  controls: IControls<ParamKey>,
+): IParams<ParamKey> {
+  return Object.entries<IControl>(controls).reduce((acc, [key, val]) => {
+    return { ...acc, [key]: getRandomValueFromControl(val) };
+  }, {}) as IParams<ParamKey>;
 }
 
 export function delay(delay: number) {
