@@ -13,6 +13,7 @@ export function PlaybackControls(props: {
   onJumpNFrames: (N: number) => () => void;
   onPlayWithCustomDelta: (delta: number) => () => void;
   onStopPlayingWithCustomDelta: () => void;
+  onExport: () => void;
 }) {
   return (
     <div className={styles.PlaybackControls}>
@@ -23,7 +24,9 @@ export function PlaybackControls(props: {
         >
           <strong>⛶</strong>
         </button>
-        <button className={styles.TextButton}>Capture</button>
+        <button className={styles.TextButton} onClick={props.onExport}>
+          Capture
+        </button>
       </div>
       <div className={styles.Section}>
         <JumpNFramesButton
@@ -67,6 +70,8 @@ export function PlaybackControls(props: {
               </span>
             </>
           }
+          active
+          activationAnimationDuration={0}
         />
       </div>
     </div>
@@ -86,7 +91,7 @@ export function JumpNFramesButton(props: {
   const { handlePress, handleRelease } = useLongPress(
     HOLD_TIMEOUT,
     props.onLongPress,
-    props.onLongPressRelease
+    props.onLongPressRelease,
   );
 
   return (

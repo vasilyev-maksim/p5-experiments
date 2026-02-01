@@ -47,9 +47,9 @@ export function createSketch<Params extends string>(
   // Note that `api` is not available in the topmost scope to avoid issues with p5 instance init order.
   argsFactory: (api: Api<Params>) => CreateSketchArgs<Params>,
 ): ISketchFactory<Params> {
-  return (initialProps) => (p) => {
+  return (initialProps, initExportCallback) => (p) => {
     let time = 0,
-      animationsTime = 0,
+      drawsCount = 0,
       initialPropsUpdate = true,
       props: TrackedProps<Params>,
       draw: ReturnType<CreateSketchArgs<Params>["draw"]>;
@@ -92,38 +92,6 @@ export function createSketch<Params extends string>(
       },
     };
 
-    function updateTrackedProps(newRawProps: ISketchProps<Params>) {
-      if (!props) {
-        props = {} as any;
-      }
-
-      (Object.keys(newRawProps) as PropNames<Params>[]).forEach((key) => {
-        if (props[key] === undefined) {
-          props[key] = new TrackedValue(newRawProps[key] as any) as any;
-        } else {
-          props[key].value = newRawProps[key];
-        }
-      });
-    }
-
-    function updateMemos(force: boolean = false) {
-      memos.forEach((memo) => {
-        memo.recalc(force);
-      });
-    }
-
-    function updateAnimations(force: boolean = false) {
-      animations.forEach((animations) => {
-        animations.recalc(animationsTime, force);
-      });
-    }
-
-    function runAnimations() {
-      animations.forEach((animations) => {
-        animations.runAnimationStep(animationsTime);
-      });
-    }
-
     // initialize tracked props immediately (even before setups), don't move this line
     updateTrackedProps(initialProps);
 
@@ -137,12 +105,8 @@ export function createSketch<Params extends string>(
       // set time using initial time shift (for pretty previews)
       time = api.getProp("timeShift") ?? 0;
 
-      // [potential bug] hope `args.setup` won't need initialized memos any time soon lol
-      // Context: in pillars sketch we calculate memo based on p5's random seed,
-      // so memos can't be initialized before `p.randomSeed(...)` in setup,
-      // that's why the line below is there and `force` arg = true
-      updateMemos(true);
-      updateAnimations(true);
+      updateMemos();
+      updateAnimations();
 
       args.setup?.(api);
 
@@ -154,44 +118,46 @@ export function createSketch<Params extends string>(
         import.meta.env.VITE_DEV_TOOLS === "1"
           ? () => {
               argDraw();
-
-              p.push();
-              {
-                // p.stroke("white");
-                p.fill("white");
-                p.text(time, 10, 10, 20, 20);
-                p.stroke("white");
-                p.strokeWeight(1);
-                p.noFill();
-
-                p.translate(p.width / 2, p.height / 2);
-                const size = Math.max(
-                  p.width - p.mouseX * 2,
-                  p.height - p.mouseY * 2,
-                );
-                const tl = [-size / 2, -size / 2] as const;
-                p.rect(...tl, size, size);
-                p.fill("white");
-
-                p.textSize(20);
-                p.strokeWeight(1);
-
-                p.text(size, ...tl);
-              }
-              p.pop();
+              drawDevTools();
             }
           : argDraw;
 
       if (api.getProp("playing") === false) {
         p.noLoop();
       }
+
+      initExportCallback?.((filename, exportWidth, exportHeight) => {
+        p.noLoop();
+
+        p.resizeCanvas(exportWidth, exportHeight, true);
+        props["canvasHeight"].value = exportHeight;
+        props["canvasWidth"].value = exportWidth;
+        updateMemos();
+        updateAnimations(true);
+        draw();
+        p.saveCanvas(filename);
+
+        const prevW = props["canvasWidth"].prevValue!,
+          prevH = props["canvasHeight"].prevValue!;
+
+        p.resizeCanvas(prevW, prevH, true);
+        props["canvasHeight"].value = prevH;
+        props["canvasWidth"].value = prevW;
+        updateMemos();
+        updateAnimations(true);
+        draw();
+
+        if (props["playing"].value) {
+          p.loop();
+        }
+      });
     };
 
     p.draw = () => {
       runAnimations();
       draw();
       time += api.getProp("timeDelta");
-      animationsTime++;
+      drawsCount++;
     };
 
     p.updateWithProps = (newRawProps) => {
@@ -219,7 +185,7 @@ export function createSketch<Params extends string>(
         if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
           // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
           // The reason is that `p.draw` implies time increase, which is unintentional, we just want to redraw.
-          p.resizeCanvas(canvasWidth.value, canvasHeight.value, true);
+          p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
         }
 
         // play/pause
@@ -237,5 +203,63 @@ export function createSketch<Params extends string>(
         initialPropsUpdate = false;
       }
     };
+
+    function updateTrackedProps(newRawProps: ISketchProps<Params>) {
+      if (!props) {
+        props = {} as any;
+      }
+
+      (Object.keys(newRawProps) as PropNames<Params>[]).forEach((key) => {
+        if (props[key] === undefined) {
+          props[key] = new TrackedValue(undefined) as any;
+        }
+        props[key].value = newRawProps[key];
+      });
+    }
+
+    function updateMemos() {
+      memos.forEach((memo) => {
+        memo.recalc();
+      });
+    }
+
+    function updateAnimations(force: boolean = false) {
+      animations.forEach((animations) => {
+        animations.recalc(drawsCount);
+        if (force) {
+          animations.forceAnimationsToEnd(time);
+        }
+      });
+    }
+
+    function runAnimations() {
+      animations.forEach((animations) => {
+        animations.runAnimationStep(drawsCount);
+      });
+    }
+
+    function drawDevTools() {
+      p.push();
+      {
+        // p.stroke("white");
+        p.fill("white");
+        p.text(time, 10, 10, 20, 20);
+        p.stroke("white");
+        p.strokeWeight(1);
+        p.noFill();
+
+        p.translate(p.width / 2, p.height / 2);
+        const size = Math.max(p.width - p.mouseX * 2, p.height - p.mouseY * 2);
+        const tl = [-size / 2, -size / 2] as const;
+        p.rect(...tl, size, size);
+        p.fill("white");
+
+        p.textSize(20);
+        p.strokeWeight(1);
+
+        p.text(size, ...tl);
+      }
+      p.pop();
+    }
   };
 }

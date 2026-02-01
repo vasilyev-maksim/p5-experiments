@@ -24,11 +24,11 @@ export class MemoizedAnimatedValue<ArgsType extends any[]> {
     );
   }
 
-  public recalc(time: number, force = false): this {
-    this.memoizedValue.recalc(force);
-    if (force || this.memoizedValue.hasChanged) {
+  public recalc(time: number): this {
+    this.memoizedValue.recalc();
+    if (this.memoizedValue.hasChanged) {
       this.animatedValue.animateTo({
-        value: this.memoizedValue.value,
+        value: this.memoizedValue.value!,
         startTime: time,
       });
     }
@@ -41,5 +41,9 @@ export class MemoizedAnimatedValue<ArgsType extends any[]> {
 
   public runAnimationStep(time: number) {
     this.animatedValue.runAnimationStep(time);
+  }
+
+  public forceAnimationsToEnd(time: number) {
+    this.animatedValue.forceToEnd(time);
   }
 }

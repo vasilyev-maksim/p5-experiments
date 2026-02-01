@@ -14,15 +14,14 @@ export class MemoizedValue<
     // Sometimes we need a reference to `MemoizedValue` instance
     // before it can actually be initialized with a real value,
     // that's why there is `undefined` provided as first arg
-    super(undefined as any, comparator);
+    super(undefined, comparator);
   }
 
-  /** Calculates new value if some of args changed (or if `force` is true) */
-  public recalc(force = false): this {
-    this.value =
-      force || TrackedArray.someHasChanged(this.deps)
-        ? this.fn(...(TrackedArray.unbox(this.deps) as ArgsType))
-        : this.value;
+  /** Calculates new value if some of args changed */
+  public recalc(): this {
+    this.value = TrackedArray.someHasChanged(this.deps)
+      ? this.fn(...(TrackedArray.unbox(this.deps) as ArgsType))
+      : this.value!;
 
     return this;
   }

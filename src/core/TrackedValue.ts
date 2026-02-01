@@ -1,9 +1,9 @@
-export type TrackedValueComparator<T> = (a: T, b: T) => boolean;
+export type TrackedValueComparator<T> = (a?: T, b?: T) => boolean;
 
 export class TrackedValue<T> {
-  private static DEFAULT_COMPARATOR = <T>(a: T, b: T) => a === b;
-  private _value: T;
-  private _prevValue: T;
+  private static DEFAULT_COMPARATOR = <T>(a?: T, b?: T) => a === b;
+  private _value?: T;
+  private _prevValue?: T;
 
   public set value(val: T) {
     this._prevValue = this._value;
@@ -11,7 +11,11 @@ export class TrackedValue<T> {
   }
 
   public get value(): T {
-    return this._value;
+    if (this._value === undefined) {
+      throw new Error("Can't access value of non-initialized tracked value.");
+    } else {
+      return this._value;
+    }
   }
 
   public get prevValue() {
@@ -23,7 +27,7 @@ export class TrackedValue<T> {
   }
 
   public constructor(
-    initValue: T,
+    initValue?: T,
     private readonly comparator: TrackedValueComparator<T> = TrackedValue.DEFAULT_COMPARATOR,
   ) {
     this._value = initValue;

@@ -58,6 +58,10 @@ export class AnimatedArray {
     }
   }
 
+  public forceToEnd(time: number) {
+    this.array.forEach((x) => x.forceToEnd(time));
+  }
+
   public runAnimationStep(currentTime: number) {
     this.array.forEach((x) => x.runAnimationStep(currentTime));
   }
@@ -67,6 +71,6 @@ export class AnimatedArray {
   }
 
   public getDestinationValue() {
-    return this.array.map((x) => x.getDestinationValue()!);
+    return this.array.map((x) => x.getEndValue()!);
   }
 }

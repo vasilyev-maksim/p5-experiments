@@ -29,8 +29,8 @@ export class MemoizedAnimatedColors<ArgsType extends any[]> {
     );
   }
 
-  public recalc(time: number, force = false): this {
-    this.memoizedAnimatedArray.recalc(time, force);
+  public recalc(time: number): this {
+    this.memoizedAnimatedArray.recalc(time);
     return this;
   }
 
@@ -41,5 +41,9 @@ export class MemoizedAnimatedColors<ArgsType extends any[]> {
 
   public runAnimationStep(time: number) {
     this.memoizedAnimatedArray.runAnimationStep(time);
+  }
+
+  public forceAnimationsToEnd(time: number) {
+    this.memoizedAnimatedArray.forceAnimationsToEnd(time);
   }
 }

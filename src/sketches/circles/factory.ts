@@ -20,8 +20,8 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
   }) => {
     const animatedRadius = createAnimatedValue(
         ANIMATION_SPEED,
-        (canvasWidth, zoom) => (canvasWidth * zoom) / 120,
-        [getTrackedProp("canvasWidth"), getTrackedProp("ZOOM")],
+        (canvasHeight, zoom) => ((zoom * canvasHeight) / 811) * 9, // 1158 10
+        [getTrackedProp("canvasHeight"), getTrackedProp("ZOOM")],
       ),
       gap = createMemo(
         (x) => p.map(x, controls.GAP.min, controls.GAP.max, 0.1, 3),

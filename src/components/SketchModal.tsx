@@ -1,4 +1,9 @@
-import type { IPreset, ISketch, SketchCanvasSize } from "../models";
+import type {
+  ExportCallback,
+  IPreset,
+  ISketch,
+  SketchCanvasSize,
+} from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useKeyboardShortcuts, useModalBehavior, useViewport } from "../hooks";
@@ -18,6 +23,9 @@ import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
 import { copyPresetCodeToClipboard, getRandomParams } from "@/utils/misc";
+
+const EXPORT_WIDTH = 3840 / 2,
+  EXPORT_HEIGHT = 2160 / 2;
 
 export const SketchModal = ({
   sketch,
@@ -88,16 +96,20 @@ export const SketchModal = ({
   );
   /** manual time delta is used by playback controls and takes precedence over timeDelta (if former is set) */
   const [manualTimeDelta, setManualTimeDelta] = useState<number>();
+  const exportCallback = useRef<ExportCallback>(null);
 
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
   };
+
   const applyPreset = (preset: IPreset) => {
     setPresetName(preset.name);
     setParams(preset.params);
     setTimeDelta(preset.params.timeDelta ?? 1);
   };
+
   const playPause = () => setPlaying((x) => !x);
+
   const openInFullscreen = () => {
     if (sketchCanvasRef.current) {
       setSize("fullscreen");
@@ -111,6 +123,14 @@ export const SketchModal = ({
         }
       }
     }
+  };
+
+  const handleExport = () => {
+    exportCallback.current?.(
+      `${sketch.id}_wallpaper.jpg`,
+      EXPORT_WIDTH,
+      EXPORT_HEIGHT,
+    );
   };
 
   const jumpNFrames = (N: number) => () => {
@@ -268,6 +288,7 @@ export const SketchModal = ({
                 presetName={presetName}
                 timeShift={timeShift}
                 timeDelta={manualTimeDelta || timeDelta}
+                initExportCallback={(cb) => (exportCallback.current = cb)}
               />
             </div>
             <animated.div
@@ -288,6 +309,7 @@ export const SketchModal = ({
                 onJumpNFrames={jumpNFrames}
                 onPlayWithCustomDelta={playWithCustomDelta}
                 onStopPlayingWithCustomDelta={stopPlayingWithCustomDelta}
+                onExport={handleExport}
               />
             </animated.div>
             <animated.div

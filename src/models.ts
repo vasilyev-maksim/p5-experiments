@@ -12,8 +12,16 @@ export type ISketchProps<ParamKey extends string = string> = {
   randomSeed: number;
 };
 
+export type ExportCallback = (
+  exportFilename: string,
+  width: number,
+  height: number,
+) => void;
+export type InitExportCallback = (callback: ExportCallback) => void;
+
 export type ISketchFactory<ParamKey extends string = string> = (
   initialProps: ISketchProps<ParamKey>,
+  initExportCallback?: InitExportCallback,
 ) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
 interface IControlBase {

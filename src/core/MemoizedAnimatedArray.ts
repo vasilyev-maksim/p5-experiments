@@ -27,9 +27,9 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
     // TODO: написать AnimatedArray + полумать использовать композиция (вместо наследования) в классах
   }
 
-  public recalc(time: number, force = false): this {
-    this.memoizedArray.recalc(force);
-    if (force || this.memoizedArray.hasChanged) {
+  public recalc(time: number): this {
+    this.memoizedArray.recalc();
+    if (this.memoizedArray.hasChanged) {
       this.animatedArray.animateTo({
         values: this.memoizedArray.value,
         startTime: time,
@@ -44,5 +44,9 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
 
   public runAnimationStep(time: number) {
     this.animatedArray.runAnimationStep(time);
+  }
+
+  public forceAnimationsToEnd(time: number) {
+    this.animatedArray.forceToEnd(time);
   }
 }

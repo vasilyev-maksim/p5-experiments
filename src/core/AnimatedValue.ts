@@ -1,7 +1,7 @@
 export class AnimatedValue {
   private start: number | undefined;
   private interpolated: number | undefined;
-  private destination: number | undefined;
+  private end: number | undefined;
   private startTime: number | undefined;
   private endTime: number | undefined;
   private onAnimationEnd?: (finalValue: number) => void;
@@ -15,7 +15,7 @@ export class AnimatedValue {
     if (initialValue !== undefined) {
       this.start = initialValue;
       this.interpolated = initialValue;
-      this.destination = initialValue;
+      this.end = initialValue;
     }
   }
 
@@ -34,7 +34,7 @@ export class AnimatedValue {
     this.endTime = startTime + (animationDuration ?? this.animationDuration);
     this.start = this.start === undefined ? value : this.interpolated;
     this.interpolated = this.start;
-    this.destination = value;
+    this.end = value;
     this.onAnimationEnd = onAnimationEnd;
   }
 
@@ -47,17 +47,16 @@ export class AnimatedValue {
       }
 
       if (
-        this.destination !== undefined &&
+        this.end !== undefined &&
         this.start !== undefined &&
-        this.destination !== this.start &&
+        this.end !== this.start &&
         this.interpolated !== undefined
       ) {
         const ratio =
           (currentTime - this.startTime) / (this.endTime - this.startTime);
 
         this.interpolated =
-          this.start +
-          this.timingFunction(ratio) * (this.destination - this.start);
+          this.start + this.timingFunction(ratio) * (this.end - this.start);
 
         if (ratio === 1 && this.onAnimationEnd !== undefined) {
           this.onAnimationEnd(this.interpolated);
@@ -67,12 +66,17 @@ export class AnimatedValue {
     }
   }
 
+  public forceToEnd(time: number) {
+    this.interpolated = this.end;
+    this.endTime = time;
+  }
+
   public getCurrentValue() {
     return this.interpolated;
   }
 
-  public getDestinationValue() {
-    return this.destination;
+  public getEndValue() {
+    return this.end;
   }
 
   public getStartValue() {
@@ -83,9 +87,9 @@ export class AnimatedValue {
     if (
       this.interpolated !== undefined &&
       this.start !== undefined &&
-      this.destination !== undefined
+      this.end !== undefined
     ) {
-      return (this.interpolated - this.start) / (this.destination - this.start);
+      return (this.interpolated - this.start) / (this.end - this.start);
     }
   }
 

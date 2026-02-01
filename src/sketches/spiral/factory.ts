@@ -45,7 +45,7 @@ export const factory = createSketch<Params>(
     return {
       setup: () => {
         p.background(BG_COLOR);
-        p.fill(255, 0, 0, 10);
+        // p.fill(255, 0, 0, 10);
         p.strokeWeight(1);
         p.angleMode("degrees");
       },
