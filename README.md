@@ -3,17 +3,16 @@
 # 📋 TODO
 
 - don't mismatch preset on the first change (mark it with \*)
-- returning `TrackedValue` from `getProp()` call makes sense only in `p.updateWithProps`, so pass `getTrackedValue` fn as arg to `updateWithProps` factory method
 - make animations independent from canvas size (?)
+  - tiles
+- rethink zigzags
 - draw fullscreen icon by myself (renders differently on windows)
 - sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - add onScreenResize callback to factory (for pulse bg = black on resize)
 - make preview sizes in percentages
 - catch particular sketch errors (to show other more successful ones)
 - each preset may have a timestamp to play animation from (for better showiness)
-- add "save as image" button
 - use query params for direct sketch links
-- add randomize button for controls and random seed
 - remove param controls margin-top if no presets
 - focus trap for modal (home page links are accessible)
 - tabIndex everywhere
@@ -21,6 +20,7 @@
 
 # 💡 NICE TO HAVE
 
+- returning `TrackedValue` from `getProp()` call makes sense only in `p.updateWithProps`, so pass `getTrackedValue` fn as arg to `updateWithProps` factory method
 - move left side bar to the right (?)
 - mobile version (?), at least info message inviting to desktop version
 - perf opt: use cache for init data (like precomputed partitions array in TILES)
@@ -29,6 +29,8 @@
 
 # ✅ DONE
 
+- add "save as image" button
+- add randomize button for controls and random seed
 - "export preset" button
 - добавить в AnimatedValue возможность ориентироваться на time, потому что если на паузе, то получится сдвиг (тк вызов nextStep)
 - make WIDTH and HEIGHT a dynamic pro, not a factory func arg (The problem is when we resize canvas (going fullscreen) animation drops)

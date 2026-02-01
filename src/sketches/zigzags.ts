@@ -35,16 +35,18 @@ const controls = {
 
 type Params = ExtractParams<typeof controls>;
 
-const factory = createSketch<Params>((p, getProp) => {
+const factory = createSketch<Params>(({ p, getProp, getTime }) => {
   return {
     setup: () => {
       p.angleMode("radians");
     },
-    draw: (time) => {
+    draw: () => () => {
+      const time = getTime();
+
       p.background("black");
-      const PADDING_PERCENT = getProp("PADDING_PERCENT").value,
-        RESOLUTION = getProp("RESOLUTION").value,
-        COLOR_INDEX = getProp("COLOR").value;
+      const PADDING_PERCENT = getProp("PADDING_PERCENT"),
+        RESOLUTION = getProp("RESOLUTION"),
+        COLOR_INDEX = getProp("COLOR");
 
       const color = controls.COLOR.colors[COLOR_INDEX][0];
       p.stroke(color);
