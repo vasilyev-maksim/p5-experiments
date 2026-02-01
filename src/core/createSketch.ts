@@ -126,31 +126,7 @@ export function createSketch<Params extends string>(
         p.noLoop();
       }
 
-      initExportCallback?.((filename, exportWidth, exportHeight) => {
-        p.noLoop();
-
-        p.resizeCanvas(exportWidth, exportHeight, true);
-        props["canvasHeight"].value = exportHeight;
-        props["canvasWidth"].value = exportWidth;
-        updateMemos();
-        updateAnimations(true);
-        draw();
-        p.saveCanvas(filename);
-
-        const prevW = props["canvasWidth"].prevValue!,
-          prevH = props["canvasHeight"].prevValue!;
-
-        p.resizeCanvas(prevW, prevH, true);
-        props["canvasHeight"].value = prevH;
-        props["canvasWidth"].value = prevW;
-        updateMemos();
-        updateAnimations(true);
-        draw();
-
-        if (props["playing"].value) {
-          p.loop();
-        }
-      });
+      initExportCallback?.(exportCallback);
     };
 
     p.draw = () => {
@@ -260,6 +236,42 @@ export function createSketch<Params extends string>(
         p.text(size, ...tl);
       }
       p.pop();
+    }
+
+    function exportCallback(
+      filename: string,
+      exportWidth: number,
+      exportHeight: number,
+    ) {
+      // manually stop the draw loop
+      p.noLoop();
+
+      // draw the same frame but for wallpaper resolution
+      p.resizeCanvas(exportWidth, exportHeight, true);
+      // update related tracked props, memos and animations
+      props["canvasHeight"].value = exportHeight;
+      props["canvasWidth"].value = exportWidth;
+      updateMemos();
+      // all animations forcibly set to end values to see correct final result
+      updateAnimations(true);
+      draw();
+
+      p.saveCanvas(filename);
+
+      const prevW = props["canvasWidth"].prevValue!,
+        prevH = props["canvasHeight"].prevValue!;
+
+      // revert to old values and draw what user saw initially
+      p.resizeCanvas(prevW, prevH, true);
+      props["canvasHeight"].value = prevH;
+      props["canvasWidth"].value = prevW;
+      updateMemos();
+      updateAnimations(true);
+      draw();
+
+      if (props["playing"].value) {
+        p.loop();
+      }
     }
   };
 }
