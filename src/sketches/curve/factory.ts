@@ -3,7 +3,7 @@ import { range } from "@/utils/misc";
 import { controls, type Params } from "./controls";
 
 const JOINT_SIZE = 10;
-const ANIMATION_SPEED = 30;
+const ANIMATION_SPEED = 25;
 
 export const factory = createSketch<Params>(
   ({

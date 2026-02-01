@@ -5,7 +5,7 @@ import p5 from "p5";
 import { controls, type Params } from "./controls";
 import type { ISketchFactory } from "@/models";
 
-const ANIMATION_SPEED = 30;
+const ANIMATION_SPEED = 25;
 const COLOR_ANIMATION_SPEED = 60;
 
 export const factory: ISketchFactory<Params> = createSketch<Params>(

@@ -3,7 +3,7 @@ import { range } from "../../utils/misc";
 import { createSketch } from "@core/createSketch";
 import { type Params, controls } from "./controls";
 
-const ANIMATION_SPEED = 30;
+const ANIMATION_SPEED = 25;
 const POLYGONS_COUNT = 500,
   BG_COLOR = "black";
 
@@ -45,7 +45,6 @@ export const factory = createSketch<Params>(
     return {
       setup: () => {
         p.background(BG_COLOR);
-        // p.fill(255, 0, 0, 10);
         p.strokeWeight(1);
         p.angleMode("degrees");
       },
