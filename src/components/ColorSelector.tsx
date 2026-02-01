@@ -3,7 +3,7 @@ import type { IColorControl } from "../models";
 import { BooleanParamControl } from "./BooleanParamControl";
 import { ColorOptionButton } from "./ColorOptionButton";
 import { OptionSelector } from "./OptionSelector";
-import styles from "./ColorSelector.module.css";
+import { ControlItemsGroup } from "./ParamControls";
 
 const SHUFFLE_INTERVAL = 4000;
 
@@ -35,7 +35,7 @@ export function ColorSelector(props: {
   }, [autoCycleActive, props.value, colors.length]);
 
   return (
-    <>
+    <ControlItemsGroup>
       <OptionSelector
         valuesCount={colors.length}
         renderOption={(value, active, onClick) => {
@@ -55,7 +55,6 @@ export function ColorSelector(props: {
       />
       {(props.shuffle ?? -1) > -1 && (
         <BooleanParamControl
-          className={styles.ShuffleControl}
           label={props.shuffleSwitchLabel ?? "Shuffle colors"}
           value={autoCycleActive}
           active={props.active}
@@ -63,6 +62,6 @@ export function ColorSelector(props: {
           onChange={setAutoCycleActive}
         />
       )}
-    </>
+    </ControlItemsGroup>
   );
 }

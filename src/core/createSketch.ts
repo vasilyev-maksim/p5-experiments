@@ -112,7 +112,6 @@ export function createSketch<Params extends string>(
 
       // initialize draw func passing p5 instance (`api.p`),
       // which is guaranteed to be initialized properly at this moment
-
       const argDraw = args.draw(api);
       draw =
         import.meta.env.VITE_DEV_TOOLS === "1"
@@ -217,7 +216,6 @@ export function createSketch<Params extends string>(
     function drawDevTools() {
       p.push();
       {
-        // p.stroke("white");
         p.fill("white");
         p.text(time, 10, 10, 20, 20);
         p.stroke("white");

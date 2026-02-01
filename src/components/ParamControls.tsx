@@ -13,6 +13,7 @@ import { ColorSelector } from "./ColorSelector";
 import { OptionSelector } from "./OptionSelector";
 import { OptionButton } from "./OptionButton";
 import { BooleanParamControl } from "./BooleanParamControl";
+import type { PropsWithChildren } from "react";
 
 export function ParamControls(props: {
   sketch: ISketch<string>;
@@ -61,85 +62,91 @@ export function ParamControls(props: {
         showHeader={showHeader.wasRun}
         animationDuration={showHeader.duration}
       >
-        {springs.map(({ x }, i) => {
-          const [key, c] = entries[i];
-          let body = null;
-          const value = props.params[key];
+        <ControlItemsGroup>
+          {springs.map(({ x }, i) => {
+            const [key, c] = entries[i];
+            let body = null;
+            const value = props.params[key];
 
-          if (c.type === "range") {
-            const valueStr = c.valueFormatter?.(value, c) ?? value;
-            const label = c.label ?? key;
-            body = (
-              <Slider
-                label={label + ": " + valueStr}
-                value={value}
-                onChange={(val) => props.onParamChange(key, val)}
-                max={c.max}
-                min={c.min}
-                step={c.step}
-                active={initControls.wasRun}
-                activationAnimationDuration={initControls.duration}
-              />
-            );
-          } else if (c.type === "color") {
-            body = (
-              <ColorSelector
-                title={c.label + ": " + value}
-                colors={c.colors}
-                value={value}
-                onChange={(val) => props.onParamChange(key, val)}
-                active={initControls.wasRun}
-                animationDuration={initControls.duration}
-                shuffle={c.shuffle}
-                shuffleSwitchLabel={c.shuffleSwitchLabel}
-              />
-            );
-          } else if (c.type === "boolean") {
-            body = (
-              <BooleanParamControl
-                label={c.label}
-                value={value === 1}
-                active={initControls.wasRun}
-                animationDuration={initControls.duration}
-                onChange={(val) => props.onParamChange(key, val ? 1 : 0)}
-              />
-            );
-          } else if (c.type === "choice") {
-            body = (
-              <OptionSelector
-                valuesCount={c.options.length}
-                renderOption={(value, active, onClick) => (
-                  <OptionButton
-                    active={active}
-                    onClick={onClick}
-                    label={c.options[value].label}
-                    mini
-                    animationDuration={initControls.duration}
-                  />
-                )}
-                title={c.label}
-                value={value}
-                onChange={(val) => props.onParamChange(key, val)}
-                active={initControls.wasRun}
-                gap={5}
-              />
-            );
-          }
+            if (c.type === "range") {
+              const valueStr = c.valueFormatter?.(value, c) ?? value;
+              const label = c.label ?? key;
+              body = (
+                <Slider
+                  label={label + ": " + valueStr}
+                  value={value}
+                  onChange={(val) => props.onParamChange(key, val)}
+                  max={c.max}
+                  min={c.min}
+                  step={c.step}
+                  active={initControls.wasRun}
+                  activationAnimationDuration={initControls.duration}
+                />
+              );
+            } else if (c.type === "color") {
+              body = (
+                <ColorSelector
+                  title={c.label + ": " + value}
+                  colors={c.colors}
+                  value={value}
+                  onChange={(val) => props.onParamChange(key, val)}
+                  active={initControls.wasRun}
+                  animationDuration={initControls.duration}
+                  shuffle={c.shuffle}
+                  shuffleSwitchLabel={c.shuffleSwitchLabel}
+                />
+              );
+            } else if (c.type === "boolean") {
+              body = (
+                <BooleanParamControl
+                  label={c.label}
+                  value={value === 1}
+                  active={initControls.wasRun}
+                  animationDuration={initControls.duration}
+                  onChange={(val) => props.onParamChange(key, val ? 1 : 0)}
+                />
+              );
+            } else if (c.type === "choice") {
+              body = (
+                <OptionSelector
+                  valuesCount={c.options.length}
+                  renderOption={(value, active, onClick) => (
+                    <OptionButton
+                      active={active}
+                      onClick={onClick}
+                      label={c.options[value].label}
+                      mini
+                      animationDuration={initControls.duration}
+                    />
+                  )}
+                  title={c.label}
+                  value={value}
+                  onChange={(val) => props.onParamChange(key, val)}
+                  active={initControls.wasRun}
+                  gap={5}
+                />
+              );
+            }
 
-          return (
-            <animated.div
-              key={i}
-              className={styles.Item}
-              style={{
-                scale: x.to([0, 1], [0.9, 1]),
-                opacity: x,
-              }}
-            >
-              {body}
-            </animated.div>
-          );
-        })}
+            return (
+              <animated.div
+                key={i}
+                className={styles.Item}
+                style={{
+                  scale: x.to([0, 1], [0.9, 1]),
+                  opacity: x,
+                }}
+              >
+                {body}
+              </animated.div>
+            );
+          })}
+        </ControlItemsGroup>
       </SectionLayout>
     )
   );
+}
+
+export function ControlItemsGroup(props: PropsWithChildren) {
+  return <div className={styles.ControlItemsLayout}>{props.children}</div>;
 }

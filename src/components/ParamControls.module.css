@@ -3,9 +3,6 @@
 }
 
 .ItemsWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
   position: relative;
   top: -3px;
   padding-right: 6px;
@@ -15,5 +12,10 @@
   padding: 0 5px;
   border-radius: 3px;
   background-color: var(--primaryColorFaded);
-  /* margin: 1px; */
+}
+
+.ControlItemsLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
