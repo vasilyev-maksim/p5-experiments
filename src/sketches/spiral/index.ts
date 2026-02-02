@@ -10,8 +10,6 @@ export const spiralSketch: ISketch<Params> = {
   preview: {
     size: 515,
   },
-  timeShift: 1002,
   controls,
   presets,
-  defaultParams: presets[0].params,
 };

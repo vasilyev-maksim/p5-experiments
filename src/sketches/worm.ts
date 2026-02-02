@@ -109,9 +109,7 @@ export const wormSketch: ISketch<Params> = {
   preview: {
     size: 520,
   },
-  timeShift: 0,
   randomSeed: 44,
   controls,
   presets,
-  defaultParams: presets[0].params,
 };

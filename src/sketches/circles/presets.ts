@@ -13,7 +13,7 @@ export const presets: IPreset<Params>[] = [
       ZOOM: 1,
     },
     name: "heart",
-    timeShift: 85,
+    startTime: 85,
   },
   {
     params: {
@@ -74,7 +74,7 @@ export const presets: IPreset<Params>[] = [
       COLOR: 1,
     },
     name: "nature",
-    timeShift: 900,
+    startTime: 900,
   },
   {
     params: {
@@ -99,6 +99,6 @@ export const presets: IPreset<Params>[] = [
       COLOR: 6,
     },
     name: "turbulence",
-    timeShift: 325,
+    startTime: 325,
   },
 ];

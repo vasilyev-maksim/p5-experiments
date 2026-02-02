@@ -1,11 +1,18 @@
 # 👨‍💻 IN PROGRESS
 
+- each preset may have a timestamp to play animation from (for better showiness)
+  - spiral
+  - arcs
+  - pillars
+  - curve
+
 # 📋 TODO
 
+- implement playback controls using sketch event?
+- refactor timeShift/timeDelta mess in SketchModal
 - make play controls animation more user friendly
   - hide it by timer after mouse leave
   - show it once on modal expand (even with no mouse hovering)
-- rename timeshift to inittime
 - don't mismatch preset on the first change (mark it with \*)
 - make animations independent from canvas size (?)
   - tiles
@@ -15,7 +22,6 @@
 - add onScreenResize callback to factory (for pulse bg = black on resize)
 - make preview sizes in percentages
 - catch particular sketch errors (to show other more successful ones)
-- each preset may have a timestamp to play animation from (for better showiness)
 - use query params for direct sketch links
 - remove param controls margin-top if no presets
 - focus trap for modal (home page links are accessible)
@@ -33,6 +39,7 @@
 
 # ✅ DONE
 
+- rename timeShift to startTime
 - add "save as image" button
 - add randomize button for controls and random seed
 - "export preset" button

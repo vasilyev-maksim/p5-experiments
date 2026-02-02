@@ -16,6 +16,7 @@ export const presets: IPreset<Params>[] = [
       timeDelta: 1,
     },
     name: "spiral",
+    startTime: 1002,
   },
   {
     params: {

@@ -299,7 +299,7 @@ export function createSketch<Params extends string>(
       }
 
       function applyPreset(event: PresetChangeEvent) {
-        time = event.preset?.timeShift ?? time;
+        time = event.preset?.startTime ?? time;
         args.onPresetChange?.(event.preset);
       }
     };

@@ -27,7 +27,7 @@ export const SketchTile = forwardRef<
       invisible = false,
       animationDuration = 0,
     },
-    ref
+    ref,
   ) => {
     const { tileWidth, tileHeight, borderWidth } = useViewport();
 
@@ -41,7 +41,7 @@ export const SketchTile = forwardRef<
             [styles.Copy]: !interactive,
             [styles.Hidden]: invisible,
           },
-          className
+          className,
         )}
         onClick={onSelect}
         style={
@@ -60,11 +60,11 @@ export const SketchTile = forwardRef<
           sketch={sketch}
           playing={false}
           size="tile"
-          params={sketch.defaultParams}
-          timeShift={sketch.timeShift}
+          params={sketch.presets[0].params}
+          timeShift={sketch.presets[0].startTime}
         />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>
     );
-  }
+  },
 );

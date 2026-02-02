@@ -167,6 +167,7 @@ const presets: IPreset<Params>[] = [
       PADDING_PERCENT: 20,
     },
     name: "escalator",
+    startTime: 179,
   },
 ];
 
@@ -177,8 +178,6 @@ export const zigzagsSketch: ISketch<Params> = {
   preview: {
     size: 300,
   },
-  timeShift: 179,
   controls,
   presets,
-  defaultParams: presets[0].params,
 };

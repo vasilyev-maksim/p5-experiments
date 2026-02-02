@@ -10,8 +10,6 @@ export const circlesSketch: ISketch<Params> = {
   preview: {
     size: 700,
   },
-  timeShift: 85,
   controls,
   presets,
-  defaultParams: presets[0].params,
 };

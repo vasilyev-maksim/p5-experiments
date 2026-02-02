@@ -92,7 +92,7 @@ export type ExtractParams<T> = T extends IControls<infer P> ? P : string;
 export type IPreset<ParamKey extends string = string> = {
   name?: string;
   params: IParams<ParamKey>;
-  timeShift?: number;
+  startTime?: number;
 };
 
 export interface ISketch<ParamKey extends string = string> {
@@ -103,9 +103,7 @@ export interface ISketch<ParamKey extends string = string> {
   };
   factory: ISketchFactory<ParamKey>;
   randomSeed?: number;
-  timeShift?: number;
   controls: IControls<ParamKey>;
-  defaultParams: IParams<ParamKey>;
   presets: IPreset<ParamKey>[];
 }
 

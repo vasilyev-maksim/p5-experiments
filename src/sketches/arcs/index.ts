@@ -10,8 +10,6 @@ export const arcSketch: ISketch<Params> = {
   preview: {
     size: 300,
   },
-  timeShift: 236,
   controls,
   presets,
-  defaultParams: presets[0].params,
 };

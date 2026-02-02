@@ -15,6 +15,7 @@ export const presets: IPreset<Params>[] = [
       CURVATURE_TYPE: 0,
     },
     name: "touch",
+    startTime: 236,
   },
   {
     params: {
