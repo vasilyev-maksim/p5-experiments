@@ -22,7 +22,7 @@
 - add onScreenResize callback to factory (for pulse bg = black on resize)
 - make preview sizes in percentages
 - catch particular sketch errors (to show other more successful ones)
-- use query params for direct sketch links
+- use query params for direct sketch links (+ selected preset in qs)
 - remove param controls margin-top if no presets
 - focus trap for modal (home page links are accessible)
 - tabIndex everywhere
