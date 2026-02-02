@@ -1,28 +1,44 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 
+export type ExportRequestEvent = {
+  type: "export";
+  exportFileName: string;
+  exportFileWidth: number;
+  exportFileHeight: number;
+};
+
+export type PresetChangeEvent = {
+  type: "presetChange";
+  preset: IPreset;
+};
+
+export type SketchEvent = ExportRequestEvent | PresetChangeEvent;
+
 export type ISketchProps<ParamKey extends string = string> = {
   [K in ParamKey]: number;
 } & {
   playing: boolean;
-  presetName?: string;
   timeShift?: number;
   timeDelta: number;
   canvasWidth: number;
   canvasHeight: number;
   randomSeed: number;
+  event?: SketchEvent;
 };
 
-export type ExportCallback = (
-  exportFilename: string,
-  width: number,
-  height: number,
-) => void;
-export type InitExportCallback = (callback: ExportCallback) => void;
+// export type Init<T> = (arg: T) => void;
 
-export type ISketchFactory<ParamKey extends string = string> = (
-  initialProps: ISketchProps<ParamKey>,
-  initExportCallback?: InitExportCallback,
-) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
+// export type ExportCallback = (
+//   exportFilename: string,
+//   width: number,
+//   height: number,
+// ) => void;
+
+// export type SetSketchTimeCallback = (time: number) => void;
+
+export type ISketchFactory<ParamKey extends string = string> = (args: {
+  initialProps: ISketchProps<ParamKey>;
+}) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
 
 interface IControlBase {
   label: string;
@@ -76,6 +92,7 @@ export type ExtractParams<T> = T extends IControls<infer P> ? P : string;
 export type IPreset<ParamKey extends string = string> = {
   name?: string;
   params: IParams<ParamKey>;
+  timeShift?: number;
 };
 
 export interface ISketch<ParamKey extends string = string> {

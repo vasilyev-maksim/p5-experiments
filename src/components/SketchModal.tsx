@@ -1,5 +1,5 @@
 import type {
-  ExportCallback,
+  SketchEvent,
   IPreset,
   ISketch,
   SketchCanvasSize,
@@ -87,7 +87,6 @@ export const SketchModal = ({
   const [playing, setPlaying] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const [params, setParams] = useState(sketch.defaultParams);
-  const [presetName, setPresetName] = useState<string>();
   /** initially used for sketch timeShift (to match preview tile) and then for playback controls */
   const [timeShift, setTimeShift] = useState<number>(sketch.timeShift ?? 0);
   /** time delta is a speed of animation set by user */
@@ -96,15 +95,18 @@ export const SketchModal = ({
   );
   /** manual time delta is used by playback controls and takes precedence over timeDelta (if former is set) */
   const [manualTimeDelta, setManualTimeDelta] = useState<number>();
-  const exportCallback = useRef<ExportCallback>(null);
+  const [event, setEvent] = useState<SketchEvent>();
 
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
   };
 
   const applyPreset = (preset: IPreset) => {
-    setPresetName(preset.name);
     setParams(preset.params);
+    setEvent({
+      type: "presetChange",
+      preset,
+    });
     setTimeDelta(preset.params.timeDelta ?? 1);
   };
 
@@ -126,11 +128,12 @@ export const SketchModal = ({
   };
 
   const handleExport = () => {
-    exportCallback.current?.(
-      `${sketch.id}_wallpaper.jpg`,
-      EXPORT_WIDTH,
-      EXPORT_HEIGHT,
-    );
+    setEvent({
+      type: "export",
+      exportFileWidth: EXPORT_WIDTH,
+      exportFileHeight: EXPORT_HEIGHT,
+      exportFileName: `${sketch.id}_wallpaper.jpg`,
+    });
   };
 
   const jumpNFrames = (N: number) => () => {
@@ -285,10 +288,9 @@ export const SketchModal = ({
                 params={params}
                 playing={playing}
                 ref={sketchCanvasRef}
-                presetName={presetName}
                 timeShift={timeShift}
                 timeDelta={manualTimeDelta || timeDelta}
-                initExportCallback={(cb) => (exportCallback.current = cb)}
+                event={event}
               />
             </div>
             <animated.div

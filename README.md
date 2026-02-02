@@ -2,6 +2,10 @@
 
 # 📋 TODO
 
+- make play controls animation more user friendly
+  - hide it by timer after mouse leave
+  - show it once on modal expand (even with no mouse hovering)
+- rename timeshift to inittime
 - don't mismatch preset on the first change (mark it with \*)
 - make animations independent from canvas size (?)
   - tiles

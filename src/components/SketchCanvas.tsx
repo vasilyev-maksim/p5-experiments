@@ -4,7 +4,7 @@ import type {
   IParams,
   SketchCanvasSize,
   ISketchProps,
-  InitExportCallback,
+  SketchEvent,
 } from "../models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
@@ -20,11 +20,10 @@ export const SketchCanvas = forwardRef<
     size: SketchCanvasSize;
     playing: boolean;
     params: IParams;
-    presetName?: string;
     timeDelta?: number;
     timeShift?: number;
     id: string;
-    initExportCallback?: InitExportCallback;
+    event?: SketchEvent;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -40,28 +39,30 @@ export const SketchCanvas = forwardRef<
       ({
         ...props.params,
         playing: props.playing,
-        presetName: props.presetName,
         timeShift: props.timeShift ?? 0,
         timeDelta: props.timeDelta ?? 0,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
         randomSeed: props.sketch.randomSeed ?? 0,
+        event: props.event,
       }) as ISketchProps,
     [
       props.params,
       props.playing,
-      props.presetName,
       props.timeShift,
       props.timeDelta,
       canvasWidth,
       canvasHeight,
       props.sketch.randomSeed,
+      props.event,
     ],
   );
 
   const p5Sketch = useMemo(() => {
     // this time `sketchProps` are initial props
-    return props.sketch.factory(sketchProps, props.initExportCallback);
+    return props.sketch.factory({
+      initialProps: sketchProps,
+    });
   }, []);
 
   const { duration } =

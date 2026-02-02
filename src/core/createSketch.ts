@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
-import type { ISketchProps, ISketchFactory } from "../models";
+import type {
+  ISketchProps,
+  ISketchFactory,
+  SketchEvent,
+  ExportRequestEvent,
+  PresetChangeEvent,
+  IPreset,
+} from "../models";
 import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
 import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
@@ -17,6 +24,7 @@ export type CreateSketchArgs<Params extends string> = {
   // Why a factory? it allows us define helper render functions in closure with `api` var available.
   draw: (api: Api<Params>) => () => void;
   onPropsChanged?: (api: Api<Params>) => void;
+  onPresetChange?: (preset: IPreset) => void;
 };
 
 type Api<Params extends string> = {
@@ -47,229 +55,252 @@ export function createSketch<Params extends string>(
   // Note that `api` is not available in the topmost scope to avoid issues with p5 instance init order.
   argsFactory: (api: Api<Params>) => CreateSketchArgs<Params>,
 ): ISketchFactory<Params> {
-  return (initialProps, initExportCallback) => (p) => {
-    let time = 0,
-      drawsCount = 0,
-      initialPropsUpdate = true,
-      props: TrackedProps<Params>,
-      draw: ReturnType<CreateSketchArgs<Params>["draw"]>;
+  return ({ initialProps }) =>
+    (p) => {
+      let time = 0,
+        drawsCount = 0,
+        initialPropsUpdate = true,
+        props: TrackedProps<Params>,
+        draw: ReturnType<CreateSketchArgs<Params>["draw"]>;
 
-    const memos: MemoizedValue<any, any>[] = [];
-    const animations: Array<
-      | MemoizedAnimatedValue<any>
-      | MemoizedAnimatedArray<any>
-      | MemoizedAnimatedColors<any>
-    > = [];
+      const memos: MemoizedValue<any, any>[] = [];
+      const animations: Array<
+        | MemoizedAnimatedValue<any>
+        | MemoizedAnimatedArray<any>
+        | MemoizedAnimatedColors<any>
+      > = [];
 
-    const api: Api<Params> = {
-      p,
-      getTrackedProp: (k) => {
-        return props[k];
-      },
-      getProp: (k) => {
-        return api.getTrackedProp(k).value!;
-      },
-      getTime: () => time,
-      createMemo: (...args) => {
-        const memo = new MemoizedValue(...args);
-        memos.push(memo);
-        return memo;
-      },
-      createAnimatedValue: (...args) => {
-        const animation = new MemoizedAnimatedValue(...args);
-        animations.push(animation);
-        return animation;
-      },
-      createAnimatedArray: (...args) => {
-        const animation = new MemoizedAnimatedArray(...args);
-        animations.push(animation);
-        return animation;
-      },
-      createAnimatedColors: (...args) => {
-        const animation = new MemoizedAnimatedColors(...args);
-        animations.push(animation);
-        return animation;
-      },
-    };
+      const api: Api<Params> = {
+        p,
+        getTrackedProp: (k) => {
+          return props[k];
+        },
+        getProp: (k) => {
+          return api.getTrackedProp(k).value!;
+        },
+        getTime: () => time,
+        createMemo: (...args) => {
+          const memo = new MemoizedValue(...args);
+          memos.push(memo);
+          return memo;
+        },
+        createAnimatedValue: (...args) => {
+          const animation = new MemoizedAnimatedValue(...args);
+          animations.push(animation);
+          return animation;
+        },
+        createAnimatedArray: (...args) => {
+          const animation = new MemoizedAnimatedArray(...args);
+          animations.push(animation);
+          return animation;
+        },
+        createAnimatedColors: (...args) => {
+          const animation = new MemoizedAnimatedColors(...args);
+          animations.push(animation);
+          return animation;
+        },
+      };
 
-    // initialize tracked props immediately (even before setups), don't move this line
-    updateTrackedProps(initialProps);
+      // initialize tracked props immediately (even before setups), don't move this line
+      updateTrackedProps(initialProps);
 
-    const args = argsFactory(api);
+      const args = argsFactory(api);
 
-    p.setup = () => {
-      p.createCanvas(initialProps.canvasWidth, initialProps.canvasHeight);
-      p.randomSeed(initialProps.randomSeed);
-      p.noiseSeed(initialProps.randomSeed);
+      p.setup = () => {
+        p.createCanvas(initialProps.canvasWidth, initialProps.canvasHeight);
+        p.randomSeed(initialProps.randomSeed);
+        p.noiseSeed(initialProps.randomSeed);
 
-      // set time using initial time shift (for pretty previews)
-      time = api.getProp("timeShift") ?? 0;
+        // set time using initial time shift (for pretty previews)
+        time = api.getProp("timeShift") ?? 0;
 
-      updateMemos();
-      updateAnimations();
-
-      args.setup?.(api);
-
-      // initialize draw func passing p5 instance (`api.p`),
-      // which is guaranteed to be initialized properly at this moment
-      const argDraw = args.draw(api);
-      draw =
-        import.meta.env.VITE_DEV_TOOLS === "1"
-          ? () => {
-              argDraw();
-              drawDevTools();
-            }
-          : argDraw;
-
-      if (api.getProp("playing") === false) {
-        p.noLoop();
-      }
-
-      initExportCallback?.(exportCallback);
-    };
-
-    p.draw = () => {
-      runAnimations();
-      draw();
-      time += api.getProp("timeDelta");
-      drawsCount++;
-    };
-
-    p.updateWithProps = (newRawProps) => {
-      // updateWithProps's first call happens before `p.setup` call
-      if (!initialPropsUpdate) {
-        updateTrackedProps(newRawProps);
         updateMemos();
         updateAnimations();
 
-        args.onPropsChanged?.(api);
+        args.setup?.(api);
 
-        const playing = api.getProp("playing");
-        const timeShift = api.getTrackedProp("timeShift");
+        // initialize draw func passing p5 instance (`api.p`),
+        // which is guaranteed to be initialized properly at this moment
+        const argDraw = args.draw(api);
+        draw =
+          import.meta.env.VITE_DEV_TOOLS === "1"
+            ? () => {
+                argDraw();
+                drawDevTools();
+              }
+            : argDraw;
 
-        // for playback controls
-        if (timeShift.hasChanged && timeShift.value !== undefined) {
-          const delta = timeShift.value - (timeShift.prevValue ?? 0);
-          time += delta;
-        }
-
-        // respond to canvas size changes
-        const canvasHeight = api.getTrackedProp("canvasHeight");
-        const canvasWidth = api.getTrackedProp("canvasWidth");
-
-        if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
-          // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
-          // The reason is that `p.draw` implies time increase, which is unintentional, we just want to redraw.
-          p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
-        }
-
-        // play/pause
-        if (playing) {
-          p.loop();
-        } else {
+        if (api.getProp("playing") === false) {
           p.noLoop();
         }
+      };
 
-        // we need to manually redraw PAUSED sketch to see new params applied
-        if (!playing) {
-          draw();
+      p.draw = () => {
+        runAnimations();
+        draw();
+        time += api.getProp("timeDelta");
+        drawsCount++;
+      };
+
+      p.updateWithProps = (newRawProps) => {
+        // updateWithProps's first call happens before `p.setup` call
+        if (!initialPropsUpdate) {
+          updateTrackedProps(newRawProps);
+          updateMemos();
+          updateAnimations();
+
+          // respond to canvas size changes
+          const canvasHeight = api.getTrackedProp("canvasHeight");
+          const canvasWidth = api.getTrackedProp("canvasWidth");
+          if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
+            // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
+            // The reason is that `p.draw` implies time increase, which is unintentional, we just want to redraw.
+            p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
+          }
+
+          // play/pause
+          const playing = api.getProp("playing");
+          if (playing) {
+            p.loop();
+          } else {
+            p.noLoop();
+          }
+
+          const timeShift = api.getTrackedProp("timeShift");
+          // for playback controls
+          if (timeShift.hasChanged) {
+            const delta = timeShift.value - (timeShift.prevValue ?? 0);
+            time += delta;
+          }
+
+          // handle incoming event (export, preset change, etc.)
+          const event = api.getTrackedProp("event");
+          if (event.hasChanged) {
+            reactToEvent(event.value);
+          }
+
+          // run user defined code after all important changes were applied (above)
+          args.onPropsChanged?.(api);
+
+          // manually redraw PAUSED sketch to see changed params take effect (if there are any)
+          if (!playing) {
+            draw();
+          }
+        } else {
+          initialPropsUpdate = false;
         }
-      } else {
-        initialPropsUpdate = false;
+      };
+
+      function updateTrackedProps(newRawProps: ISketchProps<Params>) {
+        if (!props) {
+          props = {} as any;
+        }
+
+        (Object.keys(newRawProps) as PropNames<Params>[]).forEach((key) => {
+          if (props[key] === undefined) {
+            props[key] = new TrackedValue(undefined) as any;
+          }
+          props[key].value = newRawProps[key];
+        });
+      }
+
+      function updateMemos() {
+        memos.forEach((memo) => {
+          memo.recalc();
+        });
+      }
+
+      function updateAnimations(force: boolean = false) {
+        animations.forEach((animations) => {
+          animations.recalc(drawsCount);
+          if (force) {
+            animations.forceAnimationsToEnd(time);
+          }
+        });
+      }
+
+      function runAnimations() {
+        animations.forEach((animations) => {
+          animations.runAnimationStep(drawsCount);
+        });
+      }
+
+      function drawDevTools() {
+        p.push();
+        {
+          p.fill("white");
+          p.text(time, 10, 10, 20, 20);
+          p.stroke("white");
+          p.strokeWeight(1);
+          p.noFill();
+
+          p.translate(p.width / 2, p.height / 2);
+          const size = Math.max(
+            p.width - p.mouseX * 2,
+            p.height - p.mouseY * 2,
+          );
+          const tl = [-size / 2, -size / 2] as const;
+          p.rect(...tl, size, size);
+          p.fill("white");
+
+          p.textSize(20);
+          p.strokeWeight(1);
+
+          p.text(size, ...tl);
+        }
+        p.pop();
+      }
+
+      function reactToEvent(event: SketchEvent) {
+        switch (event.type) {
+          case "export":
+            exportCanvas(event);
+            return;
+          case "presetChange":
+            applyPreset(event);
+            return;
+        }
+      }
+
+      function exportCanvas({
+        exportFileName,
+        exportFileWidth,
+        exportFileHeight,
+      }: ExportRequestEvent) {
+        // manually stop the draw loop
+        p.noLoop();
+
+        // draw the same frame but for wallpaper resolution
+        p.resizeCanvas(exportFileWidth, exportFileHeight, true);
+        // update related tracked props, memos and animations
+        props["canvasWidth"].value = exportFileWidth;
+        props["canvasHeight"].value = exportFileHeight;
+        updateMemos();
+        // all animations forcibly set to end values to see correct final result
+        updateAnimations(true);
+        draw();
+
+        p.saveCanvas(exportFileName);
+
+        const prevW = props["canvasWidth"].prevValue!,
+          prevH = props["canvasHeight"].prevValue!;
+
+        // revert to old values and draw what user saw initially
+        p.resizeCanvas(prevW, prevH, true);
+        props["canvasWidth"].value = prevW;
+        props["canvasHeight"].value = prevH;
+        updateMemos();
+        updateAnimations(true);
+        draw();
+
+        if (props["playing"].value) {
+          p.loop();
+        }
+      }
+
+      function applyPreset(event: PresetChangeEvent) {
+        time = event.preset?.timeShift ?? time;
+        args.onPresetChange?.(event.preset);
       }
     };
-
-    function updateTrackedProps(newRawProps: ISketchProps<Params>) {
-      if (!props) {
-        props = {} as any;
-      }
-
-      (Object.keys(newRawProps) as PropNames<Params>[]).forEach((key) => {
-        if (props[key] === undefined) {
-          props[key] = new TrackedValue(undefined) as any;
-        }
-        props[key].value = newRawProps[key];
-      });
-    }
-
-    function updateMemos() {
-      memos.forEach((memo) => {
-        memo.recalc();
-      });
-    }
-
-    function updateAnimations(force: boolean = false) {
-      animations.forEach((animations) => {
-        animations.recalc(drawsCount);
-        if (force) {
-          animations.forceAnimationsToEnd(time);
-        }
-      });
-    }
-
-    function runAnimations() {
-      animations.forEach((animations) => {
-        animations.runAnimationStep(drawsCount);
-      });
-    }
-
-    function drawDevTools() {
-      p.push();
-      {
-        p.fill("white");
-        p.text(time, 10, 10, 20, 20);
-        p.stroke("white");
-        p.strokeWeight(1);
-        p.noFill();
-
-        p.translate(p.width / 2, p.height / 2);
-        const size = Math.max(p.width - p.mouseX * 2, p.height - p.mouseY * 2);
-        const tl = [-size / 2, -size / 2] as const;
-        p.rect(...tl, size, size);
-        p.fill("white");
-
-        p.textSize(20);
-        p.strokeWeight(1);
-
-        p.text(size, ...tl);
-      }
-      p.pop();
-    }
-
-    function exportCallback(
-      filename: string,
-      exportWidth: number,
-      exportHeight: number,
-    ) {
-      // manually stop the draw loop
-      p.noLoop();
-
-      // draw the same frame but for wallpaper resolution
-      p.resizeCanvas(exportWidth, exportHeight, true);
-      // update related tracked props, memos and animations
-      props["canvasHeight"].value = exportHeight;
-      props["canvasWidth"].value = exportWidth;
-      updateMemos();
-      // all animations forcibly set to end values to see correct final result
-      updateAnimations(true);
-      draw();
-
-      p.saveCanvas(filename);
-
-      const prevW = props["canvasWidth"].prevValue!,
-        prevH = props["canvasHeight"].prevValue!;
-
-      // revert to old values and draw what user saw initially
-      p.resizeCanvas(prevW, prevH, true);
-      props["canvasHeight"].value = prevH;
-      props["canvasWidth"].value = prevW;
-      updateMemos();
-      updateAnimations(true);
-      draw();
-
-      if (props["playing"].value) {
-        p.loop();
-      }
-    }
-  };
 }

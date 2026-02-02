@@ -4,6 +4,7 @@ import { controls, type Params } from "./controls";
 
 const JOINT_SIZE = 10;
 const ANIMATION_SPEED = 25;
+const BG_COLOR = "black";
 
 export const factory = createSketch<Params>(
   ({
@@ -25,13 +26,11 @@ export const factory = createSketch<Params>(
     );
 
     return {
-      onPropsChanged: () => {
-        if (getTrackedProp("presetName").hasChanged) {
-          p.background("black");
-        }
+      onPresetChange: () => {
+        p.background(BG_COLOR);
       },
       setup: () => {
-        p.background("black");
+        p.background(BG_COLOR);
       },
       draw: () => () => {
         const CHAOS_FACTOR = getProp("CHAOS_FACTOR"),
