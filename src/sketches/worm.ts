@@ -22,13 +22,13 @@ const controls = {
 type Params = ExtractParams<typeof controls>;
 
 const factory: ISketchFactory<Params> =
-  ({ canvasWidth, canvasHeight }) =>
+  ({ initialProps: { canvasWidth, canvasHeight } }) =>
   (p) => {
     const R = 50;
     const N = 25;
     const A = 120;
     const arr: p5.Vector[] = range(N).map((i) =>
-      p.createVector(canvasWidth / 2 + R * i, canvasHeight / 2)
+      p.createVector(canvasWidth / 2 + R * i, canvasHeight / 2),
     );
 
     p.updateWithProps = (props) => {

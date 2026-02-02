@@ -8,13 +8,13 @@ import type { ISketchFactory } from "../../models";
 import { easeInOutQuad, getQsParam } from "@/core/utils";
 
 export const tiles: ISketchFactory =
-  ({ initialCanvasWidth, initialCanvasHeight, initialRandomSeed }) =>
+  ({ initialProps: { canvasHeight, canvasWidth, randomSeed } }) =>
   (p) => {
     const GRID_CELLS_Y = Number(getQsParam("y", "20")),
       CANVAS_PADDING = 3,
       PADDING = 3,
       GRID_SIZE = new Size(
-        Math.round((GRID_CELLS_Y * initialCanvasWidth) / initialCanvasHeight),
+        Math.round((GRID_CELLS_Y * canvasWidth) / canvasHeight),
         GRID_CELLS_Y,
       ),
       GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
@@ -24,8 +24,8 @@ export const tiles: ISketchFactory =
       grid = new Grid(p, {
         origin: GRID_ORIGIN,
         gridSizeInPixels: new Size(
-          initialCanvasWidth - CANVAS_PADDING * 2,
-          initialCanvasHeight - CANVAS_PADDING * 2,
+          canvasWidth - CANVAS_PADDING * 2,
+          canvasHeight - CANVAS_PADDING * 2,
         ),
         gridSizeInCells: GRID_SIZE,
         color: "#CCC",
@@ -35,8 +35,8 @@ export const tiles: ISketchFactory =
       animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
 
     p.setup = () => {
-      p.createCanvas(initialCanvasWidth, initialCanvasHeight);
-      p.randomSeed(initialRandomSeed);
+      p.createCanvas(canvasWidth, canvasHeight);
+      p.randomSeed(randomSeed);
 
       while (spawnTurtle()) {
         // noop
