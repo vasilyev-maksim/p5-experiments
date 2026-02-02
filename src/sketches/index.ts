@@ -2,11 +2,9 @@ import type { ISketch } from "../models";
 import { spiralSketch } from "./spiral";
 import { pillarsSketch } from "./pillars";
 import { curveSketch } from "./curve";
-// // import { tiles } from "./tiles/tiles";
 import { arcSketch } from "./arcs";
-// import { zigzagsSketch } from "./zigzags";
 import { circlesSketch } from "./circles";
-// import { testSketch } from "./test";
+import { sketch as _templateSketch } from "./_template";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
@@ -14,8 +12,8 @@ export const sketchList: ISketch<any>[] = [
   pillarsSketch,
   arcSketch,
   curveSketch,
-  // zigzagsSketch,
   circlesSketch,
+  _templateSketch,
   // {
   //   id: "tiles",
   //   name: "tiles",
@@ -31,6 +29,4 @@ export const sketchList: ISketch<any>[] = [
   //   // randomSeed: 12,
   //   // randomSeed: 45,
   // },
-  // testSketch,
-  //wormSketch,
 ];
