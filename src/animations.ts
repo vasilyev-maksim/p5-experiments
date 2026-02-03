@@ -32,57 +32,60 @@ export type GridAnimationParams = {
   itemDuration: number;
 };
 
+let MULT = Number(import.meta.env.VITE_ANIMATIONS_DURATION_MULTIPLIER);
+MULT = isNaN(MULT) ? 1 : MULT;
+
 export const sequences = [
   new Sequence(MODAL_OPEN_SEQUENCE, [
-    Sequence.syncSegment({ id: "GRID_GOES_IN_BG", duration: 400 }),
+    Sequence.syncSegment({ id: "GRID_GOES_IN_BG", duration: 400 * MULT }),
     Sequence.syncSegment({
       id: "TILE_GOES_MODAL",
-      delay: 100,
-      duration: 500,
+      delay: 100 * MULT,
+      duration: 500 * MULT,
     }),
-    Sequence.syncSegment({ id: "START_PLAYING", delay: 100 }),
+    Sequence.syncSegment({ id: "START_PLAYING", delay: 100 * MULT }),
     Sequence.syncSegment({ id: "SHOW_SIDEBAR" }),
-    Sequence.syncSegment({ id: "SHOW_HEADER", duration: 500 }),
+    Sequence.syncSegment({ id: "SHOW_HEADER", duration: 500 * MULT }),
     Sequence.asyncSegment<PresetsAnimationParams>({
       id: "SHOW_PRESETS",
       timingPayload: {
-        itemDelay: 30,
-        itemDuration: 200,
+        itemDelay: 30 * MULT,
+        itemDuration: 200 * MULT,
       },
       disabledIf: (ctx) => !(ctx as Ctx).presetsPresent,
     }),
-    Sequence.syncSegment({ id: "SHOW_PRESET_HEADER", duration: 300 }),
+    Sequence.syncSegment({ id: "SHOW_PRESET_HEADER", duration: 300 * MULT }),
     Sequence.asyncSegment<ControlsAnimationParams>({
       id: "SHOW_CONTROLS",
       timingPayload: {
-        itemDelay: 50,
-        itemDuration: 300,
+        itemDelay: 50 * MULT,
+        itemDuration: 300 * MULT,
       },
       disabledIf: (ctx) => !(ctx as Ctx).controlsPresent,
     }),
-    Sequence.syncSegment({ id: "SHOW_BOTTOM_ACTIONS", delay: 0 }),
+    Sequence.syncSegment({ id: "SHOW_BOTTOM_ACTIONS", delay: 0 * MULT }),
     Sequence.syncSegment({
       id: "SHOW_CONTROLS_HEADER",
-      duration: 300,
+      duration: 300 * MULT,
     }),
     Sequence.syncSegment({
       id: "INIT_CONTROLS_AND_PRESETS",
-      delay: 100,
-      duration: 200,
+      delay: 100 * MULT,
+      duration: 200 * MULT,
     }),
   ]),
   new Sequence(HOME_PAGE_SEQUENCE, [
     Sequence.syncSegment({
       id: "HEADER",
-      delay: 700,
-      duration: 200,
+      delay: 700 * MULT,
+      duration: 200 * MULT,
     }),
     Sequence.asyncSegment<GridAnimationParams>({
       id: "TILES",
-      delay: 200,
+      delay: 200 * MULT,
       timingPayload: {
-        itemDelay: 125,
-        itemDuration: 300,
+        itemDelay: 125 * MULT,
+        itemDuration: 300 * MULT,
       },
     }),
   ]),
