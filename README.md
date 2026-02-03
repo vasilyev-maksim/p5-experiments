@@ -5,9 +5,11 @@
   - arcs
   - pillars
   - curve
+- city sketch
 
 # 📋 TODO
 
+- add "collapse side panel" capabilities
 - implement playback controls using sketch event?
 - refactor timeShift/timeDelta mess in SketchModal
 - make play controls animation more user friendly

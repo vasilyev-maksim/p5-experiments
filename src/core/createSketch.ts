@@ -25,6 +25,7 @@ export type CreateSketchArgs<Params extends string> = {
   draw: (api: Api<Params>) => () => void;
   onPropsChanged?: (api: Api<Params>) => void;
   onPresetChange?: (preset: IPreset) => void;
+  in3D?: boolean;
 };
 
 type Api<Params extends string> = {
@@ -107,7 +108,11 @@ export function createSketch<Params extends string>(
       const args = argsFactory(api);
 
       p.setup = () => {
-        p.createCanvas(initialProps.canvasWidth, initialProps.canvasHeight);
+        p.createCanvas(
+          initialProps.canvasWidth,
+          initialProps.canvasHeight,
+          args.in3D ? p.WEBGL : p.P2D,
+        );
         p.randomSeed(initialProps.randomSeed);
         p.noiseSeed(initialProps.randomSeed);
 
