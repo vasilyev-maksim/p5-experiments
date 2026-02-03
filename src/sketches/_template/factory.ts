@@ -2,12 +2,12 @@ import { createSketch } from "@/core/createSketch";
 import type { ISketchFactory } from "@/models";
 import type { Params } from ".";
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
+export const factory: ISketchFactory<Params> = createSketch<Params>(({ p }) => {
   return {
-    setup: ({ p }) => {
+    setup: () => {
       p.noStroke();
     },
-    draw: ({ p }) => {
+    draw: () => {
       return () => {
         p.background("black");
         p.stroke("white");
