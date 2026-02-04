@@ -9,6 +9,7 @@
 
 # 📋 TODO
 
+- return back sketch start time but leave preset specific (needed for cube)
 - add "collapse side panel" capabilities
 - implement playback controls using sketch event?
 - refactor timeShift/timeDelta mess in SketchModal

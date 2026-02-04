@@ -11,11 +11,11 @@ export class TrackedValue<T> {
   }
 
   public get value(): T {
-    if (this._value === undefined) {
-      throw new Error("Can't access value of non-initialized tracked value.");
-    } else {
-      return this._value;
-    }
+    return this._value!;
+    // if (this._value === undefined) {
+    //   throw new Error("Can't access value of non-initialized tracked value.");
+    // } else {
+    // }
   }
 
   public get prevValue() {

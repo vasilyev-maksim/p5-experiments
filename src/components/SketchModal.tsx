@@ -90,7 +90,7 @@ export const SketchModal = ({
   const [params, setParams] = useState(defaultPreset.params);
   /** initially used for sketch timeShift (to match preview tile) and then for playback controls */
   const [timeShift, setTimeShift] = useState<number>(
-    defaultPreset.startTime ?? 0,
+    defaultPreset.startTime ?? sketch.startTime ?? 0,
   );
   /** time delta is a speed of animation set by user */
   const [timeDelta, setTimeDelta] = useState(

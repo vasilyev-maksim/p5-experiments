@@ -10,6 +10,8 @@ import {
   type PresetsAnimationParams,
 } from "../animations";
 import { OptionButton } from "./OptionButton";
+import { useEffect, useRef, useState } from "react";
+import { BooleanParamControl } from "./BooleanParamControl";
 
 export function Presets(props: {
   sketch: ISketch;
@@ -49,6 +51,23 @@ export function Presets(props: {
     MODAL_OPEN_SEQUENCE,
   ).useSegment("INIT_CONTROLS_AND_PRESETS");
 
+  const [shufflePresets, setShufflePresets] = useState(
+    props.sketch.presetsShuffle === 1,
+  );
+
+  const i = useRef(0);
+  useEffect(() => {
+    if (shufflePresets) {
+      const id = setInterval(() => {
+        props.onApply(
+          props.sketch.presets[++i.current % props.sketch.presets.length],
+        );
+      }, props.sketch.presetsShuffleInterval ?? 1200);
+
+      return () => clearInterval(id);
+    }
+  }, [shufflePresets]);
+
   return (
     paramsCount > 0 &&
     segment.wasRun && (
@@ -62,7 +81,8 @@ export function Presets(props: {
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             const p = props.sketch.presets?.[i]!;
             const isActive =
-              controlsActivated.wasRun && areParamsEqual(props.params, p.params);
+              controlsActivated.wasRun &&
+              areParamsEqual(props.params, p.params);
             return (
               <animated.div
                 tabIndex={1}
@@ -83,6 +103,15 @@ export function Presets(props: {
             );
           })}
         </div>
+        {(props.sketch.presetsShuffle ?? -1) > -1 && (
+          <BooleanParamControl
+            label={"Cycle presets"}
+            value={shufflePresets}
+            active={controlsActivated.wasRun}
+            animationDuration={controlsActivated.duration}
+            onChange={(x) => setShufflePresets(x)}
+          />
+        )}
       </SectionLayout>
     )
   );

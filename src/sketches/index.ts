@@ -5,17 +5,17 @@ import { curveSketch } from "./curve";
 import { arcSketch } from "./arcs";
 import { circlesSketch } from "./circles";
 import { sketch as citySketch } from "./city";
-import { sketch as cube3DSketch } from "./cube3D";
+import { sketch as cubesSketch } from "./cubes";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
+  cubesSketch,
   spiralSketch,
   pillarsSketch,
   arcSketch,
   curveSketch,
   circlesSketch,
   citySketch,
-  cube3DSketch,
   // {
   //   id: "tiles",
   //   name: "tiles",

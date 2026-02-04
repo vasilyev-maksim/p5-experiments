@@ -7,12 +7,15 @@ export type Params = ExtractParams<typeof controls>;
 
 export const sketch: ISketch<Params> = {
   factory,
-  id: "cube3D",
-  name: "cube3D",
+  id: "cubes",
+  name: "cubes",
   preview: {
-    size: 520,
+    size: 320,
   },
   randomSeed: 44,
   controls,
   presets,
+  presetsShuffle: 1,
+  presetsShuffleInterval: 1000,
+  startTime: 150,
 };

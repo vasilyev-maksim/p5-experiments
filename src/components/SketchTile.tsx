@@ -30,6 +30,7 @@ export const SketchTile = forwardRef<
     ref,
   ) => {
     const { tileWidth, tileHeight, borderWidth } = useViewport();
+    const defaultPreset = sketch.presets[0];
 
     return (
       <div
@@ -60,8 +61,8 @@ export const SketchTile = forwardRef<
           sketch={sketch}
           playing={false}
           size="tile"
-          params={sketch.presets[0].params}
-          timeShift={sketch.presets[0].startTime}
+          params={defaultPreset.params}
+          timeShift={defaultPreset.startTime ?? sketch.startTime}
         />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>

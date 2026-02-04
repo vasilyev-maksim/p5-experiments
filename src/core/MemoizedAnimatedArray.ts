@@ -6,7 +6,7 @@ import type { ArrayOfTrackedValues } from "./TrackedArray";
 
 export class MemoizedAnimatedArray<ArgsType extends any[]> {
   private readonly animatedArray: AnimatedArray;
-  private readonly memoizedArray: MemoizedArray<ArgsType, number>;
+  public readonly memoizedArray: MemoizedArray<ArgsType, number>;
 
   public constructor(
     animationDuration: number,

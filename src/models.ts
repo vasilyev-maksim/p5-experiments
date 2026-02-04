@@ -105,6 +105,9 @@ export interface ISketch<ParamKey extends string = string> {
   randomSeed?: number;
   controls: IControls<ParamKey>;
   presets: IPreset<ParamKey>[];
+  presetsShuffle?: -1 | 0 | 1;
+  presetsShuffleInterval?: number;
+  startTime?: number;
 }
 
 export type SketchCanvasSize = "tile" | "modal" | "fullscreen";
