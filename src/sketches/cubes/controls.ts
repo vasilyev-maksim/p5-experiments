@@ -23,7 +23,7 @@ export const controls = {
   CUBE_SIZE: {
     type: "range",
     min: 10,
-    max: 100,
+    max: 60,
     step: 1,
     label: "Cube size",
   },

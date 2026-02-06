@@ -33,14 +33,13 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
 
     return {
       setup: () => {
-        p.noStroke();
         // p.setAttributes("antialias", false);
       },
       draw: () => {
         return () => {
           p.background("black");
           p.stroke("white");
-          p.strokeWeight(1);
+          p.strokeWeight(0.5);
 
           const time = getTime();
           const cameraDistance = animatedZoom.value!;
