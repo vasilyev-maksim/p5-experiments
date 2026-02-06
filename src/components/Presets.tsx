@@ -55,12 +55,12 @@ export function Presets(props: {
     props.sketch.presetsShuffle === 1,
   );
 
-  const i = useRef(0);
+  const presetIndex = useRef(0);
   useEffect(() => {
     if (shufflePresets) {
       const id = setInterval(() => {
         props.onApply(
-          props.sketch.presets[++i.current % props.sketch.presets.length],
+          props.sketch.presets[++presetIndex.current % props.sketch.presets.length],
         );
       }, props.sketch.presetsShuffleInterval ?? 1200);
 
