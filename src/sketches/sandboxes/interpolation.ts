@@ -4,7 +4,7 @@ import type {
   IPreset,
   ISketch,
   ISketchFactory,
-} from "../models";
+} from "../../models";
 import { AnimatedValue } from "@core/AnimatedValue";
 import { createSketch } from "@core/createSketch";
 

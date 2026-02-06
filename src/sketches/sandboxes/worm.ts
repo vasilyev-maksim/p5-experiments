@@ -5,8 +5,8 @@ import type {
   IPreset,
   ISketch,
   ISketchFactory,
-} from "../models";
-import { range } from "../utils/misc";
+} from "../../models";
+import { range } from "../../utils/misc";
 
 const controls = {
   TIME_DELTA: {
