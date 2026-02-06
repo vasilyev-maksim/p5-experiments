@@ -9,13 +9,13 @@ import { sketch as cubesSketch } from "./cubes";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
+  citySketch,
   cubesSketch,
   spiralSketch,
   pillarsSketch,
   arcSketch,
   curveSketch,
   circlesSketch,
-  citySketch,
   // {
   //   id: "tiles",
   //   name: "tiles",

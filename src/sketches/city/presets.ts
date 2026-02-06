@@ -4,7 +4,14 @@ import type { Params } from ".";
 export const presets: IPreset<Params>[] = [
   {
     params: {
-      TIME_DELTA: 1,
+      N: 0.1,
+      NInt: 3,
+    },
+  },
+  {
+    params: {
+      N: 1,
+      NInt: 5,
     },
   },
 ];

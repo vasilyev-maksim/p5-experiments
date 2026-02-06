@@ -1,12 +1,18 @@
 import type { IControls } from "@/models";
 
 export const controls = {
-  TIME_DELTA: {
+  N: {
     type: "range",
     min: 0,
-    max: 3,
-    step: 0.1,
-    label: "Playback speed",
-    valueFormatter: (x) => x.toFixed(1),
+    max: 1,
+    step: 0.05,
+    label: "N",
+  },
+  NInt: {
+    type: "range",
+    min: 1,
+    max: 10,
+    step: 1,
+    label: "N",
   },
 } as const satisfies IControls;
