@@ -6,6 +6,7 @@
   - pillars
   - curve
 - city sketch
+- beta flag for sketches
 
 # 📋 TODO
 

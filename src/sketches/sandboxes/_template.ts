@@ -57,7 +57,7 @@ const presets: IPreset<Params>[] = [
   },
 ];
 
-export const _templateSketch: ISketch<Params> = {
+export const sketch: ISketch<Params> = {
   factory,
   id: "_template",
   name: "_template",
