@@ -14,7 +14,7 @@ import {
 import { SketchTilesGrid } from "./SketchTilesGrid";
 import { useURLParams } from "../hooks";
 import { delay } from "../utils/misc";
-import { sketchList } from "../sketches";
+import { sketchList } from "../sketches/list";
 
 function App() {
   const { clearUrlSketch, directLinkSketch, updateUrlSketch } =
