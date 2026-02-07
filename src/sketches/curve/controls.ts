@@ -12,7 +12,7 @@ export const controls = {
   },
   CURVES_COUNT: {
     label: "Curves count",
-    max: 50,
+    max: 49,
     min: 1,
     step: 2,
     type: "range",
