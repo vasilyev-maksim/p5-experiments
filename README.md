@@ -1,16 +1,19 @@
 # 👨‍💻 IN PROGRESS
 
+- city sketch
+- use query params for direct sketch links
+
+# 📋 TODO
+
+- move `/p5-experiments/` base url from vite config to .env
+- refactor `useViewport`
+  - maybe use context to store constant sizes
+  - rename to `useSize`(?)
 - each preset may have a timestamp to play animation from (for better showiness)
   - spiral
   - arcs
   - pillars
   - curve
-- city sketch
-- beta flag for sketches
-
-# 📋 TODO
-
-- return back sketch start time but leave preset specific (needed for cube)
 - add "collapse side panel" capabilities
 - implement playback controls using sketch event?
 - refactor timeShift/timeDelta mess in SketchModal
@@ -26,7 +29,7 @@
 - add onScreenResize callback to factory (for pulse bg = black on resize)
 - make preview sizes in percentages
 - catch particular sketch errors (to show other more successful ones)
-- use query params for direct sketch links (+ selected preset in qs)
+- selected preset id in url
 - remove param controls margin-top if no presets
 - focus trap for modal (home page links are accessible)
 - tabIndex everywhere
@@ -43,6 +46,8 @@
 
 # ✅ DONE
 
+- return back sketch start time but leave preset specific (needed for cube)
+- beta flag for sketches
 - rename timeShift to startTime
 - add "save as image" button
 - add randomize button for controls and random seed

@@ -4,6 +4,7 @@ import { ViewportContext } from "./components/ViewportContext";
 import type { ISketch } from "./models";
 import { getClosestDiscreteValue } from "./utils/misc";
 
+// TODO: move consts from here / use react context for that
 export function useViewport() {
   const ctx = useContext(ViewportContext);
   const tileWidth = 292;
@@ -41,16 +42,14 @@ export function useViewport() {
 
 export function useURLParams(sketchList: ISketch[]) {
   const baseUrl = import.meta.env.BASE_URL;
-  const directLinkSketchId = location.pathname
-    .split(baseUrl)
-    .filter(Boolean)
-    .pop();
+  const qs = new URLSearchParams(location.search);
+  const directLinkSketchId = qs.get("sid");
   const [directLinkSketch, setDirectLinkSketch] = useState<ISketch | undefined>(
-    sketchList.find((x) => x.id === directLinkSketchId)
+    sketchList.find((x) => x.id === directLinkSketchId),
   );
 
   const updateUrlSketch = (sketch: ISketch) => {
-    history.pushState({}, "", baseUrl + sketch.id);
+    history.pushState({}, "", `${baseUrl}?sid=${sketch.id}`);
   };
 
   const clearUrlSketch = () => {
@@ -88,7 +87,7 @@ export function useModalBehavior(isOpen: boolean, closeModal: () => void) {
 
 export function useKeyboardShortcuts(
   onPlayPause: () => void,
-  onFullscreenToggle: () => void
+  onFullscreenToggle: () => void,
 ) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -105,7 +104,7 @@ export function useSliderBehavior(
   min: number,
   max: number,
   step: number,
-  onChange: (val: number) => void
+  onChange: (val: number) => void,
 ) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -119,7 +118,7 @@ export function useSliderBehavior(
     config: { duration: 150 },
   });
   const handleLeft = animatedValue.to(
-    (v) => Math.min(1, Math.max(0, (v - min) / (max - min))) * 100
+    (v) => Math.min(1, Math.max(0, (v - min) / (max - min))) * 100,
   );
 
   useEffect(() => {
@@ -135,7 +134,7 @@ export function useSliderBehavior(
         min,
         max,
         step,
-        value
+        value,
       );
       onChange(closestDiscreteValue);
     }
@@ -190,7 +189,7 @@ export function useSliderBehavior(
 export function useLongPress(
   timeout: number,
   onLongPress: () => void,
-  onLongPressRelease?: () => void
+  onLongPressRelease?: () => void,
 ) {
   const pressedRef = useRef<boolean>(false);
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
