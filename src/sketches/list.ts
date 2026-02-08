@@ -7,8 +7,8 @@ import { circlesSketch } from "./circles";
 import { sketch as citySketch } from "./city";
 import { sketch as cubesSketch } from "./cubes";
 import { zigzagsSketch } from "./zigzags";
-import { sketch as lightsSketch } from "./sandboxes/lights";
-import { interpolationSketch } from "./sandboxes/interpolation";
+import { sketch as lightsSketch } from "./_sandboxes/lights";
+import { interpolationSketch } from "./_sandboxes/interpolation";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
