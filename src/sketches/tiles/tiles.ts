@@ -140,3 +140,19 @@ export const tiles: ISketchFactory =
       );
     };
   };
+
+// {
+//   id: "tiles",
+//   name: "tiles",
+//   preview: {
+//     size: 420,
+//   },
+//   factory: tiles,
+//   timeShift: -20,
+//   randomSeed: 123,
+//   presets: [],
+//   controls: {},
+//   defaultParams: {},
+//   // randomSeed: 12,
+//   // randomSeed: 45,
+// },

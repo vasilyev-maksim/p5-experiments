@@ -108,6 +108,7 @@ export interface ISketch<ParamKey extends string = string> {
   presetsShuffle?: -1 | 0 | 1;
   presetsShuffleInterval?: number;
   startTime?: number;
+  type: "released" | "draft" | "hidden";
 }
 
 export type SketchCanvasSize = "tile" | "modal" | "fullscreen";

@@ -112,4 +112,5 @@ export const wormSketch: ISketch<Params> = {
   randomSeed: 44,
   controls,
   presets,
+  type: 'hidden'
 };

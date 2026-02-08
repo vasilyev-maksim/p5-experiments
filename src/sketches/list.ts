@@ -6,29 +6,30 @@ import { arcSketch } from "./arcs";
 import { circlesSketch } from "./circles";
 import { sketch as citySketch } from "./city";
 import { sketch as cubesSketch } from "./cubes";
+import { zigzagsSketch } from "./zigzags";
+import { sketch as lightsSketch } from "./sandboxes/lights";
+import { interpolationSketch } from "./sandboxes/interpolation";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
-  citySketch,
   cubesSketch,
   spiralSketch,
   pillarsSketch,
   arcSketch,
   curveSketch,
   circlesSketch,
-  // {
-  //   id: "tiles",
-  //   name: "tiles",
-  //   preview: {
-  //     size: 420,
-  //   },
-  //   factory: tiles,
-  //   timeShift: -20,
-  //   randomSeed: 123,
-  //   presets: [],
-  //   controls: {},
-  //   defaultParams: {},
-  //   // randomSeed: 12,
-  //   // randomSeed: 45,
-  // },
-];
+  zigzagsSketch,
+  lightsSketch,
+  interpolationSketch,
+  citySketch,
+]
+  .filter((x) =>
+    import.meta.env.PROD ? x.type === "released" : x.type !== "hidden",
+  )
+  .sort((a, b) =>
+    a.type === "draft" && b.type === "released"
+      ? -1
+      : a.type === b.type
+        ? 0
+        : 1,
+  );

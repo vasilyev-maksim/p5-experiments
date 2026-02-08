@@ -12,4 +12,5 @@ export const circlesSketch: ISketch<Params> = {
   },
   controls,
   presets,
+  type: 'released',
 };

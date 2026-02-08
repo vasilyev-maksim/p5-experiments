@@ -12,4 +12,5 @@ export const arcSketch: ISketch<Params> = {
   },
   controls,
   presets,
+  type: 'released',
 };

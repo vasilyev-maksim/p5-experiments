@@ -180,4 +180,5 @@ export const zigzagsSketch: ISketch<Params> = {
   },
   controls,
   presets,
+  type: "hidden",
 };

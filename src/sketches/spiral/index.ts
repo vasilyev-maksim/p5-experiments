@@ -12,4 +12,5 @@ export const spiralSketch: ISketch<Params> = {
   },
   controls,
   presets,
+  type: "released",
 };

@@ -13,4 +13,5 @@ export const curveSketch: ISketch<Params> = {
   randomSeed: 44,
   controls,
   presets,
+  type: 'released',
 };

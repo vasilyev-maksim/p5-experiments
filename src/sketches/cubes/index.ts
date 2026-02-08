@@ -18,4 +18,5 @@ export const sketch: ISketch<Params> = {
   presetsShuffle: 1,
   presetsShuffleInterval: 1500,
   startTime: 150,
+  type: 'released',
 };

@@ -13,4 +13,5 @@ export const pillarsSketch: ISketch<Params> = {
   randomSeed: 144,
   controls,
   presets,
+  type: 'released',
 };
