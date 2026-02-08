@@ -1,11 +1,9 @@
 # 👨‍💻 IN PROGRESS
 
 - city sketch
-- use query params for direct sketch links
 
 # 📋 TODO
 
-- move `/p5-experiments/` base url from vite config to .env
 - refactor `useViewport`
   - maybe use context to store constant sizes
   - rename to `useSize`(?)
@@ -46,6 +44,8 @@
 
 # ✅ DONE
 
+- move `/p5-experiments/` base url from vite config to .env
+- use query params for direct sketch links
 - return back sketch start time but leave preset specific (needed for cube)
 - beta flag for sketches
 - rename timeShift to startTime

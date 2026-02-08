@@ -13,6 +13,7 @@ import { MemoizedValue } from "./MemoizedValue";
 import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { MemoizedAnimatedColors } from "./MemoizedAnimatedColor";
+import { ENV } from "@/env";
 
 type PropNames<Params extends string> = keyof ISketchProps<Params>;
 type TrackedProps<Params extends string> = {
@@ -127,13 +128,12 @@ export function createSketch<Params extends string>(
         // initialize draw func passing p5 instance (`api.p`),
         // which is guaranteed to be initialized properly at this moment
         const argDraw = args.draw(api);
-        draw =
-          import.meta.env.VITE_DEV_TOOLS === "1"
-            ? () => {
-                argDraw();
-                drawDevTools();
-              }
-            : argDraw;
+        draw = ENV.devTools
+          ? () => {
+              argDraw();
+              drawDevTools();
+            }
+          : argDraw;
 
         if (api.getProp("playing") === false) {
           p.noLoop();

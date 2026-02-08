@@ -96,3 +96,8 @@ export function copyPresetCodeToClipboard(params: IParams) {
   const code = JSON.stringify({ params, ...(name ? { name } : {}) }, null, 4);
   return copyToClipboard(code);
 }
+
+export function tryParseNumber(str: string, fallback: number) {
+  const num = Number(str);
+  return isNaN(num) ? fallback : num;
+}

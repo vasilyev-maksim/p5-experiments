@@ -1,3 +1,4 @@
+import { ENV } from "./env";
 import { Sequence } from "./sequencer/Sequence";
 
 export const MODAL_OPEN_SEQUENCE = "MODAL_OPEN";
@@ -32,8 +33,7 @@ export type GridAnimationParams = {
   itemDuration: number;
 };
 
-let MULT = Number(import.meta.env.VITE_ANIMATIONS_DURATION_MULTIPLIER);
-MULT = isNaN(MULT) ? 1 : MULT;
+const MULT = ENV.animationsDurationMultiplier;
 
 export const sequences = [
   new Sequence(MODAL_OPEN_SEQUENCE, [
