@@ -4,10 +4,10 @@ import { Matrix } from "./Matrix";
 import { Turtle } from "./Turtle";
 import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
-import type { ISketchFactory } from "../../models";
+import type { ISketch, ISketchFactory } from "../../models";
 import { easeInOutQuad, getQsParam } from "@/core/utils";
 
-export const tiles: ISketchFactory =
+export const factory: ISketchFactory<""> =
   ({ initialProps: { canvasHeight, canvasWidth, randomSeed } }) =>
   (p) => {
     const GRID_CELLS_Y = Number(getQsParam("y", "20")),
@@ -80,7 +80,7 @@ export const tiles: ISketchFactory =
 
           if (area > maxArea || rect.getAspectRatio() > 2) return 0;
 
-          return maxArea - area;
+          return area;
         },
       });
 
@@ -156,3 +156,20 @@ export const tiles: ISketchFactory =
 //   // randomSeed: 12,
 //   // randomSeed: 45,
 // },
+
+export const sketch: ISketch<""> = {
+  factory,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  controls: {} as any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  presets: [{ params: {} as any, name: "" }],
+  type: "draft",
+
+  id: "tiles",
+  name: "tiles",
+  preview: {
+    size: 420,
+  },
+  startTime: -20,
+  randomSeed: 123,
+};

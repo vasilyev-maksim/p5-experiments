@@ -13,7 +13,10 @@ interface IProviders {
 export class Turtle {
   public start: p5.Vector;
 
-  constructor(public origin: p5.Vector, private providers: IProviders) {
+  constructor(
+    public origin: p5.Vector,
+    private providers: IProviders,
+  ) {
     this.start = origin.copy();
     this.providers = providers;
   }
@@ -55,10 +58,10 @@ export class Turtle {
     const directionY = direction.y;
 
     let maxDY = this.getEmptyPathLengthByDirection(
-      new p5.Vector(0, direction.y)
+      new p5.Vector(0, direction.y),
     );
     const maxDX = this.getEmptyPathLengthByDirection(
-      new p5.Vector(direction.x, 0)
+      new p5.Vector(direction.x, 0),
     );
     const variations = [];
 
@@ -71,7 +74,7 @@ export class Turtle {
           const newMaxDY = dy - 1;
           if (newMaxDY < maxDY) {
             variations.push(
-              new p5.Vector(x - directionX, this.start.y + maxDY * directionY)
+              new p5.Vector(x - directionX, this.start.y + maxDY * directionY),
             );
           }
           maxDY = newMaxDY;
@@ -83,7 +86,7 @@ export class Turtle {
     variations.push(
       this.start
         .copy()
-        .add(new p5.Vector(maxDX * directionX, maxDY * directionY))
+        .add(new p5.Vector(maxDX * directionX, maxDY * directionY)),
     );
 
     return variations
@@ -93,7 +96,7 @@ export class Turtle {
         return { rect, value };
       })
       .filter(({ value }) => value > 0)
-      .sort((a, b) => b.value - a.value)
+      .sort((a, b) => a.value - b.value)
       .map((x) => x.rect);
   }
 }
