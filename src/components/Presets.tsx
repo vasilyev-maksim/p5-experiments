@@ -51,16 +51,26 @@ export function Presets(props: {
     MODAL_OPEN_SEQUENCE,
   ).useSegment("INIT_CONTROLS_AND_PRESETS");
 
+  const presetIndex = useRef(0);
   const [shufflePresets, setShufflePresets] = useState(
     props.sketch.presetsShuffle === 1,
   );
 
-  const presetIndex = useRef(0);
+  const handleClick = (preset: IPreset) => {
+    props.onApply(preset);
+
+    if (shufflePresets) {
+      setShufflePresets(false);
+    }
+  };
+
   useEffect(() => {
     if (shufflePresets) {
       const id = setInterval(() => {
         props.onApply(
-          props.sketch.presets[++presetIndex.current % props.sketch.presets.length],
+          props.sketch.presets[
+            ++presetIndex.current % props.sketch.presets.length
+          ],
         );
       }, props.sketch.presetsShuffleInterval ?? 1200);
 
@@ -96,7 +106,7 @@ export function Presets(props: {
                 <OptionButton
                   label={p.name ?? i.toString()}
                   active={isActive}
-                  onClick={() => props.onApply(p)}
+                  onClick={() => handleClick(p)}
                   animationDuration={controlsActivated.duration}
                 />
               </animated.div>
@@ -105,11 +115,12 @@ export function Presets(props: {
         </div>
         {(props.sketch.presetsShuffle ?? -1) > -1 && (
           <BooleanParamControl
-            label={"Cycle presets"}
+            label={"Shuffle presets"}
             value={shufflePresets}
             active={controlsActivated.wasRun}
             animationDuration={controlsActivated.duration}
             onChange={(x) => setShufflePresets(x)}
+            className={styles.ShufflePresetsControl}
           />
         )}
       </SectionLayout>

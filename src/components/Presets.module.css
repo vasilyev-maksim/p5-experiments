@@ -8,3 +8,7 @@
 .PresetButtonWrapper {
   display: inline-block;
 }
+
+.ShufflePresetsControl {
+  margin-top: 8px;
+}
