@@ -114,8 +114,10 @@ export function createSketch<Params extends string>(
           initialProps.canvasHeight,
           args.in3D ? p.WEBGL : p.P2D,
         );
-        p.randomSeed(initialProps.randomSeed);
-        p.noiseSeed(initialProps.randomSeed);
+        if (initialProps.randomSeed !== undefined){
+          p.randomSeed(initialProps.randomSeed);
+          p.noiseSeed(initialProps.randomSeed);
+        }
 
         // set time using initial time shift (for pretty previews)
         time = api.getProp("timeShift") ?? 0;

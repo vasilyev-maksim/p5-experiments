@@ -10,6 +10,7 @@ import { zigzagsSketch } from "./zigzags";
 import { sketch as lightsSketch } from "./_sandboxes/lights";
 import { interpolationSketch } from "./_sandboxes/interpolation";
 import { sketch as tilesSketch } from "./tiles/tiles";
+import { sketch as wormsSketch } from "./_sandboxes/worms";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
@@ -24,6 +25,7 @@ export const sketchList: ISketch<any>[] = [
   interpolationSketch,
   citySketch,
   tilesSketch,
+  wormsSketch,
 ]
   .filter((x) =>
     import.meta.env.PROD ? x.type === "released" : x.type !== "hidden",

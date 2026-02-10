@@ -4,6 +4,7 @@
 
 # 📋 TODO
 
+- add throttle to createMemo
 - refactor `useViewport`
   - maybe use context to store constant sizes
   - rename to `useSize`(?)

@@ -43,7 +43,7 @@ export const SketchCanvas = forwardRef<
         timeDelta: props.timeDelta ?? 0,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
-        randomSeed: props.sketch.randomSeed ?? 0,
+        randomSeed: props.sketch.randomSeed,
         event: props.event,
       }) as ISketchProps,
     [

@@ -64,7 +64,6 @@ export const controls = {
       ["#0000ffff", "#ea72f7ff"],
       ["#fcff39ff", "#c04affff"],
       ["#18005fff", "#5aff4aff"],
-      // ["#ffffffff", "#1e00c8ff"],
       ["#ffffffff", "#000000ff"],
     ],
     label: "Color",
