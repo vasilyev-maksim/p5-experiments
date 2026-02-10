@@ -19,8 +19,9 @@ export const factory: ISketchFactory<""> =
       ),
       GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
       MAX_AREA = 0.08,
+      // MAX_AREA = 0.02,
       REVERSE = getQsParam("r", "1") === "1",
-      ANIMATION_SPEED = parseInt(getQsParam("s", "10")),
+      ANIMATION_SPEED = parseInt(getQsParam("s", "7")),
       grid = new Grid(p, {
         origin: GRID_ORIGIN,
         gridSizeInPixels: new Size(
@@ -78,6 +79,7 @@ export const factory: ISketchFactory<""> =
           const gridArea = GRID_SIZE.getArea();
           const maxArea = MAX_AREA * gridArea;
 
+          // if (area > maxArea) return 0;
           if (area > maxArea || rect.getAspectRatio() > 2) return 0;
 
           return area;
