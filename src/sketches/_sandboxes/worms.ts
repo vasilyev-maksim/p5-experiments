@@ -9,6 +9,7 @@ import { createSketch } from "@core/createSketch";
 import { Matrix } from "../tiles/Matrix";
 import { Size } from "../tiles/Size";
 import p5, { type STROKE_JOIN } from "p5";
+import { oscillateBetween } from "@/core/utils";
 
 const controls = {
   RESOLUTION: {
@@ -20,7 +21,7 @@ const controls = {
   },
   WORM_LENGTH: {
     type: "range",
-    min: 1,
+    min: 0,
     max: 100,
     step: 1,
     label: "Worm length",
@@ -42,10 +43,6 @@ const controls = {
       { label: "Cut", value: 2 },
     ],
   },
-  INVERT_COLORS: {
-    type: "boolean",
-    label: "Invert colors",
-  },
   COLOR: {
     type: "color",
     colors: [
@@ -57,6 +54,14 @@ const controls = {
       ["#ffffffff", "#000000ff"],
     ],
     label: "Color",
+  },
+  INVERT_COLORS: {
+    type: "boolean",
+    label: "Invert colors",
+  },
+  ANIMATED: {
+    type: "boolean",
+    label: "Animated",
   },
 } as const satisfies IControls;
 
@@ -72,6 +77,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
     getProp,
     createAnimatedValue,
     createAnimatedColors,
+    getTime,
   }) => {
     const width = createMemo(
       (w, h, r) => p.floor((w * r) / h),
@@ -83,7 +89,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
     );
     const worms = createMemo(
       (res, len, width) => {
-        if (len === 1) {
+        if (len === 0) {
           return Array.from({ length: res * width }, (_, i) => {
             const pos = p.createVector((i % width) + 1, p.floor(i / width) + 1);
             return new Worm(pos, 1, () => 1);
@@ -153,6 +159,9 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
           const H = getProp("RESOLUTION");
           const L = getProp("WORM_LENGTH");
           const [colorA, colorB] = colorsAnimated.value!;
+          const time = getTime();
+          const animF = oscillateBetween(p, 0, 1, 0.02, time);
+          // const animF = (time % 200) / 200;
 
           p.scale(
             getProp("canvasWidth") / (W + 1),
@@ -164,14 +173,28 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
             ["miter", "round", "bevel"][getProp("CORNERS_TYPE")] as STROKE_JOIN,
           );
 
-          worms.value.forEach((w) => {
-            p.stroke(p.lerpColor(colorA, colorB, w.tail.length / L));
+          worms.value.forEach((worm) => {
+            p.stroke(p.lerpColor(colorA, colorB, worm.tail.length / L));
+
             p.beginShape();
-            p.vertex(w.head.x, w.head.y);
-            p.vertex(w.head.x, w.head.y);
-            w.tail.forEach((pos) => {
-              p.vertex(pos.x, pos.y);
-            });
+            {
+              p.vertex(worm.head.x, worm.head.y);
+              p.vertex(worm.head.x, worm.head.y);
+
+              const curr =
+                (getProp("ANIMATED") === 1 ? animF : 1) * worm.tail.length;
+              // console.log("curr", curr);
+
+              worm.tail.forEach((pos, i, arr) => {
+                if (curr >= i + 1) {
+                  p.vertex(pos.x, pos.y);
+                } else if (curr < i + 1 && curr > i) {
+                  const prev = i === 0 ? worm.head : arr[i - 1];
+                  const int = p5.Vector.lerp(prev, pos, curr % 1);
+                  p.vertex(int.x, int.y);
+                }
+              });
+            }
             p.endShape();
           });
 
@@ -197,8 +220,12 @@ export class Worm {
     private readonly sensor: (pos: p5.Vector) => number,
   ) {}
 
+  public get body() {
+    return [this.head, ...this.tail];
+  }
+
   public step(cb: (pos: p5.Vector) => void): boolean {
-    if (this.tail.length >= this.length - 1) {
+    if (this.tail.length >= this.length) {
       return false;
     }
 
@@ -233,12 +260,60 @@ export class Worm {
 const presets: IPreset<Params>[] = [
   {
     params: {
+      RESOLUTION: 15,
+      WORM_LENGTH: 9,
+      THICKNESS: 0.9,
+      CORNERS_TYPE: 1,
+      COLOR: 1,
+      INVERT_COLORS: 1,
+      ANIMATED: 1,
+    },
+    name: "animated",
+  },
+  {
+    params: {
+      RESOLUTION: 40,
+      WORM_LENGTH: 30,
+      THICKNESS: 0.3,
+      CORNERS_TYPE: 1,
+      COLOR: 1,
+      INVERT_COLORS: 1,
+      ANIMATED: 1,
+    },
+    name: "animated 2",
+  },
+  {
+    params: {
       RESOLUTION: 35,
-      WORM_LENGTH: 1,
+      WORM_LENGTH: 100,
+      THICKNESS: 0.85,
+      COLOR: 3,
+      INVERT_COLORS: 0,
+      CORNERS_TYPE: 1,
+      ANIMATED: 1,
+    },
+    name: "animated 3",
+  },
+  {
+    params: {
+      RESOLUTION: 35,
+      WORM_LENGTH: 2,
       THICKNESS: 0.1,
       COLOR: 0,
       INVERT_COLORS: 0,
       CORNERS_TYPE: 0,
+      ANIMATED: 1,
+    },
+  },
+  {
+    params: {
+      RESOLUTION: 3,
+      WORM_LENGTH: 0,
+      THICKNESS: 0.1,
+      COLOR: 0,
+      INVERT_COLORS: 0,
+      CORNERS_TYPE: 0,
+      ANIMATED: 1,
     },
   },
   {
@@ -249,6 +324,7 @@ const presets: IPreset<Params>[] = [
       COLOR: 0,
       INVERT_COLORS: 0,
       CORNERS_TYPE: 0,
+      ANIMATED: 1,
     },
   },
   {
@@ -259,6 +335,7 @@ const presets: IPreset<Params>[] = [
       COLOR: 0,
       INVERT_COLORS: 0,
       CORNERS_TYPE: 0,
+      ANIMATED: 1,
     },
   },
   {
@@ -269,6 +346,7 @@ const presets: IPreset<Params>[] = [
       COLOR: 0,
       INVERT_COLORS: 0,
       CORNERS_TYPE: 0,
+      ANIMATED: 1,
     },
   },
   {
@@ -279,6 +357,7 @@ const presets: IPreset<Params>[] = [
       COLOR: 1,
       INVERT_COLORS: 1,
       CORNERS_TYPE: 0,
+      ANIMATED: 1,
     },
   },
   {
@@ -289,6 +368,7 @@ const presets: IPreset<Params>[] = [
       COLOR: 1,
       INVERT_COLORS: 0,
       CORNERS_TYPE: 0,
+      ANIMATED: 1,
     },
   },
   {
@@ -299,6 +379,7 @@ const presets: IPreset<Params>[] = [
       COLOR: 1,
       INVERT_COLORS: 0,
       CORNERS_TYPE: 0,
+      ANIMATED: 1,
     },
   },
 ];
@@ -308,11 +389,12 @@ export const sketch: ISketch<Params> = {
   id: "worms",
   name: "worms",
   preview: {
-    size: 400,
+    size: 450,
   },
-  // randomSeed: 40,
+  randomSeed: 40,
   controls,
   presets,
   type: "draft",
-  presetsShuffle: 1,
+  startTime: 78,
+  // presetsShuffle: 1,
 };

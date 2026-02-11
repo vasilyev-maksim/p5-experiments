@@ -93,7 +93,8 @@ export async function copyToClipboard(text: string) {
 
 export function copyPresetCodeToClipboard(params: IParams) {
   const name = prompt("Preset name:")?.trim();
-  const code = JSON.stringify({ params, ...(name ? { name } : {}) }, null, 4);
+  const code =
+    JSON.stringify({ params, ...(name ? { name } : {}) }, null, 4) + ",";
   return copyToClipboard(code);
 }
 
