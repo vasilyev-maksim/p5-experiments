@@ -28,11 +28,48 @@ export const controls = {
   CORNERS_TYPE: {
     type: "choice",
     label: "Corner type",
-    options: [
-      { label: "Square", value: 0 },
-      { label: "Round", value: 1 },
-      { label: "Cut", value: 2 },
-    ],
+    options: ["Square", "Round", "Cut"],
+  },
+  ANIMATION_TYPE: {
+    type: "choice",
+    label: "Animation type",
+    options: ["Static", "Direct", "Inverse", "Dynamic"],
+  },
+  L: {
+    label: "L",
+    type: "range",
+    min: 0,
+    max: 1,
+    step: 0.1,
+    valueFormatter: (x) => x.toFixed(1),
+  },
+  R: {
+    label: "R",
+    type: "range",
+    min: 0,
+    max: 1,
+    step: 0.1,
+    valueFormatter: (x) => x.toFixed(1),
+  },
+  U: {
+    label: "U",
+    type: "range",
+    min: 0,
+    max: 1,
+    step: 0.1,
+    valueFormatter: (x) => x.toFixed(1),
+  },
+  D: {
+    label: "D",
+    type: "range",
+    min: 0,
+    max: 1,
+    step: 0.1,
+    valueFormatter: (x) => x.toFixed(1),
+  },
+  DIRECTION_RANDOMNESS: {
+    type: "boolean",
+    label: "Random direction",
   },
   COLOR: {
     type: "color",
@@ -49,9 +86,5 @@ export const controls = {
   INVERT_COLORS: {
     type: "boolean",
     label: "Invert colors",
-  },
-  ANIMATED: {
-    type: "boolean",
-    label: "Animated",
   },
 } as const satisfies IControls;

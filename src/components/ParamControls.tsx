@@ -114,7 +114,7 @@ export function ParamControls(props: {
                     <OptionButton
                       active={active}
                       onClick={onClick}
-                      label={c.options[value].label}
+                      label={c.options[value]}
                       mini
                       animationDuration={initControls.duration}
                     />

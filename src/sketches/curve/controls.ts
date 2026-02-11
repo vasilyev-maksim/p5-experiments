@@ -51,28 +51,7 @@ export const controls = {
   JOINT_TYPE: {
     label: "Joint type",
     type: "choice",
-    options: [
-      {
-        label: "None",
-        value: 0,
-      },
-      {
-        label: "Square",
-        value: 1,
-      },
-      {
-        label: "Circle",
-        value: 2,
-      },
-      {
-        label: "Plus",
-        value: 3,
-      },
-      {
-        label: "Cross",
-        value: 4,
-      },
-    ],
+    options: ["None", "Square", "Circle", "Plus", "Cross"],
   },
   COLOR: {
     type: "color",

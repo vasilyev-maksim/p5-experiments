@@ -68,7 +68,7 @@ export interface IColorControl extends IControlBase {
 
 export interface IChoiceControl extends IControlBase {
   type: "choice";
-  options: { label: string; value: number }[];
+  options: string[];
 }
 
 export type IParams<ParamKey extends string = string> = Record<

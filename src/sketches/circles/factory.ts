@@ -89,7 +89,13 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
           const delta =
             -coilFactor.value! *
             (i + 1) *
-            oscillateBetween(p, 0, 1, coilSpeed.value!, time); // change last param to 3 for more chaos
+            oscillateBetween({
+              p,
+              start: 0,
+              end: 1,
+              speed: coilSpeed.value!,
+              time,
+            }); // change last param to 3 for more chaos
           const angle = (baseAngle + delta) * (i % 2 == 1 ? 1 : -1);
           const localX = CENTER_VEC.x - rotationCenter.x;
           const localY = CENTER_VEC.y - rotationCenter.y;

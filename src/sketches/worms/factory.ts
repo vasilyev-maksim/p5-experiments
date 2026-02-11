@@ -6,6 +6,7 @@ import { Size } from "../tiles/Size";
 import { type Params, controls } from "./controls";
 import { Worm } from "./Worm";
 import p5, { type STROKE_JOIN } from "p5";
+import { mapDirection } from "../utils";
 
 const ANIMATION_SPEED = 25;
 
@@ -19,7 +20,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
     createAnimatedColors,
     getTime,
   }) => {
-    const width = createMemo(
+    const resX = createMemo(
       (w, h, r) => p.floor((w * r) / h),
       [
         getTrackedProp("canvasWidth"),
@@ -28,42 +29,61 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       ],
     );
     const worms = createMemo(
-      (res, len, width) => {
+      (resY, resX, len, left, right, up, down, dirIsRandom) => {
         if (len === 0) {
-          return Array.from({ length: res * width }, (_, i) => {
-            const pos = p.createVector((i % width) + 1, p.floor(i / width) + 1);
-            return new Worm(pos, 1, () => 1);
+          return Array.from({ length: resY * resX }, (_, i) => {
+            const pos = p.createVector((i % resX) + 1, p.floor(i / resX) + 1);
+            return new Worm(
+              pos,
+              1,
+              () => 1,
+              () => {},
+            );
           });
         }
 
-        const height = res;
-        const matrix = new Matrix(new Size(width, height), () => p.random());
+        const height = resY;
+        const matrix = new Matrix(new Size(resX, height), () => p.random());
         const arr: Worm[] = [];
 
-        let worm: Worm, head: p5.Vector;
-
         while (true) {
-          head = matrix.getRandomTrue();
+          const head = matrix.getRandomTrue();
 
           if (!head) {
             break;
           }
 
-          matrix.set(head, false);
-          worm = new Worm(head, len, (pos) =>
-            matrix.get(pos) ? p.random() : 0,
+          arr.push(
+            new Worm(
+              head,
+              len,
+              (pos, worm) => {
+                const dir = p5.Vector.sub(worm.head, pos);
+                const weight = mapDirection(dir, {
+                  right: right * (dirIsRandom ? p.random() : 1),
+                  left: left * (dirIsRandom ? p.random() : 1),
+                  up: up * (dirIsRandom ? p.random() : 1),
+                  down: down * (dirIsRandom ? p.random() : 1),
+                });
+                return matrix.get(pos) ? weight : 0;
+              },
+              (pos) => matrix.set(pos, false),
+            ).grow(),
           );
-
-          while (worm.step((pos) => matrix.set(pos, false))) {
-            // noop
-          }
-
-          arr.push(worm);
         }
 
         return arr;
       },
-      [getTrackedProp("RESOLUTION"), getTrackedProp("WORM_LENGTH"), width],
+      [
+        getTrackedProp("RESOLUTION"),
+        resX,
+        getTrackedProp("WORM_LENGTH"),
+        getTrackedProp("L"),
+        getTrackedProp("R"),
+        getTrackedProp("U"),
+        getTrackedProp("D"),
+        getTrackedProp("DIRECTION_RANDOMNESS"),
+      ],
     );
     const thickness = createAnimatedValue(ANIMATION_SPEED, (t) => t, [
       getTrackedProp("THICKNESS"),
@@ -89,12 +109,30 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
           p.stroke("red");
           p.noFill();
 
-          const W = width.value;
+          const W = resX.value;
           const H = getProp("RESOLUTION");
-          const L = getProp("WORM_LENGTH");
+          // const MAX_WORM_LENGTH = getProp("WORM_LENGTH");
           const [colorA, colorB] = colorsAnimated.value!;
           const time = getTime();
-          const animF = oscillateBetween(p, 0, 1, 0.02, time);
+          const animationType = getProp("ANIMATION_TYPE");
+          const [start, end] =
+            animationType === 1
+              ? [0, 1]
+              : animationType === 2
+                ? [-1, 0]
+                : animationType === 3
+                  ? [-1, 1]
+                  : [0, 0];
+
+          const animationProgress = oscillateBetween({
+            p,
+            start,
+            end,
+            speed: 0.02,
+            time,
+          });
+          const progress = animationType === 0 ? 0 : animationProgress;
+
           p.scale(
             getProp("canvasWidth") / (W + 1),
             getProp("canvasHeight") / (H + 1),
@@ -104,28 +142,15 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
             ["miter", "round", "bevel"][getProp("CORNERS_TYPE")] as STROKE_JOIN,
           );
 
+          const longestWormLength = Math.max(
+            ...worms.value.map((x) => x.body.length),
+          );
           worms.value.forEach((worm) => {
-            p.stroke(p.lerpColor(colorA, colorB, worm.tail.length / L));
+            const endColorAmt = worm.tail.length / longestWormLength;
+            const colorAmt = endColorAmt * (1 - p.abs(progress));
 
-            p.beginShape();
-            {
-              p.vertex(worm.head.x, worm.head.y);
-              p.vertex(worm.head.x, worm.head.y);
-
-              const curr =
-                (getProp("ANIMATED") === 1 ? animF : 1) * worm.tail.length;
-
-              worm.tail.forEach((pos, i, arr) => {
-                if (curr >= i + 1) {
-                  p.vertex(pos.x, pos.y);
-                } else if (curr < i + 1 && curr > i) {
-                  const prev = i === 0 ? worm.head : arr[i - 1];
-                  const int = p5.Vector.lerp(prev, pos, curr % 1);
-                  p.vertex(int.x, int.y);
-                }
-              });
-            }
-            p.endShape();
+            p.stroke(p.lerpColor(colorA, colorB, colorAmt));
+            worm.draw(p, progress);
           });
         };
       },

@@ -124,13 +124,13 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
                     : 1;
               const distanceToDiagonal =
                 curvatureFactor * halfDiagonal * curvatureSign || 1;
-              const curvature = oscillateBetween(
+              const curvature = oscillateBetween({
                 p,
-                distanceToDiagonal * MAX_NEGATIVE_CURVATURE * -1,
-                distanceToDiagonal * MAX_CURVATURE,
-                0.02,
+                start: distanceToDiagonal * MAX_NEGATIVE_CURVATURE * -1,
+                end: distanceToDiagonal * MAX_CURVATURE,
+                speed: 0.02,
                 time,
-              );
+              });
               const colorIntensity = p.map(
                 p.abs(curvature),
                 0,

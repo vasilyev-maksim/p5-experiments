@@ -36,22 +36,12 @@ export const controls = {
   },
   PATTERN_TYPE: {
     type: "choice",
-    options: [
-      { label: "#1", value: 0 },
-      { label: "#2", value: 1 },
-      { label: "#3", value: 2 },
-      { label: "#4", value: 3 },
-      { label: "#5", value: 4 },
-    ],
+    options: ["1", "2", "3", "4", "5"],
     label: "Pattern type",
   },
   CURVATURE_TYPE: {
     type: "choice",
-    options: [
-      { label: "dynamic", value: 0 },
-      { label: "dynamic inverted", value: 1 },
-      { label: "static", value: 2 },
-    ],
+    options: ["Dynamic", "Dynamic inverted", "Static"],
     label: "Curvature type",
   },
   INVERT_COLORS: {

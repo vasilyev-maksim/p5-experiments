@@ -114,7 +114,7 @@ export function createSketch<Params extends string>(
           initialProps.canvasHeight,
           args.in3D ? p.WEBGL : p.P2D,
         );
-        if (initialProps.randomSeed !== undefined){
+        if (initialProps.randomSeed !== undefined) {
           p.randomSeed(initialProps.randomSeed);
           p.noiseSeed(initialProps.randomSeed);
         }

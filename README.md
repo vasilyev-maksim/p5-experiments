@@ -4,6 +4,7 @@
 
 # 📋 TODO
 
+- timeDelta value missing when exporting preset (as well as random seed etc.)
 - add throttle to createMemo
 - refactor `useViewport`
   - maybe use context to store constant sizes
