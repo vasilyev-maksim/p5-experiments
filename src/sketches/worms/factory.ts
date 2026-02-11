@@ -78,7 +78,6 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       p,
     );
 
-    // alert(W);
     return {
       setup: () => {
         p.background("black");
@@ -90,21 +89,16 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
           p.stroke("red");
           p.noFill();
 
-          // const N = getProp("N");
-          // console.log("N = ", N);
-          // console.log("NA = ", NA.value);
           const W = width.value;
           const H = getProp("RESOLUTION");
           const L = getProp("WORM_LENGTH");
           const [colorA, colorB] = colorsAnimated.value!;
           const time = getTime();
           const animF = oscillateBetween(p, 0, 1, 0.02, time);
-          // const animF = (time % 200) / 200;
           p.scale(
             getProp("canvasWidth") / (W + 1),
             getProp("canvasHeight") / (H + 1),
           );
-          // p.translate(0.25, 0.25);
           p.strokeWeight(thickness.value!);
           p.strokeJoin(
             ["miter", "round", "bevel"][getProp("CORNERS_TYPE")] as STROKE_JOIN,
@@ -120,7 +114,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
 
               const curr =
                 (getProp("ANIMATED") === 1 ? animF : 1) * worm.tail.length;
-              // console.log("curr", curr);
+
               worm.tail.forEach((pos, i, arr) => {
                 if (curr >= i + 1) {
                   p.vertex(pos.x, pos.y);
@@ -133,14 +127,6 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
             }
             p.endShape();
           });
-
-          // p.stroke("white");
-          // p.beginShape();
-          // p.vertex(5.6, 5.6);
-          // // p.vertex(2.6, 5.6);
-          // p.endShape();
-          // p.circle(2, 2, 2);
-          // p.rect(0, 0, W - 1, H - 1);
         };
       },
     };
