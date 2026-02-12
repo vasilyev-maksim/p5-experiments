@@ -7,6 +7,7 @@ import type {
   ExportRequestEvent,
   PresetChangeEvent,
   IPreset,
+  IControls,
 } from "../models";
 import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
@@ -15,28 +16,28 @@ import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { MemoizedAnimatedColors } from "./MemoizedAnimatedColor";
 import { ENV } from "@/env";
 
-type PropNames<Params extends string> = keyof ISketchProps<Params>;
-type TrackedProps<Params extends string> = {
-  [k in PropNames<Params>]: TrackedValue<ISketchProps<Params>[k]>;
+type PropNames<Controls extends IControls> = keyof ISketchProps<Controls>;
+type TrackedProps<Controls extends IControls> = {
+  [k in PropNames<Controls>]: TrackedValue<ISketchProps<Controls>[k]>;
 };
 
-export type CreateSketchArgs<Params extends string> = {
-  setup?: (api: Api<Params>) => void;
+export type CreateSketchArgs<Controls extends IControls> = {
+  setup?: (api: Api<Controls>) => void;
   // Why a factory? it allows us define helper render functions in closure with `api` var available.
-  draw: (api: Api<Params>) => () => void;
-  onPropsChanged?: (api: Api<Params>) => void;
-  onPresetChange?: (preset: IPreset) => void;
+  draw: (api: Api<Controls>) => () => void;
+  onPropsChanged?: (api: Api<Controls>) => void;
+  onPresetChange?: (preset: IPreset<Controls>) => void;
   in3D?: boolean;
 };
 
-type Api<Params extends string> = {
-  p: P5CanvasInstance<ISketchProps<Params>>;
-  getProp: <K extends PropNames<Params>>(
+type Api<Controls extends IControls> = {
+  p: P5CanvasInstance<ISketchProps<Controls>>;
+  getProp: <K extends PropNames<Controls>>(
     propName: K,
-  ) => ISketchProps<Params>[K];
-  getTrackedProp: <K extends PropNames<Params>>(
+  ) => ISketchProps<Controls>[K];
+  getTrackedProp: <K extends PropNames<Controls>>(
     propName: K,
-  ) => TrackedValue<ISketchProps<Params>[K]>;
+  ) => TrackedValue<ISketchProps<Controls>[K]>;
   getTime: () => number;
   createMemo: <ArgsType extends any[], ValueType>(
     ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
@@ -52,18 +53,18 @@ type Api<Params extends string> = {
   ) => MemoizedAnimatedColors<ArgsType>;
 };
 
-export function createSketch<Params extends string>(
+export function createSketch<Controls extends IControls>(
   // Why a factory? it allows us to use closures to create shared vars.
   // Note that `api` is not available in the topmost scope to avoid issues with p5 instance init order.
-  argsFactory: (api: Api<Params>) => CreateSketchArgs<Params>,
-): ISketchFactory<Params> {
+  argsFactory: (api: Api<Controls>) => CreateSketchArgs<Controls>,
+): ISketchFactory<Controls> {
   return ({ initialProps }) =>
     (p) => {
       let time = 0,
         drawsCount = 0,
         initialPropsUpdate = true,
-        props: TrackedProps<Params>,
-        draw: ReturnType<CreateSketchArgs<Params>["draw"]>;
+        props: TrackedProps<Controls>,
+        draw: ReturnType<CreateSketchArgs<Controls>["draw"]>;
 
       const memos: MemoizedValue<any, any>[] = [];
       const animations: Array<
@@ -72,7 +73,7 @@ export function createSketch<Params extends string>(
         | MemoizedAnimatedColors<any>
       > = [];
 
-      const api: Api<Params> = {
+      const api: Api<Controls> = {
         p,
         getTrackedProp: (k) => {
           return props[k];
@@ -198,12 +199,12 @@ export function createSketch<Params extends string>(
         }
       };
 
-      function updateTrackedProps(newRawProps: ISketchProps<Params>) {
+      function updateTrackedProps(newRawProps: ISketchProps<Controls>) {
         if (!props) {
           props = {} as any;
         }
 
-        (Object.keys(newRawProps) as PropNames<Params>[]).forEach((key) => {
+        (Object.keys(newRawProps) as PropNames<Controls>[]).forEach((key) => {
           if (props[key] === undefined) {
             props[key] = new TrackedValue(undefined) as any;
           }
@@ -280,8 +281,8 @@ export function createSketch<Params extends string>(
         // draw the same frame but for wallpaper resolution
         p.resizeCanvas(exportFileWidth, exportFileHeight, true);
         // update related tracked props, memos and animations
-        props["canvasWidth"].value = exportFileWidth;
-        props["canvasHeight"].value = exportFileHeight;
+        (props.canvasWidth.value as number) = exportFileWidth;
+        (props.canvasHeight.value as number) = exportFileHeight;
         updateMemos();
         // all animations forcibly set to end values to see correct final result
         updateAnimations(true);

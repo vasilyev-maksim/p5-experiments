@@ -1,10 +1,11 @@
 import type { IPreset } from "@/models";
-import type { Params } from "./controls";
+import type { Controls } from "./controls";
 
-export const presets: IPreset<Params>[] = [
+export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 15,
+      TEST: [1, 1],
       WORM_LENGTH: 9,
       THICKNESS: 0.9,
       CORNERS_TYPE: 1,
@@ -22,6 +23,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 40,
+      TEST: [1, 1],
       WORM_LENGTH: 30,
       THICKNESS: 0.3,
       CORNERS_TYPE: 1,
@@ -39,6 +41,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.85,
       COLOR: 3,
@@ -56,6 +59,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.75,
       COLOR: 1,
@@ -74,6 +78,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 3,
       THICKNESS: 0.55,
       COLOR: 1,
@@ -91,6 +96,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 2,
       THICKNESS: 0.1,
       COLOR: 0,
@@ -107,6 +113,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 3,
+      TEST: [1, 1],
       WORM_LENGTH: 0,
       THICKNESS: 0.1,
       COLOR: 0,
@@ -123,6 +130,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 2,
       THICKNESS: 0.1,
       COLOR: 0,
@@ -139,6 +147,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.1,
       COLOR: 0,
@@ -155,6 +164,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.75,
       COLOR: 0,
@@ -171,6 +181,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.75,
       COLOR: 1,
@@ -187,6 +198,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.75,
       COLOR: 1,
@@ -203,6 +215,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 35,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.1,
       COLOR: 1,
@@ -219,6 +232,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 48,
+      TEST: [1, 1],
       WORM_LENGTH: 47,
       THICKNESS: 0.1,
       CORNERS_TYPE: 1,
@@ -236,6 +250,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 23,
+      TEST: [1, 1],
       WORM_LENGTH: 86,
       THICKNESS: 0.25,
       CORNERS_TYPE: 1,
@@ -253,6 +268,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 40,
+      TEST: [1, 1],
       WORM_LENGTH: 100,
       THICKNESS: 0.3,
       CORNERS_TYPE: 1,
@@ -270,23 +286,7 @@ export const presets: IPreset<Params>[] = [
   {
     params: {
       RESOLUTION: 50,
-      WORM_LENGTH: 85,
-      THICKNESS: 0.25,
-      CORNERS_TYPE: 1,
-      ANIMATION_TYPE: 3,
-      DIRECTION_RANDOMNESS: 0,
-      L: 0.20000000000000004,
-      R: 0,
-      U: 0.4,
-      D: 0,
-      COLOR: 0,
-      INVERT_COLORS: 1,
-    },
-    name: "nice3",
-  },
-  {
-    params: {
-      RESOLUTION: 50,
+      TEST: [1, 1],
       WORM_LENGTH: 85,
       THICKNESS: 0.25,
       CORNERS_TYPE: 1,

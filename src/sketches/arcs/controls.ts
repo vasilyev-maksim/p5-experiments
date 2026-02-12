@@ -1,6 +1,6 @@
-import type { ExtractParams, IControls } from "@/models";
+import type { IControls } from "@/models";
 
-export type Params = ExtractParams<typeof controls>;
+export type Controls = typeof controls;
 
 export const controls = {
   RESOLUTION: {

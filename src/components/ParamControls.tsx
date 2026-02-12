@@ -16,7 +16,7 @@ import { BooleanParamControl } from "./BooleanParamControl";
 import type { PropsWithChildren } from "react";
 
 export function ParamControls(props: {
-  sketch: ISketch<string>;
+  sketch: ISketch;
   params: IParams;
   onParamChange: (key: string, value: number) => void;
 }) {
@@ -66,7 +66,8 @@ export function ParamControls(props: {
           {springs.map(({ x }, i) => {
             const [key, c] = entries[i];
             let body = null;
-            const value = props.params[key];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const value = props.params[key] as any;
 
             if (c.type === "range") {
               const valueStr = c.valueFormatter?.(value, c) ?? value;

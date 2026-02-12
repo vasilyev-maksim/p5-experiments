@@ -1,12 +1,12 @@
 import { createSketch } from "@/core/createSketch";
 import { range } from "@/utils/misc";
-import { controls, type Params } from "./controls";
+import { controls, type Controls } from "./controls";
 
 const JOINT_SIZE = 10;
 const ANIMATION_SPEED = 25;
 const BG_COLOR = "black";
 
-export const factory = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({
     getProp,
     getTime,

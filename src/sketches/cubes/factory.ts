@@ -1,12 +1,11 @@
 import { createSketch } from "@/core/createSketch";
-import type { ISketchFactory } from "@/models";
-import type { Params } from ".";
 import { range } from "@/utils/misc";
+import type { Controls } from "./controls";
 
 const ANIMATION_SPEED = 20;
 const cameraRotationDelta = 0.005;
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({
     p,
     getProp,

@@ -1,8 +1,7 @@
 import { createSketch } from "@/core/createSketch";
-import type { ISketchFactory } from "@/models";
-import type { Params } from ".";
+import type { Controls } from "./controls";
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(({ p }) => {
+export const factory = createSketch<Controls>(({ p }) => {
   return {
     setup: () => {
       p.noStroke();

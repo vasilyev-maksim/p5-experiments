@@ -1,4 +1,6 @@
-import type { ExtractParams, IControls } from "../../models";
+import type { IControls } from "../../models";
+
+export type Controls = typeof controls;
 
 export const controls = {
   POLYGON_N: {
@@ -90,5 +92,3 @@ export const controls = {
     label: "Fill colors",
   },
 } as const satisfies IControls;
-
-export type Params = ExtractParams<typeof controls>;

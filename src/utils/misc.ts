@@ -1,17 +1,23 @@
-import { type IControl, type IControls, type IParams } from "../models";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  type ControlValueType,
+  type IControl,
+  type IControls,
+  type IParams,
+} from "../models";
 
-function serializeParams(params: IParams): string {
+function serializeParams(params: IParams<any>): string {
   return Object.entries(params)
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map((key, value) => key + "__" + value)
     .join("___");
 }
 
-export function areParamsEqual(a: IParams, b: IParams): boolean {
+export function areParamsEqual(a: IParams<any>, b: IParams<any>): boolean {
   return serializeParams(a) === serializeParams(b);
 }
 
-function getRandomValueFromControl(c: IControl): number {
+function getRandomValueFromControl(c: IControl): ControlValueType<typeof c> {
   switch (c.type) {
     case "boolean":
       return Math.round(Math.random());
@@ -23,15 +29,17 @@ function getRandomValueFromControl(c: IControl): number {
       return (
         Math.floor((Math.random() * (c.max - c.min)) / c.step) * c.step + c.min
       );
+    case "coordinate":
+      return [Math.random(), Math.random()];
   }
 }
 
-export function getRandomParams<ParamKey extends string = string>(
-  controls: IControls<ParamKey>,
-): IParams<ParamKey> {
+export function getRandomParams<Controls extends IControls>(
+  controls: Controls,
+): IParams<Controls> {
   return Object.entries<IControl>(controls).reduce((acc, [key, val]) => {
     return { ...acc, [key]: getRandomValueFromControl(val) };
-  }, {}) as IParams<ParamKey>;
+  }, {}) as IParams<Controls>;
 }
 
 export function delay(delay: number) {
@@ -91,7 +99,7 @@ export async function copyToClipboard(text: string) {
   }
 }
 
-export function copyPresetCodeToClipboard(params: IParams) {
+export function copyPresetCodeToClipboard(params: IParams<any>) {
   const name = prompt("Preset name:")?.trim();
   const code =
     JSON.stringify({ params, ...(name ? { name } : {}) }, null, 4) + ",";

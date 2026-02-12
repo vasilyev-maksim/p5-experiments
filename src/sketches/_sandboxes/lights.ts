@@ -1,12 +1,8 @@
-import type {
-  ExtractParams,
-  IControls,
-  IPreset,
-  ISketch,
-  ISketchFactory,
-} from "../../models";
+import type { IControls, IPreset, ISketch } from "../../models";
 import { createSketch } from "@core/createSketch";
 import { drawGrid } from "../city/utils/grid";
+
+export type Controls = typeof controls;
 
 const controls = {
   X: {
@@ -46,9 +42,7 @@ const controls = {
   },
 } as const satisfies IControls;
 
-type Params = ExtractParams<typeof controls>;
-
-export const factory: ISketchFactory<Params> = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({ p, getTrackedProp, createMemo }) => {
     // const AX = createAnimatedValue(25, (x) => x, [getTrackedProp("X")]);
     const X = createMemo((x) => x, [getTrackedProp("X")]);
@@ -131,7 +125,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
   },
 );
 
-const presets: IPreset<Params>[] = [
+const presets: IPreset<Controls>[] = [
   {
     params: {
       X: 3,
@@ -143,7 +137,7 @@ const presets: IPreset<Params>[] = [
   },
 ];
 
-export const sketch: ISketch<Params> = {
+export const sketch: ISketch<Controls> = {
   factory,
   id: "lights",
   name: "lights",

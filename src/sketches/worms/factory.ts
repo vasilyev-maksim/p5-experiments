@@ -3,14 +3,14 @@ import { oscillateBetween } from "@/core/utils";
 import type { ISketchFactory } from "@/models";
 import { Matrix } from "../tiles/Matrix";
 import { Size } from "../tiles/Size";
-import { type Params, controls } from "./controls";
+import { controls, type Controls } from "./controls";
 import { Worm } from "./Worm";
 import p5, { type STROKE_JOIN } from "p5";
 import { mapDirection } from "../utils";
 
 const ANIMATION_SPEED = 25;
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(
+export const factory: ISketchFactory<Controls> = createSketch<Controls>(
   ({
     p,
     createMemo,
@@ -29,7 +29,8 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
       ],
     );
     const worms = createMemo(
-      (resY, resX, len, left, right, up, down, dirIsRandom) => {
+      (resY, resX, len, left, right, up, down, dirIsRandom, test) => {
+        console.log("test", test);
         if (len === 0) {
           return Array.from({ length: resY * resX }, (_, i) => {
             const pos = p.createVector((i % resX) + 1, p.floor(i / resX) + 1);
@@ -83,6 +84,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(
         getTrackedProp("U"),
         getTrackedProp("D"),
         getTrackedProp("DIRECTION_RANDOMNESS"),
+        getTrackedProp("TEST"),
       ],
     );
     const thickness = createAnimatedValue(ANIMATION_SPEED, (t) => t, [

@@ -2,13 +2,12 @@ import { createSketch } from "@/core/createSketch";
 import { oscillateBetween } from "@/core/utils";
 import { range } from "@/utils/misc";
 import p5 from "p5";
-import { controls, type Params } from "./controls";
-import type { ISketchFactory } from "@/models";
+import { controls, type Controls } from "./controls";
 
 const ANIMATION_SPEED = 25;
 const COLOR_ANIMATION_SPEED = 60;
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({
     createAnimatedColors,
     createAnimatedValue,

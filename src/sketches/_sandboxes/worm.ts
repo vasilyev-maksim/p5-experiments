@@ -1,12 +1,8 @@
 import p5 from "p5";
-import type {
-  ExtractParams,
-  IControls,
-  IPreset,
-  ISketch,
-  ISketchFactory,
-} from "../../models";
+import type { IControls, IPreset, ISketch, ISketchFactory } from "../../models";
 import { range } from "../../utils/misc";
+
+export type Controls = typeof controls;
 
 const controls = {
   TIME_DELTA: {
@@ -19,9 +15,7 @@ const controls = {
   },
 } as const satisfies IControls;
 
-type Params = ExtractParams<typeof controls>;
-
-const factory: ISketchFactory<Params> =
+const factory: ISketchFactory<typeof controls> =
   ({ initialProps: { canvasWidth, canvasHeight } }) =>
   (p) => {
     const R = 50;
@@ -94,7 +88,7 @@ const factory: ISketchFactory<Params> =
     };
   };
 
-const presets: IPreset<Params>[] = [
+const presets: IPreset<typeof controls>[] = [
   {
     params: {
       TIME_DELTA: 1,
@@ -102,7 +96,7 @@ const presets: IPreset<Params>[] = [
   },
 ];
 
-export const wormSketch: ISketch<Params> = {
+export const wormSketch: ISketch<typeof controls> = {
   factory,
   id: "worm",
   name: "worm",
@@ -112,5 +106,5 @@ export const wormSketch: ISketch<Params> = {
   randomSeed: 44,
   controls,
   presets,
-  type: 'hidden'
+  type: "hidden",
 };

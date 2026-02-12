@@ -1,13 +1,13 @@
 // import { MemoizedValue } from "../utils/MemoizedValue";
 import { range } from "../../utils/misc";
 import { createSketch } from "@core/createSketch";
-import { type Params, controls } from "./controls";
+import { type Controls, controls } from "./controls";
 
 const ANIMATION_SPEED = 25;
 const POLYGONS_COUNT = 500,
   BG_COLOR = "black";
 
-export const factory = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({
     createAnimatedColors,
     createAnimatedValue,

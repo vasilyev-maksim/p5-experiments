@@ -1,11 +1,10 @@
 import type p5 from "p5";
-import type { ISketchFactory } from "../../models";
 import { createSketch } from "@core/createSketch";
-import { type Params, controls } from "./controls";
+import { type Controls, controls } from "./controls";
 
 const ANIMATION_SPEED = 25;
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({
     createAnimatedArray,
     createAnimatedColors,

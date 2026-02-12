@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Grid } from "./Grid";
 import { Size } from "./Size";
 import { Matrix } from "./Matrix";
@@ -7,7 +8,7 @@ import { StaggerAnimation } from "./StaggerAnimation";
 import type { ISketch, ISketchFactory } from "../../models";
 import { easeInOutQuad, getQsParam } from "@/core/utils";
 
-export const factory: ISketchFactory<""> =
+export const factory: ISketchFactory<any> =
   ({ initialProps: { canvasHeight, canvasWidth, randomSeed } }) =>
   (p) => {
     const GRID_CELLS_Y = Number(getQsParam("y", "20")),
@@ -159,7 +160,7 @@ export const factory: ISketchFactory<""> =
 //   // randomSeed: 45,
 // },
 
-export const sketch: ISketch<""> = {
+export const sketch: ISketch<any> = {
   factory,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   controls: {} as any,

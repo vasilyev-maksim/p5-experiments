@@ -5,12 +5,11 @@ import {
 import { createSketch } from "@/core/createSketch";
 import { oscillateBetween } from "@/core/utils";
 import p5 from "p5";
-import { type Params, controls } from "./controls";
-import type { ISketchFactory } from "@/models";
+import { controls, type Controls } from "./controls";
 
 const ANIMATION_SPEED = 20;
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({
     getTime,
     getProp,

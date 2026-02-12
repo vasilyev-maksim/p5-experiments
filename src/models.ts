@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 
+/** EVENTS */
 export type ExportRequestEvent = {
   type: "export";
   exportFileName: string;
@@ -9,37 +11,12 @@ export type ExportRequestEvent = {
 
 export type PresetChangeEvent = {
   type: "presetChange";
-  preset: IPreset;
+  preset: IPreset<any>;
 };
 
 export type SketchEvent = ExportRequestEvent | PresetChangeEvent;
 
-export type ISketchProps<ParamKey extends string = string> = {
-  [K in ParamKey]: number;
-} & {
-  playing: boolean;
-  timeShift?: number;
-  timeDelta: number;
-  canvasWidth: number;
-  canvasHeight: number;
-  randomSeed: number;
-  event?: SketchEvent;
-};
-
-// export type Init<T> = (arg: T) => void;
-
-// export type ExportCallback = (
-//   exportFilename: string,
-//   width: number,
-//   height: number,
-// ) => void;
-
-// export type SetSketchTimeCallback = (time: number) => void;
-
-export type ISketchFactory<ParamKey extends string = string> = (args: {
-  initialProps: ISketchProps<ParamKey>;
-}) => (p: P5CanvasInstance<ISketchProps<ParamKey>>) => void;
-
+/** Controls */
 interface IControlBase {
   label: string;
 }
@@ -71,40 +48,61 @@ export interface IChoiceControl extends IControlBase {
   options: string[];
 }
 
-export type IParams<ParamKey extends string = string> = Record<
-  ParamKey,
-  number
-> & { timeDelta?: number };
+export interface ICoordinateControl extends IControlBase {
+  type: "coordinate";
+}
 
 export type IControl =
   | IRangeControl
   | IBooleanControl
   | IColorControl
-  | IChoiceControl;
+  | IChoiceControl
+  | ICoordinateControl;
 
-export type IControls<ParamKey extends string = string> = Record<
-  ParamKey,
-  IControl
->;
+export type ControlValueType<T extends IControl> = T extends ICoordinateControl
+  ? [number, number]
+  : number;
 
-export type ExtractParams<T> = T extends IControls<infer P> ? P : string;
+export type IControls = Record<string, IControl>;
 
-export type IPreset<ParamKey extends string = string> = {
+// Sketch factory
+
+export type IParams<Controls extends IControls = any> = {
+  [K in keyof Controls]: ControlValueType<Controls[K]>;
+} & { timeDelta?: number };
+
+export type ISketchProps<Controls extends IControls> = IParams<Controls> & {
+  playing: boolean;
+  timeShift?: number;
+  timeDelta: number;
+  canvasWidth: number;
+  canvasHeight: number;
+  randomSeed: number;
+  event?: SketchEvent;
+};
+
+export type ISketchFactory<Controls extends IControls> = (args: {
+  initialProps: ISketchProps<Controls>;
+}) => (p: P5CanvasInstance<ISketchProps<Controls>>) => void;
+
+// export type ExtractParams<T> = keyof T;
+
+export type IPreset<Controls extends IControls = any> = {
   name?: string;
-  params: IParams<ParamKey>;
+  params: IParams<Controls>;
   startTime?: number;
 };
 
-export interface ISketch<ParamKey extends string = string> {
+export interface ISketch<Controls extends IControls = IControls> {
   name: string;
   id: string;
   preview: {
     size: number;
   };
-  factory: ISketchFactory<ParamKey>;
+  factory: ISketchFactory<Controls>;
   randomSeed?: number;
-  controls: IControls<ParamKey>;
-  presets: IPreset<ParamKey>[];
+  controls: Controls;
+  presets: IPreset<Controls>[];
   presetsShuffle?: -1 | 0 | 1;
   presetsShuffleInterval?: number;
   startTime?: number;

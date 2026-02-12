@@ -1,7 +1,7 @@
 import type { IPreset } from "../../models";
-import { controls, type Params } from "./controls";
+import { controls, type Controls } from "./controls";
 
-export const presets: IPreset<Params>[] = [
+export const presets: IPreset<Controls>[] = [
   {
     params: {
       POLYGON_N: 5,

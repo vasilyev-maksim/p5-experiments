@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   SketchEvent,
   IPreset,
@@ -33,7 +34,7 @@ export const SketchModal = ({
   top = 0,
   onBackClick,
 }: {
-  sketch: ISketch;
+  sketch: ISketch<any>;
   left?: number;
   top?: number;
   onBackClick: () => void;
@@ -104,7 +105,7 @@ export const SketchModal = ({
     setParams((x) => ({ ...x, [key]: value }));
   };
 
-  const applyPreset = (preset: IPreset) => {
+  const applyPreset = (preset: IPreset<any>) => {
     setParams(preset.params);
     setEvent({
       type: "presetChange",

@@ -1,9 +1,9 @@
 import type { ISketch } from "../../models";
-import { controls, type Params } from "./controls";
+import { controls, type Controls } from "./controls";
 import { factory } from "./factory";
 import { presets } from "./presets";
 
-export const curveSketch: ISketch<Params> = {
+export const curveSketch: ISketch<Controls> = {
   factory,
   id: "curve",
   name: "curve",

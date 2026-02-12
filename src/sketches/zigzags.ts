@@ -1,7 +1,9 @@
 import p5 from "p5";
-import type { ExtractParams, IControls, IPreset, ISketch } from "../models";
+import type { IControls, IPreset, ISketch } from "../models";
 import { SquareBorderPointsJoiner } from "@core/BorderPointsJoiner";
 import { createSketch } from "@core/createSketch";
+
+export type Controls = typeof controls;
 
 const controls = {
   RESOLUTION: {
@@ -33,9 +35,7 @@ const controls = {
   },
 } as const satisfies IControls;
 
-type Params = ExtractParams<typeof controls>;
-
-const factory = createSketch<Params>(({ p, getProp, getTime }) => {
+const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
   return {
     setup: () => {
       p.angleMode("radians");
@@ -158,7 +158,7 @@ function drawZigzag({
   p.pop();
 }
 
-const presets: IPreset<Params>[] = [
+const presets: IPreset<Controls>[] = [
   {
     params: {
       timeDelta: 1,
@@ -171,7 +171,7 @@ const presets: IPreset<Params>[] = [
   },
 ];
 
-export const zigzagsSketch: ISketch<Params> = {
+export const zigzagsSketch: ISketch<Controls> = {
   factory,
   id: "zigzags",
   name: "zigzags",

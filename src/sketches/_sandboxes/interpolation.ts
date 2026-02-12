@@ -1,12 +1,8 @@
-import type {
-  ExtractParams,
-  IControls,
-  IPreset,
-  ISketch,
-  ISketchFactory,
-} from "../../models";
+import type { IControls, IPreset, ISketch } from "../../models";
 import { AnimatedValue } from "@core/AnimatedValue";
 import { createSketch } from "@core/createSketch";
+
+export type Controls = typeof controls;
 
 const controls = {
   TIME_DELTA: {
@@ -19,9 +15,7 @@ const controls = {
   },
 } as const satisfies IControls;
 
-type Params = ExtractParams<typeof controls>;
-
-export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
+export const factory = createSketch<typeof controls>(() => {
   const animatedX = new AnimatedValue(0, 20);
   const animatedY = new AnimatedValue(0, 20);
   return {
@@ -51,7 +45,7 @@ export const factory: ISketchFactory<Params> = createSketch<Params>(() => {
   };
 });
 
-const presets: IPreset<Params>[] = [
+const presets: IPreset<Controls>[] = [
   {
     params: {
       TIME_DELTA: 1,
@@ -59,7 +53,7 @@ const presets: IPreset<Params>[] = [
   },
 ];
 
-export const interpolationSketch: ISketch<Params> = {
+export const interpolationSketch: ISketch<Controls> = {
   factory,
   id: "interpolation",
   name: "interpolation",

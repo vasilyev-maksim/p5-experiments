@@ -1,11 +1,9 @@
-import type { ExtractParams, ISketch } from "../../models";
-import { controls } from "./controls";
+import type { ISketch } from "../../models";
+import { controls, type Controls } from "./controls";
 import { factory } from "./factory";
 import { presets } from "./presets";
 
-export type Params = ExtractParams<typeof controls>;
-
-export const sketch: ISketch<Params> = {
+export const sketch: ISketch<Controls> = {
   factory,
   id: "_template",
   name: "_template",

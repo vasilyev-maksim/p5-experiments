@@ -1,6 +1,6 @@
-import type { ExtractParams, IControls } from "@/models";
+import type { IControls } from "@/models";
 
-export type Params = ExtractParams<typeof controls>;
+export type Controls = typeof controls;
 
 export const controls = {
   RESOLUTION: {
@@ -86,5 +86,9 @@ export const controls = {
   INVERT_COLORS: {
     type: "boolean",
     label: "Invert colors",
+  },
+  TEST: {
+    type: "coordinate",
+    label: "asasas",
   },
 } as const satisfies IControls;

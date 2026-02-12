@@ -1,9 +1,9 @@
 import type { ISketch } from "@/models";
 import { factory } from "./factory";
-import { type Params, controls } from "./controls";
+import { controls, type Controls } from "./controls";
 import { presets } from "./presets";
 
-export const arcSketch: ISketch<Params> = {
+export const arcSketch: ISketch<Controls> = {
   factory,
   id: "arcs",
   name: "arcs",
@@ -12,5 +12,5 @@ export const arcSketch: ISketch<Params> = {
   },
   controls,
   presets,
-  type: 'released',
+  type: "released",
 };

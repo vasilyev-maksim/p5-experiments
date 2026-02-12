@@ -1,9 +1,8 @@
 import { createSketch } from "@/core/createSketch";
-import type { ISketchFactory } from "@/models";
-import type { Params } from ".";
 import { drawBuilding } from "./utils/building";
+import type { Controls } from "./controls";
 
-export const factory: ISketchFactory<Params> = createSketch<Params>(
+export const factory = createSketch<Controls>(
   ({ p, createAnimatedValue, getTrackedProp }) => {
     const animatedNInt = createAnimatedValue(25, (x) => x, [
       getTrackedProp("NInt"),

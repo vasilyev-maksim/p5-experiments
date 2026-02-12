@@ -1,5 +1,7 @@
 import type { IControls } from "@/models";
 
+export type Controls = typeof controls;
+
 export const controls = {
   RESOLUTION: {
     type: "range",
