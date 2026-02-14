@@ -26,7 +26,7 @@ const factory: ISketchFactory<typeof controls> =
     );
 
     p.updateWithProps = (props) => {
-      if (props.playing) {
+      if (props.mode === "animated") {
         p.loop();
       } else {
         p.noLoop();

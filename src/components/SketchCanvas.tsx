@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, forwardRef, useEffect, useRef } from "react";
 import type {
   ISketch,
@@ -17,13 +16,13 @@ import { useSequence } from "../sequencer";
 export const SketchCanvas = forwardRef<
   HTMLDivElement,
   {
-    sketch: ISketch<any>;
+    sketch: ISketch;
     size: SketchCanvasSize;
-    playing: boolean;
     paused: boolean;
-    params: IParams<any>;
-    timeDelta?: number;
-    timeShift?: number;
+    mode: ISketchProps["mode"];
+    params: IParams;
+    timeDelta?: ISketchProps["timeDelta"];
+    timeShift?: ISketchProps["timeShift"];
     id: string;
     event?: SketchEvent;
   }
@@ -40,19 +39,19 @@ export const SketchCanvas = forwardRef<
     () =>
       ({
         ...props.params,
-        playing: props.playing,
         paused: props.paused,
+        mode: props.mode,
         timeShift: props.timeShift ?? 0,
         timeDelta: props.timeDelta ?? 0,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
         randomSeed: props.sketch.randomSeed,
         event: props.event,
-      }) as ISketchProps<any>,
+      }) as ISketchProps,
     [
       props.params,
-      props.playing,
       props.paused,
+      props.mode,
       props.timeShift,
       props.timeDelta,
       canvasWidth,

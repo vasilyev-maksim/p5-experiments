@@ -5,7 +5,7 @@ import { Slider } from "./Slider";
 import { useLongPress } from "../hooks";
 
 export function PlaybackControls(props: {
-  playing: boolean;
+  paused: boolean;
   timeDelta: number;
   onTimeDeltaChange: (val: number) => void;
   onPlayPause: () => void;
@@ -41,7 +41,7 @@ export function PlaybackControls(props: {
           onLongPress={props.onPlayWithCustomDelta(-0.5)}
           onLongPressRelease={props.onStopPlayingWithCustomDelta}
         />
-        <PlayPauseButton playing={props.playing} onClick={props.onPlayPause} />
+        <PlayPauseButton paused={props.paused} onClick={props.onPlayPause} />
         <JumpNFramesButton
           n={1}
           onClick={props.onJumpNFrames(1)}

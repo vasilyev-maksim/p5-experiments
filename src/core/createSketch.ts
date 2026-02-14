@@ -136,7 +136,7 @@ export function createSketch<Controls extends IControls>(
             }
           : argDraw;
 
-        if (api.getProp("playing") === false) {
+        if (api.getProp("paused")) {
           p.noLoop();
         }
       };
@@ -163,16 +163,14 @@ export function createSketch<Controls extends IControls>(
             p.resizeCanvas(canvasWidth.value!, canvasHeight.value!);
           }
 
-          // play/pause
-          const playing = api.getProp("playing");
-          if (playing) {
+          if (api.getProp("mode") === "animated") {
             p.loop();
           } else {
             p.noLoop();
           }
 
-          const timeShift = api.getTrackedProp("timeShift");
           // for playback controls
+          const timeShift = api.getTrackedProp("timeShift");
           if (timeShift.hasChanged) {
             const delta = timeShift.value - (timeShift.prevValue ?? 0);
             time += delta;

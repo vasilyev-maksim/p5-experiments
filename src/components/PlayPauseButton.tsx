@@ -5,12 +5,12 @@ const LEFT_OFFSET = 15;
 const WIDTH = 40;
 
 export function PlayPauseButton(props: {
-  playing: boolean;
+  paused: boolean;
   onClick: () => void;
 }) {
   const { x } = useSpring({
-    from: { x: props.playing ? 1 : 0 },
-    to: { x: props.playing ? 0 : 1 },
+    from: { x: props.paused ? 0 : 1 },
+    to: { x: props.paused ? 1 : 0 },
     config: { duration: 300, easing: easings.easeInOutCubic },
   });
 
@@ -31,7 +31,7 @@ export function PlayPauseButton(props: {
                     ${WIDTH + (100 - WIDTH) * a}% ${50 * a}%,
                     ${WIDTH + (100 - WIDTH) * a}% ${100 - 50 * a}%,
                     ${LEFT_OFFSET * a}% 100%
-                  )`
+                  )`,
             ),
           }}
         />
@@ -46,7 +46,7 @@ export function PlayPauseButton(props: {
                     100% ${100 * a}%,
                     100% 100%,
                     ${100 - WIDTH * (1 - a)}% 100%
-                  )`
+                  )`,
             ),
           }}
         />

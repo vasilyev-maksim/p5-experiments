@@ -4,6 +4,7 @@ import type {
   IPreset,
   ISketch,
   SketchCanvasSize,
+  ISketchProps,
 } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
@@ -34,7 +35,7 @@ export const SketchModal = ({
   top = 0,
   onBackClick,
 }: {
-  sketch: ISketch<any>;
+  sketch: ISketch;
   left?: number;
   top?: number;
   onBackClick: () => void;
@@ -78,14 +79,14 @@ export const SketchModal = ({
         config: { duration: seg.duration, easing: easings.easeInOutCubic },
       });
     } else if (seg.id === "START_PLAYING" && seg.isRunning) {
-      setPlaying(true);
+      setMode("animated");
     }
   }, []);
 
   useListener(onProgress);
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
-  const [playing, setPlaying] = useState(false);
+  const [mode, setMode] = useState<ISketchProps["mode"]>("static");
   const [paused, setPaused] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const defaultPreset = sketch.presets[0];
@@ -114,7 +115,7 @@ export const SketchModal = ({
     });
   };
 
-  const applyPreset = (preset: IPreset<any>) => {
+  const applyPreset = (preset: IPreset) => {
     setParams(preset.params);
     sendEvent({
       type: "presetChange",
@@ -302,8 +303,8 @@ export const SketchModal = ({
                 size={size}
                 sketch={sketch}
                 params={params}
-                playing={playing}
                 paused={paused}
+                mode={mode}
                 ref={sketchCanvasRef}
                 timeShift={timeShift}
                 timeDelta={manualTimeDelta || timeDelta}
@@ -320,7 +321,7 @@ export const SketchModal = ({
               className={styles.PlaybackControlsBlock}
             >
               <PlaybackControls
-                playing={!paused}
+                paused={paused}
                 timeDelta={timeDelta}
                 onTimeDeltaChange={setTimeDelta}
                 onPlayPause={playPause}

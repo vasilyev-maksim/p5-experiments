@@ -78,16 +78,17 @@ export type IParams<Controls extends IControls = any> = {
   [K in keyof Controls]: ControlValueType<Controls[K]>;
 } & { timeDelta?: number };
 
-export type ISketchProps<Controls extends IControls> = IParams<Controls> & {
-  playing: boolean;
-  paused: boolean;
-  timeShift?: number;
-  timeDelta: number;
-  canvasWidth: number;
-  canvasHeight: number;
-  randomSeed: number;
-  event?: SketchEvent;
-};
+export type ISketchProps<Controls extends IControls = IControls> =
+  IParams<Controls> & {
+    mode: "static" | "animated";
+    paused: boolean;
+    timeShift?: number;
+    timeDelta: number;
+    canvasWidth: number;
+    canvasHeight: number;
+    randomSeed: number;
+    event?: SketchEvent;
+  };
 
 export type ISketchFactory<Controls extends IControls> = (args: {
   initialProps: ISketchProps<Controls>;

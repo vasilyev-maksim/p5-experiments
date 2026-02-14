@@ -4,6 +4,9 @@
 
 # 📋 TODO
 
+- adopt `tiles` and `worm` to new architecture
+- presets for `worms`
+- top and bottom shadows for sidebar
 - city sketch
 - optimize `SketchModal` (too many rerenders of controls)
 - refactor: use `drawGrid` in `cubes` sketch

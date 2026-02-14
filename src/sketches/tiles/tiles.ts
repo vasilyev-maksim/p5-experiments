@@ -46,7 +46,7 @@ export const factory: ISketchFactory<any> =
     };
 
     p.updateWithProps = (props) => {
-      if (props.playing) {
+      if (props.mode === "animated") {
         p.loop();
       } else {
         p.noLoop();
