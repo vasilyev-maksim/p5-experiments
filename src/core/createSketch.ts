@@ -131,7 +131,9 @@ export function createSketch<Controls extends IControls>(
         const argDraw = args.draw(api);
         draw = ENV.devTools
           ? () => {
+              p.push();
               argDraw();
+              p.pop();
               drawDevTools();
             }
           : argDraw;

@@ -2,6 +2,7 @@
 
 # 📋 TODO
 
+- redesign `Export preset` and `Randomize` buttons
 - adopt `tiles` and `worm` to new architecture
 - presets for `worms`
 - top and bottom shadows for sidebar

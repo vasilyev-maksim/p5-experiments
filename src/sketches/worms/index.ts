@@ -8,12 +8,12 @@ export const sketch: ISketch<Controls> = {
   id: "worms",
   name: "worms",
   preview: {
-    size: 450,
+    size: 434,
   },
   randomSeed: 40,
   controls,
   presets,
   type: "draft",
-  startTime: 78,
+  startTime: 223,
   // presetsShuffle: 1,
 };
