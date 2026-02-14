@@ -1,6 +1,7 @@
 import { createSketch } from "@/core/createSketch";
 import { range } from "@/utils/misc";
 import type { Controls } from "./controls";
+import { drawGrid } from "../utils";
 
 const ANIMATION_SPEED = 20;
 const cameraRotationDelta = 0.005;
@@ -31,9 +32,6 @@ export const factory = createSketch<Controls>(
     );
 
     return {
-      setup: () => {
-        // p.setAttributes("antialias", false);
-      },
       draw: () => {
         return () => {
           p.background("black");
@@ -62,66 +60,32 @@ export const factory = createSketch<Controls>(
           const totalLen = resolution * 2 + 1;
           const totalSize = totalLen * cubeSize;
           const middleIndex = Math.floor(totalLen / 2);
-          const offset = -(totalSize / 2);
 
-          p.translate(offset, offset, offset);
+          drawGrid(p, {
+            size: p.createVector(totalSize, totalSize, totalSize),
+            cells: p.createVector(totalLen, totalLen, totalLen),
+            drawCb: ({ x, y, z }) => {
+              let size = 1;
+              if (
+                !(x === middleIndex && y === middleIndex && z === middleIndex)
+              ) {
+                const xi =
+                  x < middleIndex ? resolution - x - 1 : x - (middleIndex + 1);
+                const yi =
+                  y < middleIndex ? resolution - y - 1 : y - (middleIndex + 1);
+                const zi =
+                  z < middleIndex ? resolution - z - 1 : z - (middleIndex + 1);
 
-          p.push();
-          for (let y = 0; y < totalLen; y++) {
-            p.push();
-            for (let z = 0; z < totalLen; z++) {
-              p.push();
-              {
-                p.translate(0, cubeSize / 2, cubeSize / 2);
-                for (let x = 0; x < totalLen; x++) {
-                  p.translate(cubeSize / 2, 0, 0);
-
-                  let size = cubeSize;
-                  if (
-                    !(
-                      x === middleIndex &&
-                      y === middleIndex &&
-                      z === middleIndex
-                    )
-                  ) {
-                    const xi =
-                      x < middleIndex
-                        ? resolution - x - 1
-                        : x - (middleIndex + 1);
-                    const yi =
-                      y < middleIndex
-                        ? resolution - y - 1
-                        : y - (middleIndex + 1);
-                    const zi =
-                      z < middleIndex
-                        ? resolution - z - 1
-                        : z - (middleIndex + 1);
-
-                    const sizeX =
-                      cubeSize *
-                      (x === middleIndex ? 1 : animatedSizes.value[xi]);
-                    const sizeY =
-                      cubeSize *
-                      (y === middleIndex ? 1 : animatedSizes.value[yi]);
-                    const sizeZ =
-                      cubeSize *
-                      (z === middleIndex ? 1 : animatedSizes.value[zi]);
-                    size = Math.min(sizeX, sizeY, sizeZ);
-                  }
-
-                  const boxRelativeSize = size / (1 + animatedGap.value!);
-                  p.box(boxRelativeSize, boxRelativeSize, boxRelativeSize);
-
-                  p.translate(cubeSize / 2, 0, 0);
-                }
+                const sizeX = x === middleIndex ? 1 : animatedSizes.value[xi];
+                const sizeY = y === middleIndex ? 1 : animatedSizes.value[yi];
+                const sizeZ = z === middleIndex ? 1 : animatedSizes.value[zi];
+                size = Math.min(sizeX, sizeY, sizeZ);
               }
-              p.pop();
-              p.translate(0, 0, cubeSize);
-            }
-            p.pop();
-            p.translate(0, cubeSize, 0);
-          }
-          p.pop();
+
+              const boxRelativeSize = size / (1 + animatedGap.value!);
+              p.box(boxRelativeSize, boxRelativeSize, boxRelativeSize);
+            },
+          });
         };
       },
       in3D: true,

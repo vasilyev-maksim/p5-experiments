@@ -1,7 +1,5 @@
 # 👨‍💻 IN PROGRESS
 
-- rename `playing` => `mode` (`static` | `animated`), `paused` => `playing`
-
 # 📋 TODO
 
 - adopt `tiles` and `worm` to new architecture
@@ -9,7 +7,6 @@
 - top and bottom shadows for sidebar
 - city sketch
 - optimize `SketchModal` (too many rerenders of controls)
-- refactor: use `drawGrid` in `cubes` sketch
 - experiment with lights in `cubes`
 - rethink `AnimatedValue.forceToEnd` usage when exporting sketch as image
 - timeDelta value missing when exporting preset (as well as random seed etc.)
@@ -53,6 +50,8 @@
 
 # ✅ DONE
 
+- refactor: use `drawGrid` in `cubes` sketch
+- rename `playing` => `mode` (`static` | `animated`), `paused` => `playing`
 - coordinates control
 - add "hollow worm" bool control (second stroke of color black on top of the first)
 - move `/p5-experiments/` base url from vite config to .env
