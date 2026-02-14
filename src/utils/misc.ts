@@ -29,7 +29,7 @@ function getRandomValueFromControl(c: IControl): ControlValueType<typeof c> {
       return (
         Math.floor((Math.random() * (c.max - c.min)) / c.step) * c.step + c.min
       );
-    case "coordinate":
+    case "coordinates":
       return [Math.random(), Math.random()];
   }
 }

@@ -1,29 +1,33 @@
 # 👨‍💻 IN PROGRESS
 
-- city sketch
+- rename `playing` => `mode` (`static` | `animated`), `paused` => `playing`
 
 # 📋 TODO
 
+- city sketch
+- optimize `SketchModal` (too many rerenders of controls)
+- refactor: use `drawGrid` in `cubes` sketch
+- experiment with lights in `cubes`
+- rethink `AnimatedValue.forceToEnd` usage when exporting sketch as image
 - timeDelta value missing when exporting preset (as well as random seed etc.)
-- add throttle to createMemo
 - refactor `useViewport`
   - maybe use context to store constant sizes
-  - rename to `useSize`(?)
+  - rename to `useSize` [?]
 - each preset may have a timestamp to play animation from (for better showiness)
   - spiral
   - arcs
   - pillars
   - curve
 - add "collapse side panel" capabilities
-- implement playback controls using sketch event?
-- refactor timeShift/timeDelta mess in SketchModal
+- implement playback controls using sketch event [?]
+- refactor timeShift/timeDelta mess in `SketchModal`
 - make play controls animation more user friendly
   - hide it by timer after mouse leave
+  - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
 - don't mismatch preset on the first change (mark it with \*)
-- make animations independent from canvas size (?)
+- make animations independent from canvas size [?]
   - tiles
-- rethink zigzags
 - draw fullscreen icon by myself (renders differently on windows)
 - sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - add onScreenResize callback to factory (for pulse bg = black on resize)
@@ -38,14 +42,16 @@
 # 💡 NICE TO HAVE
 
 - returning `TrackedValue` from `getProp()` call makes sense only in `p.updateWithProps`, so pass `getTrackedValue` fn as arg to `updateWithProps` factory method
-- move left side bar to the right (?)
-- mobile version (?), at least info message inviting to desktop version
+- move left side bar to the right [?]
+- mobile version [?], at least info message inviting to desktop version
 - perf opt: use cache for init data (like precomputed partitions array in TILES)
 - position of preview fragment (in px)
 - worm like transition of site header when scrolling down
 
 # ✅ DONE
 
+- coordinates control
+- add "hollow worm" bool control (second stroke of color black on top of the first)
 - move `/p5-experiments/` base url from vite config to .env
 - use query params for direct sketch links
 - return back sketch start time but leave preset specific (needed for cube)
@@ -85,6 +91,7 @@
 
 # ❌ CANCELED
 
+- rethink zigzags
 - next/prev animation modal (using keyboard arrows)
 - more advanced controls: transformers, l/r arrows
 - Smooth animation start (with easing)

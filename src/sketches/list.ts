@@ -14,8 +14,8 @@ import { sketch as wormsSketch } from "./worms";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
-  cubesSketch,
   spiralSketch,
+  cubesSketch,
   pillarsSketch,
   arcSketch,
   curveSketch,

@@ -14,11 +14,13 @@ import { OptionSelector } from "./OptionSelector";
 import { OptionButton } from "./OptionButton";
 import { BooleanParamControl } from "./BooleanParamControl";
 import type { PropsWithChildren } from "react";
+import { CoordinatesControl } from "./CoordinatesControl";
 
 export function ParamControls(props: {
   sketch: ISketch;
   params: IParams;
-  onParamChange: (key: string, value: number) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onParamChange: (key: string, value: any) => void;
 }) {
   const segment =
     useSequence<MODAL_OPEN_SEGMENTS>(
@@ -105,6 +107,7 @@ export function ParamControls(props: {
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
                   onChange={(val) => props.onParamChange(key, val ? 1 : 0)}
+                  options={c.options}
                 />
               );
             } else if (c.type === "choice") {
@@ -125,6 +128,16 @@ export function ParamControls(props: {
                   onChange={(val) => props.onParamChange(key, val)}
                   active={initControls.wasRun}
                   gap={5}
+                />
+              );
+            } else if (c.type === "coordinates") {
+              body = (
+                <CoordinatesControl
+                  label={c.label}
+                  value={value}
+                  active={initControls.wasRun}
+                  animationDuration={initControls.duration}
+                  onChange={(val) => props.onParamChange(key, val)}
                 />
               );
             }

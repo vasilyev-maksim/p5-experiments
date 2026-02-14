@@ -1,4 +1,3 @@
-import type { MaterialType } from "./models";
 import p5 from "p5";
 
 export function drawMaterial(p: p5, cb: () => void, material: MaterialType) {
@@ -19,3 +18,4 @@ export function drawMaterial(p: p5, cb: () => void, material: MaterialType) {
   }
   p.pop();
 }
+export type MaterialType = "wood" | "stone" | "plastic" | "glass" | "sand";

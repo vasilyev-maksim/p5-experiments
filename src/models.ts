@@ -2,6 +2,10 @@
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 
 /** EVENTS */
+type EventBase = {
+  id?: number;
+};
+
 export type ExportRequestEvent = {
   type: "export";
   exportFileName: string;
@@ -14,7 +18,7 @@ export type PresetChangeEvent = {
   preset: IPreset<any>;
 };
 
-export type SketchEvent = ExportRequestEvent | PresetChangeEvent;
+export type SketchEvent = EventBase & (ExportRequestEvent | PresetChangeEvent);
 
 /** Controls */
 interface IControlBase {
@@ -31,6 +35,7 @@ export interface IRangeControl extends IControlBase {
 
 export interface IBooleanControl extends IControlBase {
   type: "boolean";
+  options?: [string, string]; // default value is ['Nope', 'Yeap']
 }
 
 export interface IColorControl extends IControlBase {
@@ -49,7 +54,7 @@ export interface IChoiceControl extends IControlBase {
 }
 
 export interface ICoordinateControl extends IControlBase {
-  type: "coordinate";
+  type: "coordinates";
 }
 
 export type IControl =
@@ -61,7 +66,9 @@ export type IControl =
 
 export type ControlValueType<T extends IControl> = T extends ICoordinateControl
   ? [number, number]
-  : number;
+  : T extends IBooleanControl
+    ? boolean
+    : number;
 
 export type IControls = Record<string, IControl>;
 
@@ -73,6 +80,7 @@ export type IParams<Controls extends IControls = any> = {
 
 export type ISketchProps<Controls extends IControls> = IParams<Controls> & {
   playing: boolean;
+  paused: boolean;
   timeShift?: number;
   timeDelta: number;
   canvasWidth: number;

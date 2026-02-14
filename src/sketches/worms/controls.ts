@@ -3,6 +3,15 @@ import type { IControls } from "@/models";
 export type Controls = typeof controls;
 
 export const controls = {
+  DIRECTION: {
+    type: "coordinates",
+    label: "Direction",
+  },
+  DIRECTION_RANDOMNESS: {
+    type: "boolean",
+    label: "Directional randomness",
+    options: ["Off", "On"],
+  },
   RESOLUTION: {
     type: "range",
     min: 3,
@@ -10,19 +19,27 @@ export const controls = {
     step: 1,
     label: "Resolution",
   },
-  WORM_LENGTH: {
+  LENGTH: {
     type: "range",
     min: 0,
     max: 100,
     step: 1,
-    label: "Worm length",
+    label: "Max length",
   },
   THICKNESS: {
     type: "range",
     min: 0.05,
     max: 0.95,
     step: 0.05,
-    label: "Worm thickness",
+    label: "Thickness",
+    valueFormatter: (x) => x.toFixed(2),
+  },
+  INNER_THICKNESS: {
+    type: "range",
+    min: 0,
+    max: 0.95,
+    step: 0.05,
+    label: "Hollowness",
     valueFormatter: (x) => x.toFixed(2),
   },
   CORNERS_TYPE: {
@@ -33,43 +50,7 @@ export const controls = {
   ANIMATION_TYPE: {
     type: "choice",
     label: "Animation type",
-    options: ["Static", "Direct", "Inverse", "Dynamic"],
-  },
-  L: {
-    label: "L",
-    type: "range",
-    min: 0,
-    max: 1,
-    step: 0.1,
-    valueFormatter: (x) => x.toFixed(1),
-  },
-  R: {
-    label: "R",
-    type: "range",
-    min: 0,
-    max: 1,
-    step: 0.1,
-    valueFormatter: (x) => x.toFixed(1),
-  },
-  U: {
-    label: "U",
-    type: "range",
-    min: 0,
-    max: 1,
-    step: 0.1,
-    valueFormatter: (x) => x.toFixed(1),
-  },
-  D: {
-    label: "D",
-    type: "range",
-    min: 0,
-    max: 1,
-    step: 0.1,
-    valueFormatter: (x) => x.toFixed(1),
-  },
-  DIRECTION_RANDOMNESS: {
-    type: "boolean",
-    label: "Random direction",
+    options: ["Static", "Forward", "Backward", "Both"],
   },
   COLOR: {
     type: "color",
@@ -86,9 +67,5 @@ export const controls = {
   INVERT_COLORS: {
     type: "boolean",
     label: "Invert colors",
-  },
-  TEST: {
-    type: "coordinate",
-    label: "asasas",
   },
 } as const satisfies IControls;

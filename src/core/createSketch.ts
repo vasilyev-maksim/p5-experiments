@@ -54,14 +54,12 @@ type Api<Controls extends IControls> = {
 };
 
 export function createSketch<Controls extends IControls>(
-  // Why a factory? it allows us to use closures to create shared vars.
-  // Note that `api` is not available in the topmost scope to avoid issues with p5 instance init order.
+  // Why a factory? It allows us to use closures to create shared vars.
   argsFactory: (api: Api<Controls>) => CreateSketchArgs<Controls>,
 ): ISketchFactory<Controls> {
   return ({ initialProps }) =>
     (p) => {
       let time = 0,
-        drawsCount = 0,
         initialPropsUpdate = true,
         props: TrackedProps<Controls>,
         draw: ReturnType<CreateSketchArgs<Controls>["draw"]>;
@@ -146,8 +144,9 @@ export function createSketch<Controls extends IControls>(
       p.draw = () => {
         runAnimations();
         draw();
-        time += api.getProp("timeDelta");
-        drawsCount++;
+        if (api.getProp("paused") === false) {
+          time += api.getProp("timeDelta");
+        }
       };
 
       p.updateWithProps = (newRawProps) => {
@@ -161,9 +160,7 @@ export function createSketch<Controls extends IControls>(
           const canvasHeight = api.getTrackedProp("canvasHeight");
           const canvasWidth = api.getTrackedProp("canvasWidth");
           if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
-            // `p.resizeCanvas` calls `p.draw` automatically, so we disable it by passing `true` as last arg.
-            // The reason is that `p.draw` implies time increase, which is unintentional, we just want to redraw.
-            p.resizeCanvas(canvasWidth.value!, canvasHeight.value!, true);
+            p.resizeCanvas(canvasWidth.value!, canvasHeight.value!);
           }
 
           // play/pause
@@ -189,11 +186,6 @@ export function createSketch<Controls extends IControls>(
 
           // run user defined code after all important changes were applied (above)
           args.onPropsChanged?.(api);
-
-          // manually redraw PAUSED sketch to see changed params take effect (if there are any)
-          if (!playing) {
-            draw();
-          }
         } else {
           initialPropsUpdate = false;
         }
@@ -220,7 +212,9 @@ export function createSketch<Controls extends IControls>(
 
       function updateAnimations(force: boolean = false) {
         animations.forEach((animations) => {
-          animations.recalc(drawsCount);
+          // to keep animations (related to params change) running even when sketch is paused,
+          // we use `p.frameCount` instead of `time`
+          animations.recalc(p.frameCount);
           if (force) {
             animations.forceAnimationsToEnd(time);
           }
@@ -229,7 +223,9 @@ export function createSketch<Controls extends IControls>(
 
       function runAnimations() {
         animations.forEach((animations) => {
-          animations.runAnimationStep(drawsCount);
+          // to keep animations (related to params change) running even when sketch is paused,
+          // we use `p.frameCount` instead of `time`
+          animations.runAnimationStep(p.frameCount);
         });
       }
 
@@ -286,7 +282,7 @@ export function createSketch<Controls extends IControls>(
         updateMemos();
         // all animations forcibly set to end values to see correct final result
         updateAnimations(true);
-        draw();
+        p.redraw();
 
         p.saveCanvas(exportFileName);
 
@@ -299,9 +295,9 @@ export function createSketch<Controls extends IControls>(
         props["canvasHeight"].value = prevH;
         updateMemos();
         updateAnimations(true);
-        draw();
+        p.redraw();
 
-        if (props["playing"].value) {
+        if (props["paused"].value === false) {
           p.loop();
         }
       }

@@ -1,5 +1,5 @@
-import type { MaterialType } from "./models";
 import p5 from "p5";
+import type { MaterialType } from "./material";
 
 export function drawPanel(p: p5, size: p5.Vector, type: MaterialType) {
   const color =

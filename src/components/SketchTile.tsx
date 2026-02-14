@@ -60,6 +60,7 @@ export const SketchTile = forwardRef<
           id="tile"
           sketch={sketch}
           playing={false}
+          paused={true}
           size="tile"
           params={defaultPreset.params}
           timeShift={defaultPreset.startTime ?? sketch.startTime}

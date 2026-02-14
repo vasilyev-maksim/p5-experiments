@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
 import { ViewportContext } from "./components/ViewportContext";
 import type { ISketch } from "./models";
@@ -186,6 +186,60 @@ export function useSliderBehavior(
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useThrottleWithTrailing<T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number,
+): T {
+  const callbackRef = useRef(callback);
+  const lastCallRef = useRef(0);
+  const pendingArgsRef = useRef<Parameters<T> | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return useMemo(() => {
+    return ((...args: Parameters<T>) => {
+      const now = Date.now();
+
+      // Clear any pending trailing call
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      if (now - lastCallRef.current >= delay) {
+        // Immediate call
+        lastCallRef.current = now;
+        callbackRef.current(...args);
+        pendingArgsRef.current = null;
+      } else {
+        // Schedule trailing call
+        pendingArgsRef.current = args;
+        timeoutRef.current = setTimeout(
+          () => {
+            lastCallRef.current = Date.now();
+            if (pendingArgsRef.current) {
+              callbackRef.current(...pendingArgsRef.current);
+            }
+            pendingArgsRef.current = null;
+          },
+          delay - (now - lastCallRef.current),
+        );
+      }
+    }) as T;
+  }, [delay]);
+}
+
 export function useLongPress(
   timeout: number,
   onLongPress: () => void,
@@ -214,4 +268,24 @@ export function useLongPress(
   };
 
   return { handlePress, handleRelease };
+}
+
+export function useGlobalDrag(
+  onMouseDown: (e: Pick<MouseEvent, "clientX" | "clientY">) => void,
+) {
+  const handleMouseDown = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    document.body.style.userSelect = "none";
+    onMouseDown(e);
+
+    const removeHandlers = () => {
+      document.body.style.userSelect = "";
+      window.removeEventListener("mousemove", onMouseDown);
+      window.removeEventListener("mouseup", removeHandlers);
+    };
+
+    window.addEventListener("mousemove", onMouseDown);
+    window.addEventListener("mouseup", removeHandlers);
+  };
+
+  return { handleMouseDown };
 }

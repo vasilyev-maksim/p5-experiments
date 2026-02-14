@@ -1,18 +1,21 @@
-import type { MaterialType } from "./models";
 import p5 from "p5";
 import { drawPanel } from "./panel";
+import type { MaterialType } from "./material";
 
-export function drawFrame(p: p5, {
-  size,
-  railWidth,
-  railHeight,
-  material,
-}: {
-  size: p5.Vector;
-  railWidth: number;
-  railHeight: number;
-  material: MaterialType;
-}) {
+export function drawFrame(
+  p: p5,
+  {
+    size,
+    railWidth,
+    railHeight,
+    material,
+  }: {
+    size: p5.Vector;
+    railWidth: number;
+    railHeight: number;
+    material: MaterialType;
+  },
+) {
   p.push();
   {
     p.scale(size);

@@ -1,0 +1,29 @@
+.Label {
+  margin-bottom: 5px;
+}
+
+.Container {
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.Plane {
+  border: 2px solid rgb(from var(--primaryColor) r g b / 0.2);
+  height: 100px;
+  width: 100px;
+  position: relative;
+  box-sizing: content-box;
+  border-radius: 3px;
+}
+
+.Handle {
+  position: absolute;
+  border-radius: 2px;
+  background-color: var(--primaryColor);
+  translate: -50% -50%;
+}

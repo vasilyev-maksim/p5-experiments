@@ -1,6 +1,6 @@
 import type { IControls, IPreset, ISketch } from "../../models";
 import { createSketch } from "@core/createSketch";
-import { drawGrid } from "../city/utils/grid";
+import { drawGrid } from "../utils";
 
 export type Controls = typeof controls;
 

@@ -72,7 +72,7 @@ export class Worm {
 
       p.vertex(body[0].x, body[0].y);
 
-      body.forEach((pos, i, arr) => {
+      body.forEach((curr, i, arr) => {
         const localProgress =
           i === 0
             ? 1
@@ -83,7 +83,7 @@ export class Worm {
         }
 
         const prev = i === 0 ? arr[0] : arr[i - 1];
-        const int = p5.Vector.lerp(prev, pos, localProgress);
+        const int = p5.Vector.lerp(prev, curr, localProgress);
 
         p.vertex(int.x, int.y);
       });

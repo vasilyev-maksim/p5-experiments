@@ -20,6 +20,7 @@ export const SketchCanvas = forwardRef<
     sketch: ISketch<any>;
     size: SketchCanvasSize;
     playing: boolean;
+    paused: boolean;
     params: IParams<any>;
     timeDelta?: number;
     timeShift?: number;
@@ -40,6 +41,7 @@ export const SketchCanvas = forwardRef<
       ({
         ...props.params,
         playing: props.playing,
+        paused: props.paused,
         timeShift: props.timeShift ?? 0,
         timeDelta: props.timeDelta ?? 0,
         canvasWidth: canvasWidth,
@@ -50,6 +52,7 @@ export const SketchCanvas = forwardRef<
     [
       props.params,
       props.playing,
+      props.paused,
       props.timeShift,
       props.timeDelta,
       canvasWidth,

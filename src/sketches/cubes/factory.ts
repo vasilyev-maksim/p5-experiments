@@ -42,7 +42,7 @@ export const factory = createSketch<Controls>(
 
           const time = getTime();
           const cameraDistance = animatedZoom.value!;
-          const cameraRotationEnabled = getProp("CAMERA_ROTATION") === 1;
+          const cameraRotationEnabled = getProp("CAMERA_ROTATION");
           const cameraX = cameraRotationEnabled
             ? p.cos(time * cameraRotationDelta) * cameraDistance
             : cameraDistance;

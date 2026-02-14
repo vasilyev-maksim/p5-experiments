@@ -86,6 +86,7 @@ export const SketchModal = ({
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [playing, setPlaying] = useState(false);
+  const [paused, setPaused] = useState(false);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const defaultPreset = sketch.presets[0];
   const [params, setParams] = useState(defaultPreset.params);
@@ -100,21 +101,29 @@ export const SketchModal = ({
   /** manual time delta is used by playback controls and takes precedence over timeDelta (if former is set) */
   const [manualTimeDelta, setManualTimeDelta] = useState<number>();
   const [event, setEvent] = useState<SketchEvent>();
+  const eventId = useRef(0);
 
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
   };
 
+  const sendEvent = (event: SketchEvent) => {
+    setEvent({
+      ...event,
+      id: eventId.current++,
+    });
+  };
+
   const applyPreset = (preset: IPreset<any>) => {
     setParams(preset.params);
-    setEvent({
+    sendEvent({
       type: "presetChange",
       preset,
     });
     setTimeDelta(preset.params.timeDelta ?? 1);
   };
 
-  const playPause = () => setPlaying((x) => !x);
+  const playPause = () => setPaused((x) => !x);
 
   const openInFullscreen = () => {
     if (sketchCanvasRef.current) {
@@ -132,7 +141,7 @@ export const SketchModal = ({
   };
 
   const handleExport = () => {
-    setEvent({
+    sendEvent({
       type: "export",
       exportFileWidth: EXPORT_WIDTH,
       exportFileHeight: EXPORT_HEIGHT,
@@ -141,25 +150,19 @@ export const SketchModal = ({
   };
 
   const jumpNFrames = (N: number) => () => {
-    if (playing) {
-      setPlaying(false);
-    }
+    setPaused(true);
     setTimeShift((x) => (x ?? 0) + N);
   };
 
   const playWithCustomDelta = (delta: number) => () => {
     setManualTimeDelta(delta);
-    if (!playing) {
-      setPlaying(true);
-    }
+    setPaused(false);
   };
 
   const stopPlayingWithCustomDelta = () => {
     setManualTimeDelta(undefined);
     changeParam("TIME_DELTA", 1);
-    if (playing) {
-      setPlaying(false);
-    }
+    setPaused(true);
   };
 
   const randomizeParams = () => {
@@ -227,7 +230,6 @@ export const SketchModal = ({
             className={styles.Left}
             style={{
               width: modalX.to([0, 1], [0, modalSidebarWidth + modalPadding]),
-              paddingRight: modalX.to([0, 1], [0, modalSidebarPadding - 6]),
             }}
           >
             {showSidebar && (
@@ -240,14 +242,22 @@ export const SketchModal = ({
                     marginLeft: modalSidebarPadding,
                     translateY: headerX.to([0, 1], [15, 0]),
                     opacity: headerX,
+                    paddingRight: modalX.to(
+                      [0, 1],
+                      [0, modalSidebarPadding - 6],
+                    ),
                   }}
                 >
                   {sketch.name.toUpperCase()}
                 </animated.h2>
-                <div
+                <animated.div
                   className={styles.Body}
                   style={{
                     paddingTop: modalPadding,
+                    paddingRight: modalX.to(
+                      [0, 1],
+                      [0, modalSidebarPadding - 6],
+                    ),
                   }}
                 >
                   <Presets
@@ -255,11 +265,13 @@ export const SketchModal = ({
                     params={params}
                     onApply={applyPreset}
                   />
+
                   <ParamControls
                     sketch={sketch}
                     params={params}
                     onParamChange={changeParam}
                   />
+
                   {showBottomActions && (
                     <div
                       style={{
@@ -275,7 +287,7 @@ export const SketchModal = ({
                       <Button onClick={randomizeParams} label={"Randomize"} />
                     </div>
                   )}
-                </div>
+                </animated.div>
               </>
             )}
           </animated.div>
@@ -291,6 +303,7 @@ export const SketchModal = ({
                 sketch={sketch}
                 params={params}
                 playing={playing}
+                paused={paused}
                 ref={sketchCanvasRef}
                 timeShift={timeShift}
                 timeDelta={manualTimeDelta || timeDelta}
@@ -307,7 +320,7 @@ export const SketchModal = ({
               className={styles.PlaybackControlsBlock}
             >
               <PlaybackControls
-                playing={playing}
+                playing={!paused}
                 timeDelta={timeDelta}
                 onTimeDeltaChange={setTimeDelta}
                 onPlayPause={playPause}

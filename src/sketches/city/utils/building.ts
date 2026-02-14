@@ -1,7 +1,7 @@
 import p5 from "p5";
 import { drawMaterial } from "./material";
 import { drawWindow } from "./window";
-import { drawGrid } from "./grid";
+import { drawGrid } from "@/sketches/utils";
 
 export function drawBuilding(p: p5, { size }: { size: p5.Vector }) {
   const windowAreaHeight = (size.y - 1) / size.y;
