@@ -25,6 +25,7 @@ import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
 import { copyPresetCodeToClipboard, getRandomParams } from "@/utils/misc";
+import { EventBus } from "@/core/EventBus";
 
 const EXPORT_WIDTH = 3840 / 2,
   EXPORT_HEIGHT = 2160 / 2;
@@ -104,6 +105,7 @@ export const SketchModal = ({
   const [manualTimeDelta, setManualTimeDelta] = useState<number>();
   const [event, setEvent] = useState<SketchEvent>();
   const eventId = useRef(0);
+  const eventBus = useRef<EventBus>(new EventBus());
 
   const changeParam = (key: string, value: number) => {
     setParams((x) => ({ ...x, [key]: value }));
@@ -170,6 +172,13 @@ export const SketchModal = ({
   const randomizeParams = () => {
     const newParams = getRandomParams(sketch.controls);
     setParams(newParams);
+  };
+
+  const makeTest = () => {
+    eventBus.current.emit({
+      type: "test",
+      test: true,
+    });
   };
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
@@ -287,6 +296,8 @@ export const SketchModal = ({
                       />
                       &nbsp;
                       <Button onClick={randomizeParams} label={"Randomize"} />
+                      &nbsp;
+                      <Button onClick={makeTest} label={"Test"} />
                     </div>
                   )}
                 </animated.div>
@@ -310,6 +321,7 @@ export const SketchModal = ({
                 timeShift={timeShift}
                 timeDelta={manualTimeDelta || timeDelta}
                 event={event}
+                eventBus={eventBus.current}
               />
             </div>
             <animated.div

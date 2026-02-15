@@ -12,6 +12,7 @@ import { useViewport } from "../hooks";
 import { animated, easings, to, useSpring } from "react-spring";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
+import type { EventBus } from "@/core/EventBus";
 
 export const SketchCanvas = forwardRef<
   HTMLDivElement,
@@ -23,6 +24,7 @@ export const SketchCanvas = forwardRef<
     params: IParams;
     timeDelta?: ISketchProps["timeDelta"];
     timeShift?: ISketchProps["timeShift"];
+    eventBus?: EventBus;
     id: string;
     event?: SketchEvent;
   }
@@ -47,6 +49,7 @@ export const SketchCanvas = forwardRef<
         canvasHeight: canvasHeight,
         randomSeed: props.sketch.randomSeed,
         event: props.event,
+        eventBus: props.eventBus,
       }) as ISketchProps,
     [
       props.params,
@@ -58,6 +61,7 @@ export const SketchCanvas = forwardRef<
       canvasHeight,
       props.sketch.randomSeed,
       props.event,
+      props.eventBus,
     ],
   );
 

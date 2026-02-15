@@ -126,6 +126,11 @@ export function createSketch<Controls extends IControls>(
         // set time using initial time shift (for pretty previews)
         time = api.getProp("timeShift") ?? 0;
 
+        // test
+        api.getProp("eventBus")?.on("test", (e) => {
+          console.log(e);
+        });
+
         updateMemos();
         updateAnimations();
 

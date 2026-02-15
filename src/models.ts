@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
+import type { EventBus } from "./core/EventBus";
 
-/** EVENTS */
+/** Events */
+
 type EventBase = {
   id?: number;
 };
@@ -18,9 +20,25 @@ export type PresetChangeEvent = {
   preset: IPreset;
 };
 
-export type SketchEvent = EventBase & (ExportRequestEvent | PresetChangeEvent);
+export type TestEvent = {
+  type: "test";
+  test: true;
+};
+
+export type SketchEvent = EventBase &
+  (ExportRequestEvent | PresetChangeEvent | TestEvent);
+
+/** -1 = not visible in UI;
+ * 0 = visible in UI, initially turned OFF;
+ * 1 = visible in UI, initially turned ON */
+export enum FeatureState {
+  Disabled = -1,
+  Off = 0,
+  On = 1,
+}
 
 /** Controls */
+
 interface IControlBase {
   label: string;
 }
@@ -41,10 +59,7 @@ export interface IBooleanControl extends IControlBase {
 export interface IColorControl extends IControlBase {
   type: "color";
   colors: string[][];
-  /** -1 = not visible in UI;
-   * 0 = visible in UI, initially turned OFF;
-   * 1 = visible in UI, initially turned ON */
-  shuffle?: -1 | 0 | 1;
+  shuffle?: FeatureState;
   shuffleSwitchLabel?: string;
 }
 
@@ -72,7 +87,7 @@ export type ControlValueType<T extends IControl> = T extends ICoordinateControl
 
 export type IControls = Record<string, IControl>;
 
-// Sketch factory
+/** Sketch factory */
 
 export type IParams<Controls extends IControls = any> = {
   [K in keyof Controls]: ControlValueType<Controls[K]>;
@@ -88,6 +103,7 @@ export type ISketchProps<Controls extends IControls = IControls> =
     canvasHeight: number;
     randomSeed: number;
     event?: SketchEvent;
+    eventBus?: EventBus;
   };
 
 export type ISketchFactory<Controls extends IControls> = (args: {
@@ -112,7 +128,7 @@ export interface ISketch<Controls extends IControls = IControls> {
   randomSeed?: number;
   controls: Controls;
   presets: IPreset<Controls>[];
-  presetsShuffle?: -1 | 0 | 1;
+  presetsShuffle?: FeatureState;
   presetsShuffleInterval?: number;
   startTime?: number;
   type: "released" | "draft" | "hidden";
