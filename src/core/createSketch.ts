@@ -143,7 +143,7 @@ export function createSketch<Controls extends IControls>(
             }
           : argDraw;
 
-        if (api.getProp("paused")) {
+        if (api.getProp("mode") === "static") {
           p.noLoop();
         }
       };
@@ -307,13 +307,20 @@ export function createSketch<Controls extends IControls>(
         updateAnimations(true);
         p.redraw();
 
-        if (props["paused"].value === false) {
+        if (
+          props["mode"].value === "animated" &&
+          props["paused"].value === false
+        ) {
           p.loop();
         }
       }
 
       function applyPreset(event: PresetChangeEvent) {
+        // TODO: по сути я тут могу читать занечения параметров и не надо их передавать через пропсы, так будет единый канал общения с createSketch.
         time = event.preset?.startTime ?? time;
+        if (event.preset.randomSeed !== undefined) {
+          p.randomSeed(event.preset.randomSeed);
+        }
         args.onPresetChange?.(event.preset);
       }
     };

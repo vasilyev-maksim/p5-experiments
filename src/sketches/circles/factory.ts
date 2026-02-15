@@ -92,7 +92,7 @@ export const factory = createSketch<Controls>(
               p,
               start: 0,
               end: 1,
-              speed: coilSpeed.value!,
+              timeMultiplier: coilSpeed.value!,
               time,
             }); // change last param to 3 for more chaos
           const angle = (baseAngle + delta) * (i % 2 == 1 ? 1 : -1);

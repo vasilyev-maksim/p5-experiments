@@ -2,6 +2,7 @@
 import type { IControls, IPreset, ISketch } from "../../models";
 import { createSketch } from "@core/createSketch";
 import { range } from "@/utils/misc";
+import { flatSin } from "@/core/utils";
 
 export type Controls = typeof controls;
 
@@ -16,9 +17,34 @@ const controls = {
   SPEED: {
     type: "range",
     min: 0,
-    max: 10,
-    step: 1,
+    max: 5,
+    step: 0.1,
     label: "Speed",
+    valueFormatter: (x) => x.toFixed(1),
+  },
+  OUTER_OFFSET: {
+    type: "range",
+    min: 0,
+    max: 0.5,
+    step: 0.05,
+    label: "Outer offset",
+    valueFormatter: (x) => x.toFixed(2),
+  },
+  MIDDLE_OFFSET: {
+    type: "range",
+    min: 0,
+    max: 0.5,
+    step: 0.05,
+    label: "Middle offset",
+    valueFormatter: (x) => x.toFixed(2),
+  },
+  INNER_OFFSET: {
+    type: "range",
+    min: 0,
+    max: 0.5,
+    step: 0.05,
+    label: "Inner offset",
+    valueFormatter: (x) => x.toFixed(2),
   },
 } as const satisfies IControls;
 
@@ -27,6 +53,9 @@ const presets: IPreset<Controls>[] = [
     params: {
       RESOLUTION: 100,
       SPEED: 1,
+      OUTER_OFFSET: 0.1,
+      MIDDLE_OFFSET: 0.05,
+      INNER_OFFSET: 0.1,
     },
   },
 ];
@@ -57,9 +86,15 @@ export const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
         const res = getProp("RESOLUTION");
         const speed = getProp("SPEED");
 
-        const fn = (x: number) => p.sin(x * p.HALF_PI);
         // const fn = (x: number) => x ** 3;
+        // const fn = (x: number) => p.sin(x * p.HALF_PI);
         // const fn = (x: number) => p.sin(p.PI * x);
+        const fn = flatSin(
+          p,
+          getProp("OUTER_OFFSET"),
+          getProp("MIDDLE_OFFSET"),
+          getProp("INNER_OFFSET"),
+        );
 
         p.fill("red");
 
@@ -69,9 +104,9 @@ export const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
 
         range(res + 1).forEach((i) => {
           const delta = 2 / res;
-          const timeShift = (time * speed) / 40;
+          const timeShift = (time * speed) / 80;
           const x = -1 + i * delta;
-          y = -fn(x + timeShift);
+          y = fn(x + timeShift);
           y = p.constrain(y, -1, 1);
 
           p.vertex(x, y);
@@ -81,6 +116,8 @@ export const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
         p.vertex(-1, 1);
 
         p.endShape("close");
+
+        p.circle(-1.2, y, abs(50));
       };
     },
   };

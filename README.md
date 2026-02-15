@@ -1,6 +1,11 @@
 # 👨‍💻 IN PROGRESS
 
+- [medium] Add `randomSeed` to presets
+
 # 📋 TODO
+
+- pass props as event payload in contrast with direct props of `ReactP5Wrapper`
+  - do the same for time shifts, pauses, rewinds etc.
 
 - [hard] city sketch
 - [hard] optimize `SketchModal` (too many rerenders of controls)
@@ -14,7 +19,6 @@
 - [hard] make opening by link more smooth + disable list animation in bg
 - [hard] don't mismatch preset on the first change (mark it with \*)
 
-- [medium] Add `randomSeed` to presets
 - [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - [medium] adopt `tiles` and `worm` to new architecture
 - [medium] each preset may have a timestamp to play animation from (for better showiness)

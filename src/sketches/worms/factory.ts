@@ -1,5 +1,5 @@
 import { createSketch } from "@/core/createSketch";
-import { oscillateBetween } from "@/core/utils";
+import { oscillateBetween, flatSin } from "@/core/utils";
 import type { ISketchFactory } from "@/models";
 import { Matrix } from "../tiles/Matrix";
 import { Size } from "../tiles/Size";
@@ -9,6 +9,7 @@ import p5, { type STROKE_JOIN } from "p5";
 import { mapDirection } from "../utils";
 
 const ANIMATION_SPEED = 25;
+const FLAT_SIN_OFFSET = 0.2;
 
 export const factory: ISketchFactory<Controls> = createSketch<Controls>(
   ({
@@ -128,12 +129,21 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
                   ? [-1, 1]
                   : [0, 0];
 
+          const sin = (x: number) => {
+            if (animationType === 3) {
+              return flatSin(p, 0, FLAT_SIN_OFFSET, 0)(x / 2 - 0.5);
+            } else {
+              return flatSin(p, 0, 0, FLAT_SIN_OFFSET)(x);
+            }
+          };
+
           const animationProgress = oscillateBetween({
             p,
             start,
             end,
-            speed: 0.02,
+            timeMultiplier: 0.02,
             time,
+            timeFunc: (x) => -sin(x),
           });
           const progress = animationType === 0 ? 0 : animationProgress;
 

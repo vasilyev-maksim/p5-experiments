@@ -127,7 +127,7 @@ export const factory = createSketch<Controls>(
                 p,
                 start: distanceToDiagonal * MAX_NEGATIVE_CURVATURE * -1,
                 end: distanceToDiagonal * MAX_CURVATURE,
-                speed: 0.02,
+                timeMultiplier: 0.02,
                 time,
               });
               const colorIntensity = p.map(

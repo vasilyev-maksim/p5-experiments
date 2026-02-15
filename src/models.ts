@@ -99,6 +99,7 @@ export type IPreset<Controls extends IControls = any> = {
   name?: string;
   params: IParams<Controls>;
   startTime?: number;
+  randomSeed?: number;
 };
 
 export interface ISketch<Controls extends IControls = IControls> {

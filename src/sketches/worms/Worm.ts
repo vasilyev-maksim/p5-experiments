@@ -64,7 +64,7 @@ export class Worm {
     }
   }
 
-  public draw(p: p5, progress: number): void {
+public draw(p: p5, progress: number): void {
     p.beginShape();
     {
       const body = progress >= 0 ? this.body : [...this.body].reverse();
