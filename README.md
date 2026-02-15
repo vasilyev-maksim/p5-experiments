@@ -2,46 +2,47 @@
 
 # 📋 TODO
 
-- think how to use `p.createGraphics` buffer
+- [hard] city sketch
+- [hard] optimize `SketchModal` (too many rerenders of controls)
+- [hard] rethink `AnimatedValue.forceToEnd` usage when exporting sketch as image
+- [hard] presets for `worms`
+- [hard] think how to use `p.createGraphics` buffer
   - for export
   - to fix rendering issues of `curves` sketch
-- redesign `Export preset` and `Randomize` buttons
-- adopt `tiles` and `worm` to new architecture
-- presets for `worms`
-- top and bottom shadows for sidebar
-- city sketch
-- optimize `SketchModal` (too many rerenders of controls)
-- rethink `AnimatedValue.forceToEnd` usage when exporting sketch as image
-- experiment with lights in `cubes`
-- timeDelta value missing when exporting preset (as well as random seed etc.)
-- refactor `useViewport`
-  - maybe use context to store constant sizes
-  - rename to `useSize` [?]
-- each preset may have a timestamp to play animation from (for better showiness)
+- [hard] focus trap for modal (home page links are accessible)
+- [hard] tabIndex everywhere
+- [hard] make opening by link more smooth + disable list animation in bg
+- [hard] don't mismatch preset on the first change (mark it with \*)
+
+- [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
+- [medium] adopt `tiles` and `worm` to new architecture
+- [medium] each preset may have a timestamp to play animation from (for better showiness)
   - spiral
   - arcs
   - pillars
   - curve
-- add "collapse side panel" capabilities
-- implement playback controls using sketch event [?]
-- refactor timeShift/timeDelta mess in `SketchModal`
-- make play controls animation more user friendly
+- [medium] add "collapse side panel" capabilities
+- [medium] refactor timeShift/timeDelta mess in `SketchModal`
+- [medium] make play controls animation more user friendly
   - hide it by timer after mouse leave
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
-- don't mismatch preset on the first change (mark it with \*)
+- [medium] make preview sizes in percentages
+- [medium] selected preset id in url
+
+- [easy] redesign `Export preset` and `Randomize` buttons
+- [easy] top and bottom shadows for sidebar
+- [easy] experiment with lights in `cubes`
+- [easy] timeDelta value missing when exporting preset (as well as random seed etc.)
+- [easy] refactor `useViewport`
+  - maybe use context to store constant sizes
+  - rename to `useSize` [?]
+- [easy] implement playback controls using sketch event [?]
 - [easy] make animations independent from canvas size [?]
   - tiles
 - [easy] draw fullscreen icon by myself (renders differently on windows)
-- sketch previews (tiles) are super buggy when changing screen size / going fullscreen
-- add onScreenResize callback to factory (for pulse bg = black on resize)
-- make preview sizes in percentages
-- catch particular sketch errors (to show other more successful ones)
-- selected preset id in url
-- remove param controls margin-top if no presets
-- focus trap for modal (home page links are accessible)
-- tabIndex everywhere
-- make opening by link more smooth + disable list animation in bg
+- [easy] catch particular sketch errors (to show other more successful ones)
+- [easy] remove param controls margin-top if no presets
 
 # 💡 NICE TO HAVE
 
@@ -54,6 +55,7 @@
 
 # ✅ DONE
 
+- add onScreenResize callback to factory (for pulse bg = black on resize)
 - refactor: use `drawGrid` in `cubes` sketch
 - rename `playing` => `mode` (`static` | `animated`), `paused` => `playing`
 - coordinates control
