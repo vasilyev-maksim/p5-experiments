@@ -6,14 +6,14 @@ import {
   type IParams,
 } from "../models";
 
-function serializeParams(params: IParams<any>): string {
+function serializeParams(params: IParams): string {
   return Object.entries(params)
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map((key, value) => key + "__" + value)
     .join("___");
 }
 
-export function areParamsEqual(a: IParams<any>, b: IParams<any>): boolean {
+export function areParamsEqual(a: IParams, b: IParams): boolean {
   return serializeParams(a) === serializeParams(b);
 }
 
@@ -99,7 +99,7 @@ export async function copyToClipboard(text: string) {
   }
 }
 
-export function copyPresetCodeToClipboard(params: IParams<any>) {
+export function copyPresetCodeToClipboard(params: IParams) {
   const name = prompt("Preset name:")?.trim();
   const code =
     JSON.stringify({ params, ...(name ? { name } : {}) }, null, 4) + ",";

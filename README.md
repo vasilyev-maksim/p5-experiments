@@ -14,6 +14,7 @@
 - [hard] make opening by link more smooth + disable list animation in bg
 - [hard] don't mismatch preset on the first change (mark it with \*)
 
+- [medium] Add `randomSeed` to presets
 - [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - [medium] adopt `tiles` and `worm` to new architecture
 - [medium] each preset may have a timestamp to play animation from (for better showiness)

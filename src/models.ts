@@ -15,7 +15,7 @@ export type ExportRequestEvent = {
 
 export type PresetChangeEvent = {
   type: "presetChange";
-  preset: IPreset<any>;
+  preset: IPreset;
 };
 
 export type SketchEvent = EventBase & (ExportRequestEvent | PresetChangeEvent);
@@ -94,8 +94,6 @@ export type ISketchFactory<Controls extends IControls> = (args: {
   initialProps: ISketchProps<Controls>;
   id?: string;
 }) => (p: P5CanvasInstance<ISketchProps<Controls>>) => void;
-
-// export type ExtractParams<T> = keyof T;
 
 export type IPreset<Controls extends IControls = any> = {
   name?: string;

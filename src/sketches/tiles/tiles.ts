@@ -144,27 +144,9 @@ export const factory: ISketchFactory<any> =
     };
   };
 
-// {
-//   id: "tiles",
-//   name: "tiles",
-//   preview: {
-//     size: 420,
-//   },
-//   factory: tiles,
-//   timeShift: -20,
-//   randomSeed: 123,
-//   presets: [],
-//   controls: {},
-//   defaultParams: {},
-//   // randomSeed: 12,
-//   // randomSeed: 45,
-// },
-
-export const sketch: ISketch<any> = {
+export const sketch: ISketch = {
   factory,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   controls: {} as any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   presets: [{ params: {} as any, name: "" }],
   type: "draft",
 
