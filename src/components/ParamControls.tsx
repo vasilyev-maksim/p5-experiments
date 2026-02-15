@@ -103,10 +103,10 @@ export function ParamControls(props: {
               body = (
                 <BooleanParamControl
                   label={c.label}
-                  value={value === 1}
+                  value={value}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
-                  onChange={(val) => props.onParamChange(key, val ? 1 : 0)}
+                  onChange={(val) => props.onParamChange(key, val)}
                   options={c.options}
                 />
               );

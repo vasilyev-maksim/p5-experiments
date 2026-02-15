@@ -9,7 +9,8 @@ import p5, { type STROKE_JOIN } from "p5";
 import { mapDirection } from "../utils";
 
 const ANIMATION_SPEED = 25;
-const FLAT_SIN_OFFSET = 0.2;
+const SHRINK_OFFSET = 0.3;
+const GROW_OFFSET = 0.1;
 
 export const factory: ISketchFactory<Controls> = createSketch<Controls>(
   ({
@@ -131,9 +132,11 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
 
           const sin = (x: number) => {
             if (animationType === 3) {
-              return flatSin(p, 0, FLAT_SIN_OFFSET, 0)(x / 2 - 0.5);
+              // should have twice bigger period to match forward animation "visual" speed,
+              // that's why `x/2` and `SHRINK_OFFSET/2`
+              return flatSin(p, 0, SHRINK_OFFSET / 2, 0)(x / 2);
             } else {
-              return flatSin(p, 0, 0, FLAT_SIN_OFFSET)(x);
+              return flatSin(p, GROW_OFFSET / 2, 0, SHRINK_OFFSET)(x);
             }
           };
 
