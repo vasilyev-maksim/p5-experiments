@@ -2,14 +2,17 @@
 
 # 📋 TODO
 
+- think how to use `p.createGraphics` buffer
+  - for export
+  - to fix rendering issues of `curves` sketch
 - redesign `Export preset` and `Randomize` buttons
 - adopt `tiles` and `worm` to new architecture
 - presets for `worms`
 - top and bottom shadows for sidebar
 - city sketch
 - optimize `SketchModal` (too many rerenders of controls)
-- experiment with lights in `cubes`
 - rethink `AnimatedValue.forceToEnd` usage when exporting sketch as image
+- experiment with lights in `cubes`
 - timeDelta value missing when exporting preset (as well as random seed etc.)
 - refactor `useViewport`
   - maybe use context to store constant sizes
@@ -27,9 +30,9 @@
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
 - don't mismatch preset on the first change (mark it with \*)
-- make animations independent from canvas size [?]
+- [easy] make animations independent from canvas size [?]
   - tiles
-- draw fullscreen icon by myself (renders differently on windows)
+- [easy] draw fullscreen icon by myself (renders differently on windows)
 - sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - add onScreenResize callback to factory (for pulse bg = black on resize)
 - make preview sizes in percentages

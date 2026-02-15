@@ -25,9 +25,14 @@ export type CreateSketchArgs<Controls extends IControls> = {
   setup?: (api: Api<Controls>) => void;
   // Why a factory? it allows us define helper render functions in closure with `api` var available.
   draw: (api: Api<Controls>) => () => void;
-  onPropsChanged?: (api: Api<Controls>) => void;
+  onPropsChange?: (api: Api<Controls>) => void;
   onPresetChange?: (preset: IPreset<Controls>) => void;
+  canvasSizeHandlerOverride?: (
+    width: TrackedValue<ISketchProps<Controls>["canvasWidth"]>,
+    height: TrackedValue<ISketchProps<Controls>["canvasHeight"]>,
+  ) => void;
   in3D?: boolean;
+  id?: string;
 };
 
 type Api<Controls extends IControls> = {
@@ -55,9 +60,9 @@ type Api<Controls extends IControls> = {
 
 export function createSketch<Controls extends IControls>(
   // Why a factory? It allows us to use closures to create shared vars.
-  argsFactory: (api: Api<Controls>) => CreateSketchArgs<Controls>,
+  argsFactory: (api: Api<Controls>, id?: string) => CreateSketchArgs<Controls>,
 ): ISketchFactory<Controls> {
-  return ({ initialProps }) =>
+  return ({ initialProps, id }) =>
     (p) => {
       let time = 0,
         initialPropsUpdate = true,
@@ -105,7 +110,7 @@ export function createSketch<Controls extends IControls>(
       // initialize tracked props immediately (even before setups), don't move this line
       updateTrackedProps(initialProps);
 
-      const args = argsFactory(api);
+      const args = argsFactory(api, id);
 
       p.setup = () => {
         p.createCanvas(
@@ -162,7 +167,12 @@ export function createSketch<Controls extends IControls>(
           const canvasHeight = api.getTrackedProp("canvasHeight");
           const canvasWidth = api.getTrackedProp("canvasWidth");
           if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
-            p.resizeCanvas(canvasWidth.value!, canvasHeight.value!);
+            p.resizeCanvas(
+              canvasWidth.value!,
+              canvasHeight.value!,
+              args.canvasSizeHandlerOverride !== undefined,
+            );
+            args.canvasSizeHandlerOverride?.(canvasWidth, canvasHeight);
           }
 
           if (api.getProp("mode") === "animated") {
@@ -185,7 +195,7 @@ export function createSketch<Controls extends IControls>(
           }
 
           // run user defined code after all important changes were applied (above)
-          args.onPropsChanged?.(api);
+          args.onPropsChange?.(api);
         } else {
           initialPropsUpdate = false;
         }

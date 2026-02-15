@@ -23,8 +23,6 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
       initialValueForItem,
       timingFunction,
     );
-
-    // TODO: написать AnimatedArray + полумать использовать композиция (вместо наследования) в классах
   }
 
   public recalc(time: number): this {

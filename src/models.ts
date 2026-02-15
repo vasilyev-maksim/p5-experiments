@@ -92,6 +92,7 @@ export type ISketchProps<Controls extends IControls = IControls> =
 
 export type ISketchFactory<Controls extends IControls> = (args: {
   initialProps: ISketchProps<Controls>;
+  id?: string;
 }) => (p: P5CanvasInstance<ISketchProps<Controls>>) => void;
 
 // export type ExtractParams<T> = keyof T;

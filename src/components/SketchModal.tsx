@@ -80,6 +80,7 @@ export const SketchModal = ({
       });
     } else if (seg.id === "START_PLAYING" && seg.isRunning) {
       setMode("animated");
+      setPaused(false);
     }
   }, []);
 
@@ -87,7 +88,7 @@ export const SketchModal = ({
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   const [mode, setMode] = useState<ISketchProps["mode"]>("static");
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(true);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const defaultPreset = sketch.presets[0];
   const [params, setParams] = useState(defaultPreset.params);

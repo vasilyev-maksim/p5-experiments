@@ -29,6 +29,10 @@ export const factory = createSketch<Controls>(
       onPresetChange: () => {
         p.background(BG_COLOR);
       },
+      canvasSizeHandlerOverride: () => {
+        p.background(BG_COLOR);
+        p.redraw();
+      },
       setup: () => {
         p.background(BG_COLOR);
       },

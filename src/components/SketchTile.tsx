@@ -59,7 +59,7 @@ export const SketchTile = forwardRef<
         <SketchCanvas
           id="tile"
           sketch={sketch}
-          paused={false}
+          mode="static"
           paused={true}
           size="tile"
           params={defaultPreset.params}

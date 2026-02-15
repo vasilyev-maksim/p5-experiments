@@ -65,6 +65,7 @@ export const SketchCanvas = forwardRef<
     // this time `sketchProps` are initial props
     return props.sketch.factory({
       initialProps: sketchProps,
+      id: `${props.sketch.id}_${props.id}`,
     });
   }, []);
 
