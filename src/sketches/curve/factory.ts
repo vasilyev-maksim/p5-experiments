@@ -11,18 +11,20 @@ export const factory = createSketch<Controls>(
     getProp,
     getTime,
     getTrackedProp,
-    p,
+    getCanvasSize,
     createAnimatedValue,
     createMemo,
+    p,
   }) => {
+    const { trackedCanvasWidth } = getCanvasSize();
     const gapAnimated = createAnimatedValue(
       ANIMATION_SPEED,
       (x, canvasWidth) => (x * canvasWidth) / 1158,
-      [getTrackedProp("GAP"), getTrackedProp("canvasWidth")],
+      [getTrackedProp("GAP"), trackedCanvasWidth],
     );
     const strokeWidth = createMemo(
       (canvasWidth) => (2 * canvasWidth) / 1158,
-      [getTrackedProp("canvasWidth")],
+      [trackedCanvasWidth],
     );
 
     return {

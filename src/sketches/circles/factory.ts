@@ -15,12 +15,13 @@ export const factory = createSketch<Controls>(
     getProp,
     getTime,
     getTrackedProp,
+    getCanvasSize,
     p,
   }) => {
     const animatedRadius = createAnimatedValue(
         ANIMATION_SPEED,
         (canvasHeight, zoom) => ((zoom * canvasHeight) / 811) * 9, // 1158 10
-        [getTrackedProp("canvasHeight"), getTrackedProp("ZOOM")],
+        [getCanvasSize().trackedCanvasHeight, getTrackedProp("ZOOM")],
       ),
       gap = createMemo(
         (x) => p.map(x, controls.GAP.min, controls.GAP.max, 0.1, 3),
@@ -57,8 +58,8 @@ export const factory = createSketch<Controls>(
       },
       draw: () => () => {
         const [colorB, colorA] = colorsAnimated.value;
-        const canvasWidth = getProp("canvasWidth"),
-          canvasHeight = getProp("canvasHeight"),
+        const { canvasHeight: canvasHeight, canvasWidth: canvasWidth } =
+            getCanvasSize(),
           resolution = getProp("RESOLUTION"),
           radius = animatedRadius.value!,
           CENTER_VEC = p.createVector(canvasWidth / 2, canvasHeight / 2);

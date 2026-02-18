@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {
-  SketchEvent,
-  IPreset,
-  ISketch,
-  SketchCanvasSize,
-  ISketchProps,
-} from "../models";
+import type { IPreset, ISketch, SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useKeyboardShortcuts, useModalBehavior, useViewport } from "../hooks";
@@ -26,6 +20,7 @@ import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
 import { copyPresetCodeToClipboard, getRandomParams } from "@/utils/misc";
 import { EventBus } from "@/core/EventBus";
+import type { SketchEvent } from "@/core/events";
 
 const EXPORT_WIDTH = 3840 / 2,
   EXPORT_HEIGHT = 2160 / 2;
@@ -80,7 +75,14 @@ export const SketchModal = ({
         config: { duration: seg.duration, easing: easings.easeInOutCubic },
       });
     } else if (seg.id === "START_PLAYING" && seg.isRunning) {
-      setMode("animated");
+      sendEvent({
+        type: "modeChange",
+        mode: "animated",
+      });
+      sendEvent({
+        type: "playPauseEvent",
+        paused: false,
+      });
       setPaused(false);
     }
   }, []);
@@ -88,46 +90,53 @@ export const SketchModal = ({
   useListener(onProgress);
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
-  const [mode, setMode] = useState<ISketchProps["mode"]>("static");
+  // TODO: put `paused` state inside `PlaybackControls`
   const [paused, setPaused] = useState(true);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const defaultPreset = sketch.presets[0];
   const [params, setParams] = useState(defaultPreset.params);
-  /** initially used for sketch timeShift (to match preview tile) and then for playback controls */
-  const [timeShift, setTimeShift] = useState<number>(
-    defaultPreset.startTime ?? sketch.startTime ?? 0,
-  );
   /** time delta is a speed of animation set by user */
   const [timeDelta, setTimeDelta] = useState(
-    defaultPreset.params.timeDelta ?? 1,
+    (defaultPreset.params.timeDelta as number) ?? 1,
   );
-  /** manual time delta is used by playback controls and takes precedence over timeDelta (if former is set) */
-  const [manualTimeDelta, setManualTimeDelta] = useState<number>();
-  const [event, setEvent] = useState<SketchEvent>();
-  const eventId = useRef(0);
-  const eventBus = useRef<EventBus>(new EventBus());
+  const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
 
-  const changeParam = (key: string, value: number) => {
-    setParams((x) => ({ ...x, [key]: value }));
+  const sendEvent = (...args: Parameters<EventBus<SketchEvent>["emit"]>) => {
+    eventBus.current.emit(...args);
   };
 
-  const sendEvent = (event: SketchEvent) => {
-    setEvent({
-      ...event,
-      id: eventId.current++,
+  const changeTimeDelta = (timeDelta: number) => {
+    sendEvent({
+      type: "timeDeltaChange",
+      timeDelta,
     });
+    setTimeDelta(timeDelta);
+  };
+
+  const changeParam = (paramName: string, paramValue: any) => {
+    sendEvent({
+      type: "paramChange",
+      paramName,
+      paramValue,
+    });
+    setParams((x) => ({ ...x, [paramName]: paramValue }));
   };
 
   const applyPreset = (preset: IPreset) => {
-    setParams(preset.params);
     sendEvent({
-      type: "presetChange",
+      type: "applyPreset",
       preset,
     });
-    setTimeDelta(preset.params.timeDelta ?? 1);
+    setParams(preset.params);
   };
 
-  const playPause = () => setPaused((x) => !x);
+  const playPause = () => {
+    sendEvent({
+      type: "playPauseEvent",
+      paused: !paused,
+    });
+    setPaused((x) => !x);
+  };
 
   const openInFullscreen = () => {
     if (sketchCanvasRef.current) {
@@ -154,32 +163,44 @@ export const SketchModal = ({
   };
 
   const jumpNFrames = (N: number) => () => {
-    setPaused(true);
-    setTimeShift((x) => (x ?? 0) + N);
+    sendEvent({
+      type: "timeTravelEvent",
+      timeShift: N,
+    });
   };
 
-  const playWithCustomDelta = (delta: number) => () => {
-    setManualTimeDelta(delta);
-    setPaused(false);
+  const playWithCustomDelta = (timeDelta: number) => () => {
+    sendEvent({
+      type: "timeDeltaChange",
+      timeDelta,
+    });
+    sendEvent({
+      type: "playPauseEvent",
+      paused: false,
+    });
   };
 
   const stopPlayingWithCustomDelta = () => {
-    setManualTimeDelta(undefined);
-    changeParam("TIME_DELTA", 1);
-    setPaused(true);
+    sendEvent({
+      type: "timeDeltaChange",
+      timeDelta,
+    });
+    sendEvent({
+      type: "playPauseEvent",
+      paused: true,
+    });
   };
 
   const randomizeParams = () => {
-    const newParams = getRandomParams(sketch.controls);
-    setParams(newParams);
+    const randomParams = getRandomParams(sketch.controls);
+    sendEvent({
+      type: "paramsChange",
+      params: randomParams,
+    });
+    setParams(randomParams);
   };
 
-  const makeTest = () => {
-    eventBus.current.emit({
-      type: "test",
-      test: true,
-    });
-  };
+  const makeTest = () => {};
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
@@ -314,13 +335,12 @@ export const SketchModal = ({
                 id="modal"
                 size={size}
                 sketch={sketch}
-                params={params}
+                initParams={params}
                 paused={paused}
-                mode={mode}
+                mode={"static"}
                 ref={sketchCanvasRef}
-                timeShift={timeShift}
-                timeDelta={manualTimeDelta || timeDelta}
-                event={event}
+                startTime={defaultPreset.startTime ?? sketch.startTime ?? 0}
+                timeDelta={timeDelta}
                 eventBus={eventBus.current}
               />
             </div>
@@ -336,7 +356,7 @@ export const SketchModal = ({
               <PlaybackControls
                 paused={paused}
                 timeDelta={timeDelta}
-                onTimeDeltaChange={setTimeDelta}
+                onTimeDeltaChange={changeTimeDelta}
                 onPlayPause={playPause}
                 onFullscreenToggle={openInFullscreen}
                 onJumpNFrames={jumpNFrames}

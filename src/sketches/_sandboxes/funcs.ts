@@ -57,6 +57,7 @@ const presets: IPreset<Controls>[] = [
       MIDDLE_OFFSET: 0.05,
       INNER_OFFSET: 0.1,
     },
+    timeDelta: 1,
   },
 ];
 

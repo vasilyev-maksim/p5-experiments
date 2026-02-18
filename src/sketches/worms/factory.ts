@@ -21,14 +21,12 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
     createAnimatedValue,
     createAnimatedColors,
     getTime,
+    getCanvasSize,
   }) => {
+    const { trackedCanvasHeight, trackedCanvasWidth } = getCanvasSize();
     const resolutionX = createMemo(
       (w, h, r) => p.floor((w * r) / h),
-      [
-        getTrackedProp("canvasWidth"),
-        getTrackedProp("canvasHeight"),
-        getTrackedProp("RESOLUTION"),
-      ],
+      [trackedCanvasWidth, trackedCanvasHeight, getTrackedProp("RESOLUTION")],
     );
     const worms = createMemo(
       (resY, resX, len, dirIsRandom, [r, d]) => {
@@ -139,6 +137,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
               return flatSin(p, GROW_OFFSET / 2, 0, SHRINK_OFFSET)(x);
             }
           };
+          const { canvasHeight, canvasWidth } = getCanvasSize();
 
           const animationProgress = oscillateBetween({
             p,
@@ -150,10 +149,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           });
           const progress = animationType === 0 ? 0 : animationProgress;
 
-          p.scale(
-            getProp("canvasWidth") / (W + 1),
-            getProp("canvasHeight") / (H + 1),
-          );
+          p.scale(canvasWidth / (W + 1), canvasHeight / (H + 1));
 
           p.strokeJoin(
             ["miter", "round", "bevel"][getProp("CORNERS_TYPE")] as STROKE_JOIN,

@@ -9,7 +9,7 @@ import type { ISketch, ISketchFactory } from "../../models";
 import { easeInOutQuad, getQsParam } from "@/core/utils";
 
 export const factory: ISketchFactory<any> =
-  ({ initialProps: { canvasHeight, canvasWidth, randomSeed } }) =>
+  ({ initData: { canvasHeight, canvasWidth, randomSeed } }) =>
   (p) => {
     const GRID_CELLS_Y = Number(getQsParam("y", "20")),
       CANVAS_PADDING = 3,
@@ -38,7 +38,9 @@ export const factory: ISketchFactory<any> =
 
     p.setup = () => {
       p.createCanvas(canvasWidth, canvasHeight);
-      p.randomSeed(randomSeed);
+      if (randomSeed !== undefined) {
+        p.randomSeed(randomSeed);
+      }
 
       while (spawnTurtle()) {
         // noop
@@ -147,7 +149,7 @@ export const factory: ISketchFactory<any> =
 export const sketch: ISketch = {
   factory,
   controls: {} as any,
-  presets: [{ params: {} as any, name: "" }],
+  presets: [{ params: {} as any, name: "", timeDelta: 1 }],
   type: "draft",
 
   id: "tiles",

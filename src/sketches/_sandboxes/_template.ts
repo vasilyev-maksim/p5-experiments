@@ -48,6 +48,7 @@ const presets: IPreset<Controls>[] = [
       N: 1,
       NA: 1,
     },
+    timeDelta: 1,
   },
 ];
 

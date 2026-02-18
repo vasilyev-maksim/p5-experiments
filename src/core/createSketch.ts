@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type {
-  ISketchProps,
   ISketchFactory,
-  SketchEvent,
-  ExportRequestEvent,
-  PresetChangeEvent,
   IPreset,
   IControls,
+  IParams,
+  ParamName,
 } from "../models";
 import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
@@ -15,35 +13,34 @@ import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { MemoizedAnimatedColors } from "./MemoizedAnimatedColor";
 import { ENV } from "@/env";
-
-type PropNames<Controls extends IControls> = keyof ISketchProps<Controls>;
-type TrackedProps<Controls extends IControls> = {
-  [k in PropNames<Controls>]: TrackedValue<ISketchProps<Controls>[k]>;
-};
+import type { ExportRequestEvent, SketchEvent } from "./events";
+import type { EventBus } from "./EventBus";
 
 export type CreateSketchArgs<Controls extends IControls> = {
   setup?: (api: Api<Controls>) => void;
   // Why a factory? it allows us define helper render functions in closure with `api` var available.
   draw: (api: Api<Controls>) => () => void;
-  onPropsChange?: (api: Api<Controls>) => void;
   onPresetChange?: (preset: IPreset<Controls>) => void;
   canvasSizeHandlerOverride?: (
-    width: TrackedValue<ISketchProps<Controls>["canvasWidth"]>,
-    height: TrackedValue<ISketchProps<Controls>["canvasHeight"]>,
+    width: TrackedValue<number>,
+    height: TrackedValue<number>,
   ) => void;
-  in3D?: boolean;
   id?: string;
 };
 
 type Api<Controls extends IControls> = {
-  p: P5CanvasInstance<ISketchProps<Controls>>;
-  getProp: <K extends PropNames<Controls>>(
+  p: P5CanvasInstance;
+  getProp: <K extends ParamName<Controls>>(propName: K) => IParams<Controls>[K];
+  getTrackedProp: <K extends ParamName<Controls>>(
     propName: K,
-  ) => ISketchProps<Controls>[K];
-  getTrackedProp: <K extends PropNames<Controls>>(
-    propName: K,
-  ) => TrackedValue<ISketchProps<Controls>[K]>;
+  ) => TrackedValue<IParams<Controls>[K]>;
   getTime: () => number;
+  getCanvasSize: () => {
+    canvasWidth: number;
+    canvasHeight: number;
+    trackedCanvasWidth: TrackedValue<number>;
+    trackedCanvasHeight: TrackedValue<number>;
+  };
   createMemo: <ArgsType extends any[], ValueType>(
     ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
   ) => MemoizedValue<ArgsType, ValueType>;
@@ -58,26 +55,40 @@ type Api<Controls extends IControls> = {
   ) => MemoizedAnimatedColors<ArgsType>;
 };
 
-export function createSketch<Controls extends IControls>(
+export function createSketch<C extends IControls>(
   // Why a factory? It allows us to use closures to create shared vars.
-  argsFactory: (api: Api<Controls>, id?: string) => CreateSketchArgs<Controls>,
-): ISketchFactory<Controls> {
-  return ({ initialProps, id }) =>
+  argsFactory: (api: Api<C>, id?: string) => CreateSketchArgs<C>,
+  { in3D }: { in3D: boolean } = { in3D: false },
+): ISketchFactory<C> {
+  return ({ initData, id, eventBus }) =>
     (p) => {
       let time = 0,
-        initialPropsUpdate = true,
-        props: TrackedProps<Controls>,
-        draw: ReturnType<CreateSketchArgs<Controls>["draw"]>;
+        paused = initData.paused,
+        timeDelta = initData.timeDelta ?? 1,
+        props: {
+          [k in keyof IParams<C>]: TrackedValue<IParams<C>[k]>;
+        },
+        draw: ReturnType<CreateSketchArgs<C>["draw"]>;
 
       const memos: MemoizedValue<any, any>[] = [];
+      const canvasWidth = new TrackedValue(initData.canvasWidth);
+      const canvasHeight = new TrackedValue(initData.canvasHeight);
       const animations: Array<
         | MemoizedAnimatedValue<any>
         | MemoizedAnimatedArray<any>
         | MemoizedAnimatedColors<any>
       > = [];
 
-      const api: Api<Controls> = {
+      const api: Api<C> = {
         p,
+        getCanvasSize: () => {
+          return {
+            canvasWidth: canvasWidth.value,
+            trackedCanvasWidth: canvasWidth,
+            canvasHeight: canvasHeight.value,
+            trackedCanvasHeight: canvasHeight,
+          };
+        },
         getTrackedProp: (k) => {
           return props[k];
         },
@@ -108,31 +119,32 @@ export function createSketch<Controls extends IControls>(
       };
 
       // initialize tracked props immediately (even before setups), don't move this line
-      updateTrackedProps(initialProps);
-
-      const args = argsFactory(api, id);
+      // TODO: try to move this line inside p.setup
 
       p.setup = () => {
         p.createCanvas(
-          initialProps.canvasWidth,
-          initialProps.canvasHeight,
-          args.in3D ? p.WEBGL : p.P2D,
+          initData.canvasWidth,
+          initData.canvasHeight,
+          in3D ? p.WEBGL : p.P2D,
         );
-        if (initialProps.randomSeed !== undefined) {
-          p.randomSeed(initialProps.randomSeed);
-          p.noiseSeed(initialProps.randomSeed);
+
+        if (initData.randomSeed !== undefined) {
+          p.randomSeed(initData.randomSeed);
+          p.noiseSeed(initData.randomSeed);
         }
 
-        // set time using initial time shift (for pretty previews)
-        time = api.getProp("timeShift") ?? 0;
+        if (initData.mode === "static") {
+          p.noLoop();
+        }
 
-        // test
-        api.getProp("eventBus")?.on("test", (e) => {
-          console.log(e);
-        });
+        // set start time for pretty preview images
+        time = initData.startTime ?? 0;
+
+        updateTrackedProps(initData.params);
+
+        const args = argsFactory(api, id);
 
         updateMemos();
-        updateAnimations();
 
         args.setup?.(api);
 
@@ -148,89 +160,133 @@ export function createSketch<Controls extends IControls>(
             }
           : argDraw;
 
-        if (api.getProp("mode") === "static") {
-          p.noLoop();
+        // events handling
+        if (eventBus) {
+          initEventBus(eventBus, args);
         }
       };
 
       p.draw = () => {
         runAnimations();
         draw();
-        if (api.getProp("paused") === false) {
-          time += api.getProp("timeDelta");
+        if (paused === false) {
+          time += timeDelta;
         }
       };
 
-      p.updateWithProps = (newRawProps) => {
-        // updateWithProps's first call happens before `p.setup` call
-        if (!initialPropsUpdate) {
-          updateTrackedProps(newRawProps);
-          updateMemos();
-          updateAnimations();
+      function initEventBus(
+        bus: EventBus<SketchEvent<C>>,
+        args: CreateSketchArgs<C>,
+      ) {
+        if (bus) {
+          bus.on("export", (e) => {
+            exportCanvas(e);
+          });
 
-          // respond to canvas size changes
-          const canvasHeight = api.getTrackedProp("canvasHeight");
-          const canvasWidth = api.getTrackedProp("canvasWidth");
-          if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
-            p.resizeCanvas(
-              canvasWidth.value!,
-              canvasHeight.value!,
-              args.canvasSizeHandlerOverride !== undefined,
-            );
-            args.canvasSizeHandlerOverride?.(canvasWidth, canvasHeight);
-          }
+          bus.on("applyPreset", ({ preset }) => {
+            if (preset.startTime !== undefined) {
+              time = preset.startTime;
+            }
 
-          if (api.getProp("mode") === "animated") {
-            p.loop();
-          } else {
-            p.noLoop();
-          }
+            if (preset.randomSeed !== undefined) {
+              p.randomSeed(preset.randomSeed);
+            }
 
-          // for playback controls
-          const timeShift = api.getTrackedProp("timeShift");
-          if (timeShift.hasChanged) {
-            const delta = timeShift.value - (timeShift.prevValue ?? 0);
-            time += delta;
-          }
+            if (preset.timeDelta !== undefined) {
+              timeDelta = preset.timeDelta;
+            }
 
-          // handle incoming event (export, preset change, etc.)
-          const event = api.getTrackedProp("event");
-          if (event.hasChanged) {
-            reactToEvent(event.value);
-          }
+            updateMemos(() => updateTrackedProps(preset.params));
+            args.onPresetChange?.(preset);
+          });
 
-          // run user defined code after all important changes were applied (above)
-          args.onPropsChange?.(api);
-        } else {
-          initialPropsUpdate = false;
+          bus.on("paramChange", (e) => {
+            updateMemos(() => updateTrackedProp(e.paramName, e.paramValue));
+          });
+
+          bus.on("paramsChange", (e) => {
+            updateMemos(() => updateTrackedProps(e.params));
+          });
+
+          bus.on("modeChange", (e) => {
+            if (e.mode === "animated") {
+              p.loop();
+            } else {
+              p.noLoop();
+            }
+          });
+
+          bus.on("timeDeltaChange", (e) => {
+            timeDelta = e.timeDelta;
+          });
+
+          bus.on("timeTravelEvent", (e) => {
+            time += e.timeShift;
+          });
+
+          bus.on("canvasSizeChangeEvent", (e) => {
+            updateMemos(() => {
+              canvasHeight.value = e.canvasHeight;
+              canvasWidth.value = e.canvasWidth;
+            });
+
+            if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
+              p.resizeCanvas(
+                canvasWidth.value!,
+                canvasHeight.value!,
+                args.canvasSizeHandlerOverride !== undefined,
+              );
+              args.canvasSizeHandlerOverride?.(canvasWidth, canvasHeight);
+            }
+          });
+
+          bus.on("playPauseEvent", (e) => {
+            paused = e.paused;
+          });
         }
-      };
+      }
 
-      function updateTrackedProps(newRawProps: ISketchProps<Controls>) {
+      function updateTrackedProps(newRawProps: IParams<C>) {
+        // TODO: get rid of init part
         if (!props) {
           props = {} as any;
         }
 
-        (Object.keys(newRawProps) as PropNames<Controls>[]).forEach((key) => {
+        // TODO: get rid of init part
+        (Object.keys(newRawProps) as ParamName<C>[]).forEach((key) => {
           if (props[key] === undefined) {
             props[key] = new TrackedValue(undefined) as any;
           }
-          props[key].value = newRawProps[key];
+          props[key].value = newRawProps[key]!;
         });
       }
 
-      function updateMemos() {
+      function updateTrackedProp(
+        name: ParamName<C>,
+        value: IParams<C>[typeof name],
+      ) {
+        // TODO: get rid of init part
+        if (props[name] === undefined) {
+          props[name] = new TrackedValue(undefined) as any;
+        }
+        props[name].value = value;
+      }
+
+      function updateMemos(
+        cb?: () => void,
+        forceAnimationsToEnd: boolean = false,
+      ) {
+        cb?.();
+
         memos.forEach((memo) => {
           memo.recalc();
         });
-      }
 
-      function updateAnimations(force: boolean = false) {
         animations.forEach((animations) => {
           // to keep animations (related to params change) running even when sketch is paused,
           // we use `p.frameCount` instead of `time`
           animations.recalc(p.frameCount);
-          if (force) {
+          if (forceAnimationsToEnd) {
             animations.forceAnimationsToEnd(time);
           }
         });
@@ -270,63 +326,41 @@ export function createSketch<Controls extends IControls>(
         p.pop();
       }
 
-      function reactToEvent(event: SketchEvent) {
-        switch (event.type) {
-          case "export":
-            exportCanvas(event);
-            return;
-          case "presetChange":
-            applyPreset(event);
-            return;
-        }
-      }
-
       function exportCanvas({
         exportFileName,
         exportFileWidth,
         exportFileHeight,
       }: ExportRequestEvent) {
+        const wasLooping = p.isLooping();
         // manually stop the draw loop
         p.noLoop();
 
         // draw the same frame but for wallpaper resolution
         p.resizeCanvas(exportFileWidth, exportFileHeight, true);
         // update related tracked props, memos and animations
-        (props.canvasWidth.value as number) = exportFileWidth;
-        (props.canvasHeight.value as number) = exportFileHeight;
-        updateMemos();
-        // all animations forcibly set to end values to see correct final result
-        updateAnimations(true);
+        updateMemos(() => {
+          canvasWidth.value = exportFileWidth;
+          canvasHeight.value = exportFileHeight;
+          // all animations forcibly set to end values to see correct final result
+        }, true);
         p.redraw();
 
         p.saveCanvas(exportFileName);
 
-        const prevW = props["canvasWidth"].prevValue!,
-          prevH = props["canvasHeight"].prevValue!;
+        const prevW = canvasWidth.prevValue!,
+          prevH = canvasHeight.prevValue!;
 
         // revert to old values and draw what user saw initially
         p.resizeCanvas(prevW, prevH, true);
-        props["canvasWidth"].value = prevW;
-        props["canvasHeight"].value = prevH;
-        updateMemos();
-        updateAnimations(true);
+        updateMemos(() => {
+          canvasWidth.value = prevW;
+          canvasHeight.value = prevH;
+        }, true);
         p.redraw();
 
-        if (
-          props["mode"].value === "animated" &&
-          props["paused"].value === false
-        ) {
+        if (wasLooping) {
           p.loop();
         }
-      }
-
-      function applyPreset(event: PresetChangeEvent) {
-        // TODO: по сути я тут могу читать занечения параметров и не надо их передавать через пропсы, так будет единый канал общения с createSketch.
-        time = event.preset?.startTime ?? time;
-        if (event.preset.randomSeed !== undefined) {
-          p.randomSeed(event.preset.randomSeed);
-        }
-        args.onPresetChange?.(event.preset);
       }
     };
 }

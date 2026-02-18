@@ -88,7 +88,7 @@ export const factory = createSketch<Controls>(
           });
         };
       },
-      in3D: true,
     };
   },
+  { in3D: true },
 );

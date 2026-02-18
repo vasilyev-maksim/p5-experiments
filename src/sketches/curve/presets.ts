@@ -13,6 +13,7 @@ export const presets: IPreset<Controls>[] = [
       CHAOS_FACTOR: 3,
       JOINT_TYPE: 0,
     },
+    timeDelta: 1,
     name: "originality",
   },
   {
@@ -26,6 +27,7 @@ export const presets: IPreset<Controls>[] = [
       CHAOS_FACTOR: 0,
       JOINT_TYPE: 3,
     },
+    timeDelta: 1,
     name: "isolines",
   },
   {
@@ -39,6 +41,7 @@ export const presets: IPreset<Controls>[] = [
       CHAOS_FACTOR: 100,
       JOINT_TYPE: 0,
     },
+    timeDelta: 1,
     name: "ice plazma",
   },
   {
@@ -52,6 +55,7 @@ export const presets: IPreset<Controls>[] = [
       CHAOS_FACTOR: 10,
       JOINT_TYPE: 0,
     },
+    timeDelta: 1,
     name: "hills",
   },
   {
@@ -65,6 +69,7 @@ export const presets: IPreset<Controls>[] = [
       CHAOS_FACTOR: 69,
       JOINT_TYPE: 0,
     },
+    timeDelta: 1,
     name: "DnB",
   },
   {
@@ -78,6 +83,7 @@ export const presets: IPreset<Controls>[] = [
       JOINT_TYPE: 1,
       COLOR: 3,
     },
+    timeDelta: 1,
     name: "graphite",
   },
   {
@@ -91,6 +97,7 @@ export const presets: IPreset<Controls>[] = [
       CHAOS_FACTOR: 1,
       JOINT_TYPE: 0,
     },
+    timeDelta: 1,
     name: "sunrise",
   },
   {
@@ -104,6 +111,7 @@ export const presets: IPreset<Controls>[] = [
       CHAOS_FACTOR: 75,
       JOINT_TYPE: 0,
     },
+    timeDelta: 1,
     name: "fluctuations",
   },
   {
@@ -117,6 +125,7 @@ export const presets: IPreset<Controls>[] = [
       JOINT_TYPE: 1,
       COLOR: 1,
     },
+    timeDelta: 1,
     name: "deep network",
   },
 ];

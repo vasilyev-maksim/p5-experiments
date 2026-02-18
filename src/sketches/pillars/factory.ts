@@ -12,8 +12,10 @@ export const factory = createSketch<Controls>(
     createMemo,
     getTime,
     getTrackedProp,
+    getCanvasSize,
     p,
   }) => {
+    const { trackedCanvasHeight, trackedCanvasWidth } = getCanvasSize();
     const widthData = createMemo(
       (resolution, dispersion) => getRandomPartition(p, resolution, dispersion),
       [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
@@ -33,12 +35,12 @@ export const factory = createSketch<Controls>(
     const gapWidthAnimated = createAnimatedValue(
       ANIMATION_SPEED,
       (x, canvasWidth) => (x * canvasWidth) / 1158,
-      [getTrackedProp("GAP_X"), getTrackedProp("canvasWidth")],
+      [getTrackedProp("GAP_X"), trackedCanvasWidth],
     );
     const gapHeightAnimated = createAnimatedValue(
       ANIMATION_SPEED,
       (x, canvasHeight) => (x * canvasHeight) / 811,
-      [getTrackedProp("GAP_Y"), getTrackedProp("canvasHeight")],
+      [getTrackedProp("GAP_Y"), trackedCanvasHeight],
     );
     const colorsAnimated = createAnimatedColors(
       ANIMATION_SPEED,

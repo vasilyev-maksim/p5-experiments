@@ -4,7 +4,9 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
-      TIME_DELTA: 1,
+      N: 1,
+      NA: 1,
     },
+    timeDelta: 1,
   },
 ];

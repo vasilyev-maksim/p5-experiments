@@ -15,6 +15,8 @@ export const presets: IPreset<Controls>[] = [
       DIRECTION_RANDOMNESS: true,
       INNER_THICKNESS: 0.45,
     },
+    timeDelta: 1,
+    startTime: 1,
   },
   {
     params: {
@@ -29,6 +31,7 @@ export const presets: IPreset<Controls>[] = [
       DIRECTION_RANDOMNESS: false,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 1,
     name: "animated 2",
   },
   {
@@ -44,6 +47,7 @@ export const presets: IPreset<Controls>[] = [
       DIRECTION_RANDOMNESS: false,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 1,
     name: "animated 3",
   },
   {
@@ -57,9 +61,9 @@ export const presets: IPreset<Controls>[] = [
       CORNERS_TYPE: 0,
       ANIMATION_TYPE: 0,
       DIRECTION_RANDOMNESS: false,
-      timeDelta: 0.4,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 0.4,
     name: "animated 4",
   },
   {
@@ -75,6 +79,7 @@ export const presets: IPreset<Controls>[] = [
       DIRECTION_RANDOMNESS: false,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 1,
     name: "animated 5",
   },
   {
@@ -90,6 +95,7 @@ export const presets: IPreset<Controls>[] = [
       INVERT_COLORS: true,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 1,
     name: "nice1",
   },
   {
@@ -105,6 +111,7 @@ export const presets: IPreset<Controls>[] = [
       INVERT_COLORS: true,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 1,
     name: "nice2",
   },
   {
@@ -120,6 +127,7 @@ export const presets: IPreset<Controls>[] = [
       DIRECTION_RANDOMNESS: true,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 1,
     name: "sun",
   },
   {
@@ -133,9 +141,9 @@ export const presets: IPreset<Controls>[] = [
       DIRECTION_RANDOMNESS: false,
       COLOR: 0,
       INVERT_COLORS: true,
-      timeDelta: 0.3,
       INNER_THICKNESS: 0.5,
     },
+    timeDelta: 0.3,
     name: "nice3",
   },
 ];

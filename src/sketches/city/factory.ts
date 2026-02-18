@@ -34,7 +34,7 @@ export const factory = createSketch<Controls>(
           drawBuilding(p, { size: homeSize });
         };
       },
-      in3D: true,
     };
   },
+  { in3D: true },
 );

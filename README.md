@@ -35,6 +35,7 @@
 - [medium] make preview sizes in percentages
 - [medium] selected preset id in url
 
+- [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] redesign `Export preset` and `Randomize` buttons
 - [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`

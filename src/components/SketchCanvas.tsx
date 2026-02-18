@@ -3,8 +3,8 @@ import type {
   ISketch,
   IParams,
   SketchCanvasSize,
-  ISketchProps,
-  SketchEvent,
+  ISketchInitData,
+  SketchMode,
 } from "../models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
@@ -13,6 +13,7 @@ import { animated, easings, to, useSpring } from "react-spring";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
 import type { EventBus } from "@/core/EventBus";
+import type { SketchEvent } from "@/core/events";
 
 export const SketchCanvas = forwardRef<
   HTMLDivElement,
@@ -20,13 +21,12 @@ export const SketchCanvas = forwardRef<
     sketch: ISketch;
     size: SketchCanvasSize;
     paused: boolean;
-    mode: ISketchProps["mode"];
-    params: IParams;
-    timeDelta?: ISketchProps["timeDelta"];
-    timeShift?: ISketchProps["timeShift"];
-    eventBus?: EventBus;
+    mode: SketchMode;
+    initParams: IParams;
+    timeDelta?: ISketchInitData["timeDelta"];
+    startTime?: ISketchInitData["startTime"];
+    eventBus?: EventBus<SketchEvent>;
     id: string;
-    event?: SketchEvent;
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
@@ -37,41 +37,31 @@ export const SketchCanvas = forwardRef<
   const canvasHeight =
     props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
 
-  const sketchProps = useMemo(
-    () =>
-      ({
-        ...props.params,
+  const p5Sketch = useMemo(() => {
+    // this time `sketchProps` are initial props
+    return props.sketch.factory({
+      initData: {
+        params: props.initParams,
         paused: props.paused,
         mode: props.mode,
-        timeShift: props.timeShift ?? 0,
+        startTime: props.startTime ?? 0,
         timeDelta: props.timeDelta ?? 0,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
         randomSeed: props.sketch.randomSeed,
-        event: props.event,
-        eventBus: props.eventBus,
-      }) as ISketchProps,
-    [
-      props.params,
-      props.paused,
-      props.mode,
-      props.timeShift,
-      props.timeDelta,
-      canvasWidth,
-      canvasHeight,
-      props.sketch.randomSeed,
-      props.event,
-      props.eventBus,
-    ],
-  );
-
-  const p5Sketch = useMemo(() => {
-    // this time `sketchProps` are initial props
-    return props.sketch.factory({
-      initialProps: sketchProps,
+      },
       id: `${props.sketch.id}_${props.id}`,
+      eventBus: props.eventBus,
     });
   }, []);
+
+  useEffect(() => {
+    props.eventBus?.emit({
+      type: "canvasSizeChangeEvent",
+      canvasHeight,
+      canvasWidth,
+    });
+  }, [canvasWidth, canvasHeight]);
 
   const { duration } =
     useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
@@ -123,7 +113,7 @@ export const SketchCanvas = forwardRef<
           ),
         }}
       >
-        <ReactP5Wrapper sketch={p5Sketch} {...sketchProps} />
+        <ReactP5Wrapper sketch={p5Sketch} />
       </animated.div>
     </animated.div>
   );

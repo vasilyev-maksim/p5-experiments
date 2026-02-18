@@ -62,8 +62,8 @@ export const SketchTile = forwardRef<
           mode="static"
           paused={true}
           size="tile"
-          params={defaultPreset.params}
-          timeShift={defaultPreset.startTime ?? sketch.startTime}
+          initParams={defaultPreset.params}
+          startTime={defaultPreset.startTime ?? sketch.startTime}
         />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>

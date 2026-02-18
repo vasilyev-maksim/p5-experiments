@@ -1,18 +1,16 @@
-import type { SketchEvent } from "@/models";
+type EventByType<
+  Event extends { type: string },
+  Type extends Event["type"],
+> = Extract<Event, { type: Type }>;
 
-type SketchEventByType<K extends SketchEvent["type"]> = Extract<
-  SketchEvent,
-  { type: K }
->;
-
-export class EventBus {
+export class EventBus<Event extends { type: string }> {
   private eventTarget = new EventTarget();
 
-  on<T extends SketchEvent["type"]>(
-    type: T,
-    callback: (event: SketchEventByType<T>) => void,
+  on<Type extends Event["type"]>(
+    type: Type,
+    callback: (event: EventByType<Event, Type>) => void,
   ): EventListener {
-    const cb = ((e: CustomEvent<SketchEventByType<T>>) => {
+    const cb = ((e: CustomEvent<EventByType<Event, Type>>) => {
       callback(e.detail);
     }) as EventListener;
 
@@ -20,11 +18,12 @@ export class EventBus {
     return cb;
   }
 
-  off(type: SketchEvent["type"], listener: EventListener): void {
+  off(type: Event["type"], listener: EventListener): void {
     this.eventTarget.removeEventListener(type, listener);
   }
 
-  emit(event: SketchEvent): void {
+  emit(event: Event): void {
+    console.log(event.type);
     this.eventTarget.dispatchEvent(
       new CustomEvent(event.type, { detail: event }),
     );

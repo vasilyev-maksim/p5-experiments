@@ -120,9 +120,9 @@ export const factory = createSketch<Controls>(
           });
         };
       },
-      in3D: true,
     };
   },
+  { in3D: true },
 );
 
 const presets: IPreset<Controls>[] = [
@@ -134,6 +134,7 @@ const presets: IPreset<Controls>[] = [
       A: 10,
       B: 10,
     },
+    timeDelta: 1,
   },
 ];
 

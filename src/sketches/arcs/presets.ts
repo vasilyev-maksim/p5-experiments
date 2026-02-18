@@ -4,7 +4,6 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
-      timeDelta: 1,
       COLOR: 0,
       RESOLUTION: 60,
       MAX_CURVATURE: 1,
@@ -14,12 +13,12 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 0,
       CURVATURE_TYPE: 0,
     },
+    timeDelta: 1,
     name: "touch",
     startTime: 236,
   },
   {
     params: {
-      timeDelta: 1,
       COLOR: 0,
       RESOLUTION: 18,
       MAX_CURVATURE: 1,
@@ -29,11 +28,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 1,
       CURVATURE_TYPE: 0,
     },
+    timeDelta: 1,
     name: "khachapuri",
   },
   {
     params: {
-      timeDelta: 1,
       RESOLUTION: 6,
       MAX_CURVATURE: 2,
       MAX_NEGATIVE_CURVATURE: 0.6,
@@ -43,11 +42,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 0,
       CURVATURE_TYPE: 0,
     },
+    timeDelta: 1,
     name: "croissant",
   },
   {
     params: {
-      timeDelta: 1.5,
       COLOR: 0,
       RESOLUTION: 60,
       MAX_CURVATURE: 0.8,
@@ -57,11 +56,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 3,
       CURVATURE_TYPE: 1,
     },
+    timeDelta: 1.5,
     name: "torus",
   },
   {
     params: {
-      timeDelta: 1,
       RESOLUTION: 20,
       MAX_CURVATURE: 0.1,
       MAX_NEGATIVE_CURVATURE: 3,
@@ -71,11 +70,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 0,
     },
+    timeDelta: 1,
     name: "springs",
   },
   {
     params: {
-      timeDelta: 1.5,
       RESOLUTION: 60,
       MAX_CURVATURE: 1.2,
       MAX_NEGATIVE_CURVATURE: 0,
@@ -85,11 +84,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 0,
     },
+    timeDelta: 1.5,
     name: "flower",
   },
   {
     params: {
-      timeDelta: 1,
       RESOLUTION: 60,
       MAX_CURVATURE: 0.5,
       MAX_NEGATIVE_CURVATURE: 1.5,
@@ -99,11 +98,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 2,
     },
+    timeDelta: 1,
     name: "cube",
   },
   {
     params: {
-      timeDelta: 1,
       RESOLUTION: 6,
       MAX_CURVATURE: 0.025,
       MAX_NEGATIVE_CURVATURE: 0.025,
@@ -113,11 +112,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 1,
       CURVATURE_TYPE: 2,
     },
+    timeDelta: 1,
     name: "scars",
   },
   {
     params: {
-      timeDelta: 1.2,
       RESOLUTION: 30,
       MAX_CURVATURE: 0.9,
       MAX_NEGATIVE_CURVATURE: 0.5,
@@ -127,11 +126,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 2,
       CURVATURE_TYPE: 2,
     },
+    timeDelta: 1.2,
     name: "demogorgon",
   },
   {
     params: {
-      timeDelta: 0.8,
       RESOLUTION: 60,
       MAX_CURVATURE: 0.5,
       MAX_NEGATIVE_CURVATURE: 0.5,
@@ -141,11 +140,11 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 4,
       CURVATURE_TYPE: 2,
     },
+    timeDelta: 0.8,
     name: "cotton",
   },
   {
     params: {
-      timeDelta: 1.2,
       RESOLUTION: 24,
       MAX_CURVATURE: 0.7,
       MAX_NEGATIVE_CURVATURE: 0.5,
@@ -155,6 +154,7 @@ export const presets: IPreset<Controls>[] = [
       PATTERN_TYPE: 4,
       CURVATURE_TYPE: 1,
     },
+    timeDelta: 1.2,
     name: "jungle",
   },
 ];

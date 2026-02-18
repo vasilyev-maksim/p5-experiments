@@ -10,6 +10,7 @@ export const presets: IPreset<Controls>[] = [
       CUBE_SIZE: 20,
       GAP: 0,
     },
+    timeDelta: 1,
   },
 
   {
@@ -20,6 +21,7 @@ export const presets: IPreset<Controls>[] = [
       CUBE_SIZE: 20,
       GAP: 0,
     },
+    timeDelta: 1,
   },
   {
     params: {
@@ -29,6 +31,7 @@ export const presets: IPreset<Controls>[] = [
       CUBE_SIZE: 40,
       GAP: 1,
     },
+    timeDelta: 1,
   },
   {
     params: {
@@ -38,6 +41,7 @@ export const presets: IPreset<Controls>[] = [
       CUBE_SIZE: 40,
       GAP: 0,
     },
+    timeDelta: 1,
   },
 
   {
@@ -48,6 +52,7 @@ export const presets: IPreset<Controls>[] = [
       CUBE_SIZE: 40,
       GAP: 0,
     },
+    timeDelta: 1,
   },
   {
     params: {
@@ -57,6 +62,7 @@ export const presets: IPreset<Controls>[] = [
       CUBE_SIZE: 40,
       GAP: 0,
     },
+    timeDelta: 1,
   },
   {
     params: {
@@ -66,5 +72,6 @@ export const presets: IPreset<Controls>[] = [
       CUBE_SIZE: 40,
       GAP: 1,
     },
+    timeDelta: 1,
   },
 ];
