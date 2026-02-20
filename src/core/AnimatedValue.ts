@@ -32,7 +32,6 @@ export class AnimatedValue {
   }) {
     this.start = this.getCurrentValue(currentTime); // do not move this live below time assignments
     this.end = value;
-    console.log({ currentTime });
 
     this.startTime = currentTime;
     this.endTime = currentTime + animationDuration;

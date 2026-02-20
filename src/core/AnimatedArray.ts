@@ -79,14 +79,11 @@ export class AnimatedArray {
 
   // remove all items contained in `garbage`
   private garbageCollect(currentTime: number) {
-    // console.log(this.array);
-
     this.array = this.array.filter((x) => {
-      const shouldBeCollected = 
+      const shouldBeCollected =
         x.reachedTheEndTime(currentTime) && this.garbage.has(x);
 
       if (shouldBeCollected) {
-        console.log("gc");
         this.garbage.delete(x); // remove from garbage
       }
       return shouldBeCollected === false;
