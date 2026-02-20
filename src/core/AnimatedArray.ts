@@ -2,6 +2,7 @@ import { AnimatedValue } from "./AnimatedValue";
 
 export class AnimatedArray {
   private array: AnimatedValue[] = [];
+  private garbage = new Set<AnimatedValue>();
 
   public constructor(
     private readonly animationDuration: number,
@@ -11,7 +12,12 @@ export class AnimatedArray {
   ) {
     if (initialValues) {
       this.array = initialValues.map(
-        (v) => new AnimatedValue(animationDuration, v, timingFunction),
+        (initialValue) =>
+          new AnimatedValue({
+            animationDuration,
+            initialValue,
+            timingFunction,
+          }),
       );
     }
   }
@@ -33,35 +39,57 @@ export class AnimatedArray {
           value: newValue,
           currentTime,
         });
+        this.garbage.delete(animatedValue);
       } else if (animatedValue === undefined) {
-        // add new animation value fro new item, start from  `initialValueForItem` then grow up to `newValue`
-        const newAnimatedValue = new AnimatedValue(
-          this.animationDuration,
-          this.initialValueForItem ?? newValue,
-          this.timingFunction,
-        );
+        // add new animation value for new item, start from  `initialValueForItem` then grow up to `newValue`
+        const newAnimatedValue = new AnimatedValue({
+          animationDuration: this.animationDuration,
+          initialValue: this.initialValueForItem ?? newValue,
+          timingFunction: this.timingFunction,
+        });
         newAnimatedValue.animateTo({
           value: newValue,
           currentTime,
         });
         this.array.push(newAnimatedValue);
       } else if (newValue === undefined) {
-        // animate down to `initialValueForItem`, then remove item from array
-        animatedValue.animateTo({
-          value:
-            this.initialValueForItem ??
-            animatedValue.getCurrentValue(currentTime)!,
-          currentTime,
-        });
+        if (this.garbage.has(animatedValue) === false) {
+          // animate down to `initialValueForItem`
+          animatedValue.animateTo({
+            value:
+              this.initialValueForItem ??
+              animatedValue.getCurrentValue(currentTime)!,
+            currentTime,
+          });
+          // then mark it to be garbage collected from array
+          this.garbage.add(animatedValue);
+        }
       }
     }
   }
 
   public getCurrentValue(currentTime: number) {
+    this.garbageCollect(currentTime);
     return this.array.map((x) => x.getCurrentValue(currentTime)!);
   }
 
   public getEndValue() {
     return this.array.map((x) => x.getEndValue()!);
+  }
+
+  // remove all items contained in `garbage`
+  private garbageCollect(currentTime: number) {
+    // console.log(this.array);
+
+    this.array = this.array.filter((x) => {
+      const shouldBeCollected = 
+        x.reachedTheEndTime(currentTime) && this.garbage.has(x);
+
+      if (shouldBeCollected) {
+        console.log("gc");
+        this.garbage.delete(x); // remove from garbage
+      }
+      return shouldBeCollected === false;
+    });
   }
 }

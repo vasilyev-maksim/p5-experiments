@@ -33,11 +33,11 @@ export class MemoizedAnimatedValue<
   }: MemoizedAnimatedValueParams<ArgsType>) {
     this.memoizedValue = new MemoizedValue({ fn, deps, comparator });
 
-    this.animatedValue = new AnimatedValue(
+    this.animatedValue = new AnimatedValue({
       animationDuration,
-      this.memoizedValue.value,
+      initialValue: this.memoizedValue.value,
       timingFunction,
-    );
+    });
 
     this.memoizedValue.onChanged.addCallback((value) => {
       this.animatedValue.animateTo({

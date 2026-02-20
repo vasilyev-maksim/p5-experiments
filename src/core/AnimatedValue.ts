@@ -3,13 +3,20 @@ export class AnimatedValue {
   private end: number;
   private startTime: number | undefined;
   private endTime: number | undefined;
+  private readonly animationDuration;
+  private readonly timingFunction;
 
-  public constructor(
-    private readonly animationDuration: number,
-    initialValue: number,
-    private readonly timingFunction: (x: number) => number = AnimatedValue
-      .TIMING_FUNCTIONS.EASE_IN_OUT,
-  ) {
+  public constructor({
+    initialValue,
+    animationDuration,
+    timingFunction = AnimatedValue.TIMING_FUNCTIONS.EASE_IN_OUT,
+  }: {
+    animationDuration: number;
+    initialValue: number;
+    timingFunction?: (x: number) => number;
+  }) {
+    this.timingFunction = timingFunction;
+    this.animationDuration = animationDuration;
     this.start = initialValue;
     this.end = initialValue;
   }
@@ -17,7 +24,7 @@ export class AnimatedValue {
   public animateTo({
     value,
     currentTime,
-    animationDuration,
+    animationDuration = this.animationDuration,
   }: {
     value: number;
     currentTime: number;
@@ -25,8 +32,17 @@ export class AnimatedValue {
   }) {
     this.start = this.getCurrentValue(currentTime); // do not move this live below time assignments
     this.end = value;
+    console.log({ currentTime });
+
     this.startTime = currentTime;
-    this.endTime = currentTime + (animationDuration ?? this.animationDuration);
+    this.endTime = currentTime + animationDuration;
+  }
+
+  public set({ value, currentTime }: { value: number; currentTime: number }) {
+    this.start = value;
+    this.end = value;
+    this.startTime = currentTime;
+    this.endTime = currentTime;
   }
 
   public getCurrentValue(currentTime: number) {
@@ -56,6 +72,10 @@ export class AnimatedValue {
 
   public getEndValue() {
     return this.end;
+  }
+
+  public reachedTheEndTime(currentTime: number) {
+    return this.endTime ? this.endTime <= currentTime : false;
   }
 
   public static TIMING_FUNCTIONS = class {

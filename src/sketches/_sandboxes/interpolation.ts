@@ -16,8 +16,15 @@ const controls = {
 } as const satisfies IControls;
 
 export const factory = createSketch<typeof controls>(() => {
-  const animatedX = new AnimatedValue(0, 20);
-  const animatedY = new AnimatedValue(0, 20);
+  const animatedX = new AnimatedValue({
+    initialValue: 0,
+    animationDuration: 20,
+  });
+  const animatedY = new AnimatedValue({
+    initialValue: 0,
+    animationDuration: 20,
+  });
+
   return {
     setup: ({ p, getTime }) => {
       p.noStroke();
