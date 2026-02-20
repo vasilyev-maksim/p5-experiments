@@ -48,11 +48,10 @@ export class AnimatedArray {
       } else if (newValue === undefined) {
         // animate down to `initialValueForItem`, then remove item from array
         animatedValue.animateTo({
-          value: this.initialValueForItem ?? animatedValue.getCurrentValue()!,
+          value:
+            this.initialValueForItem ??
+            animatedValue.getCurrentValue(startTime)!,
           startTime,
-          onAnimationEnd: () => {
-            this.array.splice(values.length);
-          },
         });
       }
     }
@@ -62,15 +61,15 @@ export class AnimatedArray {
     this.array.forEach((x) => x.forceToEnd(time));
   }
 
-  public runAnimationStep(currentTime: number) {
-    this.array.forEach((x) => x.runAnimationStep(currentTime));
+  // public runAnimationStep(currentTime: number) {
+  //   this.array.forEach((x) => x.runAnimationStep(currentTime));
+  // }
+
+  public getCurrentValue(currentTime: number) {
+    return this.array.map((x) => x.getCurrentValue(currentTime)!);
   }
 
-  public getCurrentValue() {
-    return this.array.map((x) => x.getCurrentValue()!);
-  }
-
-  public getDestinationValue() {
+  public getEndValue() {
     return this.array.map((x) => x.getEndValue()!);
   }
 }

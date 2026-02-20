@@ -1,7 +1,7 @@
 import {
   SquareBorderPointsJoiner,
   type JointRenderCallback,
-} from "@/core/BorderPointsJoiner";
+} from "@/sketches/arcs/BorderPointsJoiner";
 import { createSketch } from "@/core/createSketch";
 import { oscillateBetween } from "@/core/utils";
 import p5 from "p5";
@@ -18,20 +18,20 @@ export const factory = createSketch<Controls>(
     p,
     createAnimatedColors,
   }) => {
-    const paddingPercentAnimated = createAnimatedValue(
-      ANIMATION_SPEED,
-      (x) => x,
-      [getTrackedProp("PADDING_PERCENT")],
-    );
-    const colorsAnimated = createAnimatedColors(
-      ANIMATION_SPEED,
-      [getTrackedProp("COLOR"), getTrackedProp("INVERT_COLORS")],
-      (x, inverted) => [
+    const paddingPercentAnimated = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      deps: [getTrackedProp("PADDING_PERCENT")],
+      fn: (x) => x,
+    });
+    const colorsAnimated = createAnimatedColors({
+      animationDuration: ANIMATION_SPEED,
+      deps: [getTrackedProp("COLOR"), getTrackedProp("INVERT_COLORS")],
+      colorProvider: (x, inverted) => [
         controls.COLOR.colors[x][inverted ? 1 : 0],
         controls.COLOR.colors[x][inverted ? 0 : 1],
       ],
       p,
-    );
+    });
 
     return {
       setup: () => {
@@ -83,12 +83,12 @@ export const factory = createSketch<Controls>(
 
         return () => {
           p.background("black");
-          const PADDING_PERCENT = paddingPercentAnimated.value!,
+          const PADDING_PERCENT = paddingPercentAnimated.getValue(),
             RESOLUTION = getProp("RESOLUTION"),
             CURVATURE_TYPE = getProp("CURVATURE_TYPE"),
             MAX_NEGATIVE_CURVATURE = getProp("MAX_NEGATIVE_CURVATURE"),
             MAX_CURVATURE = getProp("MAX_CURVATURE"),
-            [colorA, colorB] = colorsAnimated.value!,
+            [colorA, colorB] = colorsAnimated.getValue(),
             PATTERN_TYPE = getProp("PATTERN_TYPE"),
             time = getTime();
 

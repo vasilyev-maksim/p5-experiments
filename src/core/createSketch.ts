@@ -9,31 +9,38 @@ import type {
 } from "../models";
 import { TrackedValue } from "./TrackedValue";
 import { MemoizedValue } from "./MemoizedValue";
-import { MemoizedAnimatedValue } from "./MemoizedAnimatedValue";
+import {
+  MemoizedAnimatedValue,
+  type MemoizedAnimatedValueParams,
+} from "./MemoizedAnimatedValue";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { MemoizedAnimatedColors } from "./MemoizedAnimatedColor";
 import { ENV } from "@/env";
 import type { ExportRequestEvent, SketchEvent } from "./events";
 import type { EventBus } from "./EventBus";
+import { TrackedArray } from "./TrackedArray";
+import type p5 from "p5";
+import type { IValueProvider } from "./models";
+
+type TrackedParams<C extends IControls> = {
+  [k in keyof IParams<C>]: TrackedValue<IParams<C>[k]>;
+};
 
 export type CreateSketchArgs<Controls extends IControls> = {
   setup?: (api: Api<Controls>) => void;
   // Why a factory? it allows us define helper render functions in closure with `api` var available.
   draw: (api: Api<Controls>) => () => void;
   onPresetChange?: (preset: IPreset<Controls>) => void;
-  canvasSizeHandlerOverride?: (
-    width: TrackedValue<number>,
-    height: TrackedValue<number>,
-  ) => void;
+  canvasSizeHandlerOverride?: (size: TrackedValue<[number, number]>) => void;
   id?: string;
 };
 
-type Api<Controls extends IControls> = {
+type Api<C extends IControls> = {
   p: P5CanvasInstance;
-  getProp: <K extends ParamName<Controls>>(propName: K) => IParams<Controls>[K];
-  getTrackedProp: <K extends ParamName<Controls>>(
+  getProp: <K extends ParamName<C>>(propName: K) => IParams<C>[K];
+  getTrackedProp: <K extends ParamName<C>>(
     propName: K,
-  ) => TrackedValue<IParams<Controls>[K]>;
+  ) => TrackedValue<IParams<C>[K]>;
   getTime: () => number;
   getCanvasSize: () => {
     canvasWidth: number;
@@ -45,14 +52,14 @@ type Api<Controls extends IControls> = {
     ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
   ) => MemoizedValue<ArgsType, ValueType>;
   createAnimatedValue: <ArgsType extends any[]>(
-    ...args: ConstructorParameters<typeof MemoizedAnimatedValue<ArgsType>>
-  ) => MemoizedAnimatedValue<ArgsType>;
+    params: Omit<MemoizedAnimatedValueParams<ArgsType>, "timeProvider">,
+  ) => IValueProvider<number>;
   createAnimatedArray: <ArgsType extends any[]>(
     ...args: ConstructorParameters<typeof MemoizedAnimatedArray<ArgsType>>
-  ) => MemoizedAnimatedArray<ArgsType>;
+  ) => IValueProvider<number[]>;
   createAnimatedColors: <ArgsType extends any[]>(
     ...args: ConstructorParameters<typeof MemoizedAnimatedColors<ArgsType>>
-  ) => MemoizedAnimatedColors<ArgsType>;
+  ) => IValueProvider<[p5.Color, p5.Color]>;
 };
 
 export function createSketch<C extends IControls>(
@@ -65,14 +72,17 @@ export function createSketch<C extends IControls>(
       let time = 0,
         paused = initData.paused,
         timeDelta = initData.timeDelta ?? 1,
-        props: {
-          [k in keyof IParams<C>]: TrackedValue<IParams<C>[k]>;
-        },
         draw: ReturnType<CreateSketchArgs<C>["draw"]>;
 
-      const memos: MemoizedValue<any, any>[] = [];
+      const props = createTrackedProps(initData.params);
       const canvasWidth = new TrackedValue(initData.canvasWidth);
       const canvasHeight = new TrackedValue(initData.canvasHeight);
+      const canvasSize = new MemoizedValue(
+        (w, h): [number, number] => [w, h],
+        [canvasWidth, canvasHeight],
+        TrackedArray.defaultArrayComparator, // intentionally
+      );
+
       const animations: Array<
         | MemoizedAnimatedValue<any>
         | MemoizedAnimatedArray<any>
@@ -98,23 +108,32 @@ export function createSketch<C extends IControls>(
         getTime: () => time,
         createMemo: (...args) => {
           const memo = new MemoizedValue(...args);
-          memos.push(memo);
+          // memos.push(memo);
           return memo;
         },
-        createAnimatedValue: (...args) => {
-          const animation = new MemoizedAnimatedValue(...args);
+        createAnimatedValue: (params) => {
+          const animation = new MemoizedAnimatedValue({
+            ...params,
+            timeProvider: () => time,
+          });
           animations.push(animation);
-          return animation;
+          return {
+            getValue: () => animation.getCurrentValue(time),
+          };
         },
         createAnimatedArray: (...args) => {
           const animation = new MemoizedAnimatedArray(...args);
           animations.push(animation);
-          return animation;
+          return {
+            getValue: () => animation.getCurrentValue(time),
+          };
         },
         createAnimatedColors: (...args) => {
           const animation = new MemoizedAnimatedColors(...args);
           animations.push(animation);
-          return animation;
+          return {
+            getValue: () => animation.getCurrentValue(time),
+          };
         },
       };
 
@@ -140,11 +159,7 @@ export function createSketch<C extends IControls>(
         // set start time for pretty preview images
         time = initData.startTime ?? 0;
 
-        updateTrackedProps(initData.params);
-
         const args = argsFactory(api, id);
-
-        updateMemos();
 
         args.setup?.(api);
 
@@ -160,6 +175,15 @@ export function createSketch<C extends IControls>(
             }
           : argDraw;
 
+        canvasSize.onChanged.addCallback(([width, height]) => {
+          p.resizeCanvas(
+            width,
+            height,
+            args.canvasSizeHandlerOverride !== undefined,
+          );
+          args.canvasSizeHandlerOverride?.(canvasSize);
+        });
+
         // events handling
         if (eventBus) {
           initEventBus(eventBus, args);
@@ -167,7 +191,6 @@ export function createSketch<C extends IControls>(
       };
 
       p.draw = () => {
-        runAnimations();
         draw();
         if (paused === false) {
           time += timeDelta;
@@ -229,15 +252,6 @@ export function createSketch<C extends IControls>(
               canvasHeight.value = e.canvasHeight;
               canvasWidth.value = e.canvasWidth;
             });
-
-            if (canvasHeight.hasChanged || canvasWidth.hasChanged) {
-              p.resizeCanvas(
-                canvasWidth.value!,
-                canvasHeight.value!,
-                args.canvasSizeHandlerOverride !== undefined,
-              );
-              args.canvasSizeHandlerOverride?.(canvasWidth, canvasHeight);
-            }
           });
 
           bus.on("playPauseEvent", (e) => {
@@ -246,17 +260,22 @@ export function createSketch<C extends IControls>(
         }
       }
 
-      function updateTrackedProps(newRawProps: IParams<C>) {
-        // TODO: get rid of init part
-        if (!props) {
-          props = {} as any;
-        }
+      function createTrackedProps(params: IParams<C>): TrackedParams<C> {
+        return Object.fromEntries(
+          Object.entries(params).map(([name, value]) => {
+            const tracked = new TrackedValue(
+              value,
+              Array.isArray(value)
+                ? TrackedArray.defaultArrayComparator
+                : TrackedValue.defaultComparator,
+            );
+            return [name, tracked];
+          }),
+        ) as TrackedParams<C>;
+      }
 
-        // TODO: get rid of init part
+      function updateTrackedProps(newRawProps: IParams<C>) {
         (Object.keys(newRawProps) as ParamName<C>[]).forEach((key) => {
-          if (props[key] === undefined) {
-            props[key] = new TrackedValue(undefined) as any;
-          }
           props[key].value = newRawProps[key]!;
         });
       }
@@ -265,10 +284,6 @@ export function createSketch<C extends IControls>(
         name: ParamName<C>,
         value: IParams<C>[typeof name],
       ) {
-        // TODO: get rid of init part
-        if (props[name] === undefined) {
-          props[name] = new TrackedValue(undefined) as any;
-        }
         props[name].value = value;
       }
 
@@ -278,25 +293,10 @@ export function createSketch<C extends IControls>(
       ) {
         cb?.();
 
-        memos.forEach((memo) => {
-          memo.recalc();
-        });
-
         animations.forEach((animations) => {
-          // to keep animations (related to params change) running even when sketch is paused,
-          // we use `p.frameCount` instead of `time`
-          animations.recalc(p.frameCount);
           if (forceAnimationsToEnd) {
             animations.forceAnimationsToEnd(time);
           }
-        });
-      }
-
-      function runAnimations() {
-        animations.forEach((animations) => {
-          // to keep animations (related to params change) running even when sketch is paused,
-          // we use `p.frameCount` instead of `time`
-          animations.runAnimationStep(p.frameCount);
         });
       }
 

@@ -1,46 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatedValue } from "./AnimatedValue";
 import { MemoizedValue } from "./MemoizedValue";
-import type { ArrayOfTrackedValues } from "./TrackedArray";
-import type { TrackedValueComparator } from "./TrackedValue";
+import type {
+  IAnimatedValue,
+  TrackedTuple,
+  TrackedValueComparator,
+} from "./models";
 
-export class MemoizedAnimatedValue<ArgsType extends any[]> {
+export type MemoizedAnimatedValueParams<ArgsType extends any[]> = {
+  animationDuration: number;
+  fn: (...args: ArgsType) => number;
+  deps: TrackedTuple<ArgsType>;
+  comparator?: TrackedValueComparator<number>;
+  timingFunction?: AnimatedValue["timingFunction"];
+  timeProvider: () => number;
+};
+
+export class MemoizedAnimatedValue<
+  ArgsType extends any[],
+> implements IAnimatedValue<number> {
   public readonly animatedValue: AnimatedValue;
   public readonly memoizedValue: MemoizedValue<ArgsType, number>;
 
-  public constructor(
-    animationDuration: number,
-    fn: (...args: ArgsType) => number,
-    deps: ArrayOfTrackedValues<ArgsType>,
-    comparator?: TrackedValueComparator<number>,
-    timingFunction?: AnimatedValue["timingFunction"],
-  ) {
+  public constructor({
+    animationDuration,
+    fn,
+    deps,
+    comparator,
+    timingFunction,
+    timeProvider,
+  }: MemoizedAnimatedValueParams<ArgsType>) {
     this.memoizedValue = new MemoizedValue(fn, deps, comparator);
-    // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
+    
     this.animatedValue = new AnimatedValue(
       animationDuration,
-      undefined,
+      this.memoizedValue.value,
       timingFunction,
     );
-  }
 
-  public recalc(time: number): this {
-    this.memoizedValue.recalc();
-    if (this.memoizedValue.hasChanged) {
+    this.memoizedValue.onChanged.addCallback((value) => {
       this.animatedValue.animateTo({
-        value: this.memoizedValue.value!,
-        startTime: time,
+        startTime: timeProvider(),
+        value,
       });
-    }
-    return this;
+    });
   }
 
-  public get value() {
-    return this.animatedValue.getCurrentValue();
-  }
-
-  public runAnimationStep(time: number) {
-    this.animatedValue.runAnimationStep(time);
+  public getCurrentValue(currentTime: number) {
+    return this.animatedValue.getCurrentValue(currentTime);
   }
 
   public forceAnimationsToEnd(time: number) {

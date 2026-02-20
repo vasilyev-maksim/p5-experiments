@@ -1,6 +1,6 @@
 import p5 from "p5";
 import type { IControls, IPreset, ISketch } from "../models";
-import { SquareBorderPointsJoiner } from "@core/BorderPointsJoiner";
+import { SquareBorderPointsJoiner } from "@/sketches/arcs/BorderPointsJoiner";
 import { createSketch } from "@core/createSketch";
 
 export type Controls = typeof controls;

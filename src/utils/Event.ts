@@ -4,11 +4,19 @@ export class Event<in out Arg = void> {
   public addCallback = (callback: (arg: Arg) => void): (() => void) => {
     this.callbacks.push(callback);
     return () => {
-      this.callbacks = this.callbacks.filter((x) => x !== callback);
+      this.removeCallback(callback);
     };
+  };
+
+  public removeCallback = (callback: (arg: Arg) => void) => {
+    this.callbacks = this.callbacks.filter((x) => x !== callback);
   };
 
   public __invokeCallbacks = (arg: Arg): void => {
     this.callbacks.forEach((cb) => cb(arg));
+  };
+
+  public __clearCallbacks = () => {
+    this.callbacks = [];
   };
 }

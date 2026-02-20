@@ -2,7 +2,7 @@ import type { ISketch } from "../models";
 import { spiralSketch } from "./spiral";
 import { pillarsSketch } from "./pillars";
 import { curveSketch } from "./curve";
-import { arcSketch } from "./arcs";
+import { arcsSketch } from "./arcs";
 import { circlesSketch } from "./circles";
 import { sketch as citySketch } from "./city";
 import { sketch as cubesSketch } from "./cubes";
@@ -15,19 +15,19 @@ import { sketch } from "./_sandboxes/funcs";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
-  spiralSketch,
-  cubesSketch,
-  pillarsSketch,
-  arcSketch,
-  curveSketch,
-  circlesSketch,
-  zigzagsSketch,
-  lightsSketch,
-  interpolationSketch,
-  citySketch,
-  tilesSketch,
+  // spiralSketch,
+  // cubesSketch,
+  // pillarsSketch,
+  arcsSketch,
+  // curveSketch,
+  // circlesSketch,
+  // zigzagsSketch,
+  // lightsSketch,
+  // interpolationSketch,
+  // citySketch,
+  // tilesSketch,
   wormsSketch,
-  sketch,
+  // sketch,
 ]
   .filter((x) =>
     import.meta.env.PROD ? x.type === "released" : x.type !== "hidden",

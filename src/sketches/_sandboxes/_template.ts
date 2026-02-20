@@ -22,7 +22,11 @@ const controls = {
 
 export const factory = createSketch<Controls>(
   ({ p, createAnimatedValue, getTrackedProp, getProp }) => {
-    const NA = createAnimatedValue(25, (x) => x, [getTrackedProp("NA")]);
+    const NA = createAnimatedValue({
+      animationDuration: 25,
+      fn: (x) => x,
+      deps: [getTrackedProp("NA")],
+    });
 
     return {
       setup: () => {
@@ -35,7 +39,7 @@ export const factory = createSketch<Controls>(
 
           const N = getProp("N");
           console.log("N = ", N);
-          console.log("NA = ", NA.value);
+          console.log("NA = ", NA.getValue());
         };
       },
     };

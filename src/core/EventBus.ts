@@ -23,7 +23,6 @@ export class EventBus<Event extends { type: string }> {
   }
 
   emit(event: Event): void {
-    console.log(event.type);
     this.eventTarget.dispatchEvent(
       new CustomEvent(event.type, { detail: event }),
     );

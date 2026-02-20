@@ -34,12 +34,10 @@ export const factory = createSketch<typeof controls>(() => {
         p.stroke("white");
         const time = getTime();
         p.circle(
-          animatedX.getCurrentValue()!,
-          animatedY.getCurrentValue()!,
+          animatedX.getCurrentValue(time),
+          animatedY.getCurrentValue(time),
           10,
         );
-        animatedX.runAnimationStep(time);
-        animatedY.runAnimationStep(time);
       };
     },
   };

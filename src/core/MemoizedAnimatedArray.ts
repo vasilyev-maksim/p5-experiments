@@ -2,46 +2,36 @@
 import { AnimatedArray } from "./AnimatedArray";
 import type { AnimatedValue } from "./AnimatedValue";
 import { MemoizedArray } from "./MemoizedArray";
-import type { ArrayOfTrackedValues } from "./TrackedArray";
+import type { TrackedTuple } from "./models";
 
 export class MemoizedAnimatedArray<ArgsType extends any[]> {
   private readonly animatedArray: AnimatedArray;
   public readonly memoizedArray: MemoizedArray<ArgsType, number>;
 
-  public constructor(
-    animationDuration: number,
-    fn: (...args: ArgsType) => number[],
-    deps: ArrayOfTrackedValues<ArgsType>,
-    initialValueForItem?: number,
-    timingFunction?: AnimatedValue["timingFunction"],
-  ) {
-    this.memoizedArray = new MemoizedArray(fn, deps, undefined);
-    // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
+  public constructor({
+    animationDuration,
+    deps,
+    fn,
+    initialValueForItem,
+    timingFunction,
+  }: {
+    animationDuration: number;
+    deps: TrackedTuple<ArgsType>;
+    fn: (...args: ArgsType) => number[];
+    initialValueForItem?: number;
+    timingFunction?: AnimatedValue["timingFunction"];
+  }) {
+    this.memoizedArray = new MemoizedArray(fn, deps);
     this.animatedArray = new AnimatedArray(
       animationDuration,
-      undefined,
+      this.memoizedArray.value,
       initialValueForItem,
       timingFunction,
     );
   }
 
-  public recalc(time: number): this {
-    this.memoizedArray.recalc();
-    if (this.memoizedArray.hasChanged) {
-      this.animatedArray.animateTo({
-        values: this.memoizedArray.value,
-        startTime: time,
-      });
-    }
-    return this;
-  }
-
-  public get value() {
-    return this.animatedArray.getCurrentValue();
-  }
-
-  public runAnimationStep(time: number) {
-    this.animatedArray.runAnimationStep(time);
+  public getCurrentValue(currentTime: number) {
+    return this.animatedArray.getCurrentValue(currentTime);
   }
 
   public forceAnimationsToEnd(time: number) {

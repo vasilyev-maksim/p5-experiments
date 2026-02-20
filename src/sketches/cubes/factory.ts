@@ -79,6 +79,7 @@ export const factory = createSketch<Controls>(
                 const sizeX = x === middleIndex ? 1 : animatedSizes.value[xi];
                 const sizeY = y === middleIndex ? 1 : animatedSizes.value[yi];
                 const sizeZ = z === middleIndex ? 1 : animatedSizes.value[zi];
+                
                 size = Math.min(sizeX, sizeY, sizeZ);
               }
 

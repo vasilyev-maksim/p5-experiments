@@ -30,6 +30,14 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
     );
     const worms = createMemo(
       (resY, resX, len, dirIsRandom, [r, d]) => {
+        console.log("WORM", {
+          resY,
+          resX,
+          len,
+          dirIsRandom,
+          d: [r, d],
+        });
+
         const left = 1 - r,
           right = r,
           up = 1 - d,
@@ -86,23 +94,25 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         getTrackedProp("DIRECTION"),
       ],
     );
-    const thickness = createAnimatedValue(ANIMATION_SPEED, (t) => t, [
-      getTrackedProp("THICKNESS"),
-    ]);
-    const innerThickness = createAnimatedValue(
-      ANIMATION_SPEED,
-      (inner, outer) => inner * outer,
-      [getTrackedProp("INNER_THICKNESS"), getTrackedProp("THICKNESS")],
-    );
-    const colorsAnimated = createAnimatedColors(
-      ANIMATION_SPEED,
-      [getTrackedProp("COLOR"), getTrackedProp("INVERT_COLORS")],
-      (x, inverted) => [
+    const thickness = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (t) => t,
+      deps: [getTrackedProp("THICKNESS")],
+    });
+    const innerThickness = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (inner, outer) => inner * outer,
+      deps: [getTrackedProp("INNER_THICKNESS"), getTrackedProp("THICKNESS")],
+    });
+    const colorsAnimated = createAnimatedColors({
+      animationDuration: ANIMATION_SPEED,
+      deps: [getTrackedProp("COLOR"), getTrackedProp("INVERT_COLORS")],
+      colorProvider: (x, inverted) => [
         controls.COLOR.colors[x][inverted ? 1 : 0],
         controls.COLOR.colors[x][inverted ? 0 : 1],
       ],
       p,
-    );
+    });
 
     return {
       setup: () => {
@@ -116,7 +126,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           const W = resolutionX.value;
           const H = getProp("RESOLUTION");
           // const MAX_WORM_LENGTH = getProp("WORM_LENGTH");
-          const [colorA, colorB] = colorsAnimated.value!;
+          const [colorA, colorB] = colorsAnimated.getValue();
           const time = getTime();
           const animationType = getProp("ANIMATION_TYPE");
           const [start, end] =
@@ -164,13 +174,13 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
 
             // outer stroke
             p.stroke(p.lerpColor(colorA, colorB, colorAmt));
-            p.strokeWeight(thickness.value!);
+            p.strokeWeight(thickness.getValue());
             worm.draw(p, progress);
 
             // inner stroke
-            if (innerThickness.value! > 0) {
+            if (innerThickness.getValue() > 0) {
               p.stroke("black");
-              p.strokeWeight(innerThickness.value!);
+              p.strokeWeight(innerThickness.getValue());
               worm.draw(p, progress);
             }
           });
