@@ -8,19 +8,25 @@ import type {
   ParamName,
 } from "../models";
 import { TrackedValue } from "./TrackedValue";
-import { MemoizedValue } from "./MemoizedValue";
+import { MemoizedValue, type MemoizedValueParams } from "./MemoizedValue";
 import {
   MemoizedAnimatedValue,
   type MemoizedAnimatedValueParams,
 } from "./MemoizedAnimatedValue";
-import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
-import { MemoizedAnimatedColors } from "./MemoizedAnimatedColor";
+import {
+  MemoizedAnimatedArray,
+  type MemoizedAnimatedArrayParams,
+} from "./MemoizedAnimatedArray";
+import {
+  MemoizedAnimatedColors,
+  type MemoizedAnimatedColorsParams,
+} from "./MemoizedAnimatedColor";
 import { ENV } from "@/env";
 import type { ExportRequestEvent, SketchEvent } from "./events";
 import type { EventBus } from "./EventBus";
 import { TrackedArray } from "./TrackedArray";
 import type p5 from "p5";
-import type { IValueProvider } from "./models";
+import type { ITrackedValueProvider, IValueProvider } from "./models";
 
 type TrackedParams<C extends IControls> = {
   [k in keyof IParams<C>]: TrackedValue<IParams<C>[k]>;
@@ -49,16 +55,16 @@ type Api<C extends IControls> = {
     trackedCanvasHeight: TrackedValue<number>;
   };
   createMemo: <ArgsType extends any[], ValueType>(
-    ...args: ConstructorParameters<typeof MemoizedValue<ArgsType, ValueType>>
-  ) => MemoizedValue<ArgsType, ValueType>;
+    params: MemoizedValueParams<ArgsType, ValueType>,
+  ) => IValueProvider<ValueType> & ITrackedValueProvider<ValueType>;
   createAnimatedValue: <ArgsType extends any[]>(
     params: Omit<MemoizedAnimatedValueParams<ArgsType>, "timeProvider">,
   ) => IValueProvider<number>;
   createAnimatedArray: <ArgsType extends any[]>(
-    ...args: ConstructorParameters<typeof MemoizedAnimatedArray<ArgsType>>
+    params: Omit<MemoizedAnimatedArrayParams<ArgsType>, "timeProvider">,
   ) => IValueProvider<number[]>;
   createAnimatedColors: <ArgsType extends any[]>(
-    ...args: ConstructorParameters<typeof MemoizedAnimatedColors<ArgsType>>
+    params: Omit<MemoizedAnimatedColorsParams<ArgsType>, "timeProvider">,
   ) => IValueProvider<[p5.Color, p5.Color]>;
 };
 
@@ -72,22 +78,17 @@ export function createSketch<C extends IControls>(
       let time = 0,
         paused = initData.paused,
         timeDelta = initData.timeDelta ?? 1,
-        draw: ReturnType<CreateSketchArgs<C>["draw"]>;
+        draw: ReturnType<CreateSketchArgs<C>["draw"]>,
+        isExporting = false;
 
       const props = createTrackedProps(initData.params);
       const canvasWidth = new TrackedValue(initData.canvasWidth);
       const canvasHeight = new TrackedValue(initData.canvasHeight);
-      const canvasSize = new MemoizedValue(
-        (w, h): [number, number] => [w, h],
-        [canvasWidth, canvasHeight],
-        TrackedArray.defaultArrayComparator, // intentionally
-      );
-
-      const animations: Array<
-        | MemoizedAnimatedValue<any>
-        | MemoizedAnimatedArray<any>
-        | MemoizedAnimatedColors<any>
-      > = [];
+      const canvasSize = new MemoizedValue({
+        fn: (w, h): [number, number] => [w, h],
+        deps: [canvasWidth, canvasHeight],
+        comparator: TrackedArray.defaultArrayComparator, // intentionally
+      });
 
       const api: Api<C> = {
         p,
@@ -106,39 +107,50 @@ export function createSketch<C extends IControls>(
           return api.getTrackedProp(k).value!;
         },
         getTime: () => time,
-        createMemo: (...args) => {
-          const memo = new MemoizedValue(...args);
-          // memos.push(memo);
-          return memo;
+        createMemo: (params) => {
+          const memo = new MemoizedValue(params);
+          return {
+            getValue: () => memo.value,
+            getTrackedValue: () => memo,
+          };
         },
         createAnimatedValue: (params) => {
           const animation = new MemoizedAnimatedValue({
             ...params,
-            timeProvider: () => time,
+            timeProvider: () => p.frameCount,
           });
-          animations.push(animation);
           return {
-            getValue: () => animation.getCurrentValue(time),
+            getValue: () =>
+              isExporting
+                ? animation.getEndValue()
+                : animation.getCurrentValue(p.frameCount),
           };
         },
-        createAnimatedArray: (...args) => {
-          const animation = new MemoizedAnimatedArray(...args);
-          animations.push(animation);
+        createAnimatedArray: (params) => {
+          const animation = new MemoizedAnimatedArray({
+            ...params,
+            timeProvider: () => p.frameCount,
+          });
           return {
-            getValue: () => animation.getCurrentValue(time),
+            getValue: () =>
+              isExporting
+                ? animation.getEndValue()
+                : animation.getCurrentValue(p.frameCount),
           };
         },
-        createAnimatedColors: (...args) => {
-          const animation = new MemoizedAnimatedColors(...args);
-          animations.push(animation);
+        createAnimatedColors: (params) => {
+          const animation = new MemoizedAnimatedColors({
+            ...params,
+            timeProvider: () => p.frameCount,
+          });
           return {
-            getValue: () => animation.getCurrentValue(time),
+            getValue: () =>
+              isExporting
+                ? animation.getEndValue()
+                : animation.getCurrentValue(p.frameCount),
           };
         },
       };
-
-      // initialize tracked props immediately (even before setups), don't move this line
-      // TODO: try to move this line inside p.setup
 
       p.setup = () => {
         p.createCanvas(
@@ -160,7 +172,6 @@ export function createSketch<C extends IControls>(
         time = initData.startTime ?? 0;
 
         const args = argsFactory(api, id);
-
         args.setup?.(api);
 
         // initialize draw func passing p5 instance (`api.p`),
@@ -202,8 +213,32 @@ export function createSketch<C extends IControls>(
         args: CreateSketchArgs<C>,
       ) {
         if (bus) {
-          bus.on("export", (e) => {
-            exportCanvas(e);
+          bus.on("modeChange", (e) => {
+            if (e.mode === "animated") {
+              p.loop();
+            } else {
+              p.noLoop();
+            }
+          });
+
+          bus.on("playPauseEvent", (e) => {
+            paused = e.paused;
+          });
+
+          bus.on("timeDeltaChange", (e) => {
+            timeDelta = e.timeDelta;
+          });
+
+          bus.on("timeTravelEvent", (e) => {
+            time += e.timeShift;
+          });
+
+          bus.on("paramChange", (e) => {
+            updateTrackedProp(e.paramName, e.paramValue);
+          });
+
+          bus.on("paramsChange", (e) => {
+            updateTrackedProps(e.params);
           });
 
           bus.on("applyPreset", ({ preset }) => {
@@ -219,32 +254,8 @@ export function createSketch<C extends IControls>(
               timeDelta = preset.timeDelta;
             }
 
-            updateMemos(() => updateTrackedProps(preset.params));
+            updateTrackedProps(preset.params);
             args.onPresetChange?.(preset);
-          });
-
-          bus.on("paramChange", (e) => {
-            updateMemos(() => updateTrackedProp(e.paramName, e.paramValue));
-          });
-
-          bus.on("paramsChange", (e) => {
-            updateMemos(() => updateTrackedProps(e.params));
-          });
-
-          bus.on("modeChange", (e) => {
-            if (e.mode === "animated") {
-              p.loop();
-            } else {
-              p.noLoop();
-            }
-          });
-
-          bus.on("timeDeltaChange", (e) => {
-            timeDelta = e.timeDelta;
-          });
-
-          bus.on("timeTravelEvent", (e) => {
-            time += e.timeShift;
           });
 
           bus.on("canvasSizeChangeEvent", (e) => {
@@ -254,8 +265,8 @@ export function createSketch<C extends IControls>(
             });
           });
 
-          bus.on("playPauseEvent", (e) => {
-            paused = e.paused;
+          bus.on("export", (e) => {
+            exportCanvas(e);
           });
         }
       }
@@ -275,8 +286,10 @@ export function createSketch<C extends IControls>(
       }
 
       function updateTrackedProps(newRawProps: IParams<C>) {
-        (Object.keys(newRawProps) as ParamName<C>[]).forEach((key) => {
-          props[key].value = newRawProps[key]!;
+        updateMemos(() => {
+          (Object.keys(newRawProps) as ParamName<C>[]).forEach((key) => {
+            props[key].value = newRawProps[key]!;
+          });
         });
       }
 
@@ -287,17 +300,8 @@ export function createSketch<C extends IControls>(
         props[name].value = value;
       }
 
-      function updateMemos(
-        cb?: () => void,
-        forceAnimationsToEnd: boolean = false,
-      ) {
+      function updateMemos(cb?: () => void) {
         cb?.();
-
-        animations.forEach((animations) => {
-          if (forceAnimationsToEnd) {
-            animations.forceAnimationsToEnd(time);
-          }
-        });
       }
 
       function drawDevTools() {
@@ -337,12 +341,12 @@ export function createSketch<C extends IControls>(
 
         // draw the same frame but for wallpaper resolution
         p.resizeCanvas(exportFileWidth, exportFileHeight, true);
-        // update related tracked props, memos and animations
         updateMemos(() => {
           canvasWidth.value = exportFileWidth;
           canvasHeight.value = exportFileHeight;
-          // all animations forcibly set to end values to see correct final result
-        }, true);
+        });
+        // all animations forcibly set to end values to see correct final result
+        isExporting = true;
         p.redraw();
 
         p.saveCanvas(exportFileName);
@@ -355,8 +359,9 @@ export function createSketch<C extends IControls>(
         updateMemos(() => {
           canvasWidth.value = prevW;
           canvasHeight.value = prevH;
-        }, true);
+        });
         p.redraw();
+        isExporting = false;
 
         if (wasLooping) {
           p.loop();

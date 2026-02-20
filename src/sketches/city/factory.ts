@@ -4,9 +4,11 @@ import type { Controls } from "./controls";
 
 export const factory = createSketch<Controls>(
   ({ p, createAnimatedValue, getTrackedProp }) => {
-    const animatedNInt = createAnimatedValue(25, (x) => x, [
-      getTrackedProp("NInt"),
-    ]);
+    const animatedNInt = createAnimatedValue({
+      animationDuration: 25,
+      fn: (x) => x,
+      deps: [getTrackedProp("NInt")],
+    });
 
     return {
       setup: () => {
@@ -19,20 +21,18 @@ export const factory = createSketch<Controls>(
         //   failureCallback: () => console.log("fail"),
         // });
       },
-      draw: () => {
-        return () => {
-          p.stroke("white");
-          p.background("black");
-          p.noStroke();
-          p.lights();
+      draw: () => () => {
+        p.stroke("white");
+        p.background("black");
+        p.noStroke();
+        p.lights();
 
-          p.orbitControl();
-          p.debugMode(500, 10, 0, 0, 0, -100, 0, 0, 0);
+        p.orbitControl();
+        p.debugMode(500, 10, 0, 0, 0, -100, 0, 0, 0);
 
-          p.scale(50);
-          const homeSize = p.createVector(animatedNInt.value!, 3, 7);
-          drawBuilding(p, { size: homeSize });
-        };
+        p.scale(50);
+        const homeSize = p.createVector(animatedNInt.getValue(), 3, 7);
+        drawBuilding(p, { size: homeSize });
       },
     };
   },

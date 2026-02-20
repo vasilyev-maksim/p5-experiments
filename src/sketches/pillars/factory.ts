@@ -16,139 +16,136 @@ export const factory = createSketch<Controls>(
     p,
   }) => {
     const { trackedCanvasHeight, trackedCanvasWidth } = getCanvasSize();
-    const widthData = createMemo(
-      (resolution, dispersion) => getRandomPartition(p, resolution, dispersion),
-      [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
-    );
-    const widthsAnimated = createAnimatedArray(ANIMATION_SPEED, (x) => x, [
-      widthData,
-    ]);
-    const amplitudeAnimated = createAnimatedValue(ANIMATION_SPEED, (x) => x, [
-      getTrackedProp("AMPLITUDE"),
-    ]);
-    const gapYAnimated = createAnimatedArray(
-      ANIMATION_SPEED,
-      (parts, period) =>
+    const widthData = createMemo({
+      fn: (resolution, dispersion) =>
+        getRandomPartition(p, resolution, dispersion),
+      deps: [getTrackedProp("RESOLUTION"), getTrackedProp("W_DISPERSION")],
+    });
+    const widthsAnimated = createAnimatedArray({
+      animationDuration: ANIMATION_SPEED,
+      fn: (x) => x,
+      deps: [widthData.getTrackedValue()],
+    });
+    const amplitudeAnimated = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (x) => x,
+      deps: [getTrackedProp("AMPLITUDE")],
+    });
+    const gapYsAnimated = createAnimatedArray({
+      animationDuration: ANIMATION_SPEED,
+      fn: (parts, period) =>
         parts.map((_, i, { length }) => (p.TWO_PI * period * i) / length),
-      [widthData, getTrackedProp("PERIOD")],
-    );
-    const gapWidthAnimated = createAnimatedValue(
-      ANIMATION_SPEED,
-      (x, canvasWidth) => (x * canvasWidth) / 1158,
-      [getTrackedProp("GAP_X"), trackedCanvasWidth],
-    );
-    const gapHeightAnimated = createAnimatedValue(
-      ANIMATION_SPEED,
-      (x, canvasHeight) => (x * canvasHeight) / 811,
-      [getTrackedProp("GAP_Y"), trackedCanvasHeight],
-    );
-    const colorsAnimated = createAnimatedColors(
-      ANIMATION_SPEED,
-      [getTrackedProp("COLOR")],
-      (x) => controls.COLOR.colors[x],
+      deps: [widthData.getTrackedValue(), getTrackedProp("PERIOD")],
+    });
+    const gapWidthAnimated = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (x, canvasWidth) => (x * canvasWidth) / 1158,
+      deps: [getTrackedProp("GAP_X"), trackedCanvasWidth],
+    });
+    const gapHeightAnimated = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (x, canvasHeight) => (x * canvasHeight) / 811,
+      deps: [getTrackedProp("GAP_Y"), trackedCanvasHeight],
+    });
+    const colorsAnimated = createAnimatedColors({
+      animationDuration: ANIMATION_SPEED,
+      deps: [getTrackedProp("COLOR")],
+      colorProvider: (x) => controls.COLOR.colors[x],
       p,
-    );
+    });
+
+    function drawColumn(
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      gapY: number,
+      gapHeight: number,
+    ) {
+      const gd = gapHeight / 2;
+      drawPill(x, y, w, gapY - gd, "down", "circle");
+      drawPill(x, gapY + gd, w, h - gapY + gd, "up", "circle");
+    }
+
+    function drawPill(
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      direction: "up" | "down",
+      endStyle: "circle" | "polygon",
+    ) {
+      const [colorA, colorB] = colorsAnimated.getValue();
+      const color = p.lerpColor(p.color(colorA), p.color(colorB), h / p.height);
+
+      p.fill(color);
+
+      const tl = p.createVector(x, y);
+      const r = w / 2;
+      const c = tl
+        .copy()
+        .add(p.createVector(...(direction === "up" ? [r, r] : [w - r, h - r])));
+      switch (endStyle) {
+        default:
+        case "circle":
+          p.circle(c.x, c.y, r * 2);
+          break;
+        case "polygon":
+          p.push();
+          {
+            p.translate(c.x, c.y);
+            p.beginShape();
+            for (let a = 0; a <= p.PI; a += p.PI / 3) {
+              const sx = p.cos(a) * r;
+              const sy = p.sin(a) * r * (direction === "up" ? -1 : 1);
+              p.vertex(sx, sy);
+            }
+            p.endShape("close");
+          }
+          p.pop();
+          break;
+      }
+
+      const rtl = direction === "up" ? tl.copy().add(p.createVector(0, r)) : tl;
+      p.rect(rtl.x, rtl.y, w, Math.max(h - r, 0));
+    }
 
     return {
       setup: () => {
         p.noStroke();
       },
-      draw: () => {
-        function drawColumn(
-          x: number,
-          y: number,
-          w: number,
-          h: number,
-          gapY: number,
-          gapHeight: number,
-        ) {
-          const gd = gapHeight / 2;
-          drawPill(x, y, w, gapY - gd, "down", "circle");
-          drawPill(x, gapY + gd, w, h - gapY + gd, "up", "circle");
-        }
+      draw: () => () => {
+        const GAP_WIDTH = gapWidthAnimated.getValue(),
+          gapHeight = gapHeightAnimated.getValue(),
+          AMPLITUDE = amplitudeAnimated.getValue(),
+          time = getTime();
 
-        function drawPill(
-          x: number,
-          y: number,
-          w: number,
-          h: number,
-          direction: "up" | "down",
-          endStyle: "circle" | "polygon",
-        ) {
-          const [colorA, colorB] = colorsAnimated.value;
-          const color = p.lerpColor(
-            p.color(colorA),
-            p.color(colorB),
-            h / p.height,
-          );
+        p.background("black");
 
-          p.fill(color);
+        const totalWidth = p.width - GAP_WIDTH;
+        let start = GAP_WIDTH;
+        const gapYArr = gapYsAnimated.getValue();
 
-          const tl = p.createVector(x, y);
-          const r = w / 2;
-          const c = tl
-            .copy()
-            .add(
-              p.createVector(...(direction === "up" ? [r, r] : [w - r, h - r])),
-            );
-          switch (endStyle) {
-            default:
-            case "circle":
-              p.circle(c.x, c.y, r * 2);
-              break;
-            case "polygon":
-              p.push();
-              {
-                p.translate(c.x, c.y);
-                p.beginShape();
-                for (let a = 0; a <= p.PI; a += p.PI / 3) {
-                  const sx = p.cos(a) * r;
-                  const sy = p.sin(a) * r * (direction === "up" ? -1 : 1);
-                  p.vertex(sx, sy);
-                }
-                p.endShape("close");
-              }
-              p.pop();
-              break;
-          }
+        widthsAnimated.getValue().forEach((widthAnimated, i) => {
+          const x = start,
+            y = 0,
+            width = widthAnimated * totalWidth,
+            w = width - GAP_WIDTH,
+            h = p.height,
+            gapY =
+              p.height / 2 +
+              p.map(
+                AMPLITUDE,
+                controls.AMPLITUDE.min,
+                controls.AMPLITUDE.max,
+                0,
+                p.height / 2,
+              ) *
+                p.sin(gapYArr[i] + time * 0.015);
 
-          const rtl =
-            direction === "up" ? tl.copy().add(p.createVector(0, r)) : tl;
-          p.rect(rtl.x, rtl.y, w, Math.max(h - r, 0));
-        }
-
-        return () => {
-          const GAP_WIDTH = gapWidthAnimated.value!,
-            gapHeight = gapHeightAnimated.value!,
-            AMPLITUDE = amplitudeAnimated.value!,
-            time = getTime();
-
-          p.background("black");
-
-          const totalWidth = p.width - GAP_WIDTH;
-          let start = GAP_WIDTH;
-
-          widthsAnimated.value.forEach((widthAnimated, i) => {
-            const x = start,
-              y = 0,
-              width = widthAnimated * totalWidth,
-              w = width - GAP_WIDTH,
-              h = p.height,
-              gapY =
-                p.height / 2 +
-                p.map(
-                  AMPLITUDE,
-                  controls.AMPLITUDE.min,
-                  controls.AMPLITUDE.max,
-                  0,
-                  p.height / 2,
-                ) *
-                  p.sin(gapYAnimated.value[i] + time * 0.015);
-
-            drawColumn(x, y, w, h, gapY, gapHeight);
-            start += width;
-          });
-        };
+          drawColumn(x, y, w, h, gapY, gapHeight);
+          start += width;
+        });
       },
     };
   },

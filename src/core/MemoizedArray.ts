@@ -7,18 +7,24 @@ export class MemoizedArray<
   ArgsType extends any[],
   ValueType,
 > extends TrackedArray<ValueType> {
-  private readonly deps: TrackedDeps<ArgsType>;
+  private readonly deps;
+  private readonly fn;
 
-  public constructor(
-    private readonly fn: (...args: ArgsType) => ValueType[],
-    deps: TrackedTuple<ArgsType>,
-    comparator?: TrackedArrayComparator<ValueType>,
-  ) {
+  public constructor({
+    fn,
+    deps,
+    comparator,
+  }: {
+    fn: (...args: ArgsType) => ValueType[];
+    deps: TrackedTuple<ArgsType>;
+    comparator?: TrackedArrayComparator<ValueType>;
+  }) {
     const trackedDeps = new TrackedDeps(deps);
     const initValue = fn(...trackedDeps.value);
 
     super(initValue, comparator);
 
+    this.fn = fn;
     this.deps = trackedDeps;
     this.deps.onChanged.addCallback((args) => {
       this.value = this.fn(...args);

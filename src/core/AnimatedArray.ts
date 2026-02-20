@@ -18,10 +18,10 @@ export class AnimatedArray {
 
   public animateTo({
     values,
-    startTime,
+    currentTime,
   }: {
     values: number[];
-    startTime: number;
+    currentTime: number;
   }) {
     const len = Math.max(values.length, this.array.length);
     for (let i = 0; i < len; i++) {
@@ -31,7 +31,7 @@ export class AnimatedArray {
       if (animatedValue !== undefined && newValue !== undefined) {
         animatedValue.animateTo({
           value: newValue,
-          startTime,
+          currentTime,
         });
       } else if (animatedValue === undefined) {
         // add new animation value fro new item, start from  `initialValueForItem` then grow up to `newValue`
@@ -42,7 +42,7 @@ export class AnimatedArray {
         );
         newAnimatedValue.animateTo({
           value: newValue,
-          startTime,
+          currentTime,
         });
         this.array.push(newAnimatedValue);
       } else if (newValue === undefined) {
@@ -50,20 +50,12 @@ export class AnimatedArray {
         animatedValue.animateTo({
           value:
             this.initialValueForItem ??
-            animatedValue.getCurrentValue(startTime)!,
-          startTime,
+            animatedValue.getCurrentValue(currentTime)!,
+          currentTime,
         });
       }
     }
   }
-
-  public forceToEnd(time: number) {
-    this.array.forEach((x) => x.forceToEnd(time));
-  }
-
-  // public runAnimationStep(currentTime: number) {
-  //   this.array.forEach((x) => x.runAnimationStep(currentTime));
-  // }
 
   public getCurrentValue(currentTime: number) {
     return this.array.map((x) => x.getCurrentValue(currentTime)!);

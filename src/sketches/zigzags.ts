@@ -161,13 +161,13 @@ function drawZigzag({
 const presets: IPreset<Controls>[] = [
   {
     params: {
-      timeDelta: 1,
       COLOR: 5,
       RESOLUTION: 60,
       PADDING_PERCENT: 20,
     },
     name: "escalator",
     startTime: 179,
+    timeDelta: 1,
   },
 ];
 

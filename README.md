@@ -4,6 +4,8 @@
 
 # 📋 TODO
 
+- recursive `worms` sourcing (place new worm not randomly, and walk not randomly too)
+- undo/redo mechanism (event sourcing for params and timeDelta)
 - pass props as event payload in contrast with direct props of `ReactP5Wrapper`
   - do the same for time shifts, pauses, rewinds etc.
 

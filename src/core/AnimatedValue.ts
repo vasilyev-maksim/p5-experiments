@@ -16,21 +16,17 @@ export class AnimatedValue {
 
   public animateTo({
     value,
-    startTime,
+    currentTime,
     animationDuration,
   }: {
     value: number;
-    startTime: number;
+    currentTime: number;
     animationDuration?: number;
   }) {
-    this.startTime = startTime;
-    this.endTime = startTime + (animationDuration ?? this.animationDuration);
-    this.start = this.getCurrentValue(startTime);
+    this.start = this.getCurrentValue(currentTime); // do not move this live below time assignments
     this.end = value;
-  }
-
-  public forceToEnd(time: number) {
-    this.endTime = time;
+    this.startTime = currentTime;
+    this.endTime = currentTime + (animationDuration ?? this.animationDuration);
   }
 
   public getCurrentValue(currentTime: number) {
@@ -40,17 +36,18 @@ export class AnimatedValue {
       } else {
         if (currentTime > this.endTime) {
           currentTime = this.endTime;
+          return this.end;
         } else if (currentTime < this.startTime) {
           currentTime = this.startTime;
+          return this.start;
+        } else {
+          const ratio =
+            (currentTime - this.startTime) / (this.endTime - this.startTime);
+          const curr =
+            this.start + this.timingFunction(ratio) * (this.end - this.start);
+
+          return curr;
         }
-
-        const ratio =
-          (currentTime - this.startTime) / (this.endTime - this.startTime);
-
-        const curr =
-          this.start + this.timingFunction(ratio) * (this.end - this.start);
-
-        return curr;
       }
     } else {
       return this.end;

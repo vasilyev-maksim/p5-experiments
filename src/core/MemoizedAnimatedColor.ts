@@ -4,6 +4,15 @@ import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { AnimatedValue } from "./AnimatedValue";
 import type { TrackedTuple } from "./models";
 
+export type MemoizedAnimatedColorsParams<ArgsType extends any[]> = {
+  animationDuration: number;
+  deps: TrackedTuple<ArgsType>;
+  colorProvider: (...args: ArgsType) => string[];
+  p: p5;
+  timingFunction?: AnimatedValue["timingFunction"];
+  timeProvider: () => number;
+};
+
 export class MemoizedAnimatedColors<ArgsType extends any[]> {
   private readonly memoizedAnimatedArray: MemoizedAnimatedArray<ArgsType>;
   private readonly p: p5;
@@ -14,13 +23,8 @@ export class MemoizedAnimatedColors<ArgsType extends any[]> {
     colorProvider,
     p,
     timingFunction,
-  }: {
-    animationDuration: number;
-    deps: TrackedTuple<ArgsType>;
-    colorProvider: (...args: ArgsType) => string[];
-    p: p5;
-    timingFunction?: AnimatedValue["timingFunction"];
-  }) {
+    timeProvider,
+  }: MemoizedAnimatedColorsParams<ArgsType>) {
     this.memoizedAnimatedArray = new MemoizedAnimatedArray<ArgsType>({
       animationDuration,
       fn: (...args) => {
@@ -31,17 +35,25 @@ export class MemoizedAnimatedColors<ArgsType extends any[]> {
       },
       deps,
       timingFunction: timingFunction ?? AnimatedValue.TIMING_FUNCTIONS.LINEAR,
+      timeProvider,
     });
     this.p = p;
   }
 
   public getCurrentValue(currentTime: number): [p5.Color, p5.Color] {
-    const [r1, g1, b1, r2, g2, b2] =
-      this.memoizedAnimatedArray.getCurrentValue(currentTime);
-    return [this.p.color(r1, g1, b1), this.p.color(r2, g2, b2)];
+    return this.convertNumbersToColors(
+      this.memoizedAnimatedArray.getCurrentValue(currentTime),
+    );
   }
 
-  public forceAnimationsToEnd(time: number) {
-    this.memoizedAnimatedArray.forceAnimationsToEnd(time);
+  public getEndValue() {
+    return this.convertNumbersToColors(
+      this.memoizedAnimatedArray.getEndValue(),
+    );
+  }
+
+  private convertNumbersToColors(numbers: number[]): [p5.Color, p5.Color] {
+    const [r1, g1, b1, r2, g2, b2] = numbers;
+    return [this.p.color(r1, g1, b1), this.p.color(r2, g2, b2)];
   }
 }

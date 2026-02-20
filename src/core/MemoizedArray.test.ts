@@ -9,7 +9,7 @@ describe("MemoizedArray", () => {
     const cb = vi.fn();
     const a = new TrackedValue(1);
     const b = new TrackedValue(2);
-    const sut = new MemoizedArray((a, b) => [a, b], [a, b]);
+    const sut = new MemoizedArray({ fn: (a, b) => [a, b], deps: [a, b] });
     sut.onChanged.addCallback(cb);
 
     expect(
@@ -84,11 +84,11 @@ describe("MemoizedArray", () => {
       (a, b) => (a ?? []).length === (b ?? []).length;
     const len = new TrackedValue(2);
     const val = new TrackedValue(1);
-    const sut = new MemoizedArray(
-      (len, val) => range(len).map(() => val),
-      [len, val],
-      lengthComparator,
-    );
+    const sut = new MemoizedArray({
+      fn: (len, val) => range(len).map(() => val),
+      deps: [len, val],
+      comparator: lengthComparator,
+    });
     sut.onChanged.addCallback(cb);
 
     // set value of MemoizedArray (sut) directly

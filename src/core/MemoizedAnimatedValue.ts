@@ -14,6 +14,7 @@ export type MemoizedAnimatedValueParams<ArgsType extends any[]> = {
   comparator?: TrackedValueComparator<number>;
   timingFunction?: AnimatedValue["timingFunction"];
   timeProvider: () => number;
+  id?: string;
 };
 
 export class MemoizedAnimatedValue<
@@ -30,8 +31,8 @@ export class MemoizedAnimatedValue<
     timingFunction,
     timeProvider,
   }: MemoizedAnimatedValueParams<ArgsType>) {
-    this.memoizedValue = new MemoizedValue(fn, deps, comparator);
-    
+    this.memoizedValue = new MemoizedValue({ fn, deps, comparator });
+
     this.animatedValue = new AnimatedValue(
       animationDuration,
       this.memoizedValue.value,
@@ -40,7 +41,7 @@ export class MemoizedAnimatedValue<
 
     this.memoizedValue.onChanged.addCallback((value) => {
       this.animatedValue.animateTo({
-        startTime: timeProvider(),
+        currentTime: timeProvider(),
         value,
       });
     });
@@ -50,7 +51,7 @@ export class MemoizedAnimatedValue<
     return this.animatedValue.getCurrentValue(currentTime);
   }
 
-  public forceAnimationsToEnd(time: number) {
-    this.animatedValue.forceToEnd(time);
+  public getEndValue() {
+    return this.animatedValue.getEndValue();
   }
 }

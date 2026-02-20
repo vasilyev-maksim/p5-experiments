@@ -23,9 +23,9 @@ export const factory = createSketch<typeof controls>(() => {
       p.noStroke();
 
       p.mouseClicked = () => {
-        const startTime = getTime();
-        animatedX.animateTo({ value: p.mouseX, startTime });
-        animatedY.animateTo({ value: p.mouseY, startTime });
+        const currentTime = getTime();
+        animatedX.animateTo({ value: p.mouseX, currentTime });
+        animatedY.animateTo({ value: p.mouseY, currentTime });
       };
     },
     draw: ({ p, getTime }) => {

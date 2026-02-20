@@ -8,7 +8,7 @@ describe("MemoizedValue", () => {
     const cb = vi.fn();
     const a = new TrackedValue(1);
     const b = new TrackedValue(2);
-    const sut = new MemoizedValue((a, b) => a + b, [a, b]);
+    const sut = new MemoizedValue({ fn: (a, b) => a + b, deps: [a, b] });
     sut.onChanged.addCallback(cb);
 
     expect(
@@ -83,7 +83,11 @@ describe("MemoizedValue", () => {
     );
     const a = new TrackedValue(1);
     const b = new TrackedValue(2);
-    const sut = new MemoizedValue((a, b) => a + b, [a, b], evenComparator);
+    const sut = new MemoizedValue({
+      fn: (a, b) => a + b,
+      deps: [a, b],
+      comparator: evenComparator,
+    });
     sut.onChanged.addCallback(cb);
 
     // set value of MemoizedValue (sut) directly

@@ -15,19 +15,19 @@ import { sketch } from "./_sandboxes/funcs";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sketchList: ISketch<any>[] = [
-  // spiralSketch,
-  // cubesSketch,
-  // pillarsSketch,
+  spiralSketch,
+  cubesSketch,
+  pillarsSketch,
   arcsSketch,
-  // curveSketch,
-  // circlesSketch,
-  // zigzagsSketch,
-  // lightsSketch,
-  // interpolationSketch,
-  // citySketch,
-  // tilesSketch,
+  curveSketch,
+  circlesSketch,
+  zigzagsSketch,
+  lightsSketch,
+  interpolationSketch,
+  citySketch,
+  tilesSketch,
   wormsSketch,
-  // sketch,
+  sketch,
 ]
   .filter((x) =>
     import.meta.env.PROD ? x.type === "released" : x.type !== "hidden",

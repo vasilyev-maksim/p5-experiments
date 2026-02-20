@@ -17,15 +17,15 @@ export const factory = createSketch<Controls>(
     p,
   }) => {
     const { trackedCanvasWidth } = getCanvasSize();
-    const gapAnimated = createAnimatedValue(
-      ANIMATION_SPEED,
-      (x, canvasWidth) => (x * canvasWidth) / 1158,
-      [getTrackedProp("GAP"), trackedCanvasWidth],
-    );
-    const strokeWidth = createMemo(
-      (canvasWidth) => (2 * canvasWidth) / 1158,
-      [trackedCanvasWidth],
-    );
+    const gapAnimated = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (x, canvasWidth) => (x * canvasWidth) / 1158,
+      deps: [getTrackedProp("GAP"), trackedCanvasWidth],
+    });
+    const strokeWidth = createMemo({
+      fn: (canvasWidth) => (2 * canvasWidth) / 1158,
+      deps: [trackedCanvasWidth],
+    });
 
     return {
       onPresetChange: () => {
@@ -54,7 +54,7 @@ export const factory = createSketch<Controls>(
 
         p.background(p.color(0, 0, 0, opacity));
         p.noFill();
-        p.strokeWeight(strokeWidth.value!);
+        p.strokeWeight(strokeWidth.getValue());
 
         const yCoords = range(CURVE_RESOLUTION + 2).map((i) =>
           p.map(
@@ -67,7 +67,7 @@ export const factory = createSketch<Controls>(
         );
 
         for (let t = -twinMidIndex; t <= twinMidIndex; t++) {
-          const yOffset = t * gapAnimated.value!;
+          const yOffset = t * gapAnimated.getValue();
           const alpha =
             t === 0 ? 255 : p.map(p.abs(t), 0, twinMidIndex + 1, 20, 0);
 

@@ -15,3 +15,7 @@ export interface IAnimatedValue<T> {
 export interface IValueProvider<T> {
   getValue(): T;
 }
+
+export interface ITrackedValueProvider<T> {
+  getTrackedValue(): TrackedValue<T>;
+}
