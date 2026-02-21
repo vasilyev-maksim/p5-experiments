@@ -81,7 +81,7 @@ export class AnimatedArray {
   private garbageCollect(currentTime: number) {
     this.array = this.array.filter((x) => {
       const shouldBeCollected =
-        x.reachedTheEndTime(currentTime) && this.garbage.has(x);
+        x.reachedTheEnd(currentTime) && this.garbage.has(x);
 
       if (shouldBeCollected) {
         this.garbage.delete(x); // remove from garbage

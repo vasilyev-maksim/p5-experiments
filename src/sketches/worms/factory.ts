@@ -34,13 +34,13 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
     });
     const worms = createMemo({
       fn: (resY, resX, len, dirIsRandom, [r, d]) => {
-        console.log("WORM", {
-          resY,
-          resX,
-          len,
-          dirIsRandom,
-          d: [r, d],
-        });
+        // console.log("WORM", {
+        //   resY,
+        //   resX,
+        //   len,
+        //   dirIsRandom,
+        //   d: [r, d],
+        // });
 
         const left = 1 - r,
           right = r,

@@ -73,8 +73,8 @@ export class AnimatedValue {
     return this.end;
   }
 
-  public reachedTheEndTime(currentTime: number) {
-    return this.endTime ? this.endTime <= currentTime : false;
+  public reachedTheEnd(currentTime: number) {
+    return this.endTime ? this.endTime <= currentTime : true;
   }
 
   public static TIMING_FUNCTIONS = class {

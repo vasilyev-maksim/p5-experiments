@@ -60,7 +60,7 @@ export const presets: IPreset<Controls>[] = [
       RESOLUTION: 25,
       AMPLITUDE: 10,
       PERIOD: 4,
-      GAP_X: 23,
+      GAP_X: 10,
       GAP_Y: 25,
       W_DISPERSION: 0,
       COLOR: 0,
