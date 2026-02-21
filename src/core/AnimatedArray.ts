@@ -3,31 +3,42 @@ import { AnimatedValue } from "./AnimatedValue";
 export class AnimatedArray {
   private array: AnimatedValue[] = [];
   private garbage = new Set<AnimatedValue>();
+  private readonly animationDuration;
+  private readonly initialValueForItem;
+  private readonly timingFunction;
 
-  public constructor(
-    private readonly animationDuration: number,
-    initialValues?: number[],
-    private readonly initialValueForItem?: number,
-    private readonly timingFunction?: AnimatedValue["timingFunction"],
-  ) {
-    if (initialValues) {
-      this.array = initialValues.map(
-        (initialValue) =>
-          new AnimatedValue({
-            animationDuration,
-            initialValue,
-            timingFunction,
-          }),
-      );
-    }
+  public constructor({
+    animationDuration,
+    initialValues,
+    initialValueForItem,
+    timingFunction,
+  }: {
+    animationDuration: number;
+    initialValues: number[];
+    initialValueForItem?: number;
+    timingFunction?: AnimatedValue["timingFunction"];
+  }) {
+    this.animationDuration = animationDuration;
+    this.initialValueForItem = initialValueForItem;
+    this.timingFunction = timingFunction;
+    this.array = initialValues.map(
+      (initialValue) =>
+        new AnimatedValue({
+          animationDuration,
+          initialValue,
+          timingFunction,
+        }),
+    );
   }
 
   public animateTo({
     values,
     currentTime,
+    animationDuration = this.animationDuration,
   }: {
     values: number[];
     currentTime: number;
+    animationDuration?: number;
   }) {
     const len = Math.max(values.length, this.array.length);
     for (let i = 0; i < len; i++) {
@@ -38,7 +49,9 @@ export class AnimatedArray {
         animatedValue.animateTo({
           value: newValue,
           currentTime,
+          animationDuration,
         });
+        // if exit animation was canceled mid way, value will be rescued (removed from `garbage`)
         this.garbage.delete(animatedValue);
       } else if (animatedValue === undefined) {
         // add new animation value for new item, start from  `initialValueForItem` then grow up to `newValue`
@@ -50,6 +63,7 @@ export class AnimatedArray {
         newAnimatedValue.animateTo({
           value: newValue,
           currentTime,
+          animationDuration,
         });
         this.array.push(newAnimatedValue);
       } else if (newValue === undefined) {
@@ -60,6 +74,7 @@ export class AnimatedArray {
               this.initialValueForItem ??
               animatedValue.getCurrentValue(currentTime)!,
             currentTime,
+            animationDuration,
           });
           // then mark it to be garbage collected from array
           this.garbage.add(animatedValue);

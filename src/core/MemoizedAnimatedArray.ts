@@ -26,12 +26,12 @@ export class MemoizedAnimatedArray<ArgsType extends any[]> {
     timeProvider,
   }: MemoizedAnimatedArrayParams<ArgsType>) {
     this.memoizedArray = new MemoizedArray({ fn, deps });
-    this.animatedArray = new AnimatedArray(
+    this.animatedArray = new AnimatedArray({
       animationDuration,
-      this.memoizedArray.value,
+      initialValues: this.memoizedArray.value,
       initialValueForItem,
       timingFunction,
-    );
+    });
 
     this.memoizedArray.onChanged.addCallback((values) => {
       this.animatedArray.animateTo({
