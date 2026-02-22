@@ -99,10 +99,24 @@ describe("AnimatedArray", () => {
 
     sut.animateTo({
       currentTime: 0,
-      values: [10, 10, 10],
+      values: [100, 100, 100],
       animationDuration: 10,
     });
 
-    expect(sut.getCurrentValue(1)).toEqual([1, 1, 1]);
+    expect(sut.getCurrentValue(1).map((x) => Math.round(x))).toEqual([1, 1, 1]);
+    expect(sut.getCurrentValue(2).map((x) => Math.round(x))).toEqual([4, 4, 4]);
+    expect(sut.getCurrentValue(3).map((x) => Math.round(x))).toEqual([9, 9, 9]);
+    expect(sut.getCurrentValue(4).map((x) => Math.round(x))).toEqual([
+      16, 16, 16,
+    ]);
+    expect(sut.getCurrentValue(9).map((x) => Math.round(x))).toEqual([
+      81, 81, 81,
+    ]);
+    expect(sut.getCurrentValue(10).map((x) => Math.round(x))).toEqual([
+      100, 100, 100,
+    ]);
+    expect(sut.getCurrentValue(11).map((x) => Math.round(x))).toEqual([
+      100, 100, 100,
+    ]);
   });
 });

@@ -110,3 +110,17 @@ export function tryParseNumber(str: string, fallback: number) {
   const num = Number(str);
   return isNaN(num) ? fallback : num;
 }
+
+export function chunkArray<T>(arr: T[], chunkLength: number): T[][] {
+  const res = [];
+  const a = [...arr];
+  let i = 0;
+
+  while (i < arr.length) {
+    res.push(a.splice(0, chunkLength));
+    i += chunkLength;
+  }
+
+  return res;
+}
+

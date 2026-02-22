@@ -3,19 +3,22 @@ import type p5 from "p5";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { AnimatedValue } from "./AnimatedValue";
 import type { TrackedTuple } from "./models";
+import { chunkArray } from "@/utils/misc";
+
+export type p5Subset = Pick<p5, 'red' | 'green' | 'blue' | 'color'>;
 
 export type MemoizedAnimatedColorsParams<ArgsType extends any[]> = {
   animationDuration: number;
   deps: TrackedTuple<ArgsType>;
   colorProvider: (...args: ArgsType) => string[];
-  p: p5;
+  p: p5Subset;
   timingFunction?: AnimatedValue["timingFunction"];
   timeProvider: () => number;
 };
 
 export class MemoizedAnimatedColors<ArgsType extends any[]> {
   private readonly memoizedAnimatedArray: MemoizedAnimatedArray<ArgsType>;
-  private readonly p: p5;
+  private readonly p: p5Subset;
 
   public constructor({
     animationDuration,
@@ -40,7 +43,7 @@ export class MemoizedAnimatedColors<ArgsType extends any[]> {
     this.p = p;
   }
 
-  public getCurrentValue(currentTime: number): [p5.Color, p5.Color] {
+  public getCurrentValue(currentTime: number): p5.Color[] {
     return this.convertNumbersToColors(
       this.memoizedAnimatedArray.getCurrentValue(currentTime),
     );
@@ -52,8 +55,7 @@ export class MemoizedAnimatedColors<ArgsType extends any[]> {
     );
   }
 
-  private convertNumbersToColors(numbers: number[]): [p5.Color, p5.Color] {
-    const [r1, g1, b1, r2, g2, b2] = numbers;
-    return [this.p.color(r1, g1, b1), this.p.color(r2, g2, b2)];
+  private convertNumbersToColors(numbers: number[]): p5.Color[] {
+    return chunkArray(numbers, 3).map(([r, g, b]) => this.p.color(r, g, b));
   }
 }

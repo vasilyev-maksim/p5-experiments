@@ -20,7 +20,7 @@ import {
 import {
   MemoizedAnimatedColors,
   type MemoizedAnimatedColorsParams,
-} from "./MemoizedAnimatedColor";
+} from "./MemoizedAnimatedColors";
 import { ENV } from "@/env";
 import type { ExportRequestEvent, SketchEvent } from "./events";
 import type { EventBus } from "./EventBus";
@@ -65,7 +65,7 @@ type Api<C extends IControls> = {
   ) => IValueProvider<number[]>;
   createAnimatedColors: <ArgsType extends any[]>(
     params: Omit<MemoizedAnimatedColorsParams<ArgsType>, "timeProvider">,
-  ) => IValueProvider<[p5.Color, p5.Color]>;
+  ) => IValueProvider<p5.Color[]>;
 };
 
 export function createSketch<C extends IControls>(
@@ -144,10 +144,11 @@ export function createSketch<C extends IControls>(
             timeProvider: () => p.frameCount,
           });
           return {
-            getValue: () =>
-              isExporting
+            getValue: () => {
+              return isExporting
                 ? animation.getEndValue()
-                : animation.getCurrentValue(p.frameCount),
+                : animation.getCurrentValue(p.frameCount);
+            },
           };
         },
       };
