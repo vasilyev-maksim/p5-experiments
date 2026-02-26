@@ -9,7 +9,6 @@ export function orbit(
   const pos = p.createVector(p.cos(time) * radius, 0, p.sin(time) * radius);
   p.push();
   {
-    console.log(pos);
     p.translate(pos);
     drawCb(pos);
   }

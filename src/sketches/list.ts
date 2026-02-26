@@ -2,7 +2,7 @@ import type { ISketch } from "../models";
 import { spiralSketch } from "./spiral";
 import { pillarsSketch } from "./pillars";
 import { curveSketch } from "./curve";
-import { arcSketch } from "./arcs";
+import { arcsSketch } from "./arcs";
 import { circlesSketch } from "./circles";
 import { sketch as citySketch } from "./city";
 import { sketch as cubesSketch } from "./cubes";
@@ -18,7 +18,7 @@ export const sketchList: ISketch<any>[] = [
   spiralSketch,
   cubesSketch,
   pillarsSketch,
-  arcSketch,
+  arcsSketch,
   curveSketch,
   circlesSketch,
   zigzagsSketch,

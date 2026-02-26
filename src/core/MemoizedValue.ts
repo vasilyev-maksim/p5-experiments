@@ -1,28 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TrackedArray, type ArrayOfTrackedValues } from "./TrackedArray";
-import { TrackedValue, type TrackedValueComparator } from "./TrackedValue";
+import type { TrackedTuple, TrackedValueComparator } from "./models";
+import { TrackedValue } from "./TrackedValue";
+
+export type MemoizedValueParams<ArgsType extends any[], ValueType> = {
+  fn: (...args: ArgsType) => ValueType;
+  deps: TrackedTuple<ArgsType>;
+  comparator?: TrackedValueComparator<ValueType>;
+};
 
 export class MemoizedValue<
   ArgsType extends any[],
   ValueType,
 > extends TrackedValue<ValueType> {
-  public constructor(
-    private readonly fn: (...args: ArgsType) => ValueType,
-    private readonly deps: ArrayOfTrackedValues<ArgsType>,
-    comparator?: TrackedValueComparator<ValueType>,
-  ) {
-    // Sometimes we need a reference to `MemoizedValue` instance
-    // before it can actually be initialized with a real value,
-    // that's why there is `undefined` provided as first arg
-    super(undefined, comparator);
+  private readonly deps: TrackedTuple<ArgsType>;
+  private readonly fn;
+
+  public constructor({
+    fn,
+    deps,
+    comparator,
+  }: MemoizedValueParams<ArgsType, ValueType>) {
+    super(comparator);
+
+    this.fn = fn;
+    this.deps = deps;
   }
 
-  /** Calculates new value if some of args changed */
-  public recalc(): this {
-    this.value = TrackedArray.someHasChanged(this.deps)
-      ? this.fn(...(TrackedArray.unbox(this.deps) as ArgsType))
-      : this.value!;
+  public recalc() {
+    const someDepChanged = this.deps.some((x) => x.hasChanged());
+    if (someDepChanged) {
+      const args = this.deps.map((x) => x.getValue()) as ArgsType;
+      const newValue = this.fn(...args);
 
-    return this;
+      this.setValue(newValue);
+    }
   }
 }

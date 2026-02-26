@@ -1,6 +1,6 @@
 import p5 from "p5";
 import type { IControls, IPreset, ISketch } from "../models";
-import { SquareBorderPointsJoiner } from "@core/BorderPointsJoiner";
+import { SquareBorderPointsJoiner } from "@/sketches/arcs/BorderPointsJoiner";
 import { createSketch } from "@core/createSketch";
 
 export type Controls = typeof controls;
@@ -35,7 +35,7 @@ const controls = {
   },
 } as const satisfies IControls;
 
-const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
+const factory = createSketch<Controls>(({ p, getParam, getTime }) => {
   return {
     setup: () => {
       p.angleMode("radians");
@@ -44,9 +44,9 @@ const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
       const time = getTime();
 
       p.background("black");
-      const PADDING_PERCENT = getProp("PADDING_PERCENT"),
-        RESOLUTION = getProp("RESOLUTION"),
-        COLOR_INDEX = getProp("COLOR");
+      const PADDING_PERCENT = getParam("PADDING_PERCENT"),
+        RESOLUTION = getParam("RESOLUTION"),
+        COLOR_INDEX = getParam("COLOR");
 
       const color = controls.COLOR.colors[COLOR_INDEX][0];
       p.stroke(color);
@@ -161,13 +161,13 @@ function drawZigzag({
 const presets: IPreset<Controls>[] = [
   {
     params: {
-      timeDelta: 1,
       COLOR: 5,
       RESOLUTION: 60,
       PADDING_PERCENT: 20,
     },
     name: "escalator",
     startTime: 179,
+    timeDelta: 1,
   },
 ];
 

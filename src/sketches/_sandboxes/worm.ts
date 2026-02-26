@@ -16,7 +16,7 @@ const controls = {
 } as const satisfies IControls;
 
 const factory: ISketchFactory<typeof controls> =
-  ({ initialProps: { canvasWidth, canvasHeight } }) =>
+  ({ initData: { canvasWidth, canvasHeight } }) =>
   (p) => {
     const R = 50;
     const N = 25;
@@ -93,6 +93,7 @@ const presets: IPreset<typeof controls>[] = [
     params: {
       TIME_DELTA: 1,
     },
+    timeDelta: 1,
   },
 ];
 

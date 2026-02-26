@@ -1,50 +1,69 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatedArray } from "./AnimatedArray";
 import type { AnimatedValue } from "./AnimatedValue";
-import { MemoizedArray } from "./MemoizedArray";
-import type { ArrayOfTrackedValues } from "./TrackedArray";
+import { MemoizedValue } from "./MemoizedValue";
+import type { TrackedArrayComparator, TrackedTuple } from "./models";
 
-export class MemoizedAnimatedArray<ArgsType extends any[]> {
-  private readonly animatedArray: AnimatedArray;
-  public readonly memoizedArray: MemoizedArray<ArgsType, number>;
+export type MemoizedAnimatedArrayParams<ArgsType extends any[]> = {
+  animationDuration: number;
+  deps: TrackedTuple<ArgsType>;
+  fn: (...args: ArgsType) => number[];
+  initialValueForItem?: number;
+  timingFunction?: AnimatedValue["timingFunction"];
+  timeProvider: () => number;
+  comparator?: TrackedArrayComparator<number>;
+};
 
-  public constructor(
-    animationDuration: number,
-    fn: (...args: ArgsType) => number[],
-    deps: ArrayOfTrackedValues<ArgsType>,
-    initialValueForItem?: number,
-    timingFunction?: AnimatedValue["timingFunction"],
-  ) {
-    this.memoizedArray = new MemoizedArray(fn, deps, undefined);
-    // intentionally no initial value provided as 2nd arg, because `memoizedValue` is not initialized yet
-    this.animatedArray = new AnimatedArray(
-      animationDuration,
-      undefined,
-      initialValueForItem,
-      timingFunction,
-    );
+export class MemoizedAnimatedArray<
+  ArgsType extends any[],
+> extends MemoizedValue<ArgsType, number[]> {
+  private readonly timeProvider;
+  private readonly animationDuration;
+  private readonly timingFunction;
+  private readonly initialValueForItem;
+  public animatedArray?: AnimatedArray;
+
+  public constructor({
+    animationDuration,
+    fn,
+    deps,
+    timingFunction,
+    timeProvider,
+    comparator,
+    initialValueForItem,
+  }: MemoizedAnimatedArrayParams<ArgsType>) {
+    super({ fn, deps, comparator });
+
+    this.timeProvider = timeProvider;
+    this.timingFunction = timingFunction;
+    this.animationDuration = animationDuration;
+    this.initialValueForItem = initialValueForItem;
   }
 
-  public recalc(time: number): this {
-    this.memoizedArray.recalc();
-    if (this.memoizedArray.hasChanged) {
-      this.animatedArray.animateTo({
-        values: this.memoizedArray.value,
-        startTime: time,
-      });
+  public override recalc() {
+    super.recalc();
+
+    if (this.hasChanged()) {
+      if (!this.animatedArray) {
+        this.animatedArray = new AnimatedArray({
+          animationDuration: this.animationDuration,
+          initialValues: this.getValue(),
+          timingFunction: this.timingFunction,
+          initialValueForItem: this.initialValueForItem,
+        });
+      } else {
+        this.animatedArray.animateTo({
+          currentTime: this.timeProvider(),
+          values: this.getValue(),
+        });
+      }
     }
-    return this;
   }
 
-  public get value() {
-    return this.animatedArray.getCurrentValue();
-  }
-
-  public runAnimationStep(time: number) {
-    this.animatedArray.runAnimationStep(time);
-  }
-
-  public forceAnimationsToEnd(time: number) {
-    this.animatedArray.forceToEnd(time);
+  public getAnimatedArray(): AnimatedArray {
+    if (this.animatedArray === undefined) {
+      throw new Error("Trying to read uninitialized animated value");
+    }
+    return this.animatedArray;
   }
 }

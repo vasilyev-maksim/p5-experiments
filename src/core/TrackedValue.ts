@@ -1,38 +1,39 @@
-export type TrackedValueComparator<T> = (a?: T, b?: T) => boolean;
+import type { TrackedValueComparator } from "./models";
+
+export type TrackedValueParams<T> = {
+  comparator?: TrackedValueComparator<T>;
+};
 
 export class TrackedValue<T> {
-  private static DEFAULT_COMPARATOR = <T>(a?: T, b?: T) => a === b;
-  private _value?: T;
-  private _prevValue?: T;
-
-  public set value(val: T) {
-    this._prevValue = this._value;
-    this._value = val;
-  }
-
-  public get value(): T {
-    return this._value!;
-    // if (this._value === undefined) {
-    //   throw new Error("Can't access value of non-initialized tracked value.");
-    // } else {
-    // }
-  }
-
-  public get prevValue() {
-    return this._prevValue;
-  }
-
-  public get hasChanged() {
-    return this.comparator(this._prevValue, this._value) === false;
-  }
+  private value?: T;
+  private changed: boolean = false;
+  public static defaultComparator = <T>(prev: T | undefined, next: T) =>
+    prev === next;
 
   public constructor(
-    initValue?: T,
-    private readonly comparator: TrackedValueComparator<T> = TrackedValue.DEFAULT_COMPARATOR,
-  ) {
-    this._value = initValue;
-    this._prevValue = initValue;
+    private readonly comparator = TrackedValue.defaultComparator<T>,
+  ) {}
+
+  public getValue(): T {
+    if (this.value === undefined) {
+      throw new Error("Trying to read uninitialized value");
+    }
+    return this.value;
   }
 
-  public static ArrayUtils = class {};
+  public setValue(value: T) {
+    const areDifferent = this.comparator(this.value, value) === false;
+    if (areDifferent) {
+      this.value = value;
+      this.changed = true;
+    }
+  }
+
+  public hasChanged() {
+    return this.changed;
+  }
+
+  public notChanged() {
+    this.changed = false;
+  }
 }

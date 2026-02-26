@@ -43,11 +43,11 @@ const controls = {
 } as const satisfies IControls;
 
 export const factory = createSketch<Controls>(
-  ({ p, getTrackedProp, createMemo }) => {
+  ({ p, getTrackedParam, createMemo }) => {
     // const AX = createAnimatedValue(25, (x) => x, [getTrackedProp("X")]);
-    const X = createMemo((x) => x, [getTrackedProp("X")]);
-    const Y = createMemo((x) => x, [getTrackedProp("Y")]);
-    const Z = createMemo((x) => x, [getTrackedProp("Z")]);
+    const X = createMemo({ fn: (x) => x, deps: [getTrackedParam("X")] });
+    const Y = createMemo({ fn: (x) => x, deps: [getTrackedParam("Y")] });
+    const Z = createMemo({ fn: (x) => x, deps: [getTrackedParam("Z")] });
     // const A = createMemo((x) => x, [getTrackedProp("A")]);
     // const B = createMemo((x) => x, [getTrackedProp("B")]);
 
@@ -61,23 +61,12 @@ export const factory = createSketch<Controls>(
           p.background("black");
           p.stroke("white");
 
-          console.log(
-            "X =",
-            X.value,
-            "\t",
-            "Y =",
-            Y.value,
-            "\t",
-            "Z =",
-            Z.value,
-          );
-
           p.debugMode(500, 10, 0, 0, 0, -100, 0, 0, 0);
           p.orbitControl();
           const lightPosition = p.createVector(
-            X.value! * 100,
-            Y.value! * -100,
-            Z.value! * -100,
+            X.getValue() * 100,
+            Y.getValue() * -100,
+            Z.getValue() * -100,
           );
           // p.spotLight(
           //   255,
@@ -120,9 +109,9 @@ export const factory = createSketch<Controls>(
           });
         };
       },
-      in3D: true,
     };
   },
+  { in3D: true },
 );
 
 const presets: IPreset<Controls>[] = [
@@ -134,6 +123,7 @@ const presets: IPreset<Controls>[] = [
       A: 10,
       B: 10,
     },
+    timeDelta: 1,
   },
 ];
 

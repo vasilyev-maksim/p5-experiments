@@ -16,16 +16,23 @@ const controls = {
 } as const satisfies IControls;
 
 export const factory = createSketch<typeof controls>(() => {
-  const animatedX = new AnimatedValue(0, 20);
-  const animatedY = new AnimatedValue(0, 20);
+  const animatedX = new AnimatedValue({
+    initialValue: 0,
+    animationDuration: 20,
+  });
+  const animatedY = new AnimatedValue({
+    initialValue: 0,
+    animationDuration: 20,
+  });
+
   return {
     setup: ({ p, getTime }) => {
       p.noStroke();
 
       p.mouseClicked = () => {
-        const startTime = getTime();
-        animatedX.animateTo({ value: p.mouseX, startTime });
-        animatedY.animateTo({ value: p.mouseY, startTime });
+        const currentTime = getTime();
+        animatedX.animateTo({ value: p.mouseX, currentTime });
+        animatedY.animateTo({ value: p.mouseY, currentTime });
       };
     },
     draw: ({ p, getTime }) => {
@@ -34,12 +41,10 @@ export const factory = createSketch<typeof controls>(() => {
         p.stroke("white");
         const time = getTime();
         p.circle(
-          animatedX.getCurrentValue()!,
-          animatedY.getCurrentValue()!,
+          animatedX.getCurrentValue(time),
+          animatedY.getCurrentValue(time),
           10,
         );
-        animatedX.runAnimationStep(time);
-        animatedY.runAnimationStep(time);
       };
     },
   };
@@ -50,6 +55,7 @@ const presets: IPreset<Controls>[] = [
     params: {
       TIME_DELTA: 1,
     },
+    timeDelta: 1,
   },
 ];
 

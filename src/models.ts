@@ -1,32 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type { EventBus } from "./core/EventBus";
-
-/** Events */
-
-type EventBase = {
-  id?: number;
-};
-
-export type ExportRequestEvent = {
-  type: "export";
-  exportFileName: string;
-  exportFileWidth: number;
-  exportFileHeight: number;
-};
-
-export type PresetChangeEvent = {
-  type: "presetChange";
-  preset: IPreset;
-};
-
-export type TestEvent = {
-  type: "test";
-  test: true;
-};
-
-export type SketchEvent = EventBase &
-  (ExportRequestEvent | PresetChangeEvent | TestEvent);
+import type { SketchEvent } from "./core/events";
 
 /** -1 = not visible in UI;
  * 0 = visible in UI, initially turned OFF;
@@ -88,34 +63,36 @@ export type ControlValueType<T extends IControl> = T extends ICoordinateControl
 export type IControls = Record<string, IControl>;
 
 /** Sketch factory */
-
-export type IParams<Controls extends IControls = any> = {
+export type ParamName<Controls extends IControls> = keyof IParams<Controls>;
+export type IParams<Controls extends IControls = IControls> = {
   [K in keyof Controls]: ControlValueType<Controls[K]>;
-} & { timeDelta?: number };
+};
 
-export type ISketchProps<Controls extends IControls = IControls> =
-  IParams<Controls> & {
-    mode: "static" | "animated";
-    paused: boolean;
-    timeShift?: number;
-    timeDelta: number;
-    canvasWidth: number;
-    canvasHeight: number;
-    randomSeed: number;
-    event?: SketchEvent;
-    eventBus?: EventBus;
-  };
+export type SketchMode = "static" | "animated";
+
+export interface ISketchInitData<Controls extends IControls = IControls> {
+  params: IParams<Controls>;
+  mode: SketchMode;
+  paused: boolean;
+  startTime?: number;
+  timeDelta: number;
+  canvasWidth: number;
+  canvasHeight: number;
+  randomSeed?: number;
+}
 
 export type ISketchFactory<Controls extends IControls> = (args: {
-  initialProps: ISketchProps<Controls>;
+  initData: ISketchInitData<Controls>;
   id?: string;
-}) => (p: P5CanvasInstance<ISketchProps<Controls>>) => void;
+  eventBus?: EventBus<SketchEvent<Controls>>;
+}) => (p: P5CanvasInstance) => void;
 
 export type IPreset<Controls extends IControls = any> = {
   name?: string;
   params: IParams<Controls>;
   startTime?: number;
   randomSeed?: number;
+  timeDelta: number;
 };
 
 export interface ISketch<Controls extends IControls = IControls> {

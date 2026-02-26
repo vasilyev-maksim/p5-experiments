@@ -16,22 +16,24 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
   ({
     p,
     createMemo,
-    getTrackedProp,
-    getProp,
+    getTrackedParam,
+    getParam,
     createAnimatedValue,
     createAnimatedColors,
     getTime,
+    getCanvasSize,
   }) => {
-    const resolutionX = createMemo(
-      (w, h, r) => p.floor((w * r) / h),
-      [
-        getTrackedProp("canvasWidth"),
-        getTrackedProp("canvasHeight"),
-        getTrackedProp("RESOLUTION"),
+    const { trackedCanvasHeight, trackedCanvasWidth } = getCanvasSize();
+    const resolutionX = createMemo({
+      fn: (w, h, r) => p.floor((w * r) / h),
+      deps: [
+        trackedCanvasWidth,
+        trackedCanvasHeight,
+        getTrackedParam("RESOLUTION"),
       ],
-    );
-    const worms = createMemo(
-      (resY, resX, len, dirIsRandom, [r, d]) => {
+    });
+    const worms = createMemo({
+      fn: (resY, resX, len, dirIsRandom, [r, d]) => {
         const left = 1 - r,
           right = r,
           up = 1 - d,
@@ -80,31 +82,35 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
 
         return arr;
       },
-      [
-        getTrackedProp("RESOLUTION"),
-        resolutionX,
-        getTrackedProp("LENGTH"),
-        getTrackedProp("DIRECTION_RANDOMNESS"),
-        getTrackedProp("DIRECTION"),
+      deps: [
+        getTrackedParam("RESOLUTION"),
+        resolutionX.getTrackedValue(),
+        getTrackedParam("LENGTH"),
+        getTrackedParam("DIRECTION_RANDOMNESS"),
+        getTrackedParam("DIRECTION"),
       ],
-    );
-    const thickness = createAnimatedValue(ANIMATION_SPEED, (t) => t, [
-      getTrackedProp("THICKNESS"),
-    ]);
-    const innerThickness = createAnimatedValue(
-      ANIMATION_SPEED,
-      (inner, outer) => inner * outer,
-      [getTrackedProp("INNER_THICKNESS"), getTrackedProp("THICKNESS")],
-    );
-    const colorsAnimated = createAnimatedColors(
-      ANIMATION_SPEED,
-      [getTrackedProp("COLOR"), getTrackedProp("INVERT_COLORS")],
-      (x, inverted) => [
+    });
+    const thickness = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (x) => x,
+      deps: [getTrackedParam("THICKNESS")],
+      id: "thickness",
+    });
+    const innerThickness = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (inner, outer) => inner * outer,
+      deps: [getTrackedParam("INNER_THICKNESS"), getTrackedParam("THICKNESS")],
+      id: "innerThickness",
+    });
+    const colorsAnimated = createAnimatedColors({
+      animationDuration: ANIMATION_SPEED,
+      deps: [getTrackedParam("COLOR"), getTrackedParam("INVERT_COLORS")],
+      colorProvider: (x, inverted) => [
         controls.COLOR.colors[x][inverted ? 1 : 0],
         controls.COLOR.colors[x][inverted ? 0 : 1],
       ],
       p,
-    );
+    });
 
     return {
       setup: () => {
@@ -115,12 +121,15 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         return () => {
           p.background("black");
 
-          const W = resolutionX.value;
-          const H = getProp("RESOLUTION");
+          const W = resolutionX.getValue();
+          const H = getParam("RESOLUTION");
+          const animationType = getParam("ANIMATION_TYPE");
+          const thicknessValue = thickness.getValue();
+          const innerThicknessValue = innerThickness.getValue();
+          const wormsArr = worms.getValue();
           // const MAX_WORM_LENGTH = getProp("WORM_LENGTH");
-          const [colorA, colorB] = colorsAnimated.value!;
+          const [colorA, colorB] = colorsAnimated.getValue();
           const time = getTime();
-          const animationType = getProp("ANIMATION_TYPE");
           const [start, end] =
             animationType === 1
               ? [0, 1]
@@ -139,6 +148,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
               return flatSin(p, GROW_OFFSET / 2, 0, SHRINK_OFFSET)(x);
             }
           };
+          const { canvasHeight, canvasWidth } = getCanvasSize();
 
           const animationProgress = oscillateBetween({
             p,
@@ -150,31 +160,30 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           });
           const progress = animationType === 0 ? 0 : animationProgress;
 
-          p.scale(
-            getProp("canvasWidth") / (W + 1),
-            getProp("canvasHeight") / (H + 1),
-          );
+          p.scale(canvasWidth / (W + 1), canvasHeight / (H + 1));
 
           p.strokeJoin(
-            ["miter", "round", "bevel"][getProp("CORNERS_TYPE")] as STROKE_JOIN,
+            ["miter", "round", "bevel"][
+              getParam("CORNERS_TYPE")
+            ] as STROKE_JOIN,
           );
 
           const longestWormLength = Math.max(
-            ...worms.value.map((x) => x.body.length),
+            ...wormsArr.map((x) => x.body.length),
           );
-          worms.value.forEach((worm) => {
+          wormsArr.forEach((worm) => {
             const endColorAmt = worm.tail.length / longestWormLength;
             const colorAmt = endColorAmt * (1 - p.abs(progress));
 
             // outer stroke
             p.stroke(p.lerpColor(colorA, colorB, colorAmt));
-            p.strokeWeight(thickness.value!);
+            p.strokeWeight(thicknessValue);
             worm.draw(p, progress);
 
             // inner stroke
-            if (innerThickness.value! > 0) {
+            if (innerThicknessValue > 0) {
               p.stroke("black");
-              p.strokeWeight(innerThickness.value!);
+              p.strokeWeight(innerThicknessValue);
               worm.draw(p, progress);
             }
           });

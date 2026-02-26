@@ -8,22 +8,24 @@ const BG_COLOR = "black";
 
 export const factory = createSketch<Controls>(
   ({
-    getProp,
+    getParam,
     getTime,
-    getTrackedProp,
-    p,
+    getTrackedParam,
+    getCanvasSize,
     createAnimatedValue,
     createMemo,
+    p,
   }) => {
-    const gapAnimated = createAnimatedValue(
-      ANIMATION_SPEED,
-      (x, canvasWidth) => (x * canvasWidth) / 1158,
-      [getTrackedProp("GAP"), getTrackedProp("canvasWidth")],
-    );
-    const strokeWidth = createMemo(
-      (canvasWidth) => (2 * canvasWidth) / 1158,
-      [getTrackedProp("canvasWidth")],
-    );
+    const { trackedCanvasWidth } = getCanvasSize();
+    const gapAnimated = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      fn: (x, canvasWidth) => (x * canvasWidth) / 1158,
+      deps: [getTrackedParam("GAP"), trackedCanvasWidth],
+    });
+    const strokeWidth = createMemo({
+      fn: (canvasWidth) => (2 * canvasWidth) / 1158,
+      deps: [trackedCanvasWidth],
+    });
 
     return {
       onPresetChange: () => {
@@ -37,22 +39,22 @@ export const factory = createSketch<Controls>(
         p.background(BG_COLOR);
       },
       draw: () => () => {
-        const CHAOS_FACTOR = getProp("CHAOS_FACTOR"),
-          CURVE_RESOLUTION = getProp("CURVE_RESOLUTION"),
-          DISPERSION = getProp("DISPERSION"),
+        const CHAOS_FACTOR = getParam("CHAOS_FACTOR"),
+          CURVE_RESOLUTION = getParam("CURVE_RESOLUTION"),
+          DISPERSION = getParam("DISPERSION"),
           time = getTime(),
-          TRACE_FACTOR = getProp("TRACE_FACTOR"),
-          CURVES_COUNT = getProp("CURVES_COUNT"),
-          JOINT_TYPE = getProp("JOINT_TYPE");
+          TRACE_FACTOR = getParam("TRACE_FACTOR"),
+          CURVES_COUNT = getParam("CURVES_COUNT"),
+          JOINT_TYPE = getParam("JOINT_TYPE");
 
         const noiseDelta = p.map(CHAOS_FACTOR, 0, 100, 0.001, 0.05),
           opacity = p.map(TRACE_FACTOR, 0, 100, 100, 5),
           twinMidIndex = Math.round((CURVES_COUNT - 1) / 2),
-          color = p.color(controls.COLOR.colors[getProp("COLOR")][0]);
+          color = p.color(controls.COLOR.colors[getParam("COLOR")][0]);
 
         p.background(p.color(0, 0, 0, opacity));
         p.noFill();
-        p.strokeWeight(strokeWidth.value!);
+        p.strokeWeight(strokeWidth.getValue());
 
         const yCoords = range(CURVE_RESOLUTION + 2).map((i) =>
           p.map(
@@ -65,7 +67,7 @@ export const factory = createSketch<Controls>(
         );
 
         for (let t = -twinMidIndex; t <= twinMidIndex; t++) {
-          const yOffset = t * gapAnimated.value!;
+          const yOffset = t * gapAnimated.getValue();
           const alpha =
             t === 0 ? 255 : p.map(p.abs(t), 0, twinMidIndex + 1, 20, 0);
 

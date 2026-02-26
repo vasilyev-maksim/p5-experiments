@@ -16,7 +16,10 @@ export class Sequence {
       : null;
   }
 
-  public constructor(public readonly id: string, segments: SegmentBase[] = []) {
+  public constructor(
+    public readonly id: string,
+    segments: SegmentBase[] = [],
+  ) {
     if (segments) {
       this.addSegments(segments);
     }
@@ -40,9 +43,9 @@ export class Sequence {
           this._activeSegmentIndex++;
           const seg = this._segments[this._activeSegmentIndex];
 
-          this.onProgress.__invokeCallbacks(seg);
-          const cleanup = seg.onPhaseChange.addCallback(() =>
-            this.onProgress.__invokeCallbacks(seg)
+          this.onProgress.dispatch(seg);
+          const cleanup = seg.onPhaseChange.addListener(() =>
+            this.onProgress.dispatch(seg),
           );
 
           const disabled = seg.isDisabled(ctx); // TODO: should be accessible in components too (without knowing ctx)
@@ -71,7 +74,7 @@ export class Sequence {
         // cleanups
         () => {
           // this.reset();
-        }
+        },
       );
     }
   };
@@ -104,7 +107,7 @@ export class Sequence {
       args.id,
       args.delay,
       args.timingPayload,
-      args.disabledIf
+      args.disabledIf,
     );
   }
 }

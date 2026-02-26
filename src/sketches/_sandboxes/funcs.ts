@@ -57,10 +57,11 @@ const presets: IPreset<Controls>[] = [
       MIDDLE_OFFSET: 0.05,
       INNER_OFFSET: 0.1,
     },
+    timeDelta: 1,
   },
 ];
 
-export const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
+export const factory = createSketch<Controls>(({ p, getParam, getTime }) => {
   return {
     setup: () => {
       p.background("black");
@@ -83,17 +84,17 @@ export const factory = createSketch<Controls>(({ p, getProp, getTime }) => {
         p.rect(-1, -1, 2, 2);
 
         const time = getTime();
-        const res = getProp("RESOLUTION");
-        const speed = getProp("SPEED");
+        const res = getParam("RESOLUTION");
+        const speed = getParam("SPEED");
 
         // const fn = (x: number) => x ** 3;
         // const fn = (x: number) => p.sin(x * p.HALF_PI);
         // const fn = (x: number) => p.sin(p.PI * x);
         const fn = flatSin(
           p,
-          getProp("OUTER_OFFSET"),
-          getProp("MIDDLE_OFFSET"),
-          getProp("INNER_OFFSET"),
+          getParam("OUTER_OFFSET"),
+          getParam("MIDDLE_OFFSET"),
+          getParam("INNER_OFFSET"),
         );
 
         p.fill("red");

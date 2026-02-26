@@ -12,6 +12,7 @@ export const presets: IPreset<Controls>[] = [
       ROTATION_SPEED: 29,
       ZOOM: 1,
     },
+    timeDelta: 1,
     name: "heart",
     startTime: 85,
   },
@@ -25,6 +26,7 @@ export const presets: IPreset<Controls>[] = [
       ROTATION_SPEED: 30,
       ZOOM: 1,
     },
+    timeDelta: 1,
     name: "drill",
   },
   {
@@ -37,6 +39,7 @@ export const presets: IPreset<Controls>[] = [
       ROTATION_SPEED: 15,
       ZOOM: 1,
     },
+    timeDelta: 1,
     name: "cats",
   },
   {
@@ -49,6 +52,7 @@ export const presets: IPreset<Controls>[] = [
       ROTATION_SPEED: 12,
       ZOOM: 1,
     },
+    timeDelta: 1,
     name: "nuclear fusion",
   },
   {
@@ -61,6 +65,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 1,
       COLOR: 2,
     },
+    timeDelta: 1,
     name: "signal",
   },
   {
@@ -73,6 +78,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 26,
       COLOR: 1,
     },
+    timeDelta: 1,
     name: "nature",
     startTime: 900,
   },
@@ -86,6 +92,7 @@ export const presets: IPreset<Controls>[] = [
       ROTATION_SPEED: 4,
       ZOOM: 1,
     },
+    timeDelta: 1,
     name: "glare",
   },
   {
@@ -98,6 +105,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 40,
       COLOR: 6,
     },
+    timeDelta: 1,
     name: "turbulence",
     startTime: 325,
   },

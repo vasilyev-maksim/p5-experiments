@@ -7,17 +7,17 @@ import { SequenceContext } from "./SequenceContext";
 import type { SegmentBase } from "./SegmentBase";
 
 export function useSequence<Id extends string = string, Context = unknown>(
-  id: string
+  id: string,
 ) {
   const sequences = useContext(SequenceContext).sequences as Sequence[];
   const seq = useMemo(
     () => sequences.find((x) => x.id === id)!,
-    [sequences, id]
+    [sequences, id],
   ) as Sequence;
 
   const useListener = (cb: (segment: SegmentBase) => void) => {
     useEffect(() => {
-      return seq.onProgress.addCallback(cb);
+      return seq.onProgress.addListener(cb);
     }, [cb, seq]);
   };
 
@@ -25,7 +25,7 @@ export function useSequence<Id extends string = string, Context = unknown>(
     opts: { condition?: boolean; ctx?: Context } = {
       condition: true,
       ctx: undefined,
-    }
+    },
   ) => {
     useEffect(() => {
       if (opts.ctx ?? opts.condition ?? true) {
@@ -38,11 +38,11 @@ export function useSequence<Id extends string = string, Context = unknown>(
     const [, setPhase] = useState<SegmentPhase>();
     const segment = useMemo(
       () => seq.getSegmentById(segmentId)!,
-      [segmentId, seq]
+      [segmentId, seq],
     );
 
     useEffect(() => {
-      return segment.onPhaseChange.addCallback(setPhase);
+      return segment.onPhaseChange.addListener(setPhase);
     }, [segment]);
 
     return segment as P extends void ? SyncSegment : AsyncSegment<P>;

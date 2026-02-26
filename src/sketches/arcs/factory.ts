@@ -1,7 +1,7 @@
 import {
   SquareBorderPointsJoiner,
   type JointRenderCallback,
-} from "@/core/BorderPointsJoiner";
+} from "@/sketches/arcs/BorderPointsJoiner";
 import { createSketch } from "@/core/createSketch";
 import { oscillateBetween } from "@/core/utils";
 import p5 from "p5";
@@ -12,26 +12,26 @@ const ANIMATION_SPEED = 20;
 export const factory = createSketch<Controls>(
   ({
     getTime,
-    getProp,
+    getParam,
     createAnimatedValue,
-    getTrackedProp,
+    getTrackedParam,
     p,
     createAnimatedColors,
   }) => {
-    const paddingPercentAnimated = createAnimatedValue(
-      ANIMATION_SPEED,
-      (x) => x,
-      [getTrackedProp("PADDING_PERCENT")],
-    );
-    const colorsAnimated = createAnimatedColors(
-      ANIMATION_SPEED,
-      [getTrackedProp("COLOR"), getTrackedProp("INVERT_COLORS")],
-      (x, inverted) => [
+    const paddingPercentAnimated = createAnimatedValue({
+      animationDuration: ANIMATION_SPEED,
+      deps: [getTrackedParam("PADDING_PERCENT")],
+      fn: (x) => x,
+    });
+    const colorsAnimated = createAnimatedColors({
+      animationDuration: ANIMATION_SPEED,
+      deps: [getTrackedParam("COLOR"), getTrackedParam("INVERT_COLORS")],
+      colorProvider: (x, inverted) => [
         controls.COLOR.colors[x][inverted ? 1 : 0],
         controls.COLOR.colors[x][inverted ? 0 : 1],
       ],
       p,
-    );
+    });
 
     return {
       setup: () => {
@@ -83,13 +83,13 @@ export const factory = createSketch<Controls>(
 
         return () => {
           p.background("black");
-          const PADDING_PERCENT = paddingPercentAnimated.value!,
-            RESOLUTION = getProp("RESOLUTION"),
-            CURVATURE_TYPE = getProp("CURVATURE_TYPE"),
-            MAX_NEGATIVE_CURVATURE = getProp("MAX_NEGATIVE_CURVATURE"),
-            MAX_CURVATURE = getProp("MAX_CURVATURE"),
-            [colorA, colorB] = colorsAnimated.value!,
-            PATTERN_TYPE = getProp("PATTERN_TYPE"),
+          const PADDING_PERCENT = paddingPercentAnimated.getValue(),
+            RESOLUTION = getParam("RESOLUTION"),
+            CURVATURE_TYPE = getParam("CURVATURE_TYPE"),
+            MAX_NEGATIVE_CURVATURE = getParam("MAX_NEGATIVE_CURVATURE"),
+            MAX_CURVATURE = getParam("MAX_CURVATURE"),
+            [colorA, colorB] = colorsAnimated.getValue(),
+            PATTERN_TYPE = getParam("PATTERN_TYPE"),
             time = getTime();
 
           const SIZE = Math.min(p.width, p.height),

@@ -7,7 +7,7 @@ export class SegmentBase {
 
   public __setPhase(phase: SegmentPhase) {
     this.__phase = phase;
-    this.onPhaseChange.__invokeCallbacks(phase);
+    this.onPhaseChange.dispatch(phase);
   }
 
   public get isRunning() {
@@ -25,11 +25,11 @@ export class SegmentBase {
   public constructor(
     public readonly id: string,
     public readonly delay: number = 0,
-    private readonly __disabledIf?: (ctx: unknown) => boolean
+    private readonly __disabledIf?: (ctx: unknown) => boolean,
   ) {
     if (this.delay < 0) {
       throw new Error(
-        `delay should be non-negative ("${this.delay}" provided)`
+        `delay should be non-negative ("${this.delay}" provided)`,
       );
     }
   }

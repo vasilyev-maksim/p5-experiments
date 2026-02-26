@@ -12,28 +12,32 @@ export const factory = createSketch<Controls>(
     createAnimatedColors,
     createAnimatedValue,
     createMemo,
-    getProp,
+    getParam,
     getTime,
-    getTrackedProp,
+    getTrackedParam,
+    getCanvasSize,
     p,
   }) => {
-    const animatedRadius = createAnimatedValue(
-        ANIMATION_SPEED,
-        (canvasHeight, zoom) => ((zoom * canvasHeight) / 811) * 9, // 1158 10
-        [getTrackedProp("canvasHeight"), getTrackedProp("ZOOM")],
-      ),
-      gap = createMemo(
-        (x) => p.map(x, controls.GAP.min, controls.GAP.max, 0.1, 3),
-        [getTrackedProp("GAP")],
-      ),
-      coilSpeed = createMemo((x) => x, [getTrackedProp("COIL_SPEED")]),
-      coilFactor = createMemo(
-        (x) =>
+    const animatedRadius = createAnimatedValue({
+        animationDuration: ANIMATION_SPEED,
+        fn: (canvasHeight, zoom) => ((zoom * canvasHeight) / 811) * 9, // 1158 10
+        deps: [getCanvasSize().trackedCanvasHeight, getTrackedParam("ZOOM")],
+      }),
+      gap = createMemo({
+        fn: (x) => p.map(x, controls.GAP.min, controls.GAP.max, 0.1, 3),
+        deps: [getTrackedParam("GAP")],
+      }),
+      coilSpeed = createMemo({
+        fn: (x) => x,
+        deps: [getTrackedParam("COIL_SPEED")],
+      }),
+      coilFactor = createMemo({
+        fn: (x) =>
           p.map(x, controls.COIL_FACTOR.min, controls.COIL_FACTOR.max, 0, 400),
-        [getTrackedProp("COIL_FACTOR")],
-      ),
-      rotationSpeed = createMemo(
-        (x) =>
+        deps: [getTrackedParam("COIL_FACTOR")],
+      }),
+      rotationSpeed = createMemo({
+        fn: (x) =>
           p.map(
             x,
             controls.ROTATION_SPEED.min,
@@ -41,14 +45,14 @@ export const factory = createSketch<Controls>(
             0,
             10,
           ),
-        [getTrackedProp("ROTATION_SPEED")],
-      ),
-      colorsAnimated = createAnimatedColors(
-        COLOR_ANIMATION_SPEED,
-        [getTrackedProp("COLOR")],
-        (x) => controls.COLOR.colors[x],
+        deps: [getTrackedParam("ROTATION_SPEED")],
+      }),
+      colorsAnimated = createAnimatedColors({
+        animationDuration: COLOR_ANIMATION_SPEED,
+        deps: [getTrackedParam("COLOR")],
+        colorProvider: (x) => controls.COLOR.colors[x],
         p,
-      );
+      });
 
     return {
       setup: () => {
@@ -56,14 +60,14 @@ export const factory = createSketch<Controls>(
         p.angleMode("degrees");
       },
       draw: () => () => {
-        const [colorB, colorA] = colorsAnimated.value;
-        const canvasWidth = getProp("canvasWidth"),
-          canvasHeight = getProp("canvasHeight"),
-          resolution = getProp("RESOLUTION"),
-          radius = animatedRadius.value!,
+        const [colorB, colorA] = colorsAnimated.getValue();
+        const { canvasHeight: canvasHeight, canvasWidth: canvasWidth } =
+            getCanvasSize(),
+          resolution = getParam("RESOLUTION"),
+          radius = animatedRadius.getValue(),
           CENTER_VEC = p.createVector(canvasWidth / 2, canvasHeight / 2);
         const time = getTime();
-        const baseAngle = (time * rotationSpeed.value!) % 360;
+        const baseAngle = (time * rotationSpeed.getValue()) % 360;
 
         p.background(colorB);
 
@@ -74,7 +78,7 @@ export const factory = createSketch<Controls>(
             p.createVector(0, 1),
             p.createVector(0, -1),
           ][i % 2];
-          const rotationShiftDelta = radius * gap.value! * i;
+          const rotationShiftDelta = radius * gap.getValue() * i;
           const rotationCenter = p5.Vector.add(
             CENTER_VEC,
             p.createVector(
@@ -86,13 +90,13 @@ export const factory = createSketch<Controls>(
           const fillColor = p.lerpColor(colorA, colorB, i / resolution);
 
           const delta =
-            -coilFactor.value! *
+            -coilFactor.getValue() *
             (i + 1) *
             oscillateBetween({
               p,
               start: 0,
               end: 1,
-              timeMultiplier: coilSpeed.value!,
+              timeMultiplier: coilSpeed.getValue(),
               time,
             }); // change last param to 3 for more chaos
           const angle = (baseAngle + delta) * (i % 2 == 1 ? 1 : -1);

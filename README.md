@@ -1,15 +1,17 @@
-# 👨‍💻 IN PROGRESS
+# 👨‍💻 IN PROGRESS§
 
 - [medium] Add `randomSeed` to presets
 
 # 📋 TODO
 
-- pass props as event payload in contrast with direct props of `ReactP5Wrapper`
-  - do the same for time shifts, pauses, rewinds etc.
+- more explicit keyboard usage hints in UI
+  - use order number (0-9) of associated control shortcut
+  - use "qwerty..." for 11-20
+- recursive `worms` sourcing (place new worm not randomly, and walk not randomly too)
+- undo/redo mechanism (event sourcing for params and timeDelta)
 
 - [hard] city sketch
 - [hard] optimize `SketchModal` (too many rerenders of controls)
-- [hard] rethink `AnimatedValue.forceToEnd` usage when exporting sketch as image
 - [hard] presets for `worms`
 - [hard] think how to use `p.createGraphics` buffer
   - for export
@@ -27,7 +29,6 @@
   - pillars
   - curve
 - [medium] add "collapse side panel" capabilities
-- [medium] refactor timeShift/timeDelta mess in `SketchModal`
 - [medium] make play controls animation more user friendly
   - hide it by timer after mouse leave
   - keep it visible if pause is on pause
@@ -35,6 +36,7 @@
 - [medium] make preview sizes in percentages
 - [medium] selected preset id in url
 
+- [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] redesign `Export preset` and `Randomize` buttons
 - [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`
@@ -42,7 +44,6 @@
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes
   - rename to `useSize` [?]
-- [easy] implement playback controls using sketch event [?]
 - [easy] make animations independent from canvas size [?]
   - tiles
 - [easy] draw fullscreen icon by myself (renders differently on windows)
@@ -51,7 +52,7 @@
 
 # 💡 NICE TO HAVE
 
-- returning `TrackedValue` from `getProp()` call makes sense only in `p.updateWithProps`, so pass `getTrackedValue` fn as arg to `updateWithProps` factory method
+- try to use web workers for async calculation of memos in parallel thread
 - move left side bar to the right [?]
 - mobile version [?], at least info message inviting to desktop version
 - perf opt: use cache for init data (like precomputed partitions array in TILES)
@@ -60,6 +61,11 @@
 
 # ✅ DONE
 
+- [hard] pass props as event payload in contrast with direct props of `ReactP5Wrapper`
+  - do the same for time shifts, pauses, rewinds etc.
+- [easy] implement playback controls using sketch event [?]
+- [medium] refactor timeShift/timeDelta mess in `SketchModal`
+- [hard] rethink `AnimatedValue.forceToEnd` usage when exporting sketch as image
 - add onScreenResize callback to factory (for pulse bg = black on resize)
 - refactor: use `drawGrid` in `cubes` sketch
 - rename `playing` => `mode` (`static` | `animated`), `paused` => `playing`
@@ -111,3 +117,4 @@
 - add diff to `TrackedValue`
 - добавить в метод draw аргумент playing (иногда надо по разному реагировать)
 - add callback to `TrackedValue.ArrayUtils.someHasChanged` signature as 2nd arg
+- returning `TrackedValue` from `getProp()` call makes sense only in `p.updateWithProps`, so pass `getTrackedValue` fn as arg to `updateWithProps` factory method
