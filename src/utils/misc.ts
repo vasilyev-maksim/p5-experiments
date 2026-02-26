@@ -4,6 +4,7 @@ import {
   type IControl,
   type IControls,
   type IParams,
+  type IPreset,
 } from "../models";
 
 function serializeParams(params: IParams): string {
@@ -99,10 +100,16 @@ export async function copyToClipboard(text: string) {
   }
 }
 
-export function copyPresetCodeToClipboard(params: IParams) {
+export function copyPresetCodeToClipboard(params: IParams, timeDelta: number) {
   const name = prompt("Preset name:")?.trim();
-  const code =
-    JSON.stringify({ params, ...(name ? { name } : {}) }, null, 4) + ",";
+  const preset: IPreset = {
+    params,
+    ...(name ? { name } : {}),
+    timeDelta,
+    randomSeed: undefined,
+    startTime: undefined,
+  };
+  const code = JSON.stringify(preset, null, 4) + ",";
   return copyToClipboard(code);
 }
 
@@ -123,4 +130,3 @@ export function chunkArray<T>(arr: T[], chunkLength: number): T[][] {
 
   return res;
 }
-

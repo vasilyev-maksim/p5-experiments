@@ -128,6 +128,7 @@ export const SketchModal = ({
       preset,
     });
     setParams(preset.params);
+    setTimeDelta(preset.timeDelta);
   };
 
   const playPause = () => {
@@ -312,7 +313,9 @@ export const SketchModal = ({
                       className={styles.BottomActionsBlock}
                     >
                       <Button
-                        onClick={() => copyPresetCodeToClipboard(params)}
+                        onClick={() =>
+                          copyPresetCodeToClipboard(params, timeDelta)
+                        }
                         label={"Export preset"}
                       />
                       &nbsp;
