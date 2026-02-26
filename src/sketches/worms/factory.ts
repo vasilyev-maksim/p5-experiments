@@ -9,7 +9,7 @@ import p5, { type STROKE_JOIN } from "p5";
 import { mapDirection } from "../utils";
 
 const ANIMATION_SPEED = 25;
-const SHRINK_OFFSET = 0.3;
+const SHRINK_OFFSET = 0.25;
 const GROW_OFFSET = 0.1;
 
 export const factory: ISketchFactory<Controls> = createSketch<Controls>(
@@ -154,7 +154,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
             p,
             start,
             end,
-            timeMultiplier: 0.02,
+            timeMultiplier: 0.01,
             time,
             timeFunc: (x) => -sin(x),
           });

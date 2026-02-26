@@ -57,6 +57,7 @@ export const controls = {
     colors: [
       ["red", "red"],
       ["red", "rgb(74, 0, 0)"],
+      ["white", "white"],
       ["#0000ffff", "#ea72f7ff"],
       ["#fcff39ff", "#c04affff"],
       ["#18005fff", "#5aff4aff"],
