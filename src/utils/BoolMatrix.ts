@@ -1,6 +1,6 @@
 import p5 from "p5";
-import { Size } from "./Size";
-import { range } from "../../utils/misc";
+import { Size } from "../sketches/tiles/Size";
+import { range } from "./misc";
 
 export interface IMatrix {
   get(cell: p5.Vector): boolean;
@@ -8,16 +8,16 @@ export interface IMatrix {
   getRandomTrue(): p5.Vector;
 }
 
-// 1-based matrix (not 0-based as usual arrays)
-export class Matrix implements IMatrix {
+// 1-based matrix (not 0-based as traditional arrays)
+export class BoolMatrix implements IMatrix {
   private matrix: boolean[][];
 
   constructor(
     public readonly sizes: Size,
-    public readonly randomProvider: () => number
+    public readonly randomProvider: () => number,
   ) {
     this.matrix = range(this.sizes.height).map(() =>
-      Array(this.sizes.width).fill(true)
+      Array(this.sizes.width).fill(true),
     );
   }
 

@@ -4,14 +4,32 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
-      RESOLUTION: 35,
+      RESOLUTION: 50,
+      PATTERN_TYPE: 3,
       DIRECTION: [0.56, 0.51],
       LENGTH: 9,
       THICKNESS: 0.4,
       CORNERS_TYPE: 1,
       COLOR: 1,
       INVERT_COLORS: true,
-      ANIMATION_TYPE: 1,
+      ANIMATION_TYPE: 3,
+      DIRECTION_RANDOMNESS: true,
+      INNER_THICKNESS: 0.25,
+    },
+    timeDelta: 1,
+    startTime: 103,
+  },
+  {
+    params: {
+      RESOLUTION: 50,
+      PATTERN_TYPE: 1,
+      DIRECTION: [0.56, 0.51],
+      LENGTH: 10,
+      THICKNESS: 0.4,
+      CORNERS_TYPE: 1,
+      COLOR: 1,
+      INVERT_COLORS: true,
+      ANIMATION_TYPE: 3,
       DIRECTION_RANDOMNESS: true,
       INNER_THICKNESS: 0.25,
     },
@@ -20,12 +38,29 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      RESOLUTION: 40,
+      PATTERN_TYPE: 1,
+      DIRECTION: [0.56, 0.51],
+      LENGTH: 10,
+      THICKNESS: 0.7500000000000001,
+      CORNERS_TYPE: 0,
+      COLOR: 3,
+      INVERT_COLORS: false,
+      ANIMATION_TYPE: 3,
+      DIRECTION_RANDOMNESS: true,
+      INNER_THICKNESS: 0,
+    },
+    timeDelta: 1.1,
+  },
+  {
+    params: {
       RESOLUTION: 50,
+      PATTERN_TYPE: 0,
       DIRECTION: [0.49137931034482757, 0.5538793103448276],
       LENGTH: 1,
       THICKNESS: 0.8999999999999999,
       CORNERS_TYPE: 0,
-      ANIMATION_TYPE: 1,
+      ANIMATION_TYPE: 3,
       DIRECTION_RANDOMNESS: true,
       COLOR: 2,
       INVERT_COLORS: true,
@@ -37,6 +72,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 50,
+      PATTERN_TYPE: 0,
       DIRECTION: [0.42, 0.17],
       LENGTH: 70,
       THICKNESS: 0.6000000000000001,
@@ -52,6 +88,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 50,
+      PATTERN_TYPE: 0,
       DIRECTION: [0.49137931034482757, 0.5538793103448276],
       LENGTH: 4,
       THICKNESS: 0.6999999999999997,
@@ -67,6 +104,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 36,
+      PATTERN_TYPE: 0,
       DIRECTION: [0.56, 0.51],
       LENGTH: 9,
       THICKNESS: 0.4,
@@ -83,6 +121,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 40,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 30,
       THICKNESS: 0.3,
@@ -99,6 +138,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 35,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 100,
       THICKNESS: 0.85,
@@ -115,6 +155,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 35,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 100,
       THICKNESS: 0.75,
@@ -131,6 +172,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 35,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 3,
       THICKNESS: 0.55,
@@ -147,6 +189,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 48,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 47,
       THICKNESS: 0.1,
@@ -163,6 +206,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 23,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 86,
       THICKNESS: 0.25,
@@ -179,6 +223,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 40,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 100,
       THICKNESS: 0.3,
@@ -195,6 +240,7 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 50,
+      PATTERN_TYPE: 0,
       DIRECTION: [1, 1],
       LENGTH: 85,
       THICKNESS: 0.25,

@@ -1,93 +1,99 @@
 import p5 from "p5";
-import { getLocalProgress } from "../utils";
+import {
+  getAbsVecFromRelDir,
+  getRandomRelDirOrder,
+  type RelDir,
+  rotate,
+} from "../utils";
+import type { BoolMatrix } from "@/utils/BoolMatrix";
+
+export type WormParams = {
+  head: p5.Vector;
+  length?: number;
+  availablePositionsDict: BoolMatrix;
+  headDir: RelDir;
+};
 
 export class Worm {
   public readonly tail: p5.Vector[] = [];
-  public constructor(
-    public head: p5.Vector,
-    private readonly length: number,
-    private readonly sensorCb: (pos: p5.Vector, worm: Worm) => number,
-    private readonly commitCb: (pos: p5.Vector) => void,
-  ) {
-    this.commitCb(this.head);
+  public head;
+  public headDir;
+  public readonly length?;
+  public readonly availablePositionsDict;
+  public finished = false;
+
+  public constructor({
+    head,
+    length,
+    headDir,
+    availablePositionsDict,
+  }: WormParams) {
+    this.head = new p5.Vector(head.x, head.y);
+    this.length = length;
+    this.headDir = headDir;
+    this.availablePositionsDict = availablePositionsDict;
+
+    this.availablePositionsDict.set(this.head, false);
   }
 
   public get body() {
     return [this.head, ...this.tail];
   }
 
-  public get tailEnd() {
-    return this.tail[this.tail.length - 1];
+  private inspectDir(dir: RelDir) {
+    const nextHeadDir = rotate(dir, this.headDir);
+    const dirVec = getAbsVecFromRelDir(nextHeadDir);
+    const nextHead = p5.Vector.add(this.head, dirVec);
+    return {
+      available: this.availablePositionsDict.get(nextHead),
+      nextHeadDir,
+      nextHead,
+      dir,
+    };
   }
 
-  public pushTail(arr: p5.Vector[]): this {
-    this.tail.push(...arr);
-    return this;
-  }
-
-  public grow(): this {
-    while (this.growOneStep()) {
-      // noop
-    }
-    return this;
-  }
-
-  public growOneStep(): boolean {
-    if (this.tail.length >= this.length) {
+  public grow(dir: RelDir) {
+    if (this.length !== undefined && this.tail.length >= this.length) {
       return false;
     }
 
-    const next = [
-      new p5.Vector(1, 0),
-      new p5.Vector(0, 1),
-      new p5.Vector(-1, 0),
-      new p5.Vector(0, -1),
-    ]
-      .map((direction) => {
-        const nextHead = p5.Vector.add(this.head, direction);
-        return {
-          head: nextHead,
-          weight: this.sensorCb(nextHead, this),
-        };
-      })
-      .filter((x) => x.weight > 0)
-      .sort((a, b) => b.weight - a.weight)
-      .map((x) => x.head)[0];
+    const { available, nextHeadDir, nextHead } = this.inspectDir(dir);
 
-    if (next) {
+    if (available) {
       this.tail.unshift(this.head);
-      this.head = next;
-      this.commitCb(this.head);
+      this.head = nextHead;
+      this.headDir = nextHeadDir;
+      this.availablePositionsDict.set(nextHead, false);
+
+      if (this.length !== undefined && this.tail.length === this.length) {
+        this.finished = true;
+      }
+
       return true;
-    } else {
-      return false;
+    }
+
+    return false;
+  }
+
+  public growOrFinish(dir: RelDir) {
+    if (!this.grow(dir)) {
+      this.finished = true;
     }
   }
 
-public draw(p: p5, progress: number): void {
-    p.beginShape();
-    {
-      const body = progress >= 0 ? this.body : [...this.body].reverse();
-      const absProgress = 1 - p.abs(progress);
+  public growX(dir: RelDir, times: number) {
+    for (let i = 0; i < times && this.grow(dir); i++);
+  }
 
-      p.vertex(body[0].x, body[0].y);
+  public growRandom(randomProvider: () => number = Math.random) {
+    const randomDir = getRandomRelDirOrder(randomProvider)
+      .map((x) => this.inspectDir(x))
+      .filter((x) => x.available)[0];
 
-      body.forEach((curr, i, arr) => {
-        const localProgress =
-          i === 0
-            ? 1
-            : getLocalProgress(absProgress, this.body.length - 1, i - 1);
-
-        if (localProgress === 0) {
-          return;
-        }
-
-        const prev = i === 0 ? arr[0] : arr[i - 1];
-        const int = p5.Vector.lerp(prev, curr, localProgress);
-
-        p.vertex(int.x, int.y);
-      });
+    if (randomDir) {
+      this.grow(randomDir.dir);
+    } else {
+      this.finished = true;
     }
-    p.endShape();
   }
 }

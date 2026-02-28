@@ -130,3 +130,22 @@ export function chunkArray<T>(arr: T[], chunkLength: number): T[][] {
 
   return res;
 }
+
+export function shuffle(
+  arr: number[],
+  randomProvider: () => number = Math.random,
+): number[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(randomProvider() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export function getRandomShuffle(
+  len: number,
+  randomProvider: () => number = Math.random,
+) {
+  return shuffle(range(len), randomProvider);
+}

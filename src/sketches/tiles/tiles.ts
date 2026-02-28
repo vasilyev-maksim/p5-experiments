@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Grid } from "./Grid";
 import { Size } from "./Size";
-import { Matrix } from "./Matrix";
+import { BoolMatrix } from "../../utils/BoolMatrix";
 import { Turtle } from "./Turtle";
 import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
@@ -32,7 +32,7 @@ export const factory: ISketchFactory<any> =
         gridSizeInCells: GRID_SIZE,
         color: "#CCC",
       }),
-      matrix = new Matrix(GRID_SIZE, () => p.random()),
+      matrix = new BoolMatrix(GRID_SIZE, () => p.random()),
       rectsToDraw: IRectangle[] = [],
       animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
 

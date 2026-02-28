@@ -1,4 +1,5 @@
-import type p5 from "p5";
+import { getRandomShuffle } from "@/utils/misc";
+import p5 from "p5";
 
 export function orbit(
   p: p5,
@@ -37,10 +38,29 @@ export function getLocalProgress(
   return Math.sign(totalProgress) * res;
 }
 
-export function mapDirection<T>(
-  dir: p5.Vector,
-  map: { [k in "up" | "down" | "left" | "right"]: T },
-): T {
+export type RelDir = "up" | "right" | "down" | "left";
+
+export const REL_DIRS_CLOCKWISE: RelDir[] = [
+  "up",
+  "right",
+  "down",
+  "left",
+] as const;
+
+export function getRandomRelDir(randomProvider: () => number = Math.random) {
+  const randomIndex = Math.floor(randomProvider() * REL_DIRS_CLOCKWISE.length);
+  return REL_DIRS_CLOCKWISE[randomIndex];
+}
+
+export function getRandomRelDirOrder(
+  randomProvider: () => number = Math.random,
+) {
+  return getRandomShuffle(REL_DIRS_CLOCKWISE.length, randomProvider).map(
+    (i) => REL_DIRS_CLOCKWISE[i],
+  );
+}
+
+export function mapRelDir<T>(dir: p5.Vector, map: { [k in RelDir]: T }): T {
   if (dir.x === 1 && dir.y === 0) {
     return map["right"];
   } else if (dir.x === -1 && dir.y === 0) {
@@ -52,6 +72,30 @@ export function mapDirection<T>(
   } else {
     throw new Error(`Invalid direction: (${dir.x}, ${dir.y})`);
   }
+}
+
+export function getAbsVecFromRelDir(dir: RelDir) {
+  return {
+    up: new p5.Vector(0, -1),
+    down: new p5.Vector(0, 1),
+    right: new p5.Vector(1, 0),
+    left: new p5.Vector(-1, 0),
+  }[dir];
+}
+
+export function rotate(rotationDir: RelDir, targetDir: RelDir): RelDir {
+  const delta = REL_DIRS_CLOCKWISE.indexOf(targetDir);
+  const dirIndex = REL_DIRS_CLOCKWISE.indexOf(rotationDir);
+  return REL_DIRS_CLOCKWISE[(dirIndex + delta) % 4];
+}
+
+export function getClockwiseDirections() {
+  return [
+    new p5.Vector(0, 1),
+    new p5.Vector(1, 0),
+    new p5.Vector(0, -1),
+    new p5.Vector(-1, 0),
+  ];
 }
 
 export function drawGrid(

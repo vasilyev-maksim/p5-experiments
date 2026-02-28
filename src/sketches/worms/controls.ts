@@ -1,16 +1,13 @@
 import type { IControls } from "@/models";
+import { patternNames } from "./patterns";
 
 export type Controls = typeof controls;
 
 export const controls = {
-  DIRECTION: {
-    type: "coordinates",
-    label: "Direction",
-  },
-  DIRECTION_RANDOMNESS: {
-    type: "boolean",
-    label: "Directional randomness",
-    options: ["Off", "On"],
+  PATTERN_TYPE: {
+    type: "choice",
+    options: patternNames,
+    label: "Pattern type",
   },
   RESOLUTION: {
     type: "range",
@@ -52,11 +49,21 @@ export const controls = {
     label: "Animation type",
     options: ["Static", "Forward", "Backward", "Both"],
   },
+  DIRECTION: {
+    type: "coordinates",
+    label: "Direction",
+  },
+  DIRECTION_RANDOMNESS: {
+    type: "boolean",
+    label: "Directional randomness",
+    options: ["Off", "On"],
+  },
   COLOR: {
     type: "color",
     colors: [
       ["red", "red"],
       ["red", "rgb(74, 0, 0)"],
+      // ["red", "rgb(0, 0, 0)"],
       ["white", "white"],
       ["#0000ffff", "#ea72f7ff"],
       ["#fcff39ff", "#c04affff"],

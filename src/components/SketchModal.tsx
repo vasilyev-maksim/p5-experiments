@@ -97,7 +97,7 @@ export const SketchModal = ({
   const [params, setParams] = useState(defaultPreset.params);
   /** time delta is a speed of animation set by user */
   const [timeDelta, setTimeDelta] = useState(
-    (defaultPreset.params.timeDelta as number) ?? 1,
+    (defaultPreset.timeDelta as number) ?? 1,
   );
   const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
 

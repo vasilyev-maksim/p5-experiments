@@ -14,6 +14,6 @@ export const sketch: ISketch<Controls> = {
   controls,
   presets,
   type: "draft",
-  startTime: 233,
+  startTime: 0,
   // presetsShuffle: 1,
 };
