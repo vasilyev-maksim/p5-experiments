@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IPreset, ISketch, SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
@@ -54,7 +53,7 @@ export const SketchModal = ({
   const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS").wasRun;
   const playbackControlsEnabled = useSegment("START_PLAYING").completed;
 
-  const onProgress = useCallback((seg: SegmentBase) => {
+  const onAnimationProgress = useCallback((seg: SegmentBase) => {
     if (
       seg.id === "TILE_GOES_MODAL" &&
       seg.isRunning &&
@@ -87,7 +86,7 @@ export const SketchModal = ({
     }
   }, []);
 
-  useListener(onProgress);
+  useListener(onAnimationProgress);
 
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   // TODO: put `paused` state inside `PlaybackControls`
@@ -113,6 +112,7 @@ export const SketchModal = ({
     setTimeDelta(timeDelta);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const changeParam = (paramName: string, paramValue: any) => {
     sendEvent({
       type: "paramChange",
@@ -200,8 +200,6 @@ export const SketchModal = ({
     });
     setParams(randomParams);
   };
-
-  const makeTest = () => {};
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
@@ -320,8 +318,6 @@ export const SketchModal = ({
                       />
                       &nbsp;
                       <Button onClick={randomizeParams} label={"Randomize"} />
-                      &nbsp;
-                      <Button onClick={makeTest} label={"Test"} />
                     </div>
                   )}
                 </animated.div>
