@@ -108,7 +108,7 @@ export interface ISketch<Controls extends IControls = IControls> {
   presetsShuffle?: FeatureState;
   presetsShuffleInterval?: number;
   startTime?: number;
-  type: "released" | "draft" | "hidden";
+  type: "released" | "draft" | "hidden" | "only";
 }
 
 export type SketchCanvasSize = "tile" | "modal" | "fullscreen";

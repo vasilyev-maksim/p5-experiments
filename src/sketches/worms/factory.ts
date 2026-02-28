@@ -34,7 +34,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
       ],
     });
     const worms = createMemo({
-      fn: (resY, resX, len, dirIsRandom, [r, d], patternType) => {
+      fn: (resY, resX, len, patternType) => {
         // const left = 1 - r,
         //   right = r,
         //   up = 1 - d,
@@ -69,9 +69,9 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         getTrackedParam("RESOLUTION"),
         resolutionX.getTrackedValue(),
         getTrackedParam("LENGTH"),
-        getTrackedParam("DIRECTION_RANDOMNESS"),
-        getTrackedParam("DIRECTION"),
         getTrackedParam("PATTERN_TYPE"),
+        // getTrackedParam("DIRECTION_RANDOMNESS"),
+        // getTrackedParam("DIRECTION"),
       ],
     });
     const thickness = createAnimatedValue({

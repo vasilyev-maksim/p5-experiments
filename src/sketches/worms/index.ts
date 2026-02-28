@@ -13,7 +13,7 @@ export const sketch: ISketch<Controls> = {
   randomSeed: 40,
   controls,
   presets,
-  type: "draft",
+  type: "only",
   startTime: 0,
   // presetsShuffle: 1,
 };
