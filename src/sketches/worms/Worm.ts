@@ -21,7 +21,7 @@ export class Worm {
   public readonly length?;
   public readonly availablePositionsDict;
   public finished = false;
-
+  
   public constructor({
     head,
     length,

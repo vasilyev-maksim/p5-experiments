@@ -40,8 +40,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         //   up = 1 - d,
         //   down = d;
         const randomProvider = () => p.random();
-        const height = resY;
-        const matrix = new BoolMatrix(new Size(resX, height), () => p.random());
+        const matrix = new BoolMatrix(new Size(resX, resY), () => p.random());
 
         if (len === 0) {
           return Array.from({ length: resY * resX }, (_, i) => {
@@ -60,6 +59,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           p,
           matrix,
           resY,
+          resX,
           len,
           randomProvider,
         };
@@ -146,6 +146,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           const progress = animationType === 0 ? 0 : animationProgress;
 
           p.scale(canvasWidth / (W + 1), canvasHeight / (H + 1));
+          p.translate(1, 1);
 
           p.strokeJoin(
             ["miter", "round", "bevel"][
@@ -157,7 +158,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
             ...wormsArr.map((x) => x.body.length),
           );
           wormsArr.forEach((worm) => {
-            const endColorAmt = worm.tail.length / longestWormLength;
+            const endColorAmt = worm.body.length / longestWormLength;
             const colorAmt = endColorAmt * (1 - p.abs(progress));
 
             // outer stroke
@@ -172,13 +173,15 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
               drawWorm(p, progress, worm);
             }
           });
+
+          // drawGrid(p, W, H);
         };
       },
     };
   },
 );
 
-function drawWorm(p: p5, progress: number, worm: Worm): void {
+function drawWorm(p: p5, progress: number, worm: Pick<Worm, "body">): void {
   p.beginShape();
   {
     const body = progress >= 0 ? worm.body : [...worm.body].reverse();
@@ -200,7 +203,25 @@ function drawWorm(p: p5, progress: number, worm: Worm): void {
       const int = p5.Vector.lerp(prev, curr, localProgress);
 
       p.vertex(int.x, int.y);
+      // p.circle(int.x, int.y, 0.01);
     });
   }
   p.endShape();
 }
+
+// function drawGrid(p: p5, resX: number, resY: number) {
+//   p.push();
+//   {
+//     p.stroke("white");
+//     p.strokeWeight(0.01);
+//     for (let x = 0; x < resX; x++) {
+//       p.line(x, 0, x, resY - 1);
+//     }
+//     for (let y = 0; y < resY; y++) {
+//       p.line(0, y, resX - 1, y);
+//     }
+//     p.strokeWeight(0.1);
+//     p.circle((resX - 1) / 2, (resY - 1) / 2, 0.5);
+//   }
+//   p.pop();
+// }

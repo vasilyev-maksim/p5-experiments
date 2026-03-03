@@ -1,21 +1,12 @@
-import type { BoolMatrix } from "@/utils/BoolMatrix";
 import { Worm } from "../Worm";
-import type p5 from "p5";
+import type { PatternArgs } from ".";
 
-export function arcsPattern({
-  matrix,
-  resY,
-  p,
-}: {
-  matrix: BoolMatrix;
-  resY: number;
-  p: p5;
-}): Worm[] {
+export function arcsPattern({ matrix, resY, p }: PatternArgs): Worm[] {
   const worms: Worm[] = [];
-  for (let i = 1; i <= resY / 2; i++) {
+  for (let i = 0; i < resY / 2; i++) {
     const worm = new Worm({
       headDir: "right",
-      head: p.createVector(1, i % 2 === 1 ? i : resY - i + 1),
+      head: p.createVector(0, i % 2 === 1 ? i : resY - i - 1),
       availablePositionsDict: matrix,
     });
     while (worm.grow("up"));

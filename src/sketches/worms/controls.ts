@@ -66,7 +66,7 @@ export const controls = {
       // ["red", "rgb(0, 0, 0)"],
       ["white", "white"],
       ["#0000ffff", "#ea72f7ff"],
-      ["#fcff39ff", "#c04affff"],
+      ["rgb(253, 255, 121)", "#c04affff"],
       ["#18005fff", "#5aff4aff"],
       ["#ffffffff", "rgb(37, 37, 37)"],
     ],

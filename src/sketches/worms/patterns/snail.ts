@@ -1,15 +1,11 @@
-import type { BoolMatrix } from "@/utils/BoolMatrix";
 import { Worm } from "../Worm";
+import type { PatternArgs } from ".";
 
 export function snailPattern({
   matrix,
   len,
   randomProvider,
-}: {
-  matrix: BoolMatrix;
-  len: number;
-  randomProvider: () => number;
-}): Worm[] {
+}: PatternArgs): Worm[] {
   const worms: Worm[] = [];
   let randomOrigin;
   do {

@@ -1,4 +1,11 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
 import { ViewportContext } from "./components/ViewportContext";
 import type { ISketch } from "./models";
@@ -238,6 +245,24 @@ export function useThrottleWithTrailing<T extends (...args: any[]) => any>(
       }
     }) as T;
   }, [delay]);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useDebouncedFn<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number,
+): T {
+  const timer = useRef<ReturnType<typeof setTimeout>>(null);
+
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (timer.current != null) {
+        clearTimeout(timer.current);
+      }
+      timer.current = setTimeout(() => fn(...args), delay);
+    },
+    [fn, delay],
+  ) as T;
 }
 
 export function useLongPress(

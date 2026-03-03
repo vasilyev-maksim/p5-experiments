@@ -4,15 +4,31 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
+      RESOLUTION: 30,
+      PATTERN_TYPE: 1,
+      DIRECTION: [1, 1],
+      LENGTH: 30,
+      THICKNESS: 0.3,
+      CORNERS_TYPE: 1,
+      COLOR: 1,
+      INVERT_COLORS: true,
+      ANIMATION_TYPE: 1,
+      DIRECTION_RANDOMNESS: false,
+      INNER_THICKNESS: 0,
+    },
+    timeDelta: 1,
+  },
+  {
+    params: {
       RESOLUTION: 50,
-      PATTERN_TYPE: 3,
+      PATTERN_TYPE: 4,
       DIRECTION: [0.56, 0.51],
       LENGTH: 9,
       THICKNESS: 0.4,
       CORNERS_TYPE: 1,
       COLOR: 1,
       INVERT_COLORS: true,
-      ANIMATION_TYPE: 3,
+      ANIMATION_TYPE: 0,
       DIRECTION_RANDOMNESS: true,
       INNER_THICKNESS: 0.25,
     },
