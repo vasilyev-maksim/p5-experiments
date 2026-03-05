@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Grid } from "./Grid";
 import { Size } from "./Size";
-import { BoolMatrix } from "../../utils/BoolMatrix";
+import { OccupancyGrid } from "../../utils/OccupancyGrid";
 import { Turtle } from "./Turtle";
 import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
@@ -32,7 +32,7 @@ export const factory: ISketchFactory<any> =
         gridSizeInCells: GRID_SIZE,
         color: "#CCC",
       }),
-      matrix = new BoolMatrix(GRID_SIZE, () => p.random()),
+      matrix = new OccupancyGrid(GRID_SIZE, () => p.random()),
       rectsToDraw: IRectangle[] = [],
       animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
 
@@ -56,21 +56,21 @@ export const factory: ISketchFactory<any> =
     };
 
     const spawnTurtle = () => {
-      const randomOrigin = matrix.getRandomTrue();
+      const randomOrigin = matrix.getRandomFreeCell();
       if (!randomOrigin) {
         return false;
       }
 
       const turtle = new Turtle(randomOrigin, {
         isForwardPossible: (cell) => {
-          return matrix.get(cell);
+          return matrix.isOccupied(cell);
         },
         onCommit: (rect) => {
           if (!rect) {
             return;
           }
           rect.getPointsRange().forEach((p) => {
-            matrix.set(p, false);
+            matrix.occupy(p, false);
           });
 
           if (rect.getArea() > 0) {

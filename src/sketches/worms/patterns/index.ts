@@ -1,4 +1,4 @@
-import type { BoolMatrix } from "@/utils/BoolMatrix";
+import type { OccupancyGrid } from "@/utils/OccupancyGrid";
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import { randomPattern } from "./random";
 import { snailPattern } from "./snail";
@@ -11,11 +11,17 @@ import { testPattern } from "./test";
 
 export type PatternArgs = {
   p: P5CanvasInstance;
-  matrix: BoolMatrix;
+  matrix: OccupancyGrid;
   resX: number;
   resY: number;
   len: number;
   randomProvider: () => number;
+  weights: {
+    left: number;
+    right: number;
+    up: number;
+    down: number;
+  };
 };
 
 export const patterns = [
@@ -52,5 +58,5 @@ export const patterns = [
     pattern: testPattern,
   },
 ] as const;
-// ["random", "spiral", "angle", "3"]
+
 export const patternNames = patterns.map((x) => x.name);

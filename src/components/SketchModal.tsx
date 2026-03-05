@@ -341,6 +341,7 @@ export const SketchModal = ({
                 startTime={defaultPreset.startTime ?? sketch.startTime ?? 0}
                 timeDelta={timeDelta}
                 eventBus={eventBus.current}
+                randomSeed={defaultPreset.randomSeed ?? sketch.randomSeed}
               />
             </div>
             <animated.div

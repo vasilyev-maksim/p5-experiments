@@ -60,20 +60,6 @@ export function getRandomRelDirOrder(
   );
 }
 
-export function mapRelDir<T>(dir: p5.Vector, map: { [k in RelDir]: T }): T {
-  if (dir.x === 1 && dir.y === 0) {
-    return map["right"];
-  } else if (dir.x === -1 && dir.y === 0) {
-    return map["left"];
-  } else if (dir.x === 0 && dir.y === -1) {
-    return map["up"];
-  } else if (dir.x === 0 && dir.y === 1) {
-    return map["down"];
-  } else {
-    throw new Error(`Invalid direction: (${dir.x}, ${dir.y})`);
-  }
-}
-
 export function getAbsVecFromRelDir(dir: RelDir) {
   return {
     up: new p5.Vector(0, -1),

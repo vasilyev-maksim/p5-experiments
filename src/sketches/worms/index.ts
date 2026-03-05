@@ -10,10 +10,10 @@ export const sketch: ISketch<Controls> = {
   preview: {
     size: 434,
   },
-  randomSeed: 40,
   controls,
   presets,
   type: "only",
   startTime: 0,
+  // randomSeed: 40,
   // presetsShuffle: 1,
 };

@@ -8,26 +8,26 @@ export function randomPattern({
 }: PatternArgs): Worm[] {
   const worms: Worm[] = [];
   let randomOrigin;
-  do {
-    randomOrigin = matrix.getRandomTrue();
+  // do {
+  //   randomOrigin = matrix.getRandomTrue();
 
-    if (!randomOrigin) {
-      break;
-    }
+  //   if (!randomOrigin) {
+  //     break;
+  //   }
 
-    const worm = new Worm({
-      headDir: "up",
-      head: randomOrigin,
-      availablePositionsDict: matrix,
-      length: len,
-    });
+  //   const worm = new Worm({
+  //     headDir: "up",
+  //     head: randomOrigin,
+  //     availablePositionsDict: matrix,
+  //     length: len,
+  //   });
 
-    while (!worm.finished) {
-      worm.growRandom(randomProvider);
-    }
+  //   while (!worm.finished) {
+  //     worm.goRandom(randomProvider);
+  //   }
 
-    worms.push(worm);
-  } while (randomOrigin);
+  //   worms.push(worm);
+  // } while (randomOrigin);
 
   return worms;
 }

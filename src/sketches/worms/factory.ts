@@ -1,7 +1,7 @@
 import { createSketch } from "@/core/createSketch";
 import { oscillateBetween, flatSin } from "@/core/utils";
 import type { ISketchFactory } from "@/models";
-import { BoolMatrix } from "../../utils/BoolMatrix";
+import { OccupancyGrid } from "../../utils/OccupancyGrid";
 import { Size } from "../tiles/Size";
 import { controls, type Controls } from "./controls";
 import { Worm } from "./Worm";
@@ -24,6 +24,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
     getTime,
     getCanvasSize,
   }) => {
+    // let i = 0;
     const { trackedCanvasHeight, trackedCanvasWidth } = getCanvasSize();
     const resolutionX = createMemo({
       fn: (w, h, r) => p.round((w * r) / h),
@@ -34,22 +35,20 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
       ],
     });
     const worms = createMemo({
-      fn: (resY, resX, len, patternType) => {
-        // const left = 1 - r,
-        //   right = r,
-        //   up = 1 - d,
-        //   down = d;
+      fn: (resY, resX, len, patternType, _, [r, d]) => {
+        const left = 1 - r,
+          right = r,
+          up = 1 - d,
+          down = d;
         const randomProvider = () => p.random();
-        const matrix = new BoolMatrix(new Size(resX, resY), () => p.random());
+        const matrix = new OccupancyGrid(new Size(resX, resY), randomProvider);
 
         if (len === 0) {
           return Array.from({ length: resY * resX }, (_, i) => {
-            const pos = p.createVector((i % resX) + 1, p.floor(i / resX) + 1);
+            const pos = p.createVector(i % resX, p.floor(i / resX));
             return new Worm({
               head: pos,
-              availablePositionsDict: matrix,
               headDir: "up",
-              length: 10,
             });
           });
         }
@@ -62,6 +61,12 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           resX,
           len,
           randomProvider,
+          weights: {
+            left,
+            right,
+            up,
+            down,
+          },
         };
         return pattern(patternArgs);
       },
@@ -70,8 +75,8 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         resolutionX.getTrackedValue(),
         getTrackedParam("LENGTH"),
         getTrackedParam("PATTERN_TYPE"),
-        // getTrackedParam("DIRECTION_RANDOMNESS"),
-        // getTrackedParam("DIRECTION"),
+        getTrackedParam("DIRECTION_RANDOMNESS"),
+        getTrackedParam("DIRECTION"),
       ],
     });
     const thickness = createAnimatedValue({
@@ -100,19 +105,34 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
       setup: () => {
         p.background("black");
         p.noFill();
+
+        // p.mouseClicked = () => {
+        //   i++;
+        // };
       },
       draw: () => {
         return () => {
-          p.background("black");
-
           const W = resolutionX.getValue();
           const H = getParam("RESOLUTION");
+          const { canvasHeight, canvasWidth } = getCanvasSize();
+
+          p.background("black");
+          p.scale(canvasWidth / (W + 1), canvasHeight / (H + 1));
+          p.translate(1, 1);
+
+          // drawGrid(p, W, H);
+
+          p.strokeJoin(
+            ["miter", "round", "bevel"][
+              getParam("CORNERS_TYPE")
+            ] as STROKE_JOIN,
+          );
+
           const animationType = getParam("ANIMATION_TYPE");
           const thicknessValue = thickness.getValue();
           const innerThicknessValue = innerThickness.getValue();
           // const wormsArr = worms.getValue().slice(0, 2);
           const wormsArr = worms.getValue();
-          // const MAX_WORM_LENGTH = getProp("WORM_LENGTH");
           const [colorA, colorB] = colorsAnimated.getValue();
           const time = getTime();
           const [start, end] =
@@ -133,7 +153,6 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
               return flatSin(p, GROW_OFFSET, 0, SHRINK_OFFSET)(x);
             }
           };
-          const { canvasHeight, canvasWidth } = getCanvasSize();
 
           const animationProgress = oscillateBetween({
             p,
@@ -144,19 +163,10 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
             timeFunc: (x) => (animationType === 2 ? -1 : 1) * sin(x),
           });
           const progress = animationType === 0 ? 0 : animationProgress;
-
-          p.scale(canvasWidth / (W + 1), canvasHeight / (H + 1));
-          p.translate(1, 1);
-
-          p.strokeJoin(
-            ["miter", "round", "bevel"][
-              getParam("CORNERS_TYPE")
-            ] as STROKE_JOIN,
-          );
-
           const longestWormLength = Math.max(
             ...wormsArr.map((x) => x.body.length),
           );
+
           wormsArr.forEach((worm) => {
             const endColorAmt = worm.body.length / longestWormLength;
             const colorAmt = endColorAmt * (1 - p.abs(progress));
@@ -173,8 +183,6 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
               drawWorm(p, progress, worm);
             }
           });
-
-          // drawGrid(p, W, H);
         };
       },
     };
@@ -185,21 +193,20 @@ function drawWorm(p: p5, progress: number, worm: Pick<Worm, "body">): void {
   p.beginShape();
   {
     const body = progress >= 0 ? worm.body : [...worm.body].reverse();
+    const head = body[0];
     const absProgress = 1 - p.abs(progress);
 
-    p.vertex(body[0].x, body[0].y);
+    p.vertex(head.x, head.y);
 
-    body.forEach((curr, i, arr) => {
+    body.forEach((curr, i) => {
       const localProgress =
-        i === 0
-          ? 1
-          : getLocalProgress(absProgress, worm.body.length - 1, i - 1);
+        i === 0 ? 1 : getLocalProgress(absProgress, body.length - 1, i - 1);
 
       if (localProgress === 0) {
         return;
       }
 
-      const prev = i === 0 ? arr[0] : arr[i - 1];
+      const prev = i === 0 ? body[0] : body[i - 1];
       const int = p5.Vector.lerp(prev, curr, localProgress);
 
       p.vertex(int.x, int.y);
@@ -209,19 +216,19 @@ function drawWorm(p: p5, progress: number, worm: Pick<Worm, "body">): void {
   p.endShape();
 }
 
-// function drawGrid(p: p5, resX: number, resY: number) {
-//   p.push();
-//   {
-//     p.stroke("white");
-//     p.strokeWeight(0.01);
-//     for (let x = 0; x < resX; x++) {
-//       p.line(x, 0, x, resY - 1);
-//     }
-//     for (let y = 0; y < resY; y++) {
-//       p.line(0, y, resX - 1, y);
-//     }
-//     p.strokeWeight(0.1);
-//     p.circle((resX - 1) / 2, (resY - 1) / 2, 0.5);
-//   }
-//   p.pop();
-// }
+function drawGrid(p: p5, resX: number, resY: number) {
+  p.push();
+  {
+    p.stroke("white");
+    p.strokeWeight(0.01);
+    for (let x = 0; x < resX; x++) {
+      p.line(x, 0, x, resY - 1);
+    }
+    for (let y = 0; y < resY; y++) {
+      p.line(0, y, resX - 1, y);
+    }
+    p.strokeWeight(0.1);
+    p.circle((resX - 1) / 2, (resY - 1) / 2, 0.5);
+  }
+  p.pop();
+}

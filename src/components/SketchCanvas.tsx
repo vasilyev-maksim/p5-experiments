@@ -25,6 +25,7 @@ export const SketchCanvas = forwardRef<
     initParams: IParams;
     timeDelta?: ISketchInitData["timeDelta"];
     startTime?: ISketchInitData["startTime"];
+    randomSeed?: ISketchInitData["randomSeed"];
     eventBus?: EventBus<SketchEvent>;
     id: string;
   }
@@ -48,7 +49,7 @@ export const SketchCanvas = forwardRef<
         timeDelta: props.timeDelta ?? 0,
         canvasWidth: canvasWidth,
         canvasHeight: canvasHeight,
-        randomSeed: props.sketch.randomSeed,
+        randomSeed: props.randomSeed,
       },
       id: `${props.sketch.id}_${props.id}`,
       eventBus: props.eventBus,

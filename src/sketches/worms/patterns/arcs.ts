@@ -9,11 +9,11 @@ export function arcsPattern({ matrix, resY, p }: PatternArgs): Worm[] {
       head: p.createVector(0, i % 2 === 1 ? i : resY - i - 1),
       availablePositionsDict: matrix,
     });
-    while (worm.grow("up"));
-    worm.grow(i % 2 === 1 ? "right" : "left");
-    while (worm.grow("up"));
-    worm.grow(i % 2 === 1 ? "right" : "left");
-    while (worm.grow("up"));
+    while (worm.go("up"));
+    worm.go(i % 2 === 1 ? "right" : "left");
+    while (worm.go("up"));
+    worm.go(i % 2 === 1 ? "right" : "left");
+    while (worm.go("up"));
 
     worms.push(worm);
   }

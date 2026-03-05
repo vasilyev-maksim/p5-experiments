@@ -6,7 +6,6 @@ export function framePattern({ resY, p, resX }: PatternArgs): Worm2[] {
   const worms: Worm2[] = [];
   for (let y = 0; y < resY; y++) {
     let worm: Worm2;
-    console.log(mid);
 
     let start = p.createVector(y < mid ? y : resY - y - 1, y);
     let end = p.createVector(y < mid ? resX - y - 1 : resX - resY + y, y);

@@ -130,10 +130,10 @@ export function chunkArray<T>(arr: T[], chunkLength: number): T[][] {
   return res;
 }
 
-export function shuffle(
-  arr: number[],
+export function shuffle<T>(
+  arr: T[],
   randomProvider: () => number = Math.random,
-): number[] {
+): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(randomProvider() * (i + 1));

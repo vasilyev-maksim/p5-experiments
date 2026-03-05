@@ -10,9 +10,9 @@ export function spotlightPattern({ matrix, resY, p }: PatternArgs): Worm[] {
       availablePositionsDict: matrix,
     });
 
-    while (worm.grow("up"));
-    worm.grow("right");
-    while (worm.grow("up"));
+    while (worm.go("up"));
+    worm.go("right");
+    while (worm.go("up"));
 
     worms.push(worm);
   }

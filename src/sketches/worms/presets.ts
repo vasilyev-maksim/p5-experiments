@@ -4,19 +4,20 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
-      RESOLUTION: 30,
-      PATTERN_TYPE: 1,
-      DIRECTION: [1, 1],
+      RESOLUTION: 50,
+      PATTERN_TYPE: 7,
+      DIRECTION: [0.3, 0],
       LENGTH: 30,
       THICKNESS: 0.3,
       CORNERS_TYPE: 1,
       COLOR: 1,
       INVERT_COLORS: true,
-      ANIMATION_TYPE: 1,
+      ANIMATION_TYPE: 0,
       DIRECTION_RANDOMNESS: false,
-      INNER_THICKNESS: 0,
+      INNER_THICKNESS: 0.25,
     },
     timeDelta: 1,
+    // randomSeed: 42,
   },
   {
     params: {
@@ -269,5 +270,21 @@ export const presets: IPreset<Controls>[] = [
     },
     timeDelta: 0.3,
     name: "nice3",
+  },
+  {
+    params: {
+      RESOLUTION: 27,
+      PATTERN_TYPE: 0,
+      DIRECTION: [0.49137931034482757, 0.5538793103448276],
+      LENGTH: 23,
+      THICKNESS: 0.9,
+      CORNERS_TYPE: 0,
+      ANIMATION_TYPE: 3,
+      DIRECTION_RANDOMNESS: true,
+      COLOR: 2,
+      INVERT_COLORS: true,
+      INNER_THICKNESS: 0.1,
+    },
+    timeDelta: 1,
   },
 ];

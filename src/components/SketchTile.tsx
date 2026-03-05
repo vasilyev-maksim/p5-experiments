@@ -64,6 +64,7 @@ export const SketchTile = forwardRef<
           size="tile"
           initParams={defaultPreset.params}
           startTime={defaultPreset.startTime ?? sketch.startTime}
+          randomSeed={defaultPreset.randomSeed ?? sketch.randomSeed}
         />
         <h2 className={styles.Title}>{sketch.name}</h2>
       </div>
