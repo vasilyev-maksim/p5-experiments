@@ -146,7 +146,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
 
           const sin = (x: number) => {
             if (animationType === 3) {
-              // should have twice bigger period to match forward animation "visual" speed,
+              // should have twice bigger period to match forward animation's "visual" speed,
               // that's why `x/2` and `SHRINK_OFFSET/2`
               return flatSin(p, 0, SHRINK_OFFSET / 2, 0)(x / 2);
             } else {

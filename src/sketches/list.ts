@@ -25,7 +25,7 @@ const all: ISketch<any>[] = [
   lightsSketch,
   interpolationSketch,
   citySketch,
-  tilesSketch,
+  // tilesSketch,
   sketch,
   wormsSketch,
 ];
