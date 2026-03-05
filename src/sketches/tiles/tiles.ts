@@ -70,7 +70,7 @@ export const factory: ISketchFactory<any> =
             return;
           }
           rect.getPointsRange().forEach((p) => {
-            matrix.occupy(p, false);
+            matrix.occupy(p);
           });
 
           if (rect.getArea() > 0) {
