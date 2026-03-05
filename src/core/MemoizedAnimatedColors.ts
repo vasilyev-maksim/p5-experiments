@@ -2,7 +2,7 @@
 import type p5 from "p5";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { AnimatedValue } from "./AnimatedValue";
-import type { TrackedArrayComparator, TrackedTuple } from "./models";
+import type { TimeProvider, TrackedArrayComparator, TrackedTuple } from "./models";
 import { chunkArray } from "@/utils/misc";
 
 export type p5Subset = Pick<p5, "red" | "green" | "blue" | "color">;
@@ -13,7 +13,7 @@ export type MemoizedAnimatedColorsParams<ArgsType extends any[]> = {
   colorProvider: (...args: ArgsType) => string[];
   p: p5Subset;
   timingFunction?: AnimatedValue["timingFunction"];
-  timeProvider: () => number;
+  timeProvider: TimeProvider;
   comparator?: TrackedArrayComparator<number>;
 };
 

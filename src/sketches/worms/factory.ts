@@ -61,7 +61,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           resX,
           len,
           randomProvider,
-          weights: {
+          dirWeights: {
             left,
             right,
             up,

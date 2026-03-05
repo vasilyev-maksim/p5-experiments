@@ -2,7 +2,7 @@
 import { AnimatedArray } from "./AnimatedArray";
 import type { AnimatedValue } from "./AnimatedValue";
 import { MemoizedValue } from "./MemoizedValue";
-import type { TrackedArrayComparator, TrackedTuple } from "./models";
+import type { TimeProvider, TrackedArrayComparator, TrackedTuple } from "./models";
 
 export type MemoizedAnimatedArrayParams<ArgsType extends any[]> = {
   animationDuration: number;
@@ -10,7 +10,7 @@ export type MemoizedAnimatedArrayParams<ArgsType extends any[]> = {
   fn: (...args: ArgsType) => number[];
   initialValueForItem?: number;
   timingFunction?: AnimatedValue["timingFunction"];
-  timeProvider: () => number;
+  timeProvider: TimeProvider;
   comparator?: TrackedArrayComparator<number>;
 };
 

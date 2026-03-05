@@ -21,3 +21,7 @@ export interface IValueProvider<T> {
 export interface ITrackedValueProvider<T> {
   getTrackedValue(): TrackedValue<T>;
 }
+
+export type RandomProvider = () => number;
+
+export type TimeProvider = () => number;

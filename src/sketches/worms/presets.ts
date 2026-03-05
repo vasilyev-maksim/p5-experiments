@@ -5,8 +5,8 @@ export const presets: IPreset<Controls>[] = [
   {
     params: {
       RESOLUTION: 50,
-      PATTERN_TYPE: 7,
-      DIRECTION: [0.3, 0],
+      PATTERN_TYPE: 0,
+      DIRECTION: [0.5, 0.5],
       LENGTH: 30,
       THICKNESS: 0.3,
       CORNERS_TYPE: 1,
@@ -17,7 +17,7 @@ export const presets: IPreset<Controls>[] = [
       INNER_THICKNESS: 0.25,
     },
     timeDelta: 1,
-    // randomSeed: 42,
+    randomSeed: 42,
   },
   {
     params: {

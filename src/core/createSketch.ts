@@ -26,7 +26,7 @@ import type { ExportRequestEvent, SketchEvent } from "./events";
 import type { EventBus } from "./EventBus";
 import { TrackedArray } from "./TrackedArray";
 import type p5 from "p5";
-import type { ITrackedValueProvider, IValueProvider } from "./models";
+import type { ITrackedValueProvider, IValueProvider, TimeProvider } from "./models";
 
 type TrackedParams<C extends IControls> = {
   [k in keyof IParams<C>]: TrackedValue<IParams<C>[k]>;
@@ -47,7 +47,7 @@ type Api<C extends IControls> = {
   getTrackedParam: <K extends ParamName<C>>(
     propName: K,
   ) => TrackedValue<IParams<C>[K]>;
-  getTime: () => number;
+  getTime: TimeProvider;
   getCanvasSize: () => {
     canvasWidth: number;
     canvasHeight: number;

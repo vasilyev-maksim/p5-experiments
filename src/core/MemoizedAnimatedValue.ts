@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatedValue } from "./AnimatedValue";
 import { MemoizedValue } from "./MemoizedValue";
-import type { TrackedTuple, TrackedValueComparator } from "./models";
+import type { TimeProvider, TrackedTuple, TrackedValueComparator } from "./models";
 
 export type MemoizedAnimatedValueParams<ArgsType extends any[]> = {
   animationDuration: number;
@@ -9,7 +9,7 @@ export type MemoizedAnimatedValueParams<ArgsType extends any[]> = {
   deps: TrackedTuple<ArgsType>;
   comparator?: TrackedValueComparator<number>;
   timingFunction?: AnimatedValue["timingFunction"];
-  timeProvider: () => number;
+  timeProvider: TimeProvider;
   id?: string;
 };
 

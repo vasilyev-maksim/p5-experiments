@@ -1,3 +1,4 @@
+import type { RandomProvider } from "@/core/models";
 import { getRandomShuffle } from "@/utils/misc";
 import p5 from "p5";
 
@@ -40,6 +41,13 @@ export function getLocalProgress(
 
 export type RelDir = "up" | "right" | "down" | "left";
 
+export type RelDirMap<T> = {
+  left: T;
+  right: T;
+  up: T;
+  down: T;
+};
+
 export const REL_DIRS_CLOCKWISE: RelDir[] = [
   "up",
   "right",
@@ -47,13 +55,13 @@ export const REL_DIRS_CLOCKWISE: RelDir[] = [
   "left",
 ] as const;
 
-export function getRandomRelDir(randomProvider: () => number = Math.random) {
+export function getRandomRelDir(randomProvider: RandomProvider = Math.random) {
   const randomIndex = Math.floor(randomProvider() * REL_DIRS_CLOCKWISE.length);
   return REL_DIRS_CLOCKWISE[randomIndex];
 }
 
 export function getRandomRelDirOrder(
-  randomProvider: () => number = Math.random,
+  randomProvider: RandomProvider = Math.random,
 ) {
   return getRandomShuffle(REL_DIRS_CLOCKWISE.length, randomProvider).map(
     (i) => REL_DIRS_CLOCKWISE[i],

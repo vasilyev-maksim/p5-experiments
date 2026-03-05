@@ -1,3 +1,4 @@
+import type { RandomProvider } from "@/core/models";
 import {
   type ControlValueType,
   type IControl,
@@ -130,9 +131,10 @@ export function chunkArray<T>(arr: T[], chunkLength: number): T[][] {
   return res;
 }
 
+// Fisher–Yates shuffle
 export function shuffle<T>(
   arr: T[],
-  randomProvider: () => number = Math.random,
+  randomProvider: RandomProvider = Math.random,
 ): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -144,7 +146,7 @@ export function shuffle<T>(
 
 export function getRandomShuffle(
   len: number,
-  randomProvider: () => number = Math.random,
+  randomProvider: RandomProvider = Math.random,
 ) {
   return shuffle(range(len), randomProvider);
 }

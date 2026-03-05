@@ -1,6 +1,7 @@
 import p5 from "p5";
 import { Size } from "../sketches/tiles/Size";
 import { range } from "./misc";
+import type { RandomProvider } from "@/core/models";
 
 export class OccupancyGrid {
   private matrix: boolean[][];
@@ -8,7 +9,7 @@ export class OccupancyGrid {
 
   constructor(
     public readonly sizes: Size,
-    public readonly randomProvider: () => number,
+    public readonly randomProvider: RandomProvider,
   ) {
     this.matrix = range(this.sizes.height).map(() =>
       Array(this.sizes.width).fill(false),

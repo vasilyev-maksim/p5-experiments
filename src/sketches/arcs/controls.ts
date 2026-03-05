@@ -36,7 +36,7 @@ export const controls = {
   },
   PATTERN_TYPE: {
     type: "choice",
-    options: ["1", "2", "3", "4", "5"],
+    options: ["#1", "#2", "#3", "#4", "#5"],
     label: "Pattern type",
   },
   CURVATURE_TYPE: {

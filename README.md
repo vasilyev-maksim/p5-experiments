@@ -1,6 +1,12 @@
 # 👨‍💻 IN PROGRESS§
 
-- [medium] Add `randomSeed` to presets
+- worms
+  - try mirror pattern
+  + rename patterns
+  + delete redundant patterns
+  - new pattern: attractor
+  - disable coords input for some patterns
+  - remove Worm2
 
 # 📋 TODO
 
@@ -61,6 +67,7 @@
 
 # ✅ DONE
 
+- [medium] Add `randomSeed` to presets
 - [hard] pass props as event payload in contrast with direct props of `ReactP5Wrapper`
   - do the same for time shifts, pauses, rewinds etc.
 - [easy] implement playback controls using sketch event [?]

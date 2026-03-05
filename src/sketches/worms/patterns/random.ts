@@ -1,33 +1,39 @@
 import { Worm } from "../Worm";
 import type { PatternArgs } from ".";
+import { WormNavigator } from "../WormNavigator";
+import type { RelDirMap } from "@/sketches/utils";
 
 export function randomPattern({
   matrix,
   len,
   randomProvider,
+  dirWeights,
 }: PatternArgs): Worm[] {
-  const worms: Worm[] = [];
-  let randomOrigin;
-  // do {
-  //   randomOrigin = matrix.getRandomTrue();
+  const worms = [];
+  const navigator = new WormNavigator(matrix, randomProvider);
+  let worm;
 
-  //   if (!randomOrigin) {
-  //     break;
-  //   }
+  while (true) {
+    worm = navigator.spawnWormRandomly();
 
-  //   const worm = new Worm({
-  //     headDir: "up",
-  //     head: randomOrigin,
-  //     availablePositionsDict: matrix,
-  //     length: len,
-  //   });
+    if (worm) {
+      worms.push(worm);
+    } else {
+      break;
+    }
 
-  //   while (!worm.finished) {
-  //     worm.goRandom(randomProvider);
-  //   }
+    while (worm.body.length < len) {
+      const randomWeights = Object.fromEntries(
+        Object.entries(dirWeights).map(([key, value]) => {
+          return [key, value * randomProvider()];
+        }),
+      ) as RelDirMap<number>;
 
-  //   worms.push(worm);
-  // } while (randomOrigin);
+      if (!navigator.tryGoUsingWeights(worm, randomWeights)) {
+        break;
+      }
+    }
+  }
 
   return worms;
 }
