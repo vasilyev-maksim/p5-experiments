@@ -3,12 +3,12 @@ import type { PatternArgs } from ".";
 import { WormNavigator } from "../WormNavigator";
 
 export function snailPattern({
-  matrix,
+  occupancyGrid,
   len,
   randomProvider,
 }: PatternArgs): Worm[] {
   const worms = [];
-  const navigator = new WormNavigator(matrix, randomProvider);
+  const navigator = new WormNavigator(occupancyGrid, randomProvider);
   let worm;
 
   while (true) {
@@ -20,18 +20,18 @@ export function snailPattern({
       break;
     }
 
-    if (!navigator.tryGoRandom(worm)) {
+    if (!navigator.goRandom(worm)) {
       continue;
     }
 
     let i = 1;
     while (true) {
       if (i % len === 0) {
-        if (!navigator.tryGoToDir(worm, "left")) {
+        if (!navigator.goToDir(worm, "left")) {
           break;
         }
-      } else if (!navigator.tryGoToDir(worm, "up")) {
-        if (!navigator.tryGoToDir(worm, "left")) {
+      } else if (!navigator.goToDir(worm, "up")) {
+        if (!navigator.goToDir(worm, "left")) {
           break;
         } else {
           i = 0;

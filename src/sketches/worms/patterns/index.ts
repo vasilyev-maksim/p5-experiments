@@ -1,39 +1,43 @@
 import type { OccupancyGrid } from "@/utils/OccupancyGrid";
 import type { P5CanvasInstance } from "@p5-wrapper/react";
-import { randomPattern } from "./random";
+import { randomDirectionalPattern } from "./randomDir";
 import { snailPattern } from "./snail";
 import { mirrorPattern } from "./mirror";
 import type { RandomProvider } from "@/core/models";
-import type { RelDirMap } from "@/sketches/utils";
-import { random2Pattern } from "./random2";
+import { directionalPattern } from "./dir";
+import { ringPattern } from "./ring";
 
 export type PatternArgs = {
   p: P5CanvasInstance;
-  matrix: OccupancyGrid;
+  occupancyGrid: OccupancyGrid;
   resX: number;
   resY: number;
   len: number;
   randomProvider: RandomProvider;
-  dirWeights: RelDirMap<number>;
 };
 
 export const patterns = [
-  {
-    name: "random",
-    pattern: randomPattern,
-  },
-  {
-    name: "random2",
-    pattern: random2Pattern,
-  },
-  {
-    name: "snail",
-    pattern: snailPattern,
-  },
-  {
-    name: "mirror",
-    pattern: mirrorPattern,
-  },
+  randomDirectionalPattern,
+  directionalPattern({
+    directionX: 0.44,
+    directionY: 0.11,
+  }),
+  snailPattern,
+  mirrorPattern,
+  ringPattern({
+    inverted: false,
+    innerRadius: 0.2,
+    outerRadius: 0.7,
+    attractorX: 0.5,
+    attractorY: 0.5,
+  }),
+  ringPattern({
+    inverted: true,
+    innerRadius: 0.3,
+    outerRadius: 0.7,
+    attractorX: 0.5,
+    attractorY: 0.5,
+  }),
 ] as const;
 
 export const patternNames = patterns.map((_, i) => "#" + (i + 1));

@@ -49,15 +49,6 @@ export const controls = {
     label: "Animation type",
     options: ["Static", "Forward", "Backward", "Both"],
   },
-  DIRECTION: {
-    type: "coordinates",
-    label: "Direction",
-  },
-  DIRECTION_RANDOMNESS: {
-    type: "boolean",
-    label: "Directional randomness",
-    options: ["Off", "On"],
-  },
   COLOR: {
     type: "color",
     colors: [

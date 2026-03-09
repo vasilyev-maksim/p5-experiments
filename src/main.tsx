@@ -13,6 +13,6 @@ createRoot(document.getElementById("root")!).render(
     <SequenceProvider sequences={sequences}>
       <App />
     </SequenceProvider>
-  </ViewportProvider>
+  </ViewportProvider>,
   // </StrictMode>
 );

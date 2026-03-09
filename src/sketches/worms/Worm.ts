@@ -1,9 +1,9 @@
 import p5 from "p5";
-import { getAbsVecFromRelDir, rotate, type RelDir } from "../utils";
+import { getAbsVecFromDir, rotate, type Dir } from "../utils";
 
 export type WormParams = {
   head: p5.Vector;
-  headDir: RelDir;
+  headDir: Dir;
   tail?: p5.Vector[];
 };
 
@@ -23,11 +23,11 @@ export class Worm {
   }
 
   public get nextHead() {
-    const absDir = getAbsVecFromRelDir(this.headDir);
+    const absDir = getAbsVecFromDir(this.headDir);
     return p5.Vector.add(this.head, absDir);
   }
 
-  public turn(dir: RelDir): this {
+  public turn(dir: Dir): this {
     this.headDir = rotate(dir, this.headDir);
     return this;
   }

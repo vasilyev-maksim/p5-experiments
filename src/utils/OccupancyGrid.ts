@@ -22,8 +22,10 @@ export class OccupancyGrid {
   }
 
   public occupy(cell: p5.Vector) {
-    this.matrix[cell.y][cell.x] = true;
-    this.freeCellsCount--;
+    if (this.matrix[cell.y]) {
+      this.matrix[cell.y][cell.x] = true;
+      this.freeCellsCount--;
+    }
   }
 
   public getRandomFreeCell(): p5.Vector | undefined {

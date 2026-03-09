@@ -4,7 +4,7 @@ export type JointRenderCallback = (
   start: p5.Vector,
   end: p5.Vector,
   index: number,
-  totalCount: number
+  totalCount: number,
 ) => void;
 
 export class SquareBorderPointsJoiner {
@@ -14,7 +14,7 @@ export class SquareBorderPointsJoiner {
     private readonly a: p5.Vector,
     private readonly b: p5.Vector,
     private readonly stepsX: number,
-    private readonly stepsY: number
+    private readonly stepsY: number,
   ) {
     this.initPoints();
   }
@@ -66,7 +66,7 @@ export class SquareBorderPointsJoiner {
   public renderJoints(
     startPointsInterval: [number, number],
     endPointsInterval: [number, number],
-    cb: JointRenderCallback
+    cb: JointRenderCallback,
   ) {
     const starts = this.cyclicSubset(...startPointsInterval);
     const ends = this.cyclicSubset(...endPointsInterval);
@@ -76,8 +76,8 @@ export class SquareBorderPointsJoiner {
         this.points[Math.floor(start)],
         this.points[Math.floor(ends[i])],
         i,
-        arr.length || 0
-      )
+        arr.length || 0,
+      ),
     );
   }
 

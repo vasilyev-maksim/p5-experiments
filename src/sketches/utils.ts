@@ -39,57 +39,61 @@ export function getLocalProgress(
   return Math.sign(totalProgress) * res;
 }
 
-export type RelDir = "up" | "right" | "down" | "left";
+export type Dir = "up" | "right" | "down" | "left";
 
-export type RelDirMap<T> = {
+export type DirMap<T> = {
   left: T;
   right: T;
   up: T;
   down: T;
 };
 
-export const REL_DIRS_CLOCKWISE: RelDir[] = [
-  "up",
-  "right",
-  "down",
-  "left",
-] as const;
+export const DIRS_CLOCKWISE: Dir[] = ["up", "right", "down", "left"] as const;
 
-export function getRandomRelDir(randomProvider: RandomProvider = Math.random) {
-  const randomIndex = Math.floor(randomProvider() * REL_DIRS_CLOCKWISE.length);
-  return REL_DIRS_CLOCKWISE[randomIndex];
+export function getRandomDir(randomProvider: RandomProvider = Math.random) {
+  const randomIndex = Math.floor(randomProvider() * DIRS_CLOCKWISE.length);
+  return DIRS_CLOCKWISE[randomIndex];
 }
 
-export function getRandomRelDirOrder(
+export function getRandomDirOrder(
   randomProvider: RandomProvider = Math.random,
 ) {
-  return getRandomShuffle(REL_DIRS_CLOCKWISE.length, randomProvider).map(
-    (i) => REL_DIRS_CLOCKWISE[i],
+  return getRandomShuffle(DIRS_CLOCKWISE.length, randomProvider).map(
+    (i) => DIRS_CLOCKWISE[i],
   );
 }
 
-export function getAbsVecFromRelDir(dir: RelDir) {
+export function getAbsVecFromDir(dir: Dir) {
   return {
-    up: new p5.Vector(0, -1),
-    down: new p5.Vector(0, 1),
-    right: new p5.Vector(1, 0),
-    left: new p5.Vector(-1, 0),
+    up: new p5.Vector(0, 1),
+    down: new p5.Vector(0, -1),
+    right: new p5.Vector(-1, 0),
+    left: new p5.Vector(1, 0),
   }[dir];
 }
 
-export function rotate(rotationDir: RelDir, targetDir: RelDir): RelDir {
-  const delta = REL_DIRS_CLOCKWISE.indexOf(targetDir);
-  const dirIndex = REL_DIRS_CLOCKWISE.indexOf(rotationDir);
-  return REL_DIRS_CLOCKWISE[(dirIndex + delta) % 4];
+export function getDirFromAbsVec(vec: p5.Vector): Dir {
+  vec = vec.copy().normalize();
+
+  if (vec.x === 0 && vec.y === 1) {
+    return "up";
+  } else if (vec.x === 0 && vec.y === -1) {
+    return "down";
+  } else if (vec.x === -1 && vec.y === 0) {
+    return "right";
+  } else if (vec.x === 1 && vec.y === 0) {
+    return "left";
+  } else {
+    throw new Error(
+      `invalid vector to extract direction from: (${vec.x}, ${vec.y})`,
+    );
+  }
 }
 
-export function getClockwiseDirections() {
-  return [
-    new p5.Vector(0, 1),
-    new p5.Vector(1, 0),
-    new p5.Vector(0, -1),
-    new p5.Vector(-1, 0),
-  ];
+export function rotate(rotationDir: Dir, targetDir: Dir): Dir {
+  const delta = DIRS_CLOCKWISE.indexOf(targetDir);
+  const dirIndex = DIRS_CLOCKWISE.indexOf(rotationDir);
+  return DIRS_CLOCKWISE[(dirIndex + delta) % 4];
 }
 
 export function drawGrid(
