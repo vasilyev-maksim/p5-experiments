@@ -1,3 +1,5 @@
+import type p5 from "p5";
+
 export interface ISize {
   width: number;
   height: number;
@@ -6,13 +8,20 @@ export interface ISize {
 }
 
 export class Size implements ISize {
-  constructor(public width: number, public height: number) {}
+  constructor(
+    public width: number,
+    public height: number,
+  ) {}
 
-  getArea(): number {
+  public getArea(): number {
     return this.width * this.height;
   }
 
-  getAspectRatio(): number {
+  public getAspectRatio(): number {
     return Math.max(this.width / this.height, this.height / this.width);
+  }
+
+  public static fromVector(v: p5.Vector): Size {
+    return new Size(v.x, v.y);
   }
 }

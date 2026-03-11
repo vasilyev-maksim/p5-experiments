@@ -1,8 +1,6 @@
 import { createSketch } from "@/core/createSketch";
 import { oscillateBetween, flatSin } from "@/core/utils";
 import type { ISketchFactory } from "@/models";
-import { OccupancyGrid } from "../../utils/OccupancyGrid";
-import { Size } from "../tiles/Size";
 import { controls, type Controls } from "./controls";
 import { Worm } from "./Worm";
 import p5, { type STROKE_JOIN } from "p5";
@@ -37,10 +35,6 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
     const worms = createMemo({
       fn: (resY, resX, len, patternType) => {
         const randomProvider = () => p.random();
-        const occupancyGrid = new OccupancyGrid(
-          new Size(resX, resY),
-          randomProvider,
-        );
 
         if (len === 0) {
           return Array.from({ length: resY * resX }, (_, i) => {
@@ -55,7 +49,6 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         const pattern = patterns[patternType];
         const patternArgs: PatternArgs = {
           p,
-          occupancyGrid,
           resY,
           resX,
           len,

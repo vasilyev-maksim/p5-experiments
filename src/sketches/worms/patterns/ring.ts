@@ -2,7 +2,8 @@ import { Worm } from "../Worm";
 import type { PatternArgs } from ".";
 import { WormNavigator } from "../WormNavigator";
 import p5 from "p5";
-import type { OccupancyGrid } from "@/utils/OccupancyGrid";
+import { OccupancyGrid } from "@/utils/OccupancyGrid";
+import { Size } from "@/sketches/tiles/Size";
 
 export const ringPattern =
   ({
@@ -18,7 +19,11 @@ export const ringPattern =
     attractorX: number;
     attractorY: number;
   }) =>
-  ({ occupancyGrid, len, randomProvider, resX, resY }: PatternArgs): Worm[] => {
+  ({ len, randomProvider, resX, resY }: PatternArgs): Worm[] => {
+    const occupancyGrid = new OccupancyGrid(
+      new Size(resX, resY),
+      randomProvider,
+    );
     const navigator = new WormNavigator(occupancyGrid, randomProvider);
     const attractor = new p5.Vector(
       Math.floor(resX * attractorX),

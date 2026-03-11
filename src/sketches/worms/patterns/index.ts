@@ -1,4 +1,3 @@
-import type { OccupancyGrid } from "@/utils/OccupancyGrid";
 import type { P5CanvasInstance } from "@p5-wrapper/react";
 import { randomDirectionalPattern } from "./randomDir";
 import { snailPattern } from "./snail";
@@ -9,7 +8,6 @@ import { ringPattern } from "./ring";
 
 export type PatternArgs = {
   p: P5CanvasInstance;
-  occupancyGrid: OccupancyGrid;
   resX: number;
   resY: number;
   len: number;

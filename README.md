@@ -2,19 +2,17 @@
 
 - worms
   - try mirror pattern
-  + rename patterns
-  + delete redundant patterns
-  - new pattern: attractor
-  - disable coords input for some patterns
-  - remove Worm2
+  * rename patterns
+  * delete redundant patterns
+  * new pattern: attractor
+  * disable coords input for some patterns
+  * remove Worm2
 
 # 📋 TODO
 
 - more explicit keyboard usage hints in UI
   - use order number (0-9) of associated control shortcut
   - use "qwerty..." for 11-20
-- recursive `worms` sourcing (place new worm not randomly, and walk not randomly too)
-- undo/redo mechanism (event sourcing for params and timeDelta)
 
 - [hard] city sketch
 - [hard] optimize `SketchModal` (too many rerenders of controls)
@@ -58,6 +56,7 @@
 
 # 💡 NICE TO HAVE
 
+- undo/redo mechanism (event sourcing for params and timeDelta)
 - try to use web workers for async calculation of memos in parallel thread
 - move left side bar to the right [?]
 - mobile version [?], at least info message inviting to desktop version
@@ -117,6 +116,7 @@
 
 # ❌ CANCELED
 
+- recursive `worms` sourcing (place new worm not randomly, and walk not randomly too)
 - rethink zigzags
 - next/prev animation modal (using keyboard arrows)
 - more advanced controls: transformers, l/r arrows

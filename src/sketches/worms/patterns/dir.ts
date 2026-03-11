@@ -2,10 +2,16 @@ import { Worm } from "../Worm";
 import type { PatternArgs } from ".";
 import { WormNavigator } from "../WormNavigator";
 import type { DirMap } from "@/sketches/utils";
+import { OccupancyGrid } from "@/utils/OccupancyGrid";
+import { Size } from "@/sketches/tiles/Size";
 
 export const directionalPattern =
   ({ directionX, directionY }: { directionX: number; directionY: number }) =>
-  ({ occupancyGrid, len, randomProvider }: PatternArgs): Worm[] => {
+  ({ resX, resY, len, randomProvider }: PatternArgs): Worm[] => {
+    const occupancyGrid = new OccupancyGrid(
+      new Size(resX, resY),
+      randomProvider,
+    );
     const worms = [];
     const navigator = new WormNavigator(occupancyGrid, randomProvider);
     let worm;
@@ -33,5 +39,3 @@ export const directionalPattern =
 
     return worms;
   };
-
-// [0.44, 0.11]
