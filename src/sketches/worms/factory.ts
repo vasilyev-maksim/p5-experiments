@@ -54,7 +54,8 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           len,
           randomProvider,
         };
-        return pattern(patternArgs);
+        const worms = pattern(patternArgs);
+        return worms;
       },
       deps: [
         getTrackedParam("RESOLUTION"),
@@ -147,12 +148,10 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
             timeFunc: (x) => (animationType === 2 ? -1 : 1) * sin(x),
           });
           const progress = animationType === 0 ? 0 : animationProgress;
-          const longestWormLength = Math.max(
-            ...wormsArr.map((x) => x.body.length),
-          );
+          const longestWormLength = Math.max(...wormsArr.map((x) => x.length));
 
           wormsArr.forEach((worm) => {
-            const endColorAmt = worm.body.length / longestWormLength;
+            const endColorAmt = worm.length / longestWormLength;
             const colorAmt = endColorAmt * (1 - p.abs(progress));
 
             // outer stroke

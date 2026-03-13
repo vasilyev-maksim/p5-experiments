@@ -4,17 +4,18 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
-      PATTERN_TYPE: 3,
-      RESOLUTION: 22,
-      LENGTH: 78,
-      THICKNESS: 0.05,
+      PATTERN_TYPE: 1,
+      RESOLUTION: 50,
+      LENGTH: 25,
+      THICKNESS: 0.4,
       INNER_THICKNESS: 0,
       CORNERS_TYPE: 1,
-      ANIMATION_TYPE: 2,
+      ANIMATION_TYPE: 1 ,
       COLOR: 1,
       INVERT_COLORS: false,
     },
     timeDelta: 1,
+    randomSeed: 7,
   },
   {
     params: {

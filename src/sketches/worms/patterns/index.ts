@@ -5,6 +5,7 @@ import { mirrorPattern } from "./mirror";
 import type { RandomProvider } from "@/core/models";
 import { directionalPattern } from "./dir";
 import { ringPattern } from "./ring";
+import { testPattern } from "./test";
 
 export type PatternArgs = {
   p: P5CanvasInstance;
@@ -17,8 +18,8 @@ export type PatternArgs = {
 export const patterns = [
   randomDirectionalPattern,
   directionalPattern({
-    directionX: 0.44,
-    directionY: 0.11,
+    directionX: 0.5,
+    directionY: 0.15,
   }),
   snailPattern,
   mirrorPattern,
@@ -36,6 +37,7 @@ export const patterns = [
     attractorX: 0.5,
     attractorY: 0.5,
   }),
+  testPattern,
 ] as const;
 
 export const patternNames = patterns.map((_, i) => "#" + (i + 1));
