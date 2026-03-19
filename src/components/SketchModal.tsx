@@ -164,6 +164,7 @@ export const SketchModal = ({
   };
 
   const jumpNFrames = (N: number) => () => {
+    setPaused(true);
     sendEvent({
       type: "timeTravelEvent",
       timeShift: N,
