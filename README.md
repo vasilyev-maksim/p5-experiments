@@ -1,7 +1,9 @@
 # 👨‍💻 IN PROGRESS§
 
 - worms
-  - try mirror pattern
+  - presets
+  * try mirror pattern
+  * worm tail optimization
   * rename patterns
   * delete redundant patterns
   * new pattern: attractor

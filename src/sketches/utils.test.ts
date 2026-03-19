@@ -5,8 +5,8 @@ vi.mock("p5", () => {
   return { default: {} };
 });
 
-describe("rel dirs", () => {
-  test("getRelToRelDir()", () => {
+describe("dirs", () => {
+  test("rotate()", () => {
     expect(rotate("up", "up")).toBe("up");
     expect(rotate("up", "down")).toBe("down");
     expect(rotate("up", "left")).toBe("left");

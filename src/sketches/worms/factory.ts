@@ -41,7 +41,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
             const pos = p.createVector(i % resX, p.floor(i / resX));
             return new Worm({
               head: pos,
-              headDir: "up",
+              // headDir: "up",
             });
           });
         }
@@ -55,6 +55,8 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
           randomProvider,
         };
         const worms = pattern(patternArgs);
+        console.log("worms", worms.length);
+
         return worms;
       },
       deps: [

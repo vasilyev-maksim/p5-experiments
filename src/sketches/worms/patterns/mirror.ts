@@ -57,14 +57,14 @@ export function mirrorQuadrant(quadrant: Worm[], size: Size) {
     const mirror = [
       new Worm({
         head: new p5.Vector(size.width - head.x - 1, head.y),
-        headDir: "up",
+        // headDir: "up",
         tail: tail.map(
           (tail) => new p5.Vector(size.width - tail.x - 1, tail.y),
         ),
       }),
       new Worm({
         head: new p5.Vector(size.width - head.x - 1, size.height - head.y - 1),
-        headDir: "up",
+        // headDir: "up",
         tail: tail.map(
           (tail) =>
             new p5.Vector(size.width - tail.x - 1, size.height - tail.y - 1),
@@ -72,7 +72,7 @@ export function mirrorQuadrant(quadrant: Worm[], size: Size) {
       }),
       new Worm({
         head: new p5.Vector(head.x, size.height - head.y - 1),
-        headDir: "up",
+        // headDir: "up",
         tail: tail.map(
           (tail) => new p5.Vector(tail.x, size.height - tail.y - 1),
         ),
@@ -91,7 +91,7 @@ export function mirrorQuadrantHalf(quadrant: Worm[], size: Size) {
       worm,
       new Worm({
         head: new p5.Vector(size.width - head.x - 1, size.height - head.y - 1),
-        headDir: "up",
+        // headDir: "up",
         tail: tail.map(
           (tail) =>
             new p5.Vector(size.width - tail.x - 1, size.height - tail.y - 1),

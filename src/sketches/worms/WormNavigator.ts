@@ -2,9 +2,9 @@ import type { RandomProvider } from "@/core/models";
 import {
   DIRS_CLOCKWISE,
   type Dir,
-  rotate,
   getAbsVecFromDir,
   type DirMap,
+  rotate,
 } from "@/sketches/utils";
 import type { OccupancyGrid } from "@/utils/OccupancyGrid";
 import p5 from "p5";
@@ -16,26 +16,25 @@ export class WormNavigator {
     private readonly randomProvider: RandomProvider,
   ) {}
 
-  public spawnWormRandomly(initialDir: Dir = "up"): Worm | null {
+  public spawnWormRandomly(): Worm | null {
     const randomHead = this.occupancyGrid.getRandomFreeCell();
     if (randomHead) {
-      return this.spawnWormAtCell(randomHead, initialDir);
+      return this.spawnWormAtCell(randomHead);
     } else {
       return null;
     }
   }
 
-  public spawnWormAtCell(cell: p5.Vector, initialDir: Dir = "up"): Worm | null {
+  public spawnWormAtCell(cell: p5.Vector): Worm | null {
     const worm = new Worm({
       head: cell,
-      headDir: initialDir,
     });
     this.occupancyGrid.occupy(cell);
     return worm;
   }
 
   public goToAttractor(worm: Worm, attractor: p5.Vector) {
-    const cellsAround = this.lookAroundClockwise(worm);
+    const cellsAround = this.lookAroundClockwise(worm.head);
     const dirs = cellsAround
       .filter((x) => x.free)
       .map((x) => {
@@ -50,29 +49,33 @@ export class WormNavigator {
       .filter((x) => x.weight > 0)
       .sort((a, b) => b.weight - a.weight);
 
-    return dirs.some(({ dir }) => this.goToDir(worm!, dir));
+    return dirs.some(({ goTo }) => goTo(worm));
   }
 
-  public lookAroundClockwise(worm: Worm) {
-    return DIRS_CLOCKWISE.map((dir) => this.inspectCell(worm, dir));
+  public static getAdjacentCell(cell: p5.Vector, dir: Dir) {
+    return getAbsVecFromDir(dir).add(cell);
   }
 
-  public inspectCell(worm: Worm, dir: Dir) {
-    const relDir = rotate(dir, worm.headDir);
-    const absDir = getAbsVecFromDir(relDir);
-    const cell = p5.Vector.add(worm.head, absDir);
+  public lookAroundClockwise(cell: p5.Vector) {
+    return DIRS_CLOCKWISE.map((dir) => {
+      const adjacentCell = WormNavigator.getAdjacentCell(cell, dir);
+      return { ...this.inspectCell(adjacentCell), dir };
+    });
+  }
+
+  // TODO: rethink
+  public inspectCell(cell: p5.Vector) {
     const free = this.occupancyGrid.isOccupied(cell) === false;
 
     return {
       free,
-      dir,
-      relDir, // TODO: rethink prop names
-      absDir,
+      // absDir,
+      // dir,
       cell,
-      goTo: () => {
+      goTo: (worm: Worm) => {
         if (free) {
-          worm.turn(dir);
-          worm.go();
+          // worm.turn(relDir);
+          worm.goTo(cell);
           this.occupancyGrid.occupy(worm.head);
           return true;
         } else {
@@ -82,22 +85,23 @@ export class WormNavigator {
     };
   }
 
-  public goToDir(worm: Worm, dir: Dir): boolean {
-    const cell = this.inspectCell(worm, dir);
-    return cell.goTo();
+  public goToDir(worm: Worm, relDir: Dir): boolean {
+    const absDir = rotate(relDir, worm.headDir ?? "up");
+    const cell = WormNavigator.getAdjacentCell(worm.head, absDir);
+    return this.inspectCell(cell).goTo(worm);
   }
 
   public goUsingWeights(worm: Worm, dirWeights: DirMap<number>): boolean {
-    const freeCells = this.lookAroundClockwise(worm).filter((x) => x.free);
+    const freeCells = this.lookAroundClockwise(worm.head).filter((x) => x.free);
     const targetCell = freeCells
       .map((x) => ({
         ...x,
-        weight: dirWeights[x.relDir],
+        weight: dirWeights[x.dir],
       }))
       .filter((x) => x.weight > 0)
       .sort((a, b) => b.weight - a.weight)[0];
 
-    return targetCell?.goTo() ?? false;
+    return targetCell?.goTo(worm) ?? false;
   }
 
   public goRandom(worm: Worm): boolean {

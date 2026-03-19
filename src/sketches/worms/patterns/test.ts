@@ -7,23 +7,22 @@ export function testPattern({ resX }: PatternArgs): Worm[] {
 
   const worm: Worm = new Worm({
     head: new p5.Vector(0, 0),
-    headDir: "left",
+    // headDir: "left",
   });
 
-  let i = 0;
-  while (i++ < resX - 1) {
-    worm.go();
-  }
+  // let i = 0;
+  // while (i++ < resX - 1) {
+  //   worm.goTo();
+  // }
 
   worms.push(worm);
   worms.push(
     new Worm({
       head: new p5.Vector(resX - 1, 1),
-      headDir: "left",
+      // headDir: "left",
       tail: [new p5.Vector(0, 1)],
     }),
   );
-  // console.log(worm);
 
   return worms;
 }
