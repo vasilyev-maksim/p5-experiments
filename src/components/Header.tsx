@@ -7,19 +7,21 @@ export function Header() {
     useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE).useSegment("HEADER");
 
   return wasRun ? (
-    <h1
-      className={styles.Header}
+    <p
+      className={styles.HeaderWrapper}
       style={{
         animationDuration: duration + "ms",
       }}
     >
-      <a href="https://vasilyev-maksim.github.io/resume/" target="_blank">
-        My
-      </a>{" "}
-      experiments with{" "}
-      <a href="https://p5js.org/" target="_blank">
-        p5.js
-      </a>
-    </h1>
+      <h1 className={styles.Header}>Generative Art</h1>
+      <h2
+        className={styles.SubHeader}
+        style={{
+          animationDuration: duration + "ms",
+        }}
+      >
+        by Maksim Vasilyev
+      </h2>
+    </p>
   ) : null;
 }

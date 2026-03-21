@@ -41,10 +41,7 @@ export const ringPattern =
       if (worm) {
         worms.push(worm);
 
-        while (
-          worm.body.length < len &&
-          navigator.goToAttractor(worm, attractor)
-        );
+        while (worm.length < len && navigator.goToAttractor(worm, attractor));
       } else {
         break;
       }

@@ -44,18 +44,18 @@ export type TimeDeltaChangeEvent = {
 };
 
 export type TimeTravelEvent = {
-  type: "timeTravelEvent";
+  type: "timeTravel";
   timeShift: number;
 };
 
 export type CanvasSizeChangeEvent = {
-  type: "canvasSizeChangeEvent";
+  type: "canvasSizeChange";
   canvasWidth: number;
   canvasHeight: number;
 };
 
 export type PlayPauseEvent = {
-  type: "playPauseEvent";
+  type: "playPause";
   paused: boolean;
 };
 

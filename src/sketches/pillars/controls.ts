@@ -4,7 +4,7 @@ export type Controls = typeof controls;
 
 export const controls = {
   RESOLUTION: {
-    label: "Pillars count",
+    label: "Resolution",
     max: 20,
     min: 1,
     step: 1,

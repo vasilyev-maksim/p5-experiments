@@ -31,10 +31,7 @@ export const directionalPattern =
         break;
       }
 
-      while (
-        worm.body.length < len &&
-        navigator.goUsingWeights(worm, dirWeights)
-      );
+      while (worm.length < len && navigator.goUsingWeights(worm, dirWeights));
     }
 
     return worms;

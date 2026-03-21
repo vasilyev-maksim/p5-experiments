@@ -79,7 +79,7 @@ export const SketchModal = ({
         mode: "animated",
       });
       sendEvent({
-        type: "playPauseEvent",
+        type: "playPause",
         paused: false,
       });
       setPaused(false);
@@ -133,7 +133,7 @@ export const SketchModal = ({
 
   const playPause = () => {
     sendEvent({
-      type: "playPauseEvent",
+      type: "playPause",
       paused: !paused,
     });
     setPaused((x) => !x);
@@ -166,7 +166,7 @@ export const SketchModal = ({
   const jumpNFrames = (N: number) => () => {
     setPaused(true);
     sendEvent({
-      type: "timeTravelEvent",
+      type: "timeTravel",
       timeShift: N,
     });
   };
@@ -177,7 +177,7 @@ export const SketchModal = ({
       timeDelta,
     });
     sendEvent({
-      type: "playPauseEvent",
+      type: "playPause",
       paused: false,
     });
   };
@@ -188,7 +188,7 @@ export const SketchModal = ({
       timeDelta,
     });
     sendEvent({
-      type: "playPauseEvent",
+      type: "playPause",
       paused: true,
     });
   };
@@ -317,7 +317,6 @@ export const SketchModal = ({
                         }
                         label={"Export preset"}
                       />
-                      &nbsp;
                       <Button onClick={randomizeParams} label={"Randomize"} />
                     </div>
                   )}

@@ -9,6 +9,13 @@ export const controls = {
     options: patternNames,
     label: "Pattern type",
   },
+  RANDOM_SEED: {
+    type: "range",
+    min: 0,
+    max: 1000,
+    step: 1,
+    label: "Random seed",
+  },
   RESOLUTION: {
     type: "range",
     min: 3,

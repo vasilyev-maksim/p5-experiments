@@ -12,6 +12,7 @@
 
 # 📋 TODO
 
+- add animated underline for my name link
 - more explicit keyboard usage hints in UI
   - use order number (0-9) of associated control shortcut
   - use "qwerty..." for 11-20

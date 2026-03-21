@@ -8,8 +8,7 @@ export const controls = {
     min: 0,
     max: 4,
     step: 1,
-    label: "Layers",
-    // valueFormatter: (x) => x * 2 + 1 + "",
+    label: "Resolution",
   },
   ZOOM: {
     type: "range",
@@ -17,10 +16,6 @@ export const controls = {
     max: 2000,
     step: 1,
     label: "Zoom",
-  },
-  CAMERA_ROTATION: {
-    type: "boolean",
-    label: "Camera rotation",
   },
   CUBE_SIZE: {
     type: "range",
@@ -36,5 +31,9 @@ export const controls = {
     step: 0.01,
     label: "Gap",
     valueFormatter: (x) => x.toFixed(2),
+  },
+  CAMERA_ROTATION: {
+    type: "boolean",
+    label: "Camera rotation",
   },
 } as const satisfies IControls;

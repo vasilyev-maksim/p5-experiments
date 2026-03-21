@@ -15,5 +15,5 @@ export const sketch: ISketch<Controls> = {
   type: "only",
   startTime: 0,
   // presetsShuffle: 1,
-  randomSeed: 40,
+  // randomSeed: 40,
 };

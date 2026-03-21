@@ -26,7 +26,11 @@ import type { ExportRequestEvent, SketchEvent } from "./events";
 import type { EventBus } from "./EventBus";
 import { TrackedArray } from "./TrackedArray";
 import type p5 from "p5";
-import type { ITrackedValueProvider, IValueProvider, TimeProvider } from "./models";
+import type {
+  ITrackedValueProvider,
+  IValueProvider,
+  TimeProvider,
+} from "./models";
 
 type TrackedParams<C extends IControls> = {
   [k in keyof IParams<C>]: TrackedValue<IParams<C>[k]>;
@@ -224,7 +228,7 @@ export function createSketch<C extends IControls>(
             }
           });
 
-          bus.on("playPauseEvent", (e) => {
+          bus.on("playPause", (e) => {
             paused = e.paused;
           });
 
@@ -232,7 +236,7 @@ export function createSketch<C extends IControls>(
             timeDelta = e.timeDelta;
           });
 
-          bus.on("timeTravelEvent", (e) => {
+          bus.on("timeTravel", (e) => {
             time += e.timeShift;
           });
 
@@ -251,6 +255,7 @@ export function createSketch<C extends IControls>(
 
             if (preset.randomSeed !== undefined) {
               p.randomSeed(preset.randomSeed);
+              p.noiseSeed(preset.randomSeed);
             }
 
             if (preset.timeDelta !== undefined) {
@@ -261,22 +266,15 @@ export function createSketch<C extends IControls>(
             args.onPresetChange?.(preset);
           });
 
-          bus.on(
-            "canvasSizeChangeEvent",
-            ({ canvasHeight: h, canvasWidth: w }) => {
-              setParams(() => {
-                canvasHeight.setValue(h);
-                canvasWidth.setValue(w);
-              });
+          bus.on("canvasSizeChange", ({ canvasHeight: h, canvasWidth: w }) => {
+            setParams(() => {
+              canvasHeight.setValue(h);
+              canvasWidth.setValue(w);
+            });
 
-              p.resizeCanvas(
-                w,
-                h,
-                args.canvasSizeHandlerOverride !== undefined,
-              );
-              args.canvasSizeHandlerOverride?.([w, h]);
-            },
-          );
+            p.resizeCanvas(w, h, args.canvasSizeHandlerOverride !== undefined);
+            args.canvasSizeHandlerOverride?.([w, h]);
+          });
 
           bus.on("export", (e) => {
             exportCanvas(e);

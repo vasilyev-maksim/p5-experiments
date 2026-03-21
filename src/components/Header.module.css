@@ -1,10 +1,24 @@
-.Header {
+.HeaderWrapper {
   opacity: 0;
   text-align: left;
-  margin-bottom: 70px;
-  font-size: 3.5rem;
-  color: var(--fontColor);
+  margin-bottom: 50px;
   animation: appear ease-in-out forwards;
+}
+
+.Header {
+  line-height: 1em;
+  font-size: 3.5rem;
+  color: var(--bgColor);
+  paint-order: stroke fill;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: hsl(from var(--primaryColor) h s l);
+  margin-bottom: 10px;
+}
+
+.SubHeader {
+  font-size: 1rem;
+  color: var(--textColor);
+  font-weight: 400;
 }
 
 @keyframes appear {

@@ -24,7 +24,7 @@ export function randomDirectionalPattern({
       break;
     }
 
-    while (worm.body.length < len && navigator.goRandom(worm));
+    while (worm.length < len && navigator.goRandom(worm));
   }
 
   return worms;
