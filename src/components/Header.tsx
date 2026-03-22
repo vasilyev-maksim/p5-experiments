@@ -20,7 +20,10 @@ export function Header() {
           animationDuration: duration + "ms",
         }}
       >
-        by Maksim Vasilyev
+        by{" "}
+        <a href="https://vasilyev-maksim.github.io/resume/" target="_blank">
+          Maksim Vasilyev
+        </a>
       </h2>
     </p>
   ) : null;

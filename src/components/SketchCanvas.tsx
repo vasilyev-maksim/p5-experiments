@@ -58,7 +58,7 @@ export const SketchCanvas = forwardRef<
 
   useEffect(() => {
     props.eventBus?.emit({
-      type: "canvasSizeChangeEvent",
+      type: "canvasSizeChange",
       canvasHeight,
       canvasWidth,
     });

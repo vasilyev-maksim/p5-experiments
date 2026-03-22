@@ -137,7 +137,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
             p,
             start,
             end,
-            timeMultiplier: 0.01,
+            timeMultiplier: 0.005,
             time,
             timeFunc: (x) => (animationType === 2 ? -1 : 1) * sin(x),
           });
