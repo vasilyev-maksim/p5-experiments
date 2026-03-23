@@ -11,12 +11,13 @@ import { sketch as lightsSketch } from "./_sandboxes/lights";
 import { interpolationSketch } from "./_sandboxes/interpolation";
 // import { sketch as tilesSketch } from "./tiles/tiles";
 import { sketch as wormsSketch } from "./worms";
-import { sketch } from "./_sandboxes/funcs";
+import { sketch as funcsSketch } from "./_sandboxes/funcs";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const all: ISketch<any>[] = [
   spiralSketch,
   cubesSketch,
+  wormsSketch,
   pillarsSketch,
   arcsSketch,
   curveSketch,
@@ -26,8 +27,7 @@ const all: ISketch<any>[] = [
   interpolationSketch,
   citySketch,
   // tilesSketch,
-  sketch,
-  wormsSketch,
+  funcsSketch,
 ];
 
 let sketchList = all

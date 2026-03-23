@@ -30,9 +30,16 @@ export const patterns = [
     attractorY: 0.5,
   }),
   ringPattern({
-    inverted: true,
-    innerRadius: 0.3,
+    inverted: false,
+    innerRadius: 0,
     outerRadius: 0.7,
+    attractorX: 0,
+    attractorY: 0.5,
+  }),
+  ringPattern({
+    inverted: true,
+    innerRadius: 0.5,
+    outerRadius: 0.9,
     attractorX: 0.5,
     attractorY: 0.5,
   }),

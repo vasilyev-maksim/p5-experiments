@@ -127,7 +127,12 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
             if (animationType === 3) {
               // should have twice bigger period to match forward animation's "visual" speed,
               // that's why `x/2` and `SHRINK_OFFSET/2`
-              return flatSin(p, 0, SHRINK_OFFSET / 2, 0)(x / 2);
+              return flatSin(
+                p,
+                GROW_OFFSET / 2,
+                SHRINK_OFFSET / 2,
+                GROW_OFFSET / 2,
+              )(x / 2);
             } else {
               return flatSin(p, GROW_OFFSET, 0, SHRINK_OFFSET)(x);
             }

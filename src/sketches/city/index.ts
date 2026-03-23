@@ -13,5 +13,5 @@ export const sketch: ISketch<Controls> = {
   randomSeed: 44,
   controls,
   presets,
-  type: "draft",
+  type: "hidden",
 };

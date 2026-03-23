@@ -21,7 +21,7 @@ export function areParamsEqual(a: IParams, b: IParams): boolean {
 function getRandomValueFromControl(c: IControl): ControlValueType<typeof c> {
   switch (c.type) {
     case "boolean":
-      return Math.round(Math.random());
+      return Math.random() > 0.5;
     case "choice":
       return Math.round(Math.random() * (c.options.length - 1));
     case "color":
