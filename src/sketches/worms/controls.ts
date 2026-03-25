@@ -9,6 +9,11 @@ export const controls = {
     options: patternNames,
     label: "Pattern type",
   },
+  ANIMATION_TYPE: {
+    type: "choice",
+    label: "Animation type",
+    options: ["Static", "Forward", "Backward", "Both"],
+  },
   RANDOM_SEED: {
     type: "range",
     min: 0,
@@ -50,11 +55,6 @@ export const controls = {
     type: "choice",
     label: "Corner type",
     options: ["Square", "Round", "Cut"],
-  },
-  ANIMATION_TYPE: {
-    type: "choice",
-    label: "Animation type",
-    options: ["Static", "Forward", "Backward", "Both"],
   },
   COLOR: {
     type: "color",
