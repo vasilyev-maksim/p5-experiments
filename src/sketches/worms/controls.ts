@@ -63,7 +63,6 @@ export const controls = {
       ["red", "hsl(0, 100%, 14%)"],
       ["white", "white"],
       ["#ffffffff", "rgb(37, 37, 37)"],
-      ["#5aff4aff", "#5aff4aff"],
       ["#5aff4aff", "hsl(115, 100%, 7%)"],
       ["#ea72f7ff", "#0000ffff"],
       ["rgb(253, 255, 121)", "#c04affff"],
