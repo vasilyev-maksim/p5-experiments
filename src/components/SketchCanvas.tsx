@@ -31,7 +31,10 @@ export const SketchCanvas = forwardRef<
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
-  const previewSize = props.sketch.preview.size;
+  const previewSize =
+    (canvasModalWidth * props.sketch.preview.sizeInPercents) / 100;
+  console.log(previewSize);
+
   const prevSize = useRef<SketchCanvasSize>(null);
   const canvasWidth =
     props.size === "fullscreen" ? window.innerWidth : canvasModalWidth;
@@ -94,6 +97,19 @@ export const SketchCanvas = forwardRef<
   const translateY = x.to([0, 1], [-(canvasModalHeight - previewSize) / 2, 0]);
   const width = x.to([0, 1], [canvasTileSize, canvasModalWidth]);
   const height = x.to([0, 1], [canvasTileSize, canvasModalHeight]);
+  // canvasModalWidth = 1158
+  console.table([
+    {
+      scale: scale.get(),
+      width: width.get(),
+      height,
+      canvasWidth,
+      canvasHeight,
+      previewSize,
+      canvasTileSize,
+      canvasModalWidth,
+    },
+  ]);
 
   return (
     <animated.div

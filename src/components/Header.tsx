@@ -7,7 +7,7 @@ export function Header() {
     useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE).useSegment("HEADER");
 
   return wasRun ? (
-    <p
+    <div
       className={styles.HeaderWrapper}
       style={{
         animationDuration: duration + "ms",
@@ -25,6 +25,6 @@ export function Header() {
           Maksim Vasilyev
         </a>
       </h2>
-    </p>
+    </div>
   ) : null;
 }

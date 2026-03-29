@@ -8,7 +8,7 @@ export const circlesSketch: ISketch<Controls> = {
   id: "circles",
   name: "circles",
   preview: {
-    size: 700,
+    sizeInPercents: 60,
   },
   controls,
   presets,

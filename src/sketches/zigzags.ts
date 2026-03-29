@@ -176,7 +176,7 @@ export const zigzagsSketch: ISketch<Controls> = {
   id: "zigzags",
   name: "zigzags",
   preview: {
-    size: 300,
+    sizeInPercents: 26,
   },
   controls,
   presets,

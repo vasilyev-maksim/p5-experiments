@@ -8,7 +8,7 @@ export const pillarsSketch: ISketch<Controls> = {
   id: "pillars",
   name: "pillars",
   preview: {
-    size: 390,
+    sizeInPercents: 33,
   },
   randomSeed: 144,
   controls,

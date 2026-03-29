@@ -8,7 +8,7 @@ export const arcsSketch: ISketch<Controls> = {
   id: "arcs",
   name: "arcs",
   preview: {
-    size: 300,
+    sizeInPercents: 26,
   },
   controls,
   presets,

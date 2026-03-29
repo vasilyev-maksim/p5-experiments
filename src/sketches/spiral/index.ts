@@ -8,7 +8,7 @@ export const spiralSketch: ISketch<Controls> = {
   id: "spiral",
   name: "spiral",
   preview: {
-    size: 515,
+    sizeInPercents: 44,
   },
   controls,
   presets,

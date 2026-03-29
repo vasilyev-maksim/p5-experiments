@@ -8,7 +8,7 @@ export const sketch: ISketch<Controls> = {
   id: "_template",
   name: "_template",
   preview: {
-    size: 520,
+    sizeInPercents: 45,
   },
   randomSeed: 44,
   controls,

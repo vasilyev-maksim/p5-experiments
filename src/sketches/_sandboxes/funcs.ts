@@ -129,7 +129,7 @@ export const sketch: ISketch<Controls> = {
   id: "funcs",
   name: "funcs",
   preview: {
-    size: 600,
+    sizeInPercents: 52,
   },
   randomSeed: 44,
   controls,

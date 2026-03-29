@@ -1,14 +1,6 @@
-# 👨‍💻 IN PROGRESS§
+# 👨‍💻 IN PROGRESS
 
-- worms
-  - presets
-  * try mirror pattern
-  * worm tail optimization
-  * rename patterns
-  * delete redundant patterns
-  * new pattern: attractor
-  * disable coords input for some patterns
-  * remove Worm2
+- [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 
 # 📋 TODO
 
@@ -20,16 +12,11 @@
 
 - [hard] city sketch
 - [hard] optimize `SketchModal` (too many rerenders of controls)
-- [hard] presets for `worms`
-- [hard] think how to use `p.createGraphics` buffer
-  - for export
-  - to fix rendering issues of `curves` sketch
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg
 - [hard] don't mismatch preset on the first change (mark it with \*)
 
-- [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - [medium] adopt `tiles` and `worm` to new architecture
 - [medium] each preset may have a timestamp to play animation from (for better showiness)
   - spiral
@@ -41,7 +28,6 @@
   - hide it by timer after mouse leave
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
-- [medium] make preview sizes in percentages
 - [medium] selected preset id in url
 
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
@@ -60,6 +46,9 @@
 
 # 💡 NICE TO HAVE
 
+- [hard] think how to use `p.createGraphics` buffer
+  - for export
+  - to fix rendering issues of `curves` sketch
 - undo/redo mechanism (event sourcing for params and timeDelta)
 - try to use web workers for async calculation of memos in parallel thread
 - move left side bar to the right [?]
@@ -70,6 +59,17 @@
 
 # ✅ DONE
 
+- [medium] make preview sizes in percentages
+- [herd] worms
+  - presets
+  - try mirror pattern
+  - worm tail optimization
+  - rename patterns
+  - delete redundant patterns
+  - new pattern: attractor
+  - disable coords input for some patterns
+  - remove Worm2
+- [hard] presets for `worms`
 - [medium] Add `randomSeed` to presets
 - [hard] pass props as event payload in contrast with direct props of `ReactP5Wrapper`
   - do the same for time shifts, pauses, rewinds etc.

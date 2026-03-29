@@ -99,7 +99,7 @@ export interface ISketch<Controls extends IControls = IControls> {
   name: string;
   id: string;
   preview: {
-    size: number;
+    sizeInPercents: number;
   };
   factory: ISketchFactory<Controls>;
   randomSeed?: number;

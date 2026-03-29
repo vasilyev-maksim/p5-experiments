@@ -8,7 +8,7 @@ export const sketch: ISketch<Controls> = {
   id: "worms",
   name: "worms",
   preview: {
-    size: 434,
+    sizeInPercents: 35,
   },
   controls,
   presets,

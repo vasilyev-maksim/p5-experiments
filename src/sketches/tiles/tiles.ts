@@ -155,7 +155,7 @@ export const sketch: ISketch = {
   id: "tiles",
   name: "tiles",
   preview: {
-    size: 420,
+    sizeInPercents: 36,
   },
   startTime: -20,
   randomSeed: 123,

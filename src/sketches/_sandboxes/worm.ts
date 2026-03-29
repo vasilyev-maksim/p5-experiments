@@ -102,7 +102,7 @@ export const wormSketch: ISketch<typeof controls> = {
   id: "worm",
   name: "worm",
   preview: {
-    size: 520,
+    sizeInPercents: 45,
   },
   randomSeed: 44,
   controls,

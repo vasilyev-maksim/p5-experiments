@@ -8,10 +8,10 @@ export const curveSketch: ISketch<Controls> = {
   id: "curve",
   name: "curve",
   preview: {
-    size: 520,
+    sizeInPercents: 45,
   },
   randomSeed: 44,
   controls,
   presets,
-  type: 'released',
+  type: "released",
 };
