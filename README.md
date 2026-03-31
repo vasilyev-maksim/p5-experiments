@@ -1,9 +1,8 @@
 # 👨‍💻 IN PROGRESS
 
-- [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
-
 # 📋 TODO
 
+- animate "shuffle presets" button
 - [bug] preset gets deselected because of long tail after decimal point (for inner thickness fo ex.)
 - add animated underline for my name link
 - more explicit keyboard usage hints in UI
@@ -59,6 +58,7 @@
 
 # ✅ DONE
 
+- [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - [medium] make preview sizes in percentages
 - [herd] worms
   - presets

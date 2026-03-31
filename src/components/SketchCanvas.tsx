@@ -31,9 +31,8 @@ export const SketchCanvas = forwardRef<
   }
 >((props, ref) => {
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
-  const previewSize =
-    (canvasModalWidth * props.sketch.preview.sizeInPercents) / 100;
-  console.log(previewSize);
+  const previewSizeInPercents = props.sketch.preview.sizeInPercents / 100;
+  const previewSize = canvasModalWidth * previewSizeInPercents;
 
   const prevSize = useRef<SketchCanvasSize>(null);
   const canvasWidth =
@@ -93,23 +92,16 @@ export const SketchCanvas = forwardRef<
   }, [props.size, api]);
 
   const scale = x.to([0, 1], [canvasTileSize / previewSize, 1]);
-  const translateX = x.to([0, 1], [-(canvasModalWidth - previewSize) / 2, 0]);
-  const translateY = x.to([0, 1], [-(canvasModalHeight - previewSize) / 2, 0]);
+  const translateX = x.to(
+    [0, 1],
+    [-(canvasModalWidth - canvasTileSize) / 2, 0],
+  );
+  const translateY = x.to(
+    [0, 1],
+    [-(canvasModalHeight - canvasTileSize) / 2, 0],
+  );
   const width = x.to([0, 1], [canvasTileSize, canvasModalWidth]);
   const height = x.to([0, 1], [canvasTileSize, canvasModalHeight]);
-  // canvasModalWidth = 1158
-  console.table([
-    {
-      scale: scale.get(),
-      width: width.get(),
-      height,
-      canvasWidth,
-      canvasHeight,
-      previewSize,
-      canvasTileSize,
-      canvasModalWidth,
-    },
-  ]);
 
   return (
     <animated.div
@@ -123,11 +115,13 @@ export const SketchCanvas = forwardRef<
       <animated.div
         className={styles.CanvasWrapper}
         style={{
-          transformOrigin: "top left",
+          transformOrigin: "center",
           transform: to(
             [scale, translateX, translateY],
-            (s, tx, ty) => `scale(${s}) translate(${tx}px, ${ty}px)`,
+            (s, tx, ty) => `translate(${tx}px, ${ty}px) scale(${s})`,
           ),
+          width: canvasModalWidth,
+          height: canvasModalHeight,
         }}
       >
         <ReactP5Wrapper sketch={p5Sketch} />

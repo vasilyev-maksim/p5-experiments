@@ -36,6 +36,7 @@ export const SketchTilesGrid = forwardRef<
           animationDelay={itemDelay * i}
           animationDuration={itemDuration}
           interactive
+          rerenderCanvasOnScreenSizeChange={!props.openedSketch}
         />
       ))}
     </div>
