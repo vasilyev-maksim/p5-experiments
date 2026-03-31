@@ -21,7 +21,10 @@ export function Header() {
         }}
       >
         by{" "}
-        <a href="https://vasilyev-maksim.github.io/resume/" target="_blank">
+        <a
+          href="https://www.linkedin.com/in/maksim-vasilyev-09099a77/"
+          target="_blank"
+        >
           Maksim Vasilyev
         </a>
       </h2>
