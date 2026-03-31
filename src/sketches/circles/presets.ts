@@ -65,7 +65,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 1,
       COLOR: 2,
     },
-    timeDelta: 1,
+    timeDelta: 0.5,
     name: "signal",
   },
   {

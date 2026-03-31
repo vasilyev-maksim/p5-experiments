@@ -208,7 +208,7 @@ export const presets: IPreset<Controls>[] = [
       RANDOM_SEED: 234,
       RESOLUTION: 50,
       LENGTH: 100,
-      THICKNESS: 0.7000000000000001,
+      THICKNESS: 0.7,
       INNER_THICKNESS: 0.5,
       CORNERS_TYPE: 1,
       ANIMATION_TYPE: 0,

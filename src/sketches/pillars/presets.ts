@@ -14,7 +14,6 @@ export const presets: IPreset<Controls>[] = [
     },
     timeDelta: 1,
     name: "looks uneven",
-    startTime: 24,
   },
   {
     params: {
