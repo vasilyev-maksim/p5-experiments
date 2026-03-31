@@ -1,14 +1,12 @@
 # 👨‍💻 IN PROGRESS
 
+- [medium] selected preset id in url
+
 # 📋 TODO
 
-- animate "shuffle presets" button
-- [bug] preset gets deselected because of long tail after decimal point (for inner thickness fo ex.)
-- add animated underline for my name link
-- more explicit keyboard usage hints in UI
+- [hard] explicit keyboard usage hints in UI
   - use order number (0-9) of associated control shortcut
   - use "qwerty..." for 11-20
-
 - [hard] city sketch
 - [hard] optimize `SketchModal` (too many rerenders of controls)
 - [hard] focus trap for modal (home page links are accessible)
@@ -22,18 +20,19 @@
   - arcs
   - pillars
   - curve
-- [medium] add "collapse side panel" capabilities
 - [medium] make play controls animation more user friendly
   - hide it by timer after mouse leave
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
-- [medium] selected preset id in url
 
+- [easy] animate "shuffle presets" button (on modal open)
+- [easy][bug] preset gets deselected because of long tail after decimal point (for inner thickness fo ex.) (worms - "hollowness" control)
+- [easy] add animated underline for my name link
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] redesign `Export preset` and `Randomize` buttons
+- [easy] redesign `Capture` button
 - [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`
-- [easy] timeDelta value missing when exporting preset (as well as random seed etc.)
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes
   - rename to `useSize` [?]
@@ -45,6 +44,7 @@
 
 # 💡 NICE TO HAVE
 
+- [medium] add "collapse side panel" capabilities (?)
 - [hard] think how to use `p.createGraphics` buffer
   - for export
   - to fix rendering issues of `curves` sketch
@@ -58,6 +58,7 @@
 
 # ✅ DONE
 
+- [easy] timeDelta value missing when exporting preset (as well as random seed etc.)
 - [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - [medium] make preview sizes in percentages
 - [herd] worms
