@@ -13,18 +13,20 @@ import {
 } from "../animations";
 import { SketchTilesGrid } from "./SketchTilesGrid";
 import { useURLParams } from "../hooks";
-import { delay } from "../utils/misc";
 import { sketchList } from "../sketches/list";
 
 function App() {
-  const { clearUrlSketch, directLinkSketch, updateUrlSketch } =
-    useURLParams(sketchList);
-  const [openedSketch, setOpenedSketch] = useState<ISketch | undefined>();
+  const { clearSketchIdInUrl, sketchIdFromUrl, setSketchIdInUrl } =
+    useURLParams();
+  const activeSketch = useMemo<ISketch | undefined>(
+    () => sketchList.find((x) => x.id === sketchIdFromUrl),
+    [sketchIdFromUrl],
+  );
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();
   const { start, reset, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
-    MODAL_OPEN_SEQUENCE
+    MODAL_OPEN_SEQUENCE,
   );
   useSequence(HOME_PAGE_SEQUENCE).useStart();
 
@@ -32,11 +34,18 @@ function App() {
 
   const ctx = useMemo(
     () => ({
-      controlsPresent: Object.entries(openedSketch?.controls ?? {}).length > 0,
-      presetsPresent: (openedSketch?.presets?.length ?? 0) > 0,
+      controlsPresent: Object.entries(activeSketch?.controls ?? {}).length > 0,
+      presetsPresent: (activeSketch?.presets?.length ?? 0) > 0,
     }),
-    [openedSketch?.controls, openedSketch?.presets]
+    [activeSketch?.controls, activeSketch?.presets],
   );
+
+  useEffect(() => {
+    if (activeSketch) {
+      start(ctx);
+    }
+    return reset;
+  }, [activeSketch, ctx]);
 
   useLayoutEffect(() => {
     if (selectedTileRef.current) {
@@ -44,37 +53,20 @@ function App() {
       setCloneLeft(left);
       setCloneTop(top);
     }
-  }, [openedSketch]);
-
-  useEffect(() => {
-    if (directLinkSketch) {
-      delay(0).then(() => {
-        setOpenedSketch(directLinkSketch);
-      });
-    }
-  }, [directLinkSketch]);
-
-  useEffect(() => {
-    if (openedSketch) {
-      start(ctx);
-    }
-    return reset;
-  }, [openedSketch, ctx]);
+  }, [activeSketch]);
 
   const handleSketchClick = (x: ISketch) => {
-    updateUrlSketch(x);
-    setOpenedSketch(x);
+    setSketchIdInUrl(x);
   };
   const closeSketch = () => {
-    clearUrlSketch();
-    setOpenedSketch(undefined);
+    clearSketchIdInUrl();
   };
 
   return (
     <>
       <div
         className={classNames(styles.Container, {
-          [styles.InBackground]: !!openedSketch,
+          [styles.InBackground]: !!activeSketch,
         })}
         style={{
           transitionDuration: seg.duration + "ms",
@@ -84,16 +76,16 @@ function App() {
         <Header />
         <SketchTilesGrid
           onClick={handleSketchClick}
-          openedSketch={openedSketch}
+          activeSketch={activeSketch}
           sketches={sketchList}
           ref={selectedTileRef}
         />
       </div>
-      {openedSketch && (
+      {activeSketch && (
         <SketchModal
           top={cloneTop}
           left={cloneLeft}
-          sketch={openedSketch}
+          sketch={activeSketch}
           onBackClick={closeSketch}
         />
       )}

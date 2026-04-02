@@ -14,7 +14,7 @@ export const SketchTilesGrid = forwardRef<
   {
     sketches: ISketch[];
     onClick: (sketch: ISketch) => void;
-    openedSketch?: ISketch;
+    activeSketch?: ISketch;
   }
 >(function SketchTilesGrid(props, selectedTileRef) {
   const { useSegment } = useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE);
@@ -30,13 +30,13 @@ export const SketchTilesGrid = forwardRef<
         <SketchTile
           key={x.id}
           sketch={x}
-          invisible={props.openedSketch === x}
-          ref={props.openedSketch === x ? selectedTileRef : null}
+          invisible={props.activeSketch === x}
+          ref={props.activeSketch === x ? selectedTileRef : null}
           onSelect={() => props.onClick(x)}
           animationDelay={itemDelay * i}
           animationDuration={itemDuration}
           interactive
-          rerenderCanvasOnScreenSizeChange={!props.openedSketch}
+          rerenderCanvasOnScreenSizeChange={!props.activeSketch}
         />
       ))}
     </div>

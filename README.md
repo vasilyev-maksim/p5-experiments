@@ -4,6 +4,7 @@
 
 # 📋 TODO
 
+- [easy] back button
 - [hard] explicit keyboard usage hints in UI
   - use order number (0-9) of associated control shortcut
   - use "qwerty..." for 11-20
@@ -44,20 +45,21 @@
 
 # 💡 NICE TO HAVE
 
-- [medium] add "collapse side panel" capabilities (?)
+- [medium] add "collapse side panel" capabilities [?]
 - [hard] think how to use `p.createGraphics` buffer
   - for export
   - to fix rendering issues of `curves` sketch
-- undo/redo mechanism (event sourcing for params and timeDelta)
-- try to use web workers for async calculation of memos in parallel thread
+- [hard] undo/redo mechanism (event sourcing for params and timeDelta)
+- [medium] try to use web workers for async calculation of memos in parallel thread
 - move left side bar to the right [?]
 - mobile version [?], at least info message inviting to desktop version
-- perf opt: use cache for init data (like precomputed partitions array in TILES)
-- position of preview fragment (in px)
-- worm like transition of site header when scrolling down
+- [medium] perf opt: use cache for init data (like precomputed WORMS array)
+- [easy] position of preview fragment (in px) [?]
+- [medium] worm like transition of site header when scrolling down [?]
 
 # ✅ DONE
 
+- [easy][bug] nav back doesn't close sketch modal
 - [easy] timeDelta value missing when exporting preset (as well as random seed etc.)
 - [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
 - [medium] make preview sizes in percentages

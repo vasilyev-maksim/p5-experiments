@@ -47,27 +47,37 @@ export function useViewport() {
   };
 }
 
-export function useURLParams(sketchList: ISketch[]) {
+export function useURLParams() {
   const baseUrl = import.meta.env.BASE_URL;
-  const qs = new URLSearchParams(location.search);
-  const directLinkSketchId = qs.get("sid");
-  const [directLinkSketch, setDirectLinkSketch] = useState<ISketch | undefined>(
-    sketchList.find((x) => x.id === directLinkSketchId),
-  );
+  const sketchIdFromUrl = new URLSearchParams(location.search).get("sid");
+  const [, setRerenderCounter] = useState(0);
 
-  const updateUrlSketch = (sketch: ISketch) => {
+  const setSketchIdInUrl = (sketch: ISketch) => {
     history.pushState({}, "", `${baseUrl}?sid=${sketch.id}`);
+    setRerenderCounter((x) => x + 1);
   };
 
-  const clearUrlSketch = () => {
-    setDirectLinkSketch(undefined);
+  const clearSketchIdInUrl = () => {
     history.pushState({}, "", location.origin + import.meta.env.BASE_URL);
+    setRerenderCounter((x) => x + 1);
   };
+
+  // handling manual nav back and forward by user
+  useEffect(() => {
+    const onPopState = () => {
+      setRerenderCounter((x) => x + 1);
+    };
+    window.addEventListener("popstate", onPopState);
+
+    return () => {
+      window.removeEventListener("popstate", onPopState);
+    };
+  }, []);
 
   return {
-    directLinkSketch,
-    updateUrlSketch,
-    clearUrlSketch,
+    sketchIdFromUrl,
+    setSketchIdInUrl,
+    clearSketchIdInUrl,
   };
 }
 
