@@ -98,7 +98,9 @@ export const factory = createSketch<Controls>(
       draw: () => () => {
         p.background(BG_COLOR);
         const [borderColor] = borderColorAnimated.getValue();
-        const [colorA, colorB] = fillColorsAnimated.getValue();
+        const colors = fillColorsAnimated.getValue();
+        const colorA = colors[0];
+        const colorB = colors[1] ?? colorA;
 
         const nodes = getNodes();
         nodes.forEach((node, i, arr) => {

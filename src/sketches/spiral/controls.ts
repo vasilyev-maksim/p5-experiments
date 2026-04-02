@@ -88,6 +88,7 @@ export const controls = {
       ["#ff4b4bff", "#f0f689ff"],
       ["#13005fff", "#a3ff9aff"],
       ["#000", "#ffffffff"],
+      ["#670374ff", "#670374ff"],
     ],
     label: "Fill colors",
   },

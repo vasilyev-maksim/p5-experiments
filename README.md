@@ -17,7 +17,7 @@
 
 - [medium] adopt `tiles` and `worm` to new architecture
 - [medium] each preset may have a timestamp to play animation from (for better showiness)
-  - spiral
+  - [x] spiral
   - arcs
   - pillars
   - curve
