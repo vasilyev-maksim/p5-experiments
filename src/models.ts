@@ -88,7 +88,7 @@ export type ISketchFactory<Controls extends IControls> = (args: {
 }) => (p: P5CanvasInstance) => void;
 
 export type IPreset<Controls extends IControls = any> = {
-  name?: string;
+  name: string;
   params: IParams<Controls>;
   startTime?: number;
   randomSeed?: number;

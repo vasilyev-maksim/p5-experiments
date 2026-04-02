@@ -94,6 +94,7 @@ const presets: IPreset<typeof controls>[] = [
       TIME_DELTA: 1,
     },
     timeDelta: 1,
+    name: "0",
   },
 ];
 

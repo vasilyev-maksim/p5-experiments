@@ -124,6 +124,7 @@ const presets: IPreset<Controls>[] = [
       B: 10,
     },
     timeDelta: 1,
+    name: "0",
   },
 ];
 

@@ -11,8 +11,8 @@ export const presets: IPreset<Controls>[] = [
       GAP: 0,
     },
     timeDelta: 1,
+    name: "0",
   },
-
   {
     params: {
       ZOOM: 200,
@@ -22,6 +22,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 0,
     },
     timeDelta: 1,
+    name: "1",
   },
   {
     params: {
@@ -32,6 +33,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 1,
     },
     timeDelta: 1,
+    name: "2",
   },
   {
     params: {
@@ -42,6 +44,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 0,
     },
     timeDelta: 1,
+    name: "3",
   },
 
   {
@@ -53,6 +56,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 0,
     },
     timeDelta: 1,
+    name: "4",
   },
   {
     params: {
@@ -63,6 +67,7 @@ export const presets: IPreset<Controls>[] = [
       GAP: 0,
     },
     timeDelta: 1,
+    name: "5",
   },
   {
     params: {
@@ -73,5 +78,6 @@ export const presets: IPreset<Controls>[] = [
       GAP: 1,
     },
     timeDelta: 1,
+    name: "6",
   },
 ];

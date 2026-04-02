@@ -8,6 +8,7 @@ export const presets: IPreset<Controls>[] = [
       NInt: 3,
     },
     timeDelta: 1,
+    name: "0",
   },
   {
     params: {
@@ -15,5 +16,6 @@ export const presets: IPreset<Controls>[] = [
       NInt: 5,
     },
     timeDelta: 1,
+    name: "1",
   },
 ];

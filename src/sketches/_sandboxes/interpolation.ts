@@ -56,6 +56,7 @@ const presets: IPreset<Controls>[] = [
       TIME_DELTA: 1,
     },
     timeDelta: 1,
+    name: "0",
   },
 ];
 

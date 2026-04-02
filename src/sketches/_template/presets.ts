@@ -8,5 +8,6 @@ export const presets: IPreset<Controls>[] = [
       NA: 1,
     },
     timeDelta: 1,
+    name: "0",
   },
 ];

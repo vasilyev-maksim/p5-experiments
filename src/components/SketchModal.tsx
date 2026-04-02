@@ -313,7 +313,11 @@ export const SketchModal = ({
                     >
                       <Button
                         onClick={() =>
-                          copyPresetCodeToClipboard(params, timeDelta)
+                          copyPresetCodeToClipboard(
+                            params,
+                            timeDelta,
+                            sketch.presets.length,
+                          )
                         }
                         label={"Export preset"}
                       />

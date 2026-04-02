@@ -16,7 +16,7 @@ import { useURLParams } from "../hooks";
 import { sketchList } from "../sketches/list";
 
 function App() {
-  const { clearSketchIdInUrl, sketchIdFromUrl, setSketchIdInUrl } =
+  const { removeSketchDataFromUrl, sketchIdFromUrl, setSketchIdInUrl } =
     useURLParams();
   const activeSketch = useMemo<ISketch | undefined>(
     () => sketchList.find((x) => x.id === sketchIdFromUrl),
@@ -59,7 +59,7 @@ function App() {
     setSketchIdInUrl(x);
   };
   const closeSketch = () => {
-    clearSketchIdInUrl();
+    removeSketchDataFromUrl();
   };
 
   return (

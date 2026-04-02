@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
 import { ViewportContext } from "./components/ViewportContext";
-import type { ISketch } from "./models";
+import type { IPreset, ISketch } from "./models";
 import { getClosestDiscreteValue } from "./utils/misc";
 
 // TODO: move consts from here / use react context for that
@@ -49,35 +49,45 @@ export function useViewport() {
 
 export function useURLParams() {
   const baseUrl = import.meta.env.BASE_URL;
-  const sketchIdFromUrl = new URLSearchParams(location.search).get("sid");
-  const [, setRerenderCounter] = useState(0);
+  const qs = new URLSearchParams(location.search);
+  const sketchIdFromUrl = qs.get("sid");
+  const presetIdFromUrl = qs.get("pid");
+  const rerender = useRerender();
 
   const setSketchIdInUrl = (sketch: ISketch) => {
-    history.pushState({}, "", `${baseUrl}?sid=${sketch.id}`);
-    setRerenderCounter((x) => x + 1);
+    const qs = new URLSearchParams(location.search);
+    qs.set("sid", sketch.id);
+    history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
+    rerender();
   };
 
-  const clearSketchIdInUrl = () => {
+  const setPresetIdInUrl = (preset: IPreset) => {
+    const qs = new URLSearchParams(location.search);
+    qs.set("pid", preset.name);
+    history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
+    rerender();
+  };
+
+  const removeSketchDataFromUrl = () => {
     history.pushState({}, "", location.origin + import.meta.env.BASE_URL);
-    setRerenderCounter((x) => x + 1);
+    rerender();
   };
 
   // handling manual nav back and forward by user
   useEffect(() => {
-    const onPopState = () => {
-      setRerenderCounter((x) => x + 1);
-    };
-    window.addEventListener("popstate", onPopState);
+    window.addEventListener("popstate", rerender);
 
     return () => {
-      window.removeEventListener("popstate", onPopState);
+      window.removeEventListener("popstate", rerender);
     };
   }, []);
 
   return {
     sketchIdFromUrl,
     setSketchIdInUrl,
-    clearSketchIdInUrl,
+    presetIdFromUrl,
+    setPresetIdInUrl,
+    removeSketchDataFromUrl,
   };
 }
 
@@ -323,4 +333,9 @@ export function useGlobalDrag(
   };
 
   return { handleMouseDown };
+}
+
+export function useRerender() {
+  const [, setRerenderCounter] = useState(0);
+  return () => setRerenderCounter((x) => x + 1);
 }

@@ -100,11 +100,15 @@ export async function copyToClipboard(text: string) {
   }
 }
 
-export function copyPresetCodeToClipboard(params: IParams, timeDelta: number) {
-  const name = prompt("Preset name:")?.trim();
+export function copyPresetCodeToClipboard(
+  params: IParams,
+  timeDelta: number,
+  presetIndex: number,
+) {
+  const name = prompt("Preset name (optional):")?.trim();
   const preset: IPreset = {
     params,
-    ...(name ? { name } : {}),
+    name: name ?? presetIndex.toString(),
     timeDelta,
     randomSeed: undefined,
     startTime: undefined,
