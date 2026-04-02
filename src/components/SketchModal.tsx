@@ -1,7 +1,12 @@
 import type { IPreset, ISketch, SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
-import { useKeyboardShortcuts, useModalBehavior, useViewport } from "../hooks";
+import {
+  useKeyboardShortcuts,
+  useModalBehavior,
+  useURLParams,
+  useViewport,
+} from "../hooks";
 import classNames from "classnames";
 import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
@@ -17,9 +22,10 @@ import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
-import { copyPresetCodeToClipboard, getRandomParams } from "@/utils/misc";
+import { getRandomParams } from "@/utils/misc";
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
+import { copyPresetCodeToClipboard, getDefaultPreset } from "@/utils/preset";
 
 const EXPORT_WIDTH = 3840 / 2,
   EXPORT_HEIGHT = 2160 / 2;
@@ -45,58 +51,26 @@ export const SketchModal = ({
     modalSidebarPadding,
     borderWidth,
   } = useViewport();
-
-  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
-    MODAL_OPEN_SEQUENCE,
-  );
-  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
-  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS").wasRun;
-  const playbackControlsEnabled = useSegment("START_PLAYING").completed;
-
-  const onAnimationProgress = useCallback((seg: SegmentBase) => {
-    if (
-      seg.id === "TILE_GOES_MODAL" &&
-      seg.isRunning &&
-      seg instanceof SyncSegment
-    ) {
-      setSize("modal");
-      api.start({
-        modalX: 1,
-        config: { duration: seg.duration, easing: easings.easeInOutCubic },
-      });
-    } else if (
-      seg.id === "SHOW_HEADER" &&
-      seg.isRunning &&
-      seg instanceof SyncSegment
-    ) {
-      api.start({
-        headerX: 1,
-        config: { duration: seg.duration, easing: easings.easeInOutCubic },
-      });
-    } else if (seg.id === "START_PLAYING" && seg.isRunning) {
-      sendEvent({
-        type: "modeChange",
-        mode: "animated",
-      });
-      sendEvent({
-        type: "playPause",
-        paused: false,
-      });
-      setPaused(false);
-    }
-  }, []);
-
-  useListener(onAnimationProgress);
-
   const [size, setSize] = useState<SketchCanvasSize>("tile");
   // TODO: put `paused` state inside `PlaybackControls`
   const [paused, setPaused] = useState(true);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
-  const defaultPreset = sketch.presets[0];
-  const [params, setParams] = useState(defaultPreset.params);
+  const { getPresetFromUrl, useSyncPresetWithUrl } = useURLParams({
+    rerenderOnUrlChange: true,
+    handler: () => {
+      console.log(111111);
+
+      const temp = getPresetFromUrl();
+      if (temp) {
+        applyPreset(temp);
+      }
+    },
+  });
+  const activePreset: IPreset = getPresetFromUrl() ?? getDefaultPreset(sketch);
+  const [params, setParams] = useState(activePreset.params);
   /** time delta is a speed of animation set by user */
   const [timeDelta, setTimeDelta] = useState(
-    (defaultPreset.timeDelta as number) ?? 1,
+    (activePreset.timeDelta as number) ?? 1,
   );
   const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
 
@@ -214,6 +188,7 @@ export const SketchModal = ({
       });
     }
   };
+
   const hidePlaybackControls = () => {
     if (playbackControlsEnabled) {
       api.start({
@@ -223,8 +198,50 @@ export const SketchModal = ({
     }
   };
 
+  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+    MODAL_OPEN_SEQUENCE,
+  );
+  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
+  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS").wasRun;
+  const playbackControlsEnabled = useSegment("START_PLAYING").completed;
+
+  const onAnimationProgress = useCallback((seg: SegmentBase) => {
+    if (
+      seg.id === "TILE_GOES_MODAL" &&
+      seg.isRunning &&
+      seg instanceof SyncSegment
+    ) {
+      setSize("modal");
+      api.start({
+        modalX: 1,
+        config: { duration: seg.duration, easing: easings.easeInOutCubic },
+      });
+    } else if (
+      seg.id === "SHOW_HEADER" &&
+      seg.isRunning &&
+      seg instanceof SyncSegment
+    ) {
+      api.start({
+        headerX: 1,
+        config: { duration: seg.duration, easing: easings.easeInOutCubic },
+      });
+    } else if (seg.id === "START_PLAYING" && seg.isRunning) {
+      sendEvent({
+        type: "modeChange",
+        mode: "animated",
+      });
+      sendEvent({
+        type: "playPause",
+        paused: false,
+      });
+      setPaused(false);
+    }
+  }, []);
+
+  useListener(onAnimationProgress);
   useModalBehavior(true, onBackClick);
   useKeyboardShortcuts(playPause, openInFullscreen);
+  useSyncPresetWithUrl(params, timeDelta);
 
   return (
     <animated.div
@@ -342,10 +359,10 @@ export const SketchModal = ({
                 paused={paused}
                 mode={"static"}
                 ref={sketchCanvasRef}
-                startTime={defaultPreset.startTime ?? sketch.startTime ?? 0}
+                startTime={activePreset.startTime ?? sketch.startTime ?? 0}
                 timeDelta={timeDelta}
                 eventBus={eventBus.current}
-                randomSeed={defaultPreset.randomSeed ?? sketch.randomSeed}
+                randomSeed={activePreset.randomSeed ?? sketch.randomSeed}
               />
             </div>
             <animated.div

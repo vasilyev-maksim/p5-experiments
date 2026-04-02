@@ -16,11 +16,12 @@ import { useURLParams } from "../hooks";
 import { sketchList } from "../sketches/list";
 
 function App() {
-  const { removeSketchDataFromUrl, sketchIdFromUrl, setSketchIdInUrl } =
+  const { removeSketchDataFromUrl, getSketchIdFromUrl, setSketchIdInUrl } =
     useURLParams();
+  const activeSketchId = getSketchIdFromUrl();
   const activeSketch = useMemo<ISketch | undefined>(
-    () => sketchList.find((x) => x.id === sketchIdFromUrl),
-    [sketchIdFromUrl],
+    () => sketchList.find((x) => x.id === activeSketchId),
+    [activeSketchId],
   );
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();

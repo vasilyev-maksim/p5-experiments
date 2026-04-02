@@ -4,7 +4,6 @@ import {
   type IControl,
   type IControls,
   type IParams,
-  type IPreset,
 } from "../models";
 
 function serializeParams(params: IParams): string {
@@ -98,23 +97,6 @@ export async function copyToClipboard(text: string) {
   } catch (err) {
     console.error("Failed to copy:", err);
   }
-}
-
-export function copyPresetCodeToClipboard(
-  params: IParams,
-  timeDelta: number,
-  presetIndex: number,
-) {
-  const name = prompt("Preset name (optional):")?.trim();
-  const preset: IPreset = {
-    params,
-    name: name ?? presetIndex.toString(),
-    timeDelta,
-    randomSeed: undefined,
-    startTime: undefined,
-  };
-  const code = JSON.stringify(preset, null, 4) + ",";
-  return copyToClipboard(code);
 }
 
 export function tryParseNumber(str: string, fallback: number) {

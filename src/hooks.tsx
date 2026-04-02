@@ -8,8 +8,9 @@ import {
 } from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
 import { ViewportContext } from "./components/ViewportContext";
-import type { IPreset, ISketch } from "./models";
+import type { IParams, IPreset, ISketch } from "./models";
 import { getClosestDiscreteValue } from "./utils/misc";
+import { addPresetDataToQs, readPresetFromQs } from "./utils/preset";
 
 // TODO: move consts from here / use react context for that
 export function useViewport() {
@@ -47,47 +48,89 @@ export function useViewport() {
   };
 }
 
-export function useURLParams() {
+export function useURLParams(
+  {
+    rerenderOnUrlChange,
+    handler,
+  }: {
+    rerenderOnUrlChange: boolean;
+    handler?: () => void;
+  } = { rerenderOnUrlChange: true },
+) {
   const baseUrl = import.meta.env.BASE_URL;
   const qs = new URLSearchParams(location.search);
-  const sketchIdFromUrl = qs.get("sid");
-  const presetIdFromUrl = qs.get("pid");
+  const getSketchIdFromUrl = () => qs.get("sid");
   const rerender = useRerender();
 
   const setSketchIdInUrl = (sketch: ISketch) => {
     const qs = new URLSearchParams(location.search);
     qs.set("sid", sketch.id);
     history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
-    rerender();
+
+    if (rerenderOnUrlChange) {
+      rerender();
+    }
   };
 
-  const setPresetIdInUrl = (preset: IPreset) => {
+  const setPresetDataInUrl = (preset: IPreset) => {
     const qs = new URLSearchParams(location.search);
-    qs.set("pid", preset.name);
+    addPresetDataToQs(preset, qs);
     history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
-    rerender();
+
+    if (rerenderOnUrlChange) {
+      rerender();
+    }
   };
+  const setPresetDataInUrlDebounced = useDebouncedFn(setPresetDataInUrl, 200);
 
   const removeSketchDataFromUrl = () => {
     history.pushState({}, "", location.origin + import.meta.env.BASE_URL);
-    rerender();
+
+    if (rerenderOnUrlChange) {
+      rerender();
+    }
+  };
+
+  const getPresetFromUrl = () => {
+    const qs = new URLSearchParams(location.search);
+    return readPresetFromQs(qs);
   };
 
   // handling manual nav back and forward by user
   useEffect(() => {
-    window.addEventListener("popstate", rerender);
+    console.log(22222);
 
-    return () => {
-      window.removeEventListener("popstate", rerender);
+    const listener = () => {
+      handler?.();
+      rerender();
     };
-  }, []);
+    if (rerenderOnUrlChange) {
+      window.addEventListener("popstate", listener);
+
+      return () => {
+        console.log(33333);
+
+        window.removeEventListener("popstate", listener);
+      };
+    }
+  }, [rerenderOnUrlChange, rerender]);
+
+  const useSyncPresetWithUrl = (params: IParams, timeDelta: number) => {
+    useEffect(() => {
+      setPresetDataInUrl({
+        params,
+        timeDelta,
+        name: "",
+      });
+    }, [params, timeDelta]);
+  };
 
   return {
-    sketchIdFromUrl,
+    getSketchIdFromUrl,
     setSketchIdInUrl,
-    presetIdFromUrl,
-    setPresetIdInUrl,
     removeSketchDataFromUrl,
+    getPresetFromUrl,
+    useSyncPresetWithUrl,
   };
 }
 
@@ -337,5 +380,5 @@ export function useGlobalDrag(
 
 export function useRerender() {
   const [, setRerenderCounter] = useState(0);
-  return () => setRerenderCounter((x) => x + 1);
+  return useCallback(() => setRerenderCounter((x) => x + 1), []);
 }

@@ -4,6 +4,7 @@ import styles from "./SketchTile.module.css";
 import classNames from "classnames";
 import { useViewport } from "../hooks";
 import { SketchCanvas } from "./SketchCanvas";
+import { getDefaultPreset } from "@/utils/preset";
 
 export const SketchTile = forwardRef<
   HTMLDivElement,
@@ -38,7 +39,7 @@ export const SketchTile = forwardRef<
       canvasModalHeight,
       canvasModalWidth,
     } = useViewport();
-    const defaultPreset = sketch.presets[0];
+    const defaultPreset = getDefaultPreset(sketch);
 
     return (
       <div
