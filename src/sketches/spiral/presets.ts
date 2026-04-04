@@ -20,22 +20,6 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
-      POLYGON_N: controls.POLYGON_N.max,
-      THICKNESS: 20,
-      COIL_FACTOR: 1,
-      COIL_SPEED: 10,
-      ZOOM: 4,
-      ROTATION_SPEED: 4,
-      COLOR_CHANGE_SPEED: 10,
-      FILL_COLORS: 2,
-      BORDER_COLOR: 4,
-    },
-    timeDelta: 1,
-    name: "peach",
-    startTime: 1228,
-  },
-  {
-    params: {
       POLYGON_N: 10,
       THICKNESS: 17,
       ROTATION_SPEED: 7,
@@ -66,22 +50,21 @@ export const presets: IPreset<Controls>[] = [
     name: "glimmer",
     startTime: -256,
   },
-
   {
     params: {
-      POLYGON_N: 6,
-      THICKNESS: 20,
-      COIL_FACTOR: 100,
-      COIL_SPEED: 10,
-      ZOOM: 20,
-      ROTATION_SPEED: 10,
-      COLOR_CHANGE_SPEED: 10,
-      FILL_COLORS: 1,
+      POLYGON_N: 7,
+      THICKNESS: 9,
+      COIL_FACTOR: 42,
+      COIL_SPEED: 2,
+      ZOOM: 5,
+      ROTATION_SPEED: 8,
+      COLOR_CHANGE_SPEED: -7,
+      FILL_COLORS: 2,
       BORDER_COLOR: 5,
     },
-    timeDelta: 0.1,
-    name: "hexornado",
-    startTime: 940,
+    name: "carousel",
+    timeDelta: 1,
+    startTime: 750,
   },
   {
     params: {
@@ -98,6 +81,22 @@ export const presets: IPreset<Controls>[] = [
     timeDelta: 1,
     name: "mandala",
     startTime: 1082,
+  },
+  {
+    params: {
+      POLYGON_N: 6,
+      THICKNESS: 20,
+      COIL_FACTOR: 100,
+      COIL_SPEED: 10,
+      ZOOM: 20,
+      ROTATION_SPEED: 10,
+      COLOR_CHANGE_SPEED: 10,
+      FILL_COLORS: 1,
+      BORDER_COLOR: 5,
+    },
+    timeDelta: 0.1,
+    name: "hexornado",
+    startTime: 940,
   },
   {
     params: {
@@ -235,5 +234,21 @@ export const presets: IPreset<Controls>[] = [
     },
     timeDelta: 1,
     name: "white hole",
+  },
+  {
+    params: {
+      POLYGON_N: controls.POLYGON_N.max,
+      THICKNESS: 20,
+      COIL_FACTOR: 1,
+      COIL_SPEED: 10,
+      ZOOM: 4,
+      ROTATION_SPEED: 4,
+      COLOR_CHANGE_SPEED: 10,
+      FILL_COLORS: 2,
+      BORDER_COLOR: 4,
+    },
+    timeDelta: 1,
+    name: "peach",
+    startTime: 1228,
   },
 ];
