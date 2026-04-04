@@ -57,6 +57,7 @@ export const presets: IPreset<Controls>[] = [
     },
     timeDelta: 1,
     name: "hills",
+    startTime: 476,
   },
   {
     params: {
@@ -99,6 +100,7 @@ export const presets: IPreset<Controls>[] = [
     },
     timeDelta: 1,
     name: "sunrise",
+    startTime: 100,
   },
   {
     params: {
