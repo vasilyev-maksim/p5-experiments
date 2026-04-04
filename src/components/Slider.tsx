@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import styles from "./Slider.module.css";
 import { animated, easings, to, useSpring } from "react-spring";
-import { useSliderBehavior } from "../hooks";
+import { useSliderBehavior } from "@hooks";
 
 const TRACK_HEIGHT = [2, 2];
 const TRACK_WRAPPER_HEIGHT = 15;
@@ -21,7 +21,10 @@ export function Slider(props: {
   const { initX } = useSpring({
     from: { initX: 0 },
     to: { initX: props.active ? 1 : 0 },
-    config: { duration: props.activationAnimationDuration, easing: easings.easeInOutCubic },
+    config: {
+      duration: props.activationAnimationDuration,
+      easing: easings.easeInOutCubic,
+    },
   });
   const {
     trackRef,
@@ -37,7 +40,7 @@ export function Slider(props: {
     props.min,
     props.max,
     props.step,
-    props.onChange
+    props.onChange,
   );
 
   const handleWidth = activeX.to([0, 1], HANDLE_WIDTH);
@@ -83,7 +86,7 @@ export function Slider(props: {
           style={{
             left: to(
               [handleWidth, handleLeft],
-              (w, x) => `calc(${x}% - ${w / 2}px)`
+              (w, x) => `calc(${x}% - ${w / 2}px)`,
             ),
             width: handleWidth,
             height: handleHeight,

@@ -7,10 +7,8 @@ import {
   useState,
 } from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
-import { ViewportContext } from "./components/ViewportContext";
-import type { IParams, IPreset, ISketch } from "./models";
-import { getClosestDiscreteValue } from "./utils/misc";
-import { addPresetDataToQs, readPresetFromQs } from "./utils/preset";
+import { ViewportContext } from "../components/ViewportContext";
+import { getClosestDiscreteValue } from "../utils/misc";
 
 // TODO: move consts from here / use react context for that
 export function useViewport() {
@@ -45,92 +43,6 @@ export function useViewport() {
     canvasModalHeight,
     canvasTileSize,
     borderWidth,
-  };
-}
-
-export function useURLParams(
-  {
-    rerenderOnUrlChange,
-    handler,
-  }: {
-    rerenderOnUrlChange: boolean;
-    handler?: () => void;
-  } = { rerenderOnUrlChange: true },
-) {
-  const baseUrl = import.meta.env.BASE_URL;
-  const qs = new URLSearchParams(location.search);
-  const getSketchIdFromUrl = () => qs.get("sid");
-  const rerender = useRerender();
-
-  const setSketchIdInUrl = (sketch: ISketch) => {
-    const qs = new URLSearchParams(location.search);
-    qs.set("sid", sketch.id);
-    history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
-
-    if (rerenderOnUrlChange) {
-      rerender();
-    }
-  };
-
-  const setPresetDataInUrl = (preset: IPreset) => {
-    const qs = new URLSearchParams(location.search);
-    addPresetDataToQs(preset, qs);
-    history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
-
-    if (rerenderOnUrlChange) {
-      rerender();
-    }
-  };
-  const setPresetDataInUrlDebounced = useDebouncedFn(setPresetDataInUrl, 200);
-
-  const removeSketchDataFromUrl = () => {
-    history.pushState({}, "", location.origin + import.meta.env.BASE_URL);
-
-    if (rerenderOnUrlChange) {
-      rerender();
-    }
-  };
-
-  const getPresetFromUrl = () => {
-    const qs = new URLSearchParams(location.search);
-    return readPresetFromQs(qs);
-  };
-
-  // handling manual nav back and forward by user
-  useEffect(() => {
-    console.log(22222);
-
-    const listener = () => {
-      handler?.();
-      rerender();
-    };
-    if (rerenderOnUrlChange) {
-      window.addEventListener("popstate", listener);
-
-      return () => {
-        console.log(33333);
-
-        window.removeEventListener("popstate", listener);
-      };
-    }
-  }, [rerenderOnUrlChange, rerender]);
-
-  const useSyncPresetWithUrl = (params: IParams, timeDelta: number) => {
-    useEffect(() => {
-      setPresetDataInUrl({
-        params,
-        timeDelta,
-        name: "",
-      });
-    }, [params, timeDelta]);
-  };
-
-  return {
-    getSketchIdFromUrl,
-    setSketchIdInUrl,
-    removeSketchDataFromUrl,
-    getPresetFromUrl,
-    useSyncPresetWithUrl,
   };
 }
 

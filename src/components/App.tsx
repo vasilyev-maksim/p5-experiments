@@ -12,12 +12,13 @@ import {
   type MODAL_OPEN_SEGMENTS,
 } from "../animations";
 import { SketchTilesGrid } from "./SketchTilesGrid";
-import { useURLParams } from "../hooks";
+import { usePopStateSync, useUrlSketch } from "@hooks/url";
 import { sketchList } from "../sketches/list";
 
 function App() {
   const { removeSketchDataFromUrl, getSketchIdFromUrl, setSketchIdInUrl } =
-    useURLParams();
+    useUrlSketch();
+  usePopStateSync();
   const activeSketchId = getSketchIdFromUrl();
   const activeSketch = useMemo<ISketch | undefined>(
     () => sketchList.find((x) => x.id === activeSketchId),
@@ -59,6 +60,7 @@ function App() {
   const handleSketchClick = (x: ISketch) => {
     setSketchIdInUrl(x);
   };
+
   const closeSketch = () => {
     removeSketchDataFromUrl();
   };

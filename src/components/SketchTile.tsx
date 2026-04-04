@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import type { ISketch } from "../models";
 import styles from "./SketchTile.module.css";
 import classNames from "classnames";
-import { useViewport } from "../hooks";
+import { useViewport } from "@hooks";
 import { SketchCanvas } from "./SketchCanvas";
 import { getDefaultPreset } from "@/utils/preset";
 

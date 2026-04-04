@@ -1,12 +1,7 @@
 import type { IPreset, ISketch, SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
-import {
-  useKeyboardShortcuts,
-  useModalBehavior,
-  useURLParams,
-  useViewport,
-} from "../hooks";
+import { useKeyboardShortcuts, useModalBehavior, useViewport } from "@hooks";
 import classNames from "classnames";
 import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
@@ -26,6 +21,7 @@ import { getRandomParams } from "@/utils/misc";
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 import { copyPresetCodeToClipboard, getDefaultPreset } from "@/utils/preset";
+import { usePopStateSync, useUrlPreset, useUrlPresetSync } from "@/hooks/url";
 
 const EXPORT_WIDTH = 3840 / 2,
   EXPORT_HEIGHT = 2160 / 2;
@@ -55,25 +51,36 @@ export const SketchModal = ({
   // TODO: put `paused` state inside `PlaybackControls`
   const [paused, setPaused] = useState(true);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
-  const { getPresetFromUrl, useSyncPresetWithUrl } = useURLParams({
-    rerenderOnUrlChange: true,
-    handler: () => {
-      console.log(111111);
 
-      const temp = getPresetFromUrl();
-      if (temp) {
-        applyPreset(temp);
-      }
-    },
-  });
+  // active preset & url sync
+  const { getPresetFromUrl } = useUrlPreset();
   const activePreset: IPreset = getPresetFromUrl() ?? getDefaultPreset(sketch);
   const [params, setParams] = useState(activePreset.params);
   /** time delta is a speed of animation set by user */
   const [timeDelta, setTimeDelta] = useState(
     (activePreset.timeDelta as number) ?? 1,
   );
-  const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
+  const applyPreset = (preset: IPreset) => {
+    sendEvent({
+      type: "applyPreset",
+      preset,
+    });
+    setParams(preset.params);
+    setTimeDelta(preset.timeDelta);
+  };
+  useUrlPresetSync(params, timeDelta);
+  usePopStateSync(() => {
+    // console.log("handler");
 
+    const temp = getPresetFromUrl();
+    console.log({ temp });
+
+    if (temp) {
+      applyPreset(temp);
+    }
+  });
+
+  const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
   const sendEvent = (...args: Parameters<EventBus<SketchEvent>["emit"]>) => {
     eventBus.current.emit(...args);
   };
@@ -94,15 +101,6 @@ export const SketchModal = ({
       paramValue,
     });
     setParams((x) => ({ ...x, [paramName]: paramValue }));
-  };
-
-  const applyPreset = (preset: IPreset) => {
-    sendEvent({
-      type: "applyPreset",
-      preset,
-    });
-    setParams(preset.params);
-    setTimeDelta(preset.timeDelta);
   };
 
   const playPause = () => {
@@ -241,7 +239,6 @@ export const SketchModal = ({
   useListener(onAnimationProgress);
   useModalBehavior(true, onBackClick);
   useKeyboardShortcuts(playPause, openInFullscreen);
-  useSyncPresetWithUrl(params, timeDelta);
 
   return (
     <animated.div

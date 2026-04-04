@@ -8,7 +8,7 @@ import type {
 } from "../models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { useViewport } from "../hooks";
+import { useViewport } from "@hooks";
 import { animated, easings, to, useSpring } from "react-spring";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";

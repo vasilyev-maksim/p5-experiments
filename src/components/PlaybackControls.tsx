@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { PlayPauseButton } from "./PlayPauseButton";
 import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
-import { useLongPress } from "../hooks";
+import { useLongPress } from "@hooks";
 
 export function PlaybackControls(props: {
   paused: boolean;
