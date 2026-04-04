@@ -17,8 +17,6 @@ export function addPresetDataToQs(preset: IPreset, qs: URLSearchParams) {
   });
 
   qs.set("timeDelta", preset.timeDelta.toString());
-
-  return qs.toString();
 }
 
 export function readPresetFromQs(qs: URLSearchParams) {

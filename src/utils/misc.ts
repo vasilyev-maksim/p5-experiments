@@ -17,7 +17,9 @@ export function areParamsEqual(a: IParams, b: IParams): boolean {
   return serializeParams(a) === serializeParams(b);
 }
 
-function getRandomValueFromControl(c: IControl): ControlValueType<typeof c> {
+export function getRandomValueFromControl(
+  c: IControl,
+): ControlValueType<typeof c> {
   switch (c.type) {
     case "boolean":
       return Math.random() > 0.5;
@@ -25,10 +27,12 @@ function getRandomValueFromControl(c: IControl): ControlValueType<typeof c> {
       return Math.round(Math.random() * (c.options.length - 1));
     case "color":
       return Math.round(Math.random() * (c.colors.length - 1));
-    case "range":
-      return (
-        Math.floor((Math.random() * (c.max - c.min)) / c.step) * c.step + c.min
-      );
+    case "range": {
+      const raw =
+        Math.floor((Math.random() * (c.max - c.min)) / c.step) * c.step + c.min;
+      const precision = c.step.toString().split(".")[1]?.length ?? 0;
+      return parseFloat(raw.toFixed(precision));
+    }
     case "coordinates":
       return [Math.random(), Math.random()];
   }
@@ -60,7 +64,9 @@ export function getClosestDiscreteValue(
     let tmp = (value - min) / step;
     const remainder = tmp % 1;
     tmp = Math.floor(tmp);
-    return min + (remainder < 0.5 ? tmp : tmp + 1) * step;
+    const raw = min + (remainder < 0.5 ? tmp : tmp + 1) * step;
+    const precision = step.toString().split(".")[1]?.length ?? 0;
+    return parseFloat(raw.toFixed(precision));
   }
 }
 

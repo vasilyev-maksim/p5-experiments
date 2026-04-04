@@ -27,7 +27,6 @@
   - show it once on modal expand (even with no mouse hovering)
 
 - [easy] animate "shuffle presets" button (on modal open)
-- [easy][bug] preset gets deselected because of long tail after decimal point (for inner thickness fo ex.) (worms - "hollowness" control)
 - [easy] add animated underline for my name link
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] redesign `Export preset` and `Randomize` buttons
@@ -45,6 +44,7 @@
 
 # 💡 NICE TO HAVE
 
+- [hard] get rid of react-wrapper
 - [medium] add "collapse side panel" capabilities [?]
 - [hard] think how to use `p.createGraphics` buffer
   - for export
@@ -59,6 +59,7 @@
 
 # ✅ DONE
 
+- [easy][bug] preset gets deselected because of long tail after decimal point (for inner thickness fo ex.) (worms - "hollowness" control)
 - [easy][bug] nav back doesn't close sketch modal
 - [easy] timeDelta value missing when exporting preset (as well as random seed etc.)
 - [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
