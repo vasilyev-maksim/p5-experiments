@@ -103,20 +103,6 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
-      RESOLUTION: 6,
-      MAX_CURVATURE: 0.025,
-      MAX_NEGATIVE_CURVATURE: 0.025,
-      PADDING_PERCENT: 45,
-      COLOR: 2,
-      INVERT_COLORS: false,
-      PATTERN_TYPE: 1,
-      CURVATURE_TYPE: 2,
-    },
-    timeDelta: 1,
-    name: "scars",
-  },
-  {
-    params: {
       RESOLUTION: 30,
       MAX_CURVATURE: 0.9,
       MAX_NEGATIVE_CURVATURE: 0.5,
@@ -128,6 +114,20 @@ export const presets: IPreset<Controls>[] = [
     },
     timeDelta: 1.2,
     name: "demogorgon",
+  },
+  {
+    params: {
+      RESOLUTION: 6,
+      MAX_CURVATURE: 0.025,
+      MAX_NEGATIVE_CURVATURE: 0.025,
+      PADDING_PERCENT: 45,
+      COLOR: 2,
+      INVERT_COLORS: false,
+      PATTERN_TYPE: 1,
+      CURVATURE_TYPE: 2,
+    },
+    timeDelta: 1,
+    name: "scars",
   },
   {
     params: {
