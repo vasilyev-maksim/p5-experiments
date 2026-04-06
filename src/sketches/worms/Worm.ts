@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { getDirFromAbsVec } from "../utils";
+import { getDirFromAbsVec } from "./utils";
 
 export type WormParams = {
   head: p5.Vector;

@@ -12,18 +12,18 @@ import {
   type MODAL_OPEN_SEGMENTS,
 } from "../animations";
 import { SketchTilesGrid } from "./SketchTilesGrid";
-import { usePopStateSync, useUrlSketch } from "@hooks/url";
+import { usePopStateSync } from "@hooks/url";
 import { sketchList } from "../sketches/list";
+import {
+  getActiveSketchFromUrl,
+  removeSketchDataFromUrl,
+  setSketchToUrl,
+} from "@/utils/url";
+import { useRerender } from "@/hooks";
 
 function App() {
-  const { removeSketchDataFromUrl, getSketchIdFromUrl, setSketchIdInUrl } =
-    useUrlSketch();
-  usePopStateSync();
-  const activeSketchId = getSketchIdFromUrl();
-  const activeSketch = useMemo<ISketch | undefined>(
-    () => sketchList.find((x) => x.id === activeSketchId),
-    [activeSketchId],
-  );
+  const rerender = useRerender();
+  const activeSketch = getActiveSketchFromUrl(sketchList);
   const selectedTileRef = useRef<HTMLDivElement>(null);
   const [cloneTop, setCloneTop] = useState<number>();
   const [cloneLeft, setCloneLeft] = useState<number>();
@@ -57,12 +57,16 @@ function App() {
     }
   }, [activeSketch]);
 
+  usePopStateSync();
+
   const handleSketchClick = (x: ISketch) => {
-    setSketchIdInUrl(x);
+    setSketchToUrl(x);
+    rerender();
   };
 
   const closeSketch = () => {
     removeSketchDataFromUrl();
+    rerender();
   };
 
   return (

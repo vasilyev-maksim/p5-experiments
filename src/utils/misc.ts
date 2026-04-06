@@ -1,51 +1,3 @@
-import type { RandomProvider } from "@/core/models";
-import {
-  type ControlValueType,
-  type IControl,
-  type IControls,
-  type IParams,
-} from "../models";
-
-function serializeParams(params: IParams): string {
-  return Object.entries(params)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map((key, value) => key + "__" + value)
-    .join("___");
-}
-
-export function areParamsEqual(a: IParams, b: IParams): boolean {
-  return serializeParams(a) === serializeParams(b);
-}
-
-export function getRandomValueFromControl(
-  c: IControl,
-): ControlValueType<typeof c> {
-  switch (c.type) {
-    case "boolean":
-      return Math.random() > 0.5;
-    case "choice":
-      return Math.round(Math.random() * (c.options.length - 1));
-    case "color":
-      return Math.round(Math.random() * (c.colors.length - 1));
-    case "range": {
-      const raw =
-        Math.floor((Math.random() * (c.max - c.min)) / c.step) * c.step + c.min;
-      const precision = c.step.toString().split(".")[1]?.length ?? 0;
-      return parseFloat(raw.toFixed(precision));
-    }
-    case "coordinates":
-      return [Math.random(), Math.random()];
-  }
-}
-
-export function getRandomParams<Controls extends IControls>(
-  controls: Controls,
-): IParams<Controls> {
-  return Object.entries<IControl>(controls).reduce((acc, [key, val]) => {
-    return { ...acc, [key]: getRandomValueFromControl(val) };
-  }, {}) as IParams<Controls>;
-}
-
 export function delay(delay: number) {
   return new Promise((r) => setTimeout(r, delay));
 }
@@ -123,22 +75,11 @@ export function chunkArray<T>(arr: T[], chunkLength: number): T[][] {
   return res;
 }
 
-// Fisher–Yates shuffle
-export function shuffle<T>(
-  arr: T[],
-  randomProvider: RandomProvider = Math.random,
-): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(randomProvider() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+export function assert(
+  condition: unknown,
+  message?: string,
+): asserts condition {
+  if (!condition) {
+    throw new Error(message ?? "Assertion failed");
   }
-  return a;
-}
-
-export function getRandomShuffle(
-  len: number,
-  randomProvider: RandomProvider = Math.random,
-) {
-  return shuffle(range(len), randomProvider);
 }

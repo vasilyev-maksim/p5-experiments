@@ -1,12 +1,13 @@
 # 👨‍💻 IN PROGRESS
 
+- [easy] use "preset in url" only for custom param configs (not presets)
+
 # 📋 TODO
 
 - [hard] optimize `SketchModal` (too many rerenders of controls)
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg
-- [hard] don't mismatch preset on the first change (mark it with \*)
 
 - [medium] write meaningful README.md
 - [medium] adopt `tiles` and `worm` to new architecture
@@ -15,6 +16,7 @@
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
 
+- [easy] hide "export preset" button in prod
 - [easy] back button
 - [easy] animate "shuffle presets" button (on modal open)
 - [easy] add animated underline for my name link
@@ -124,6 +126,7 @@
 
 # ❌ CANCELED
 
+- [hard] don't mismatch preset on the first change (mark it with \*)
 - recursive `worms` sourcing (place new worm not randomly, and walk not randomly too)
 - rethink zigzags
 - next/prev animation modal (using keyboard arrows)

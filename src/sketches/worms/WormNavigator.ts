@@ -5,7 +5,7 @@ import {
   getAbsVecFromDir,
   type DirMap,
   rotate,
-} from "@/sketches/utils";
+} from "./utils";
 import type { OccupancyGrid } from "@/utils/OccupancyGrid";
 import p5 from "p5";
 import { Worm } from "./Worm";
@@ -108,3 +108,5 @@ export class WormNavigator {
     return this.occupancyGrid.isOccupied(cell) === false;
   }
 }
+
+

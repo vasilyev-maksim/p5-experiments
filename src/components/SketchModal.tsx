@@ -17,11 +17,11 @@ import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
-import { getRandomParams } from "@/utils/misc";
+import { copyPresetCodeToClipboard, getRandomParams } from "@/utils/sketch";
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
-import { copyPresetCodeToClipboard, getDefaultPreset } from "@/utils/preset";
-import { usePopStateSync, useUrlPreset, useUrlPresetSync } from "@/hooks/url";
+import { getActivePresetFromUrl, setPresetDataToUrl } from "@/utils/url";
+import { usePopStateSync } from "@/hooks/url";
 
 const EXPORT_WIDTH = 3840 / 2,
   EXPORT_HEIGHT = 2160 / 2;
@@ -52,32 +52,29 @@ export const SketchModal = ({
   const [paused, setPaused] = useState(true);
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
 
-  // active preset & url sync
-  const { getPresetFromUrl } = useUrlPreset();
-  const activePreset: IPreset = getPresetFromUrl() ?? getDefaultPreset(sketch);
+  const activePreset = getActivePresetFromUrl(sketch);
   const [params, setParams] = useState(activePreset.params);
   /** time delta is a speed of animation set by user */
-  const [timeDelta, setTimeDelta] = useState(
-    (activePreset.timeDelta as number) ?? 1,
-  );
-  const applyPreset = (preset: IPreset) => {
+  const [timeDelta, setTimeDelta] = useState(activePreset.timeDelta);
+  const handlePresetApply = (preset: IPreset) => {
     sendEvent({
       type: "applyPreset",
       preset,
     });
     setParams(preset.params);
     setTimeDelta(preset.timeDelta);
+    setPresetDataToUrl({ type: "pid", pid: preset.name });
   };
-  useUrlPresetSync(params, timeDelta);
+
   usePopStateSync(() => {
-    // console.log("handler");
+    const preset = getActivePresetFromUrl(sketch);
 
-    const temp = getPresetFromUrl();
-    console.log({ temp });
-
-    if (temp) {
-      applyPreset(temp);
-    }
+    sendEvent({
+      type: "applyPreset",
+      preset,
+    });
+    setParams(preset.params);
+    setTimeDelta(preset.timeDelta);
   });
 
   const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
@@ -100,7 +97,13 @@ export const SketchModal = ({
       paramName,
       paramValue,
     });
-    setParams((x) => ({ ...x, [paramName]: paramValue }));
+    const newParams = { ...params, [paramName]: paramValue };
+    setParams(newParams);
+    setPresetDataToUrl({
+      type: "serialized",
+      params: newParams,
+      timeDelta,
+    });
   };
 
   const playPause = () => {
@@ -172,6 +175,7 @@ export const SketchModal = ({
       params: randomParams,
     });
     setParams(randomParams);
+    setPresetDataToUrl({ type: "serialized", params: randomParams, timeDelta });
   };
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
@@ -309,7 +313,7 @@ export const SketchModal = ({
                   <Presets
                     sketch={sketch}
                     params={params}
-                    onApply={applyPreset}
+                    onApply={handlePresetApply}
                   />
 
                   <ParamControls

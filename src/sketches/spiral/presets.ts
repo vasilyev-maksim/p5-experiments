@@ -52,9 +52,9 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
-      POLYGON_N: 7,
+      POLYGON_N: 6,
       THICKNESS: 9,
-      COIL_FACTOR: 42,
+      COIL_FACTOR: 52,
       COIL_SPEED: 2,
       ZOOM: 5,
       ROTATION_SPEED: 8,
@@ -64,7 +64,7 @@ export const presets: IPreset<Controls>[] = [
     },
     name: "carousel",
     timeDelta: 1,
-    startTime: 750,
+    startTime: 450,
   },
   {
     params: {
