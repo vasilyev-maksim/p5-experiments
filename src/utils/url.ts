@@ -76,7 +76,7 @@ export function getPresetDataFromQs(
     qs.forEach((valueStr, name) => {
       const val =
         valueStr === "true" || valueStr === "false"
-          ? Boolean(valueStr)
+          ? valueStr === "true"
           : Number(valueStr);
 
       if (name === TIME_DELTA_KEY) {

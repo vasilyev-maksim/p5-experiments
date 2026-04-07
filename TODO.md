@@ -1,7 +1,5 @@
 # 👨‍💻 IN PROGRESS
 
-- [easy] use "preset in url" only for custom param configs (not presets)
-
 # 📋 TODO
 
 - [hard] optimize `SketchModal` (too many rerenders of controls)
@@ -55,6 +53,7 @@
 
 # ✅ DONE
 
+- [easy] use "preset in url" only for custom param configs (not presets)
 - [medium] each preset may have a timestamp to play animation from (for better showiness)
   - [x] spiral
   - [x] arcs
