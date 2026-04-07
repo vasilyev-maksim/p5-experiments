@@ -1,9 +1,9 @@
 import { Worm } from "../Worm";
 import type { PatternArgs } from ".";
 import { WormNavigator } from "../WormNavigator";
-import type { DirMap } from "@/sketches/utils";
 import { OccupancyGrid } from "@/utils/OccupancyGrid";
 import { Size } from "@/sketches/tiles/Size";
+import type { DirMap } from "../utils";
 
 export const directionalPattern =
   ({ directionX, directionY }: { directionX: number; directionY: number }) =>

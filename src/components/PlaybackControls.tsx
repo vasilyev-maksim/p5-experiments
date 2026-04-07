@@ -4,6 +4,8 @@ import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
 import { useLongPress } from "@hooks";
 
+const HOLD_TIMEOUT = 500;
+
 export function PlaybackControls(props: {
   paused: boolean;
   timeDelta: number;
@@ -77,8 +79,6 @@ export function PlaybackControls(props: {
     </div>
   );
 }
-
-const HOLD_TIMEOUT = 500;
 
 export function JumpNFramesButton(props: {
   n: number;
