@@ -1,4 +1,4 @@
-import type { IParams, IPreset, ISketch } from "../models";
+import type { IPreset } from "../models";
 import styles from "./Presets.module.css";
 import { areParamsEqual } from "@/utils/sketch";
 import { SectionLayout } from "./SectionLayout";
@@ -10,20 +10,19 @@ import {
   type PresetsAnimationParams,
 } from "../animations";
 import { OptionButton } from "./OptionButton";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { BooleanParamControl } from "./BooleanParamControl";
+import { useActiveSketch } from "@hooks";
 
-export function Presets(props: {
-  sketch: ISketch;
-  onApply: (preset: IPreset) => void;
-  params: IParams;
-}) {
+export const Presets = memo(function Presets() {
+  const { activeSketch, params, applyPreset } = useActiveSketch();
   const segment =
     useSequence<MODAL_OPEN_SEGMENTS>(
       MODAL_OPEN_SEQUENCE,
     ).useSegment<PresetsAnimationParams>("SHOW_PRESETS");
   const { itemDelay, itemDuration } = segment.timingPayload;
-  const paramsCount = props.sketch.presets?.length ?? 0;
+  const presets = activeSketch.presets;
+  const paramsCount = presets.length ?? 0;
   const [springs] = useSprings(
     paramsCount,
     (i) => ({
@@ -53,11 +52,11 @@ export function Presets(props: {
 
   const presetIndex = useRef(0);
   const [shufflePresets, setShufflePresets] = useState(
-    props.sketch.presetsShuffle === 1,
+    activeSketch.shufflePresets === 1,
   );
 
   const handleClick = (preset: IPreset) => {
-    props.onApply(preset);
+    applyPreset(preset, { updateUrl: true });
 
     if (shufflePresets) {
       setShufflePresets(false);
@@ -67,16 +66,19 @@ export function Presets(props: {
   useEffect(() => {
     if (shufflePresets) {
       const id = setInterval(() => {
-        props.onApply(
-          props.sketch.presets[
-            ++presetIndex.current % props.sketch.presets.length
-          ],
-        );
-      }, props.sketch.presetsShuffleInterval ?? 1200);
+        const nextPreset = presets[++presetIndex.current % presets.length];
+
+        applyPreset(nextPreset, { updateUrl: true });
+      }, activeSketch.shufflePresetsInterval ?? 1200);
 
       return () => clearInterval(id);
     }
-  }, [shufflePresets]);
+  }, [
+    shufflePresets,
+    activeSketch.shufflePresetsInterval,
+    applyPreset,
+    presets,
+  ]);
 
   return (
     paramsCount > 0 &&
@@ -89,10 +91,9 @@ export function Presets(props: {
         <div className={styles.Presets}>
           {springs.map(({ x }, i) => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            const p = props.sketch.presets?.[i]!;
+            const p = presets?.[i]!;
             const isActive =
-              controlsActivated.wasRun &&
-              areParamsEqual(props.params, p.params);
+              controlsActivated.wasRun && areParamsEqual(params, p.params);
             return (
               <animated.div
                 tabIndex={1}
@@ -113,7 +114,7 @@ export function Presets(props: {
             );
           })}
         </div>
-        {(props.sketch.presetsShuffle ?? -1) > -1 && (
+        {(activeSketch.shufflePresets ?? -1) > -1 && (
           <BooleanParamControl
             label={"Shuffle presets"}
             value={shufflePresets}
@@ -126,4 +127,4 @@ export function Presets(props: {
       </SectionLayout>
     )
   );
-}
+});

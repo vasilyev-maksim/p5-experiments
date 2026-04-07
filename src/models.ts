@@ -105,8 +105,8 @@ export interface ISketch<Controls extends IControls = IControls> {
   randomSeed?: number;
   controls: Controls;
   presets: IPreset<Controls>[];
-  presetsShuffle?: FeatureState;
-  presetsShuffleInterval?: number;
+  shufflePresets?: FeatureState;
+  shufflePresetsInterval?: number;
   startTime?: number;
   type: "released" | "draft" | "hidden" | "only";
 }

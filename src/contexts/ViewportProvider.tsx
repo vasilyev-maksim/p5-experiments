@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import { ViewportContext } from "./ViewportContext";
 
 export function ViewportProvider({ children }: { children: React.ReactNode }) {
-  const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
-  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+  const [sizes, setSizes] = useState({
+    viewportWidth: window.innerWidth,
+    viewportHeight: window.innerHeight,
+  });
 
   useEffect(() => {
     function handleResize() {
-      setViewportWidth(window.innerWidth);
-      setViewportHeight(window.innerHeight);
+      setSizes({
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+      });
     }
 
     window.addEventListener("resize", handleResize);
@@ -16,12 +20,7 @@ export function ViewportProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <ViewportContext.Provider
-      value={{
-        viewportHeight,
-        viewportWidth,
-      }}
-    >
+    <ViewportContext.Provider value={sizes}>
       {children}
     </ViewportContext.Provider>
   );

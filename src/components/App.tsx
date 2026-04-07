@@ -1,6 +1,13 @@
 import styles from "./App.module.css";
 import { Header } from "./Header";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import classNames from "classnames";
 import { SketchModal } from "./SketchModal";
 import type { ISketch } from "../models";
@@ -19,7 +26,8 @@ import {
   removeSketchDataFromUrl,
   setSketchToUrl,
 } from "@/utils/url";
-import { useRerender } from "@/hooks";
+import { useRerender } from "@hooks";
+import { ActiveSketchProvider } from "@/contexts/ActiveSketchProvider";
 
 function App() {
   const rerender = useRerender();
@@ -59,10 +67,10 @@ function App() {
 
   usePopStateSync();
 
-  const handleSketchClick = (x: ISketch) => {
+  const handleSketchClick = useCallback((x: ISketch) => {
     setSketchToUrl(x);
     rerender();
-  };
+  }, []);
 
   const closeSketch = () => {
     removeSketchDataFromUrl();
@@ -89,12 +97,13 @@ function App() {
         />
       </div>
       {activeSketch && (
-        <SketchModal
-          top={cloneTop}
-          left={cloneLeft}
-          sketch={activeSketch}
-          onBackClick={closeSketch}
-        />
+        <ActiveSketchProvider activeSketch={activeSketch}>
+          <SketchModal
+            top={cloneTop}
+            left={cloneLeft}
+            onBackClick={closeSketch}
+          />
+        </ActiveSketchProvider>
       )}
     </>
   );

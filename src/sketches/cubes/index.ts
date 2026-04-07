@@ -13,8 +13,8 @@ export const sketch: ISketch<Controls> = {
   randomSeed: 44,
   controls,
   presets,
-  presetsShuffle: 1,
-  presetsShuffleInterval: 1500,
+  shufflePresets: 1,
+  shufflePresetsInterval: 1500,
   startTime: 150,
   type: "released",
 };

@@ -1,4 +1,3 @@
-import type { ISketch, IParams } from "../models";
 import { SectionLayout } from "./SectionLayout";
 import styles from "./ParamControls.module.css";
 import { Slider } from "./Slider";
@@ -13,21 +12,18 @@ import { ColorSelector } from "./ColorSelector";
 import { OptionSelector } from "./OptionSelector";
 import { OptionButton } from "./OptionButton";
 import { BooleanParamControl } from "./BooleanParamControl";
-import type { PropsWithChildren } from "react";
+import { memo, type PropsWithChildren } from "react";
 import { CoordinatesControl } from "./CoordinatesControl";
+import { useActiveSketch } from "@hooks";
 
-export function ParamControls(props: {
-  sketch: ISketch;
-  params: IParams;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onParamChange: (key: string, value: any) => void;
-}) {
+export const ParamControls = memo(function ParamControls() {
+  const { params, activeSketch, changeParam } = useActiveSketch();
   const segment =
     useSequence<MODAL_OPEN_SEGMENTS>(
       MODAL_OPEN_SEQUENCE,
     ).useSegment<ControlsAnimationParams>("SHOW_CONTROLS");
   const { itemDelay, itemDuration } = segment.timingPayload;
-  const entries = Object.entries(props.sketch.controls ?? {});
+  const entries = Object.entries(activeSketch.controls ?? {});
   const entriesCount = entries.length;
   const [springs] = useSprings(
     entriesCount,
@@ -69,7 +65,7 @@ export function ParamControls(props: {
             const [key, c] = entries[i];
             let body = null;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const value = props.params[key] as any;
+            const value = params[key] as any;
 
             if (c.type === "range") {
               const valueStr = c.valueFormatter?.(value, c) ?? value;
@@ -78,7 +74,7 @@ export function ParamControls(props: {
                 <Slider
                   label={label + ": " + valueStr}
                   value={value}
-                  onChange={(val) => props.onParamChange(key, val)}
+                  onChange={(val) => changeParam(key, val)}
                   max={c.max}
                   min={c.min}
                   step={c.step}
@@ -92,7 +88,7 @@ export function ParamControls(props: {
                   title={c.label + ": " + value}
                   colors={c.colors}
                   value={value}
-                  onChange={(val) => props.onParamChange(key, val)}
+                  onChange={(val) => changeParam(key, val)}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
                   shuffle={c.shuffle}
@@ -106,7 +102,7 @@ export function ParamControls(props: {
                   value={value}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
-                  onChange={(val) => props.onParamChange(key, val)}
+                  onChange={(val) => changeParam(key, val)}
                   options={c.options}
                 />
               );
@@ -125,7 +121,7 @@ export function ParamControls(props: {
                   )}
                   title={c.label}
                   value={value}
-                  onChange={(val) => props.onParamChange(key, val)}
+                  onChange={(val) => changeParam(key, val)}
                   active={initControls.wasRun}
                   gap={5}
                 />
@@ -137,7 +133,7 @@ export function ParamControls(props: {
                   value={value}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
-                  onChange={(val) => props.onParamChange(key, val)}
+                  onChange={(val) => changeParam(key, val)}
                 />
               );
             }
@@ -159,7 +155,7 @@ export function ParamControls(props: {
       </SectionLayout>
     )
   );
-}
+});
 
 export function ControlItemsGroup(props: PropsWithChildren) {
   return <div className={styles.ControlItemsLayout}>{props.children}</div>;

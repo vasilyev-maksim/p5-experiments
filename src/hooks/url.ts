@@ -1,4 +1,4 @@
-import { useRerender } from "@/hooks/index";
+import { useRerender } from "@hooks";
 import { useEffect } from "react";
 
 /** triggers re-render on browser back/forward navigation */

@@ -1,4 +1,4 @@
-import type { IPreset, ISketch, SketchCanvasSize } from "../models";
+import type { SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useKeyboardShortcuts, useModalBehavior, useViewport } from "@hooks";
@@ -17,22 +17,15 @@ import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
-import { copyPresetCodeToClipboard, getRandomParams } from "@/utils/sketch";
-import { EventBus } from "@/core/EventBus";
-import type { SketchEvent } from "@/core/events";
-import { getActivePresetFromUrl, setPresetDataToUrl } from "@/utils/url";
-import { usePopStateSync } from "@/hooks/url";
-
-const EXPORT_WIDTH = 3840 / 2,
-  EXPORT_HEIGHT = 2160 / 2;
+import { copyPresetCodeToClipboard } from "@/utils/sketch";
+import { usePopStateSync } from "@hooks/url";
+import { useActiveSketch } from "@hooks";
 
 export const SketchModal = ({
-  sketch,
   left = 0,
   top = 0,
   onBackClick,
 }: {
-  sketch: ISketch;
   left?: number;
   top?: number;
   onBackClick: () => void;
@@ -48,139 +41,31 @@ export const SketchModal = ({
     borderWidth,
   } = useViewport();
   const [size, setSize] = useState<SketchCanvasSize>("tile");
-  // TODO: put `paused` state inside `PlaybackControls`
-  const [paused, setPaused] = useState(true);
-  const sketchCanvasRef = useRef<HTMLDivElement>(null);
-
-  const activePreset = getActivePresetFromUrl(sketch);
-  const [params, setParams] = useState(activePreset.params);
-  /** time delta is a speed of animation set by user */
-  const [timeDelta, setTimeDelta] = useState(activePreset.timeDelta);
-  const handlePresetApply = (preset: IPreset) => {
-    sendEvent({
-      type: "applyPreset",
-      preset,
-    });
-    setParams(preset.params);
-    setTimeDelta(preset.timeDelta);
-    setPresetDataToUrl({ type: "pid", pid: preset.name });
-  };
-
-  usePopStateSync(() => {
-    const preset = getActivePresetFromUrl(sketch);
-
-    sendEvent({
-      type: "applyPreset",
-      preset,
-    });
-    setParams(preset.params);
-    setTimeDelta(preset.timeDelta);
-  });
-
-  const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
-  const sendEvent = (...args: Parameters<EventBus<SketchEvent>["emit"]>) => {
-    eventBus.current.emit(...args);
-  };
-
-  const changeTimeDelta = (timeDelta: number) => {
-    sendEvent({
-      type: "timeDeltaChange",
-      timeDelta,
-    });
-    setTimeDelta(timeDelta);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const changeParam = (paramName: string, paramValue: any) => {
-    sendEvent({
-      type: "paramChange",
-      paramName,
-      paramValue,
-    });
-    const newParams = { ...params, [paramName]: paramValue };
-    setParams(newParams);
-    setPresetDataToUrl({
-      type: "serialized",
-      params: newParams,
-      timeDelta,
-    });
-  };
-
-  const playPause = () => {
-    sendEvent({
-      type: "playPause",
-      paused: !paused,
-    });
-    setPaused((x) => !x);
-  };
-
-  const openInFullscreen = () => {
-    if (sketchCanvasRef.current) {
-      setSize("fullscreen");
-      sketchCanvasRef.current.requestFullscreen?.();
-      document.addEventListener("fullscreenchange", exitHandler, false);
-
-      function exitHandler() {
-        if (!document.fullscreenElement) {
-          setSize("modal");
-          document.removeEventListener("fullscreenchange", exitHandler);
-        }
-      }
-    }
-  };
-
-  const handleExport = () => {
-    sendEvent({
-      type: "export",
-      exportFileWidth: EXPORT_WIDTH,
-      exportFileHeight: EXPORT_HEIGHT,
-      exportFileName: `${sketch.id}_wallpaper.jpg`,
-    });
-  };
-
-  const jumpNFrames = (N: number) => () => {
-    setPaused(true);
-    sendEvent({
-      type: "timeTravel",
-      timeShift: N,
-    });
-  };
-
-  const playWithCustomDelta = (timeDelta: number) => () => {
-    sendEvent({
-      type: "timeDeltaChange",
-      timeDelta,
-    });
-    sendEvent({
-      type: "playPause",
-      paused: false,
-    });
-  };
-
-  const stopPlayingWithCustomDelta = () => {
-    sendEvent({
-      type: "timeDeltaChange",
-      timeDelta,
-    });
-    sendEvent({
-      type: "playPause",
-      paused: true,
-    });
-  };
-
-  const randomizeParams = () => {
-    const randomParams = getRandomParams(sketch.controls);
-    sendEvent({
-      type: "paramsChange",
-      params: randomParams,
-    });
-    setParams(randomParams);
-    setPresetDataToUrl({ type: "serialized", params: randomParams, timeDelta });
-  };
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
   }));
+  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+    MODAL_OPEN_SEQUENCE,
+  );
+  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
+  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS").wasRun;
+  const playbackControlsEnabled = useSegment("START_PLAYING").completed;
+
+  const sketchCanvasRef = useRef<HTMLDivElement>(null);
+  const {
+    getActivePreset,
+    activeSketch,
+    params,
+    timeDelta,
+    paused,
+    eventBus,
+    spinUp,
+    applyPreset,
+    randomizeParams,
+    playPause,
+  } = useActiveSketch();
+  const activePreset = getActivePreset();
 
   const showPlaybackControls = () => {
     if (playbackControlsEnabled) {
@@ -200,49 +85,55 @@ export const SketchModal = ({
     }
   };
 
-  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
-    MODAL_OPEN_SEQUENCE,
-  );
-  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
-  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS").wasRun;
-  const playbackControlsEnabled = useSegment("START_PLAYING").completed;
+  const openInFullscreen = useCallback(() => {
+    if (sketchCanvasRef.current) {
+      function exitHandler() {
+        if (!document.fullscreenElement) {
+          setSize("modal");
+          document.removeEventListener("fullscreenchange", exitHandler);
+        }
+      }
 
-  const onAnimationProgress = useCallback((seg: SegmentBase) => {
-    if (
-      seg.id === "TILE_GOES_MODAL" &&
-      seg.isRunning &&
-      seg instanceof SyncSegment
-    ) {
-      setSize("modal");
-      api.start({
-        modalX: 1,
-        config: { duration: seg.duration, easing: easings.easeInOutCubic },
-      });
-    } else if (
-      seg.id === "SHOW_HEADER" &&
-      seg.isRunning &&
-      seg instanceof SyncSegment
-    ) {
-      api.start({
-        headerX: 1,
-        config: { duration: seg.duration, easing: easings.easeInOutCubic },
-      });
-    } else if (seg.id === "START_PLAYING" && seg.isRunning) {
-      sendEvent({
-        type: "modeChange",
-        mode: "animated",
-      });
-      sendEvent({
-        type: "playPause",
-        paused: false,
-      });
-      setPaused(false);
+      setSize("fullscreen");
+      sketchCanvasRef.current.requestFullscreen?.();
+      document.addEventListener("fullscreenchange", exitHandler, false);
     }
   }, []);
+
+  const onAnimationProgress = useCallback(
+    (seg: SegmentBase) => {
+      if (
+        seg.id === "TILE_GOES_MODAL" &&
+        seg.isRunning &&
+        seg instanceof SyncSegment
+      ) {
+        setSize("modal");
+        api.start({
+          modalX: 1,
+          config: { duration: seg.duration, easing: easings.easeInOutCubic },
+        });
+      } else if (
+        seg.id === "SHOW_HEADER" &&
+        seg.isRunning &&
+        seg instanceof SyncSegment
+      ) {
+        api.start({
+          headerX: 1,
+          config: { duration: seg.duration, easing: easings.easeInOutCubic },
+        });
+      } else if (seg.id === "START_PLAYING" && seg.isRunning) {
+        spinUp();
+      }
+    },
+    [spinUp, api],
+  );
 
   useListener(onAnimationProgress);
   useModalBehavior(true, onBackClick);
   useKeyboardShortcuts(playPause, openInFullscreen);
+  usePopStateSync(() => {
+    applyPreset(getActivePreset(), { updateUrl: false });
+  });
 
   return (
     <animated.div
@@ -298,7 +189,7 @@ export const SketchModal = ({
                     ),
                   }}
                 >
-                  {sketch.name.toUpperCase()}
+                  {activeSketch.name.toUpperCase()}
                 </animated.h2>
                 <animated.div
                   className={styles.Body}
@@ -310,17 +201,8 @@ export const SketchModal = ({
                     ),
                   }}
                 >
-                  <Presets
-                    sketch={sketch}
-                    params={params}
-                    onApply={handlePresetApply}
-                  />
-
-                  <ParamControls
-                    sketch={sketch}
-                    params={params}
-                    onParamChange={changeParam}
-                  />
+                  <Presets />
+                  <ParamControls />
 
                   {showBottomActions && (
                     <div
@@ -334,7 +216,7 @@ export const SketchModal = ({
                           copyPresetCodeToClipboard(
                             params,
                             timeDelta,
-                            sketch.presets.length,
+                            activeSketch.presets.length,
                           )
                         }
                         label={"Export preset"}
@@ -355,15 +237,17 @@ export const SketchModal = ({
               <SketchCanvas
                 id="modal"
                 size={size}
-                sketch={sketch}
+                sketch={activeSketch}
                 initParams={params}
                 paused={paused}
                 mode={"static"}
                 ref={sketchCanvasRef}
-                startTime={activePreset.startTime ?? sketch.startTime ?? 0}
+                startTime={
+                  activePreset.startTime ?? activeSketch.startTime ?? 0
+                }
                 timeDelta={timeDelta}
-                eventBus={eventBus.current}
-                randomSeed={activePreset.randomSeed ?? sketch.randomSeed}
+                eventBus={eventBus}
+                randomSeed={activePreset.randomSeed ?? activeSketch.randomSeed}
               />
             </div>
             <animated.div
@@ -375,17 +259,7 @@ export const SketchModal = ({
               }}
               className={styles.PlaybackControlsBlock}
             >
-              <PlaybackControls
-                paused={paused}
-                timeDelta={timeDelta}
-                onTimeDeltaChange={changeTimeDelta}
-                onPlayPause={playPause}
-                onFullscreenToggle={openInFullscreen}
-                onJumpNFrames={jumpNFrames}
-                onPlayWithCustomDelta={playWithCustomDelta}
-                onStopPlayingWithCustomDelta={stopPlayingWithCustomDelta}
-                onExport={handleExport}
-              />
+              <PlaybackControls onFullscreenToggle={openInFullscreen} />
             </animated.div>
             <animated.div
               className={styles.RightBottom}
@@ -400,7 +274,7 @@ export const SketchModal = ({
                   paddingLeft: tilePadding,
                 }}
               >
-                {sketch.name}
+                {activeSketch.name}
               </h2>
             </animated.div>
           </div>

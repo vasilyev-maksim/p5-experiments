@@ -1,20 +1,25 @@
+import { memo } from "react";
 import classNames from "classnames";
 import { PlayPauseButton } from "./PlayPauseButton";
 import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
 import { JumpNFramesButton } from "./JumpNFramesButton";
+import { useActiveSketch } from "@hooks";
 
-export function PlaybackControls(props: {
-  paused: boolean;
-  timeDelta: number;
-  onTimeDeltaChange: (val: number) => void;
-  onPlayPause: () => void;
+export const PlaybackControls = memo(function PlaybackControls(props: {
   onFullscreenToggle: () => void;
-  onJumpNFrames: (N: number) => () => void;
-  onPlayWithCustomDelta: (delta: number) => () => void;
-  onStopPlayingWithCustomDelta: () => void;
-  onExport: () => void;
 }) {
+  const {
+    paused,
+    timeDelta,
+    playPause,
+    jumpNFrames,
+    playWithCustomDelta,
+    stopPlayingWithCustomDelta,
+    exportToFile,
+    changeTimeDelta,
+  } = useActiveSketch();
+
   return (
     <div className={styles.PlaybackControls}>
       <div className={styles.Section}>
@@ -24,7 +29,7 @@ export function PlaybackControls(props: {
         >
           <strong>⛶</strong>
         </button>
-        <button className={styles.TextButton} onClick={props.onExport}>
+        <button className={styles.TextButton} onClick={exportToFile}>
           Capture
         </button>
       </div>
@@ -32,46 +37,44 @@ export function PlaybackControls(props: {
         <JumpNFramesButton
           className={styles.IconButton}
           n={-10}
-          onClick={props.onJumpNFrames(-10)}
-          onLongPress={props.onPlayWithCustomDelta(-2)}
-          onLongPressRelease={props.onStopPlayingWithCustomDelta}
+          onClick={jumpNFrames(-10)}
+          onLongPress={playWithCustomDelta(-2)}
+          onLongPressRelease={stopPlayingWithCustomDelta}
         />
         <JumpNFramesButton
           className={styles.IconButton}
           n={-1}
-          onClick={props.onJumpNFrames(-1)}
-          onLongPress={props.onPlayWithCustomDelta(-0.5)}
-          onLongPressRelease={props.onStopPlayingWithCustomDelta}
+          onClick={jumpNFrames(-1)}
+          onLongPress={playWithCustomDelta(-0.5)}
+          onLongPressRelease={stopPlayingWithCustomDelta}
         />
-        <PlayPauseButton paused={props.paused} onClick={props.onPlayPause} />
+        <PlayPauseButton paused={paused} onClick={playPause} />
         <JumpNFramesButton
           className={styles.IconButton}
           n={1}
-          onClick={props.onJumpNFrames(1)}
-          onLongPress={props.onPlayWithCustomDelta(0.5)}
-          onLongPressRelease={props.onStopPlayingWithCustomDelta}
+          onClick={jumpNFrames(1)}
+          onLongPress={playWithCustomDelta(0.5)}
+          onLongPressRelease={stopPlayingWithCustomDelta}
         />
         <JumpNFramesButton
           className={styles.IconButton}
           n={10}
-          onClick={props.onJumpNFrames(10)}
-          onLongPress={props.onPlayWithCustomDelta(2)}
-          onLongPressRelease={props.onStopPlayingWithCustomDelta}
+          onClick={jumpNFrames(10)}
+          onLongPress={playWithCustomDelta(2)}
+          onLongPressRelease={stopPlayingWithCustomDelta}
         />
       </div>
       <div className={styles.Section}>
         <Slider
-          value={props.timeDelta}
+          value={timeDelta}
           min={0}
           max={3}
           step={0.1}
-          onChange={props.onTimeDeltaChange}
+          onChange={changeTimeDelta}
           label={
             <>
               Playback speed: x
-              <span className={styles.SpeedValue}>
-                {props.timeDelta.toFixed(1)}
-              </span>
+              <span className={styles.SpeedValue}>{timeDelta.toFixed(1)}</span>
             </>
           }
           active
@@ -80,4 +83,4 @@ export function PlaybackControls(props: {
       </div>
     </div>
   );
-}
+});

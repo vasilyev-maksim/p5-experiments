@@ -7,8 +7,9 @@ import {
   useState,
 } from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
-import { ViewportContext } from "../components/ViewportContext";
 import { getClosestDiscreteValue } from "../utils/misc";
+import { ViewportContext } from "@/contexts/ViewportContext";
+import { ActiveSketchContext } from "@/contexts/ActiveSketchContext";
 
 // TODO: move consts from here / use react context for that
 export function useViewport() {
@@ -44,6 +45,11 @@ export function useViewport() {
     canvasTileSize,
     borderWidth,
   };
+}
+
+export function useActiveSketch() {
+  const ctx = useContext(ActiveSketchContext);
+  return ctx;
 }
 
 export function useModalBehavior(isOpen: boolean, closeModal: () => void) {

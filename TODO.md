@@ -2,7 +2,7 @@
 
 # 📋 TODO
 
-- [hard] optimize `SketchModal` (too many rerenders of controls)
+- [easy] organize constants (into a single file [?])
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg
@@ -19,7 +19,7 @@
 - [easy] animate "shuffle presets" button (on modal open)
 - [easy] add animated underline for my name link
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
-- [easy] redesign `Export preset` and `Randomize` buttons
+- [easy] redesign `Randomize` buttons
 - [easy] redesign `Capture` button
 - [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`
@@ -53,6 +53,7 @@
 
 # ✅ DONE
 
+- [hard] optimize `SketchModal` (too many rerenders of controls)
 - [easy] use "preset in url" only for custom param configs (not presets)
 - [medium] each preset may have a timestamp to play animation from (for better showiness)
   - [x] spiral

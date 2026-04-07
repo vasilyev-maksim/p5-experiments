@@ -83,3 +83,5 @@ export function assert(
     throw new Error(message ?? "Assertion failed");
   }
 }
+
+export function noop() {}

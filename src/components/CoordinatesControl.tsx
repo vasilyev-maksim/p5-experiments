@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./CoordinatesControl.module.css";
 import { animated, easings, useSpring } from "react-spring";
-import { useGlobalDrag, useThrottleWithTrailing } from "@/hooks/index";
+import { useGlobalDrag, useThrottleWithTrailing } from "@hooks";
 
 const MAX_HANDLE_SIZE = 12;
 const PLANE_SIZE = 70;
