@@ -2,6 +2,7 @@
 
 # 📋 TODO
 
+- [easy] Create custom favicon (use spiral)
 - [easy] organize constants (into a single file [?])
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
