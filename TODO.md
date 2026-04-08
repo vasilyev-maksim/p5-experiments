@@ -2,8 +2,6 @@
 
 # 📋 TODO
 
-- [easy] Create custom favicon (use spiral)
-- [easy] organize constants (into a single file [?])
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg
@@ -21,7 +19,7 @@
 - [easy] add animated underline for my name link
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] redesign `Randomize` buttons
-- [easy] redesign `Capture` button
+
 - [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`
 - [easy] refactor `useViewport`
@@ -29,7 +27,6 @@
   - rename to `useSize` [?]
 - [easy] make animations independent from canvas size [?]
   - tiles
-- [easy] draw fullscreen icon by myself (renders differently on windows)
 - [easy] catch particular sketch errors (to show other more successful ones)
 - [easy] remove param controls margin-top if no presets
 
@@ -54,6 +51,8 @@
 
 # ✅ DONE
 
+- [easy] draw fullscreen icon by myself (renders differently on windows)
+- [easy] Create custom favicon (use spiral)
 - [hard] optimize `SketchModal` (too many rerenders of controls)
 - [easy] use "preset in url" only for custom param configs (not presets)
 - [medium] each preset may have a timestamp to play animation from (for better showiness)
@@ -127,6 +126,7 @@
 
 # ❌ CANCELED
 
+- [easy] redesign `Capture` button
 - [hard] don't mismatch preset on the first change (mark it with \*)
 - recursive `worms` sourcing (place new worm not randomly, and walk not randomly too)
 - rethink zigzags

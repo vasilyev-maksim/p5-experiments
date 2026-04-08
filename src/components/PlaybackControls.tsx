@@ -5,6 +5,7 @@ import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
 import { JumpNFramesButton } from "./JumpNFramesButton";
 import { useActiveSketch } from "@hooks";
+import { FullScreenIcon } from "./Icons";
 
 export const PlaybackControls = memo(function PlaybackControls(props: {
   onFullscreenToggle: () => void;
@@ -24,10 +25,10 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
     <div className={styles.PlaybackControls}>
       <div className={styles.Section}>
         <button
-          className={classNames(styles.Fullscreen, styles.IconButton)}
+          className={classNames(styles.IconButton)}
           onClick={props.onFullscreenToggle}
         >
-          <strong>⛶</strong>
+          <FullScreenIcon />
         </button>
         <button className={styles.TextButton} onClick={exportToFile}>
           Capture
@@ -72,10 +73,12 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
           step={0.1}
           onChange={changeTimeDelta}
           label={
-            <>
+            <div className={styles.PlaybackSpeedLabel}>
               Playback speed: x
-              <span className={styles.SpeedValue}>{timeDelta.toFixed(1)}</span>
-            </>
+              <span className={styles.PlaybackSpeedFactor}>
+                {timeDelta.toFixed(1)}
+              </span>
+            </div>
           }
           active
           activationAnimationDuration={0}
