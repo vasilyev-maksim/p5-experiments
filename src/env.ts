@@ -7,4 +7,5 @@ export const ENV = {
   ),
   devTools: import.meta.env.VITE_DEV_TOOLS === "1",
   baseUrl: import.meta.env.VITE_BASE_URL as string,
+  isProd: import.meta.env.PROD,
 };

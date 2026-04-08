@@ -1,13 +1,12 @@
 import type { IParams, IPreset, ISketch } from "@/models";
 import { assert } from "./misc";
 import { getDefaultPreset } from "./sketch";
+import { ENV } from "@/env";
 
 const PARAM_PREFIX = "p_";
 const PRESET_ID_KEY = "pid";
 const TIME_DELTA_KEY = "timeDelta";
 const SKETCH_ID_KEY = "sid";
-
-const baseUrl = import.meta.env.BASE_URL;
 
 export type IPresetUrlData =
   | {
@@ -112,7 +111,7 @@ export function setPresetDataToUrl(presetData: IPresetUrlData) {
   setPresetDataToQs(presetData, qs);
   // Note: browsers throttle `history.pushState` on continuous updates (programmatically triggered),
   // silently reverting to `replaceState`, so nav back button doesn't work as expected
-  history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
+  history.pushState({}, "", `${ENV.baseUrl}?${qs.toString()}`);
 }
 
 export function getPresetDataFromUrl() {
@@ -147,7 +146,7 @@ export function setSketchToUrl(sketch: ISketch) {
   qs.set(SKETCH_ID_KEY, sketch.id);
   const preset = getDefaultPreset(sketch);
   setPresetDataToQs({ type: "pid", pid: preset.name }, qs);
-  history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
+  history.pushState({}, "", `${ENV.baseUrl}?${qs.toString()}`);
 }
 
 export function setParamToUrl(
@@ -157,12 +156,12 @@ export function setParamToUrl(
 ) {
   const qs = new URLSearchParams(location.search);
   setParamToQs(paramName, paramValue, qs);
-  history.pushState({}, "", `${baseUrl}?${qs.toString()}`);
+  history.pushState({}, "", `${ENV.baseUrl}?${qs.toString()}`);
 }
 
 export function removeSketchDataFromUrl() {
   // yes, it's super naive
-  history.pushState({}, "", location.origin + baseUrl);
+  history.pushState({}, "", location.origin + ENV.baseUrl);
 }
 
 export function getSketchIdFromUrl() {

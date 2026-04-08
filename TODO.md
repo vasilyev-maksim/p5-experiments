@@ -13,12 +13,10 @@
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
 
-- [easy] hide "export preset" button in prod
 - [easy] back button
 - [easy] animate "shuffle presets" button (on modal open)
 - [easy] add animated underline for my name link
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
-- [easy] redesign `Randomize` button
 - [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`
 - [easy] refactor `useViewport`
@@ -50,6 +48,8 @@
 
 # ✅ DONE
 
+- [easy] hide "export preset" button in prod
+- [easy] redesign `Randomize` button
 - [easy] draw fullscreen icon by myself (renders differently on windows)
 - [easy] Create custom favicon (use spiral)
 - [hard] optimize `SketchModal` (too many rerenders of controls)

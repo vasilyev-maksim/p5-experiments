@@ -12,6 +12,7 @@ import { interpolationSketch } from "./_sandboxes/interpolation";
 // import { sketch as tilesSketch } from "./tiles/tiles";
 import { sketch as wormsSketch } from "./worms";
 import { sketch as funcsSketch } from "./_sandboxes/funcs";
+import { ENV } from "@/env";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const all: ISketch<any>[] = [
@@ -31,9 +32,7 @@ const all: ISketch<any>[] = [
 ];
 
 let sketchList = all
-  .filter((x) =>
-    import.meta.env.PROD ? x.type === "released" : x.type !== "hidden",
-  )
+  .filter((x) => (ENV.isProd ? x.type === "released" : x.type !== "hidden"))
   .sort((a, b) =>
     a.type === "only"
       ? -2

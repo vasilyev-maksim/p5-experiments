@@ -21,6 +21,7 @@ import { copyPresetCodeToClipboard } from "@/utils/sketch";
 import { usePopStateSync } from "@hooks/url";
 import { useActiveSketch } from "@hooks";
 import { DiceIcon } from "./Icons";
+import { ENV } from "@/env";
 
 export const SketchModal = ({
   left = 0,
@@ -214,16 +215,6 @@ export const SketchModal = ({
                       className={styles.BottomActionsBlock}
                     >
                       <Button
-                        onClick={() =>
-                          copyPresetCodeToClipboard(
-                            params,
-                            timeDelta,
-                            activeSketch.presets.length,
-                          )
-                        }
-                        label={"Export preset"}
-                      />
-                      <Button
                         onClick={randomizeParams}
                         className={styles.RandomizeButton}
                         label={
@@ -233,6 +224,18 @@ export const SketchModal = ({
                           </>
                         }
                       />
+                      {ENV.isProd ? null : (
+                        <Button
+                          onClick={() =>
+                            copyPresetCodeToClipboard(
+                              params,
+                              timeDelta,
+                              activeSketch.presets.length,
+                            )
+                          }
+                          label="Export preset"
+                        />
+                      )}
                     </div>
                   )}
                 </animated.div>
