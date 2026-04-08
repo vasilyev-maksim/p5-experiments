@@ -24,7 +24,7 @@
 @keyframes appear {
   from {
     opacity: 0;
-    translate: 0 10px;
+    translate: 0 15px;
   }
 
   to {

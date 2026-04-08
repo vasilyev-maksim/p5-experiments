@@ -18,8 +18,7 @@
 - [easy] animate "shuffle presets" button (on modal open)
 - [easy] add animated underline for my name link
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
-- [easy] redesign `Randomize` buttons
-
+- [easy] redesign `Randomize` button
 - [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`
 - [easy] refactor `useViewport`

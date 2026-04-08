@@ -63,7 +63,6 @@ export const sequences = [
       },
       disabledIf: (ctx) => !(ctx as Ctx).controlsPresent,
     }),
-    Sequence.syncSegment({ id: "SHOW_BOTTOM_ACTIONS", delay: 0 * MULT }),
     Sequence.syncSegment({
       id: "SHOW_CONTROLS_HEADER",
       duration: 300 * MULT,
@@ -72,6 +71,11 @@ export const sequences = [
       id: "INIT_CONTROLS_AND_PRESETS",
       delay: 100 * MULT,
       duration: 200 * MULT,
+    }),
+    Sequence.syncSegment({
+      id: "SHOW_BOTTOM_ACTIONS",
+      duration: 300 * MULT,
+      delay: 300 * MULT,
     }),
   ]),
   new Sequence(HOME_PAGE_SEQUENCE, [

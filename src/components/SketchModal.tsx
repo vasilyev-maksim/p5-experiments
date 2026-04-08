@@ -20,6 +20,7 @@ import { Button } from "./Button";
 import { copyPresetCodeToClipboard } from "@/utils/sketch";
 import { usePopStateSync } from "@hooks/url";
 import { useActiveSketch } from "@hooks";
+import { DiceIcon } from "./Icons";
 
 export const SketchModal = ({
   left = 0,
@@ -49,7 +50,7 @@ export const SketchModal = ({
     MODAL_OPEN_SEQUENCE,
   );
   const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
-  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS").wasRun;
+  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS");
   const playbackControlsEnabled = useSegment("START_PLAYING").completed;
 
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
@@ -204,10 +205,11 @@ export const SketchModal = ({
                   <Presets />
                   <ParamControls />
 
-                  {showBottomActions && (
+                  {showBottomActions.wasRun && (
                     <div
                       style={{
                         paddingLeft: modalSidebarPadding,
+                        animationDuration: showBottomActions.duration + "ms",
                       }}
                       className={styles.BottomActionsBlock}
                     >
@@ -221,7 +223,16 @@ export const SketchModal = ({
                         }
                         label={"Export preset"}
                       />
-                      <Button onClick={randomizeParams} label={"Randomize"} />
+                      <Button
+                        onClick={randomizeParams}
+                        className={styles.RandomizeButton}
+                        label={
+                          <>
+                            <DiceIcon />
+                            &nbsp; Randomize
+                          </>
+                        }
+                      />
                     </div>
                   )}
                 </animated.div>
