@@ -37,9 +37,8 @@ type TrackedParams<C extends IControls> = {
 };
 
 export type CreateSketchArgs<Controls extends IControls> = {
-  setup?: (api: Api<Controls>) => void;
-  // Why a factory? it allows us define helper render functions in closure with `api` var available.
-  draw: (api: Api<Controls>) => () => void;
+  setup?: () => void;
+  draw: () => void;
   onPresetChange?: (preset: IPreset<Controls>) => void;
   canvasSizeHandlerOverride?: (size: [number, number]) => void;
   id?: string;
@@ -82,7 +81,7 @@ export function createSketch<C extends IControls>(
       let time = 0,
         paused = initData.paused,
         timeDelta = initData.timeDelta ?? 1,
-        draw: ReturnType<CreateSketchArgs<C>["draw"]>,
+        draw: CreateSketchArgs<C>["draw"],
         isExporting = false;
 
       const params = createTrackedParams(initData.params),
@@ -188,19 +187,16 @@ export function createSketch<C extends IControls>(
         const args = argsFactory(api, id);
         recalcMemos();
 
-        args.setup?.(api);
+        args.setup?.();
 
-        // initialize draw func passing p5 instance (`api.p`),
-        // which is guaranteed to be initialized properly at this moment
-        const argDraw = args.draw(api);
         draw = ENV.devTools
           ? () => {
               p.push();
-              argDraw();
+              args.draw();
               p.pop();
               drawDevTools();
             }
-          : argDraw;
+          : args.draw;
 
         // events handling
         if (eventBus) {

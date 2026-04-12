@@ -114,7 +114,7 @@ export const factory = createSketch<Controls>(
       setup: () => {
         p.noStroke();
       },
-      draw: () => () => {
+      draw: () => {
         const GAP_WIDTH = gapWidthAnimated.getValue(),
           gapHeight = gapHeightAnimated.getValue(),
           AMPLITUDE = amplitudeAnimated.getValue(),

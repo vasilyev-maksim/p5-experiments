@@ -7,10 +7,8 @@ export const factory = createSketch<Controls>(({ p }) => {
       p.noStroke();
     },
     draw: () => {
-      return () => {
-        p.background("black");
-        p.stroke("white");
-      };
+      p.background("black");
+      p.stroke("white");
     },
   };
 });

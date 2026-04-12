@@ -38,7 +38,7 @@ export const factory = createSketch<Controls>(
       setup: () => {
         p.background(BG_COLOR);
       },
-      draw: () => () => {
+      draw: () => {
         const CHAOS_FACTOR = getParam("CHAOS_FACTOR"),
           CURVE_RESOLUTION = getParam("CURVE_RESOLUTION"),
           DISPERSION = getParam("DISPERSION"),

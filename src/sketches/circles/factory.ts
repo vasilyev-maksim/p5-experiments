@@ -59,7 +59,7 @@ export const factory = createSketch<Controls>(
         p.noStroke();
         p.angleMode("degrees");
       },
-      draw: () => () => {
+      draw: () => {
         const [colorB, colorA] = colorsAnimated.getValue();
         const { canvasHeight: canvasHeight, canvasWidth: canvasWidth } =
             getCanvasSize(),

@@ -15,7 +15,7 @@ const controls = {
   },
 } as const satisfies IControls;
 
-export const factory = createSketch<typeof controls>(() => {
+export const factory = createSketch<typeof controls>(({ p, getTime }) => {
   const animatedX = new AnimatedValue({
     initialValue: 0,
     animationDuration: 20,
@@ -26,7 +26,7 @@ export const factory = createSketch<typeof controls>(() => {
   });
 
   return {
-    setup: ({ p, getTime }) => {
+    setup: () => {
       p.noStroke();
 
       p.mouseClicked = () => {
@@ -35,17 +35,15 @@ export const factory = createSketch<typeof controls>(() => {
         animatedY.animateTo({ value: p.mouseY, currentTime });
       };
     },
-    draw: ({ p, getTime }) => {
-      return () => {
-        p.background("black");
-        p.stroke("white");
-        const time = getTime();
-        p.circle(
-          animatedX.getCurrentValue(time),
-          animatedY.getCurrentValue(time),
-          10,
-        );
-      };
+    draw: () => {
+      p.background("black");
+      p.stroke("white");
+      const time = getTime();
+      p.circle(
+        animatedX.getCurrentValue(time),
+        animatedY.getCurrentValue(time),
+        10,
+      );
     },
   };
 });

@@ -38,7 +38,7 @@ export const factory = createSketch<Controls>(
     });
 
     return {
-      draw: () => () => {
+      draw: () => {
         p.background("black");
         p.stroke("white");
         p.strokeWeight(0.5);

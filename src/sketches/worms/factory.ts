@@ -93,79 +93,75 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         p.noFill();
       },
       draw: () => {
-        return () => {
-          const W = resolutionX.getValue();
-          const H = getParam("RESOLUTION");
-          const { canvasHeight, canvasWidth } = getCanvasSize();
+        const W = resolutionX.getValue();
+        const H = getParam("RESOLUTION");
+        const { canvasHeight, canvasWidth } = getCanvasSize();
 
-          p.background("black");
-          p.scale(canvasWidth / (W + 1), canvasHeight / (H + 1));
-          p.translate(1, 1);
+        p.background("black");
+        p.scale(canvasWidth / (W + 1), canvasHeight / (H + 1));
+        p.translate(1, 1);
 
-          p.strokeJoin(
-            ["miter", "round", "bevel"][
-              getParam("CORNERS_TYPE")
-            ] as STROKE_JOIN,
-          );
+        p.strokeJoin(
+          ["miter", "round", "bevel"][getParam("CORNERS_TYPE")] as STROKE_JOIN,
+        );
 
-          const animationType = getParam("ANIMATION_TYPE");
-          const thicknessValue = thickness.getValue();
-          const innerThicknessValue = innerThickness.getValue();
-          const wormsArr = worms.getValue();
-          const [colorA, colorB] = colorsAnimated.getValue();
-          const time = getTime();
-          const [start, end] =
-            animationType === 1
-              ? [-1, 0]
-              : animationType === 2
-                ? [0, 1]
-                : animationType === 3
-                  ? [-1, 1]
-                  : [0, 0];
+        const animationType = getParam("ANIMATION_TYPE");
+        const thicknessValue = thickness.getValue();
+        const innerThicknessValue = innerThickness.getValue();
+        const wormsArr = worms.getValue();
+        const [colorA, colorB] = colorsAnimated.getValue();
+        const time = getTime();
+        const [start, end] =
+          animationType === 1
+            ? [-1, 0]
+            : animationType === 2
+              ? [0, 1]
+              : animationType === 3
+                ? [-1, 1]
+                : [0, 0];
 
-          const sin = (x: number) => {
-            if (animationType === 3) {
-              // should have twice bigger period to match forward animation's "visual" speed,
-              // that's why `x/2` and `SHRINK_OFFSET/2`
-              return flatSin(
-                p,
-                GROW_OFFSET / 2,
-                SHRINK_OFFSET / 2,
-                GROW_OFFSET / 2,
-              )(x / 2);
-            } else {
-              return flatSin(p, GROW_OFFSET, 0, SHRINK_OFFSET)(x);
-            }
-          };
-
-          const animationProgress = oscillateBetween({
-            p,
-            start,
-            end,
-            timeMultiplier: 0.005,
-            time,
-            timeFunc: (x) => (animationType === 2 ? -1 : 1) * sin(x),
-          });
-          const progress = animationType === 0 ? 0 : animationProgress;
-          const longestWormLength = Math.max(...wormsArr.map((x) => x.length));
-
-          wormsArr.forEach((worm) => {
-            const endColorAmt = worm.length / longestWormLength;
-            const colorAmt = endColorAmt * (1 - p.abs(progress));
-
-            // outer stroke
-            p.stroke(p.lerpColor(colorA, colorB, colorAmt));
-            p.strokeWeight(thicknessValue);
-            drawWorm(p, progress, worm);
-
-            // inner stroke
-            if (innerThicknessValue > 0) {
-              p.stroke("black");
-              p.strokeWeight(innerThicknessValue);
-              drawWorm(p, progress, worm);
-            }
-          });
+        const sin = (x: number) => {
+          if (animationType === 3) {
+            // should have twice bigger period to match forward animation's "visual" speed,
+            // that's why `x/2` and `SHRINK_OFFSET/2`
+            return flatSin(
+              p,
+              GROW_OFFSET / 2,
+              SHRINK_OFFSET / 2,
+              GROW_OFFSET / 2,
+            )(x / 2);
+          } else {
+            return flatSin(p, GROW_OFFSET, 0, SHRINK_OFFSET)(x);
+          }
         };
+
+        const animationProgress = oscillateBetween({
+          p,
+          start,
+          end,
+          timeMultiplier: 0.005,
+          time,
+          timeFunc: (x) => (animationType === 2 ? -1 : 1) * sin(x),
+        });
+        const progress = animationType === 0 ? 0 : animationProgress;
+        const longestWormLength = Math.max(...wormsArr.map((x) => x.length));
+
+        wormsArr.forEach((worm) => {
+          const endColorAmt = worm.length / longestWormLength;
+          const colorAmt = endColorAmt * (1 - p.abs(progress));
+
+          // outer stroke
+          p.stroke(p.lerpColor(colorA, colorB, colorAmt));
+          p.strokeWeight(thicknessValue);
+          drawWorm(p, progress, worm);
+
+          // inner stroke
+          if (innerThicknessValue > 0) {
+            p.stroke("black");
+            p.strokeWeight(innerThicknessValue);
+            drawWorm(p, progress, worm);
+          }
+        });
       },
     };
   },

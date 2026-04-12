@@ -25,7 +25,6 @@
 - [easy] make animations independent from canvas size [?]
   - tiles
 - [easy] catch particular sketch errors (to show other more successful ones)
-- [easy] remove param controls margin-top if no presets
 
 # 💡 NICE TO HAVE
 
@@ -125,6 +124,7 @@
 
 # ❌ CANCELED
 
+- [easy] remove param controls margin-top if no presets
 - [easy] redesign `Capture` button
 - [hard] don't mismatch preset on the first change (mark it with \*)
 - recursive `worms` sourcing (place new worm not randomly, and walk not randomly too)

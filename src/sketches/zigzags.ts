@@ -40,7 +40,7 @@ const factory = createSketch<Controls>(({ p, getParam, getTime }) => {
     setup: () => {
       p.angleMode("radians");
     },
-    draw: () => () => {
+    draw: () => {
       const time = getTime();
 
       p.background("black");

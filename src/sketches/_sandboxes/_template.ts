@@ -33,14 +33,12 @@ export const factory = createSketch<Controls>(
         p.background("black");
       },
       draw: () => {
-        return () => {
-          p.background("black");
-          p.stroke("white");
+        p.background("black");
+        p.stroke("white");
 
-          const N = getParam("N");
-          console.log("N = ", N);
-          console.log("NA = ", NA.getValue());
-        };
+        const N = getParam("N");
+        console.log("N = ", N);
+        console.log("NA = ", NA.getValue());
       },
     };
   },

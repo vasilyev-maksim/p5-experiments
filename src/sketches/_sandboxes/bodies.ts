@@ -64,72 +64,64 @@ export const factory = createSketch<Controls>(({ p }) => {
       ];
     },
     draw: () => {
-      return () => {
-        p.background(p.color(0, 0, 0, 255));
+      p.background(p.color(0, 0, 0, 255));
 
-        p.stroke("white");
-        p.noFill();
+      p.stroke("white");
+      p.noFill();
 
-        bodies.forEach((body) => {
-          const forces: p5.Vector[] = [];
-          // body.applyForce(gravity);
+      bodies.forEach((body) => {
+        const forces: p5.Vector[] = [];
+        // body.applyForce(gravity);
+        attractors
+          .filter((x) => x !== body)
+          .forEach((attr) => {
+            const attraction = attr.attract(body);
+            forces.push(attraction);
+            // body.applyForce(attractionForce);
+          });
 
-          attractors
-            .filter((x) => x !== body)
-            .forEach((attr) => {
-              const attraction = attr.attract(body);
-              forces.push(attraction);
-              // body.applyForce(attractionForce);
-            });
+        const resultingForce = forces.reduce(
+          (acc, f) => acc.add(f),
+          p.createVector(0, 0),
+        );
 
-          const resultingForce = forces.reduce(
-            (acc, f) => acc.add(f),
-            p.createVector(0, 0),
-          );
+        body.renderForce(resultingForce);
+        body.applyForce(resultingForce);
+        body.render();
 
-          body.renderForce(resultingForce);
-          body.applyForce(resultingForce);
-          body.render();
+        // const mouseAttractor = p5.Vector.sub(mouseVec, body.position).setMag(
+        //   getParam("ATTRACTOR"),
+        // );
+        // const forces = [...universalForces, mouseAttractor];
+        // const mutualAttraction = bodies
+        //   .filter((x) => x !== body)
+        //   .map((x) => {
+        //     const vec = p5.Vector.sub(x.position, body.position);
+        //     if (vec.mag() < body.mass + x.mass) {
+        //       vec.mult(-2);
+        //     }
+        //     let mag =
+        //       (getParam("ATTRACTOR") * x.mass * body.mass) / vec.mag() ** 2;
+        //     mag = p.constrain(mag, 0, 10);
+        //     vec.setMag(mag);
+        //     return vec;
+        //   });
+        // const centerAttractor = p5.Vector.sub(
+        //   centerVec,
+        //   body.position,
+        // ).setMag(5);
+        // const forces = [
+        //   ...universalForces,
+        //   ...mutualAttraction,
+        //   centerAttractor,
+        // ];
+        // body.recalc(forces);
+        // if (getParam("DEBUG")) {
+        //   p.line(body.position.x, body.position.y, p.mouseX, p.mouseY);
+        // }
+      });
 
-          // const mouseAttractor = p5.Vector.sub(mouseVec, body.position).setMag(
-          //   getParam("ATTRACTOR"),
-          // );
-          // const forces = [...universalForces, mouseAttractor];
-
-          // const mutualAttraction = bodies
-          //   .filter((x) => x !== body)
-          //   .map((x) => {
-          //     const vec = p5.Vector.sub(x.position, body.position);
-          //     if (vec.mag() < body.mass + x.mass) {
-          //       vec.mult(-2);
-          //     }
-          //     let mag =
-          //       (getParam("ATTRACTOR") * x.mass * body.mass) / vec.mag() ** 2;
-          //     mag = p.constrain(mag, 0, 10);
-          //     vec.setMag(mag);
-
-          //     return vec;
-          //   });
-
-          // const centerAttractor = p5.Vector.sub(
-          //   centerVec,
-          //   body.position,
-          // ).setMag(5);
-
-          // const forces = [
-          //   ...universalForces,
-          //   ...mutualAttraction,
-          //   centerAttractor,
-          // ];
-          // body.recalc(forces);
-
-          // if (getParam("DEBUG")) {
-          //   p.line(body.position.x, body.position.y, p.mouseX, p.mouseY);
-          // }
-        });
-
-        attractors.forEach((x) => x.render());
-      };
+      attractors.forEach((x) => x.render());
     },
   };
 });

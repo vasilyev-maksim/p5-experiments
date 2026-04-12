@@ -21,7 +21,7 @@ export const factory = createSketch<Controls>(
         //   failureCallback: () => console.log("fail"),
         // });
       },
-      draw: () => () => {
+      draw: () => {
         p.stroke("white");
         p.background("black");
         p.noStroke();

@@ -95,7 +95,7 @@ export const factory = createSketch<Controls>(
         p.strokeWeight(1);
         p.angleMode("degrees");
       },
-      draw: () => () => {
+      draw: () => {
         p.background(BG_COLOR);
         const [borderColor] = borderColorAnimated.getValue();
         const colors = fillColorsAnimated.getValue();

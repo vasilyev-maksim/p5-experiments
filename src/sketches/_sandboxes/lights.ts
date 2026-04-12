@@ -57,57 +57,53 @@ export const factory = createSketch<Controls>(
         p.camera(400, -400, 400, 0, 0, 0);
       },
       draw: () => {
-        return () => {
-          p.background("black");
-          p.stroke("white");
+        p.background("black");
+        p.stroke("white");
 
-          p.debugMode(500, 10, 0, 0, 0, -100, 0, 0, 0);
-          p.orbitControl();
-          const lightPosition = p.createVector(
-            X.getValue() * 100,
-            Y.getValue() * -100,
-            Z.getValue() * -100,
-          );
-          // p.spotLight(
-          //   255,
-          //   255,
-          //   255,
-          //   lightPosition,
-          //   -1,
-          //   0,
-          //   -1,
-          //   p.PI / A.value!,
-          //   B.value!,
-          // );
-          // p.specularColor("yellow");
-          p.ambientLight(0, 0, 125);
-          p.directionalLight(255, 255, 255, -1, 0, -1);
-          p.push();
-          {
-            p.translate(lightPosition);
-            p.box(10);
-          }
-          p.pop();
+        p.debugMode(500, 10, 0, 0, 0, -100, 0, 0, 0);
+        p.orbitControl();
+        const lightPosition = p.createVector(
+          X.getValue() * 100,
+          Y.getValue() * -100,
+          Z.getValue() * -100,
+        );
+        // p.spotLight(
+        //   255,
+        //   255,
+        //   255,
+        //   lightPosition,
+        //   -1,
+        //   0,
+        //   -1,
+        //   p.PI / A.value!,
+        //   B.value!,
+        // );
+        // p.specularColor("yellow");
+        p.ambientLight(0, 0, 125);
+        p.directionalLight(255, 255, 255, -1, 0, -1);
+        p.push();
+        {
+          p.translate(lightPosition);
+          p.box(10);
+        }
+        p.pop();
 
-          // p.perspective(p.PI / 9);
-
-          p.fill("red");
-          p.ambientMaterial(255, 0, 255);
-          // p.ambientMaterial(255, 255, 255);
-          p.specularMaterial(0, 255, 0);
-          p.shininess(50);
-          // p.emissiveMaterial("red");
-
-          p.noStroke();
-          p.scale(50);
-          p.translate(0, -2.5, 0);
-          // p.box(5, 5, 5);
-          drawGrid(p, {
-            size: p.createVector(5, 5, 5),
-            cells: p.createVector(3, 3, 3),
-            drawCb: () => p.torus(0.3, 0.1),
-          });
-        };
+        // p.perspective(p.PI / 9);
+        p.fill("red");
+        p.ambientMaterial(255, 0, 255);
+        // p.ambientMaterial(255, 255, 255);
+        p.specularMaterial(0, 255, 0);
+        p.shininess(50);
+        // p.emissiveMaterial("red");
+        p.noStroke();
+        p.scale(50);
+        p.translate(0, -2.5, 0);
+        // p.box(5, 5, 5);
+        drawGrid(p, {
+          size: p.createVector(5, 5, 5),
+          cells: p.createVector(3, 3, 3),
+          drawCb: () => p.torus(0.3, 0.1),
+        });
       },
     };
   },
