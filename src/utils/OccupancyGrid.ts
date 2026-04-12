@@ -1,5 +1,4 @@
 import p5 from "p5";
-import { Size } from "../sketches/tiles/Size";
 import { range } from "./misc";
 import type { RandomProvider } from "@/core/models";
 
@@ -8,13 +7,12 @@ export class OccupancyGrid {
   private freeCellsCount: number;
 
   constructor(
-    public readonly sizes: Size,
+    public readonly width: number,
+    public readonly height: number,
     public readonly randomProvider: RandomProvider,
   ) {
-    this.matrix = range(this.sizes.height).map(() =>
-      Array(this.sizes.width).fill(false),
-    );
-    this.freeCellsCount = this.sizes.getArea();
+    this.matrix = range(this.height).map(() => Array(this.width).fill(false));
+    this.freeCellsCount = this.width * this.height;
   }
 
   public isOccupied(cell: p5.Vector) {

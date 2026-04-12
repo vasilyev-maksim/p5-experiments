@@ -1,104 +1,100 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Grid } from "./Grid";
-import { Size } from "./Size";
 import { OccupancyGrid } from "../../utils/OccupancyGrid";
 import { Turtle } from "./Turtle";
 import { type IRectangle } from "./Rectangle";
 import { StaggerAnimation } from "./StaggerAnimation";
-import type { ISketch, ISketchFactory } from "../../models";
+import type { IControls, IPreset, ISketch } from "../../models";
 import { easeInOutQuad, getQsParam } from "@/core/utils";
+import { createSketch } from "@/core/createSketch";
 
-export const factory: ISketchFactory<any> =
-  ({ initData: { canvasHeight, canvasWidth, randomSeed } }) =>
-  (p) => {
-    const GRID_CELLS_Y = Number(getQsParam("y", "20")),
-      CANVAS_PADDING = 3,
-      PADDING = 3,
-      GRID_SIZE = new Size(
-        Math.round((GRID_CELLS_Y * canvasWidth) / canvasHeight),
-        GRID_CELLS_Y,
+export type Controls = typeof controls;
+
+const controls = {
+  RESOLUTION: {
+    type: "range",
+    min: 2,
+    max: 60,
+    step: 1,
+    label: "Resolution",
+  },
+} as const satisfies IControls;
+
+export const factory = createSketch<Controls>(({ p }) => {
+  const GRID_CELLS_Y = Number(getQsParam("y", "20")),
+    CANVAS_PADDING = 3,
+    PADDING = 3,
+    GRID_SIZE = p.createVector(
+      Math.round((GRID_CELLS_Y * p.width) / p.height),
+      GRID_CELLS_Y,
+    ),
+    GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
+    MAX_AREA = 0.08,
+    // MAX_AREA = 0.02,
+    REVERSE = getQsParam("r", "1") === "1",
+    ANIMATION_SPEED = parseInt(getQsParam("s", "7")),
+    grid = new Grid(p, {
+      origin: GRID_ORIGIN,
+      gridSizeInPixels: p.createVector(
+        p.width - CANVAS_PADDING * 2,
+        p.height - CANVAS_PADDING * 2,
       ),
-      GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
-      MAX_AREA = 0.08,
-      // MAX_AREA = 0.02,
-      REVERSE = getQsParam("r", "1") === "1",
-      ANIMATION_SPEED = parseInt(getQsParam("s", "7")),
-      grid = new Grid(p, {
-        origin: GRID_ORIGIN,
-        gridSizeInPixels: new Size(
-          canvasWidth - CANVAS_PADDING * 2,
-          canvasHeight - CANVAS_PADDING * 2,
-        ),
-        gridSizeInCells: GRID_SIZE,
-        color: "#CCC",
-      }),
-      matrix = new OccupancyGrid(GRID_SIZE, () => p.random()),
-      rectsToDraw: IRectangle[] = [],
-      animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
+      gridSizeInCells: GRID_SIZE,
+      color: "#CCC",
+    }),
+    matrix = new OccupancyGrid(GRID_SIZE.x, GRID_SIZE.y, () => p.random()),
+    rectsToDraw: IRectangle[] = [],
+    animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
 
-    p.setup = () => {
-      p.createCanvas(canvasWidth, canvasHeight);
-      if (randomSeed !== undefined) {
-        p.randomSeed(randomSeed);
-      }
+  const spawnTurtle = () => {
+    const randomOrigin = matrix.getRandomFreeCell();
+    if (!randomOrigin) {
+      return false;
+    }
 
-      while (spawnTurtle()) {
-        // noop
-      }
-    };
+    const turtle = new Turtle(randomOrigin, {
+      isForwardPossible: (cell) => {
+        return matrix.isOccupied(cell);
+      },
+      onCommit: (rect) => {
+        if (!rect) {
+          return;
+        }
+        rect.getPointsRange().forEach((p) => {
+          matrix.occupy(p);
+        });
 
-    p.updateWithProps = (props) => {
-      if (props.mode === "animated") {
-        p.loop();
-      } else {
-        p.noLoop();
-      }
-    };
+        if (rect.getArea() > 0) {
+          rectsToDraw.push(rect);
+        }
+      },
+      rectEvaluator: (rect) => {
+        const area = rect.getArea();
+        const gridArea = GRID_SIZE.x * GRID_SIZE.y;
+        const maxArea = MAX_AREA * gridArea;
 
-    const spawnTurtle = () => {
-      const randomOrigin = matrix.getRandomFreeCell();
-      if (!randomOrigin) {
-        return false;
-      }
+        // if (area > maxArea) return 0;
+        if (area > maxArea || rect.getAspectRatio() > 2) return 0;
 
-      const turtle = new Turtle(randomOrigin, {
-        isForwardPossible: (cell) => {
-          return matrix.isOccupied(cell);
-        },
-        onCommit: (rect) => {
-          if (!rect) {
-            return;
-          }
-          rect.getPointsRange().forEach((p) => {
-            matrix.occupy(p);
-          });
+        return area;
+      },
+    });
 
-          if (rect.getArea() > 0) {
-            rectsToDraw.push(rect);
-          }
-        },
-        rectEvaluator: (rect) => {
-          const area = rect.getArea();
-          const gridArea = GRID_SIZE.getArea();
-          const maxArea = MAX_AREA * gridArea;
+    turtle.coverRandomRectangle();
+    return true;
+  };
 
-          // if (area > maxArea) return 0;
-          if (area > maxArea || rect.getAspectRatio() > 2) return 0;
-
-          return area;
-        },
-      });
-
-      turtle.coverRandomRectangle();
-      return true;
-    };
-
-    p.mouseClicked = spawnTurtle;
-
-    p.draw = () => {
+  return {
+    setup: () => {
+      // while (spawnTurtle()) {
+      //   console.log(1);
+      //   // noop
+      // }
+    },
+    draw: () => {
       p.background("black");
       p.fill("#AAA");
       p.strokeWeight(2);
+
       // grid.render();
 
       (REVERSE ? rectsToDraw.slice().reverse() : rectsToDraw).forEach(
@@ -143,15 +139,25 @@ export const factory: ISketchFactory<any> =
           );
         },
       );
-    };
+    },
   };
+});
 
-export const sketch: ISketch = {
+const presets: IPreset<Controls>[] = [
+  {
+    params: {
+      RESOLUTION: 1,
+    },
+    timeDelta: 1,
+    name: "0",
+  },
+];
+
+export const sketch: ISketch<Controls> = {
   factory,
-  controls: {} as any,
-  presets: [{ params: {} as any, name: "", timeDelta: 1 }],
+  controls,
+  presets,
   type: "draft",
-
   id: "tiles",
   name: "tiles",
   preview: {

@@ -1,7 +1,6 @@
 import { Worm } from "../Worm";
 import type { PatternArgs } from ".";
 import { OccupancyGrid } from "@/utils/OccupancyGrid";
-import { Size } from "@/sketches/tiles/Size";
 import { WormNavigator } from "../WormNavigator";
 import p5 from "p5";
 
@@ -11,13 +10,17 @@ export function mirrorPattern({
   len,
   randomProvider,
 }: PatternArgs): Worm[] {
-  const size = new Size(resX, resY);
-  const quadrantSize = new Size(Math.ceil(resX / 2), Math.ceil(resY / 2));
-  const occupancyGrid = new OccupancyGrid(quadrantSize, randomProvider);
+  const quadrantWidth = Math.ceil(resX / 2);
+  const quadrantHeight = Math.ceil(resY / 2);
+  const occupancyGrid = new OccupancyGrid(
+    quadrantWidth,
+    quadrantHeight,
+    randomProvider,
+  );
   const quadrantHalf: Worm[] = [];
   const navigator = new WormNavigator(occupancyGrid, randomProvider);
 
-  occupyDiagTriangle(occupancyGrid, quadrantSize);
+  occupyDiagTriangle(occupancyGrid, quadrantWidth, quadrantHeight);
 
   let worm;
   while (true) {
@@ -32,13 +35,18 @@ export function mirrorPattern({
     while (worm.length < len && navigator.goRandom(worm));
   }
 
-  const quadrant = mirrorQuadrantHalf(quadrantHalf, quadrantSize);
-  return mirrorQuadrant(quadrant, size);
+  const quadrant = mirrorQuadrantHalf(
+    quadrantHalf,
+    quadrantWidth,
+    quadrantHeight,
+  );
+  return mirrorQuadrant(quadrant, resX, resY);
 }
 
 export function occupyDiagTriangle(
   occupancyGrid: OccupancyGrid,
-  { height, width }: Size,
+  width: number,
+  height: number,
 ) {
   const k = width / height;
   for (let y = 0; y < height; y++) {
@@ -50,32 +58,31 @@ export function occupyDiagTriangle(
   }
 }
 
-export function mirrorQuadrant(quadrant: Worm[], size: Size) {
+export function mirrorQuadrant(
+  quadrant: Worm[],
+  width: number,
+  height: number,
+) {
   return quadrant.flatMap((worm) => {
     const { head, tail } = worm;
 
     const mirror = [
       new Worm({
-        head: new p5.Vector(size.width - head.x - 1, head.y),
+        head: new p5.Vector(width - head.x - 1, head.y),
+        length: worm.length,
+        tail: tail.map((tail) => new p5.Vector(width - tail.x - 1, tail.y)),
+      }),
+      new Worm({
+        head: new p5.Vector(width - head.x - 1, height - head.y - 1),
         length: worm.length,
         tail: tail.map(
-          (tail) => new p5.Vector(size.width - tail.x - 1, tail.y),
+          (tail) => new p5.Vector(width - tail.x - 1, height - tail.y - 1),
         ),
       }),
       new Worm({
-        head: new p5.Vector(size.width - head.x - 1, size.height - head.y - 1),
+        head: new p5.Vector(head.x, height - head.y - 1),
         length: worm.length,
-        tail: tail.map(
-          (tail) =>
-            new p5.Vector(size.width - tail.x - 1, size.height - tail.y - 1),
-        ),
-      }),
-      new Worm({
-        head: new p5.Vector(head.x, size.height - head.y - 1),
-        length: worm.length,
-        tail: tail.map(
-          (tail) => new p5.Vector(tail.x, size.height - tail.y - 1),
-        ),
+        tail: tail.map((tail) => new p5.Vector(tail.x, height - tail.y - 1)),
       }),
     ];
 
@@ -83,18 +90,21 @@ export function mirrorQuadrant(quadrant: Worm[], size: Size) {
   });
 }
 
-export function mirrorQuadrantHalf(quadrant: Worm[], size: Size) {
+export function mirrorQuadrantHalf(
+  quadrant: Worm[],
+  width: number,
+  height: number,
+) {
   return quadrant.flatMap((worm) => {
     const { head, tail } = worm;
 
     return [
       worm,
       new Worm({
-        head: new p5.Vector(size.width - head.x - 1, size.height - head.y - 1),
+        head: new p5.Vector(width - head.x - 1, height - head.y - 1),
         length: worm.length,
         tail: tail.map(
-          (tail) =>
-            new p5.Vector(size.width - tail.x - 1, size.height - tail.y - 1),
+          (tail) => new p5.Vector(width - tail.x - 1, height - tail.y - 1),
         ),
       }),
     ];

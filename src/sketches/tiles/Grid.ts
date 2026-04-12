@@ -1,27 +1,29 @@
 import { type IRectangle, Rectangle } from "./Rectangle";
-import { Size } from "./Size";
 import p5 from "p5";
 
 export interface IGridParams {
   origin: p5.Vector;
-  gridSizeInPixels: Size;
-  gridSizeInCells: Size;
+  gridSizeInPixels: p5.Vector;
+  gridSizeInCells: p5.Vector;
   color: string;
 }
 
 interface IGridConfig extends IGridParams {
-  cellSize: Size;
+  cellSize: p5.Vector;
 }
 
 export class Grid {
   public config: IGridConfig;
 
-  constructor(private p: p5, initParams: IGridParams) {
+  constructor(
+    private p: p5,
+    initParams: IGridParams,
+  ) {
     this.config = {
       ...initParams,
-      cellSize: new Size(
-        initParams.gridSizeInPixels.width / initParams.gridSizeInCells.width,
-        initParams.gridSizeInPixels.height / initParams.gridSizeInCells.height
+      cellSize: new p5.Vector(
+        initParams.gridSizeInPixels.x / initParams.gridSizeInCells.x,
+        initParams.gridSizeInPixels.y / initParams.gridSizeInCells.y,
       ),
     };
   }
@@ -33,9 +35,9 @@ export class Grid {
       this.p.stroke(this.config.color);
 
       // vertical lines
-      for (let cx = 0; cx <= this.config.gridSizeInCells.width; cx++) {
-        const x = cx * this.config.cellSize.width;
-        this.p.line(x, 0, x, this.config.gridSizeInPixels.height);
+      for (let cx = 0; cx <= this.config.gridSizeInCells.x; cx++) {
+        const x = cx * this.config.cellSize.x;
+        this.p.line(x, 0, x, this.config.gridSizeInPixels.y);
 
         if (cx !== 0) {
           this.p.push();
@@ -43,11 +45,11 @@ export class Grid {
             this.p.fill("white");
             this.p.textAlign(this.p.CENTER);
             this.p.strokeWeight(1);
-            this.p.text(cx, x - this.config.cellSize.width / 2, -5);
+            this.p.text(cx, x - this.config.cellSize.x / 2, -5);
             this.p.text(
               cx,
-              x - this.config.cellSize.width / 2,
-              this.config.gridSizeInPixels.height + 15
+              x - this.config.cellSize.x / 2,
+              this.config.gridSizeInPixels.y + 15,
             );
           }
           this.p.pop();
@@ -55,9 +57,9 @@ export class Grid {
       }
 
       // horizontal lines
-      for (let cy = 0; cy <= this.config.gridSizeInCells.height; cy++) {
-        const y = cy * this.config.cellSize.height;
-        this.p.line(0, y, this.config.gridSizeInPixels.width, y);
+      for (let cy = 0; cy <= this.config.gridSizeInCells.y; cy++) {
+        const y = cy * this.config.cellSize.y;
+        this.p.line(0, y, this.config.gridSizeInPixels.x, y);
 
         if (cy !== 0) {
           this.p.push();
@@ -65,12 +67,12 @@ export class Grid {
             this.p.fill("white");
             this.p.textAlign(this.p.RIGHT);
             this.p.strokeWeight(1);
-            this.p.text(cy, -5, y - this.config.cellSize.height / 2 + 5);
+            this.p.text(cy, -5, y - this.config.cellSize.y / 2 + 5);
             this.p.textAlign(this.p.LEFT);
             this.p.text(
               cy,
-              this.config.gridSizeInPixels.width + 5,
-              y - this.config.cellSize.height / 2 + 5
+              this.config.gridSizeInPixels.x + 5,
+              y - this.config.cellSize.y / 2 + 5,
             );
           }
           this.p.pop();
@@ -82,12 +84,12 @@ export class Grid {
 
   getCanvasRectangleFromCell(cell: p5.Vector) {
     const tl = new p5.Vector(
-      (cell.x - 1) * this.config.cellSize.width + this.config.origin.x,
-      (cell.y - 1) * this.config.cellSize.height + this.config.origin.y
+      (cell.x - 1) * this.config.cellSize.x + this.config.origin.x,
+      (cell.y - 1) * this.config.cellSize.y + this.config.origin.y,
     );
     const br = new p5.Vector(
-      cell.x * this.config.cellSize.width + this.config.origin.x,
-      cell.y * this.config.cellSize.height + this.config.origin.y
+      cell.x * this.config.cellSize.x + this.config.origin.x,
+      cell.y * this.config.cellSize.y + this.config.origin.y,
     );
     return new Rectangle(tl, br);
   }
@@ -95,7 +97,7 @@ export class Grid {
   getCanvasRectangleFromVertexCells(rect: IRectangle) {
     const canvasTopLeft = this.getCanvasRectangleFromCell(rect.topLeft).topLeft;
     const canvasBottomRight = this.getCanvasRectangleFromCell(
-      rect.bottomRight
+      rect.bottomRight,
     ).bottomRight;
     return new Rectangle(canvasTopLeft, canvasBottomRight);
   }

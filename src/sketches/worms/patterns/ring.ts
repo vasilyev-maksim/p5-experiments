@@ -3,7 +3,6 @@ import type { PatternArgs } from ".";
 import { WormNavigator } from "../WormNavigator";
 import p5 from "p5";
 import { OccupancyGrid } from "@/utils/OccupancyGrid";
-import { Size } from "@/sketches/tiles/Size";
 
 export const ringPattern =
   ({
@@ -20,10 +19,7 @@ export const ringPattern =
     attractorY: number;
   }) =>
   ({ len, randomProvider, resX, resY }: PatternArgs): Worm[] => {
-    const occupancyGrid = new OccupancyGrid(
-      new Size(resX, resY),
-      randomProvider,
-    );
+    const occupancyGrid = new OccupancyGrid(resX, resY, randomProvider);
     const navigator = new WormNavigator(occupancyGrid, randomProvider);
     const attractor = new p5.Vector(
       Math.floor(resX * attractorX),
@@ -61,8 +57,8 @@ function occupyRing({
   innerRadius: number;
   inverted: boolean;
 }) {
-  const W = occupancyGrid.sizes.width;
-  const H = occupancyGrid.sizes.height;
+  const W = occupancyGrid.width;
+  const H = occupancyGrid.height;
   const halfW = Math.floor(W / 2);
   const halfH = Math.floor(H / 2);
   const R = H / 2;

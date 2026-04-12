@@ -9,7 +9,7 @@ import { sketch as cubesSketch } from "./cubes";
 import { zigzagsSketch } from "./zigzags";
 import { sketch as lightsSketch } from "./_sandboxes/lights";
 import { interpolationSketch } from "./_sandboxes/interpolation";
-// import { sketch as tilesSketch } from "./tiles/tiles";
+import { sketch as tilesSketch } from "./tiles/tiles";
 import { sketch as wormsSketch } from "./worms";
 import { sketch as funcsSketch } from "./_sandboxes/funcs";
 import { ENV } from "@/env";
@@ -28,7 +28,7 @@ const all: ISketch<any>[] = [
   lightsSketch,
   interpolationSketch,
   citySketch,
-  // tilesSketch,
+  tilesSketch,
   funcsSketch,
   // bodiesSketch,
 ];

@@ -15,7 +15,7 @@ const controls = {
   },
 } as const satisfies IControls;
 
-export const factory = createSketch<typeof controls>(({ p, getTime }) => {
+export const factory = createSketch<Controls>(({ p, getTime }) => {
   const animatedX = new AnimatedValue({
     initialValue: 0,
     animationDuration: 20,
