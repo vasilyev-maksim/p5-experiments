@@ -11,22 +11,22 @@ export function FullScreenIcon() {
       <path
         d="M 12 72 L 12 12 L 72 12 M 12 12 L 72 72"
         stroke="currentColor"
-        stroke-width="22"
+        strokeWidth="22"
       ></path>
       <path
         d="M 188 72 L 188 12 L 128 12 M 188 12 L 128 72"
         stroke="currentColor"
-        stroke-width="22"
+        strokeWidth="22"
       ></path>
       <path
         d="M 12 128 L 12 188 L 72 188 M 12 188 L 72 128"
         stroke="currentColor"
-        stroke-width="22"
+        strokeWidth="22"
       ></path>
       <path
         d="M 188 128 L 188 188 L 128 188 M 188 188 L 128 128"
         stroke="currentColor"
-        stroke-width="22"
+        strokeWidth="22"
       ></path>
     </svg>
   );
