@@ -2,8 +2,8 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 import { ActiveSketchContext } from "./ActiveSketchContext";
-import { getActivePresetFromUrl, setPresetDataToUrl } from "@/utils/url";
-import { getRandomParams } from "@/utils/sketch";
+import { getActivePresetFromUrl, setPresetDataToUrl } from "@utils/url";
+import { getRandomParams } from "@utils/sketch";
 import type { IPreset, ISketch } from "@/models";
 
 const EXPORT_WIDTH = 336,

@@ -1,7 +1,7 @@
 import p5 from "p5";
 import { drawMaterial } from "./material";
 import { drawWindow } from "./window";
-import { drawGrid } from "@/sketches/utils";
+import { gridLayout } from "@/sketches/_utils/drawGrid";
 
 export function drawBuilding(p: p5, { size }: { size: p5.Vector }) {
   const windowAreaHeight = (size.y - 1) / size.y;
@@ -28,7 +28,7 @@ export function drawBuilding(p: p5, { size }: { size: p5.Vector }) {
     p.push();
     {
       p.translate(0, windowsAreaSize.y / 2 - 0.5, 0.5 + windowsAreaSize.z / 2);
-      drawGrid(p, {
+      gridLayout(p, {
         size: windowsAreaSize,
         cells: windowsCount,
         drawCb: () =>
@@ -58,7 +58,7 @@ export function drawBuilding(p: p5, { size }: { size: p5.Vector }) {
         sideWindowsAreaSize.x / 2 - 0.5,
       );
       p.rotateY(p.HALF_PI);
-      drawGrid(p, {
+      gridLayout(p, {
         size: sideWindowsAreaSize,
         cells: sideWindowsCount,
         drawCb: () =>

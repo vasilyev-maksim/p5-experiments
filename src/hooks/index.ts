@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { useSpring, easings, useSpringValue } from "react-spring";
-import { getClosestDiscreteValue } from "../utils/misc";
+import { getClosestDiscreteValue } from "@utils/misc";
 import { ViewportContext } from "@/contexts/ViewportContext";
 import { ActiveSketchContext } from "@/contexts/ActiveSketchContext";
 

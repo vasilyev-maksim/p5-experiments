@@ -1,7 +1,7 @@
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 import type { IParams, IPreset, ISketch } from "@/models";
-import { noop } from "@/utils/misc";
+import { noop } from "@utils/misc";
 import { createContext } from "react";
 
 type ActiveSketchContextValue = {

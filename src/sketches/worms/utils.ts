@@ -1,5 +1,5 @@
 import type { RandomProvider } from "@/core/models";
-import p5 from "p5";
+import { Vector } from "@utils/Vector";
 
 export type Dir = "up" | "right" | "down" | "left";
 
@@ -19,15 +19,15 @@ export function getRandomDir(randomProvider: RandomProvider = Math.random) {
 
 export function getAbsVecFromDir(dir: Dir) {
   return {
-    up: new p5.Vector(0, 1),
-    down: new p5.Vector(0, -1),
-    right: new p5.Vector(-1, 0),
-    left: new p5.Vector(1, 0),
+    up: new Vector(0, 1),
+    down: new Vector(0, -1),
+    right: new Vector(-1, 0),
+    left: new Vector(1, 0),
   }[dir];
 }
 
-export function getDirFromAbsVec(vec: p5.Vector): Dir {
-  vec = vec.copy().normalize();
+export function getDirFromAbsVec(vec: Vector): Dir {
+  vec = vec.normalize();
 
   if (vec.x === 0 && vec.y === 1) {
     return "up";

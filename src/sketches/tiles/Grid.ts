@@ -1,4 +1,5 @@
-import { type IRectangle, Rectangle } from "./Rectangle";
+import { Vector } from "@utils/Vector";
+import { type IRectangle, Rectangle } from "@utils/Rectangle";
 import p5 from "p5";
 
 export interface IGridParams {
@@ -82,12 +83,12 @@ export class Grid {
     this.p.pop();
   }
 
-  getCanvasRectangleFromCell(cell: p5.Vector) {
-    const tl = new p5.Vector(
+  getCanvasRectangleFromCell(cell: Vector) {
+    const tl = new Vector(
       (cell.x - 1) * this.config.cellSize.x + this.config.origin.x,
       (cell.y - 1) * this.config.cellSize.y + this.config.origin.y,
     );
-    const br = new p5.Vector(
+    const br = new Vector(
       cell.x * this.config.cellSize.x + this.config.origin.x,
       cell.y * this.config.cellSize.y + this.config.origin.y,
     );

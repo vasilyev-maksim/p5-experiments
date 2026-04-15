@@ -1,102 +1,118 @@
-// import type { IPoint } from "./IPoint";
-// import { Point } from "./Point";
-import { type IRectangle, Rectangle } from "./Rectangle";
-import p5 from "p5";
-// import { p5.Vector } from "./p5.Vector";
+import type { OccupancyGrid } from "@utils/OccupancyGrid";
+import { Vector } from "@utils/Vector";
+import { Rectangle } from "@utils/Rectangle";
 
-interface IProviders {
-  onCommit: (rectangle: IRectangle) => void;
-  isForwardPossible: (cell: p5.Vector) => boolean;
-  rectEvaluator: (rect: IRectangle) => number;
-}
-
-export class Turtle {
-  public start: p5.Vector;
-
+export class Tiler {
   constructor(
-    public origin: p5.Vector,
-    private providers: IProviders,
-  ) {
-    this.start = origin.copy();
-    this.providers = providers;
+    public readonly occupancyGrid: OccupancyGrid,
+    private readonly tileEvaluator: (tile: Rectangle) => number,
+  ) {}
+
+  public randomTiling(): Rectangle[] {
+    const tiles: Rectangle[] = [];
+    while (true) {
+      const tile = this.spawnRandomTile();
+      if (tile) {
+        tiles?.push(tile);
+      } else {
+        break;
+      }
+    }
+    return tiles;
   }
 
-  coverRandomRectangle() {
-    const rects = this.getRectangleVariations();
-    this.providers.onCommit(rects[0]);
+  public spawnRandomTile(): Rectangle | null {
+    const start = this.occupancyGrid.getRandomFreeCell();
+    if (start) {
+      const ends = this.getEndVariations(start);
+      // console.log(ends);
+
+      const end = ends?.[0];
+      if (end) {
+        this.occupancyGrid.occupyRange(start, end);
+        const rect = new Rectangle(start, end);
+        return rect;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
-  getEmptyPathLengthByDirection(direction: p5.Vector) {
+  public getEmptyPathLengthByDirection(start: Vector, direction: Vector) {
     if (direction.mag() === 0) return 0;
 
     let length = 0;
-    const current = this.start.copy();
+    let current = start;
 
     while (true) {
-      current.add(direction);
-      if (this.providers.isForwardPossible(current)) {
-        length++;
-      } else {
+      current = current.add(direction);
+
+      if (this.occupancyGrid.isOccupied(current)) {
         break;
+      } else {
+        length++;
       }
     }
 
     return length;
   }
 
-  getRectangleVariations() {
-    return [
-      ...this.getRectangleVariationsByDirection(new p5.Vector(1, 1)),
-      ...this.getRectangleVariationsByDirection(new p5.Vector(-1, 1)),
-      ...this.getRectangleVariationsByDirection(new p5.Vector(1, -1)),
-      ...this.getRectangleVariationsByDirection(new p5.Vector(-1, -1)),
-    ];
+  public getEndVariations(start: Vector) {
+    return (
+      [
+        ...this.getEndVariationsByDirection(start, new Vector(1, 1)),
+        ...this.getEndVariationsByDirection(start, new Vector(-1, 1)),
+        ...this.getEndVariationsByDirection(start, new Vector(1, -1)),
+        ...this.getEndVariationsByDirection(start, new Vector(-1, -1)),
+      ]
+        // filter out duplicates
+        .filter((x, i, arr) => arr.findIndex((y) => x.equals(y)) === i)
+        .map((end) => {
+          const weight = this.tileEvaluator(new Rectangle(start, end));
+          return { end, weight };
+        })
+        .filter(({ weight }) => weight > 0)
+        .sort((a, b) => b.weight - a.weight)
+        .map((x) => x.end)
+    );
   }
 
-  getRectangleVariationsByDirection(direction: p5.Vector) {
+  public getEndVariationsByDirection(start: Vector, direction: Vector) {
     const directionX = direction.x;
     const directionY = direction.y;
 
     let maxDY = this.getEmptyPathLengthByDirection(
-      new p5.Vector(0, direction.y),
+      start,
+      new Vector(0, directionY),
     );
     const maxDX = this.getEmptyPathLengthByDirection(
-      new p5.Vector(direction.x, 0),
+      start,
+      new Vector(directionX, 0),
     );
-    const variations = [];
+    const ends = [];
 
-    for (let dx = 1; dx <= maxDX; dx++) {
-      const x = this.start.x + dx * directionX;
-      for (let dy = 1; dy <= maxDY; dy++) {
-        const y = this.start.y + dy * directionY;
-        const isEmpty = this.providers.isForwardPossible(new p5.Vector(x, y));
-        if (!isEmpty) {
+    for (let dx = 0; dx <= maxDX; dx++) {
+      const x = start.x + dx * directionX;
+
+      for (let dy = 0; dy <= maxDY; dy++) {
+        const y = start.y + dy * directionY;
+        const isOccupied = this.occupancyGrid.isOccupied(new Vector(x, y));
+
+        if (isOccupied) {
           const newMaxDY = dy - 1;
-          if (newMaxDY < maxDY) {
-            variations.push(
-              new p5.Vector(x - directionX, this.start.y + maxDY * directionY),
-            );
-          }
+          // if (newMaxDY < maxDY) {
+          //   ends.push(new Vector(x - directionX, start.y + maxDY * directionY));
+          // }
           maxDY = newMaxDY;
           break;
+        } else {
+          ends.push(new Vector(x, y));
         }
       }
     }
 
-    variations.push(
-      this.start
-        .copy()
-        .add(new p5.Vector(maxDX * directionX, maxDY * directionY)),
-    );
-
-    return variations
-      .map((x) => {
-        const rect = new Rectangle(this.start, x);
-        const value = this.providers.rectEvaluator(rect);
-        return { rect, value };
-      })
-      .filter(({ value }) => value > 0)
-      .sort((a, b) => a.value - b.value)
-      .map((x) => x.rect);
+    return ends;
   }
 }

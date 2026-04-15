@@ -1,4 +1,4 @@
-import { Event } from "../utils/Event";
+import { Event } from "@utils/Event";
 import { SegmentPhase } from "./models";
 
 export class SegmentBase {

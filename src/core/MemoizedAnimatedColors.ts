@@ -2,8 +2,12 @@
 import type p5 from "p5";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { AnimatedValue } from "./AnimatedValue";
-import type { TimeProvider, TrackedArrayComparator, TrackedTuple } from "./models";
-import { chunkArray } from "@/utils/misc";
+import type {
+  TimeProvider,
+  TrackedArrayComparator,
+  TrackedTuple,
+} from "./models";
+import { chunkArray } from "@utils/misc";
 
 export type p5Subset = Pick<p5, "red" | "green" | "blue" | "color">;
 

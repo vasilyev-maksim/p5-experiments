@@ -1,15 +1,19 @@
-import { Grid } from "./Grid";
-import { OccupancyGrid } from "../../utils/OccupancyGrid";
-import { Turtle } from "./Turtle";
-import { type IRectangle } from "./Rectangle";
-import { StaggerAnimation } from "./StaggerAnimation";
+import { OccupancyGrid } from "@utils/OccupancyGrid";
+import { Tiler } from "./Turtle";
 import type { IControls, IPreset, ISketch } from "../../models";
-import { easeInOutQuad, getQsParam } from "@/core/utils";
+import { getQsParam } from "@/core/utils";
 import { createSketch } from "@/core/createSketch";
 
 export type Controls = typeof controls;
 
 const controls = {
+  RANDOM_SEED: {
+    type: "range",
+    min: 0,
+    max: 1000,
+    step: 1,
+    label: "Random seed",
+  },
   RESOLUTION: {
     type: "range",
     min: 2,
@@ -17,96 +21,99 @@ const controls = {
     step: 1,
     label: "Resolution",
   },
+  THICKNESS: {
+    type: "range",
+    min: 0.05,
+    max: 0.95,
+    step: 0.05,
+    label: "Thickness",
+    valueFormatter: (x) => x.toFixed(2),
+  },
+  INNER_THICKNESS: {
+    type: "range",
+    min: 0,
+    max: 0.95,
+    step: 0.05,
+    label: "Hollowness",
+    valueFormatter: (x) => x.toFixed(2),
+  },
 } as const satisfies IControls;
 
-export const factory = createSketch<Controls>(({ p }) => {
-  const GRID_CELLS_Y = Number(getQsParam("y", "20")),
-    CANVAS_PADDING = 3,
-    PADDING = 3,
-    GRID_SIZE = p.createVector(
-      Math.round((GRID_CELLS_Y * p.width) / p.height),
-      GRID_CELLS_Y,
-    ),
-    GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
-    MAX_AREA = 0.08,
-    // MAX_AREA = 0.02,
-    REVERSE = getQsParam("r", "1") === "1",
-    ANIMATION_SPEED = parseInt(getQsParam("s", "7")),
-    grid = new Grid(p, {
-      origin: GRID_ORIGIN,
-      gridSizeInPixels: p.createVector(
-        p.width - CANVAS_PADDING * 2,
-        p.height - CANVAS_PADDING * 2,
-      ),
-      gridSizeInCells: GRID_SIZE,
-      color: "#CCC",
-    }),
-    matrix = new OccupancyGrid(GRID_SIZE.x, GRID_SIZE.y, () => p.random()),
-    rectsToDraw: IRectangle[] = [],
-    animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
-
-  const spawnTurtle = () => {
-    const randomOrigin = matrix.getRandomFreeCell();
-    if (!randomOrigin) {
-      return false;
-    }
-
-    const turtle = new Turtle(randomOrigin, {
-      isForwardPossible: (cell) => {
-        return matrix.isOccupied(cell);
+export const factory = createSketch<Controls>(
+  ({ p, getTime, createMemo, getTrackedParam, getCanvasSize, getParam }) => {
+    const { trackedCanvasHeight, trackedCanvasWidth } = getCanvasSize();
+    const gridInfo = createMemo({
+      fn: (w, h, resY) => {
+        const resX = p.round((w * resY) / h);
+        const size = p.createVector(resX, resY);
+        const max = p.createVector(resX - 1, resY - 1);
+        const area = size.x * size.y;
+        return {
+          max,
+          size,
+          area,
+        };
       },
-      onCommit: (rect) => {
-        if (!rect) {
-          return;
-        }
-        rect.getPointsRange().forEach((p) => {
-          matrix.occupy(p);
-        });
-
-        if (rect.getArea() > 0) {
-          rectsToDraw.push(rect);
-        }
-      },
-      rectEvaluator: (rect) => {
-        const area = rect.getArea();
-        const gridArea = GRID_SIZE.x * GRID_SIZE.y;
-        const maxArea = MAX_AREA * gridArea;
-
-        // if (area > maxArea) return 0;
-        if (area > maxArea || rect.getAspectRatio() > 2) return 0;
-
-        return area;
-      },
+      deps: [
+        trackedCanvasWidth,
+        trackedCanvasHeight,
+        getTrackedParam("RESOLUTION"),
+      ],
     });
+    const tiles = createMemo({
+      fn: ({ size, area }, seed) => {
+        p.randomSeed(seed);
+        const og = new OccupancyGrid(size.x, size.y, () => p.random());
+        const MAX_AREA = 0.38; // TODO:
+        const maxArea = MAX_AREA * area;
+        const tiles = new Tiler(og, (rect) => {
+          const area = rect.getArea();
 
-    turtle.coverRandomRectangle();
-    return true;
-  };
+          // if (area > maxArea) return 0;
+          if (area > maxArea || rect.getAspectRatio() > 2) return 0;
 
-  return {
-    setup: () => {
-      // while (spawnTurtle()) {
-      //   console.log(1);
-      //   // noop
-      // }
-    },
-    draw: () => {
-      p.background("black");
-      p.fill("#AAA");
-      p.strokeWeight(2);
+          return area;
+        }).randomTiling();
 
-      // grid.render();
+        return tiles;
+      },
+      deps: [gridInfo.getTrackedValue(), getTrackedParam("RANDOM_SEED")],
+    });
+    const // GRID_CELLS_Y = Number(getQsParam("y", "20")),
+      // CANVAS_PADDING = 3,
+      // PADDING = 3,
+      // GRID_SIZE = p.createVector(
+      //   Math.round((GRID_CELLS_Y * p.width) / p.height),
+      //   GRID_CELLS_Y,
+      // ),
+      // GRID_ORIGIN = p.createVector(CANVAS_PADDING, CANVAS_PADDING),
+      // MAX_AREA = 0.38,
+      // MAX_AREA = 0.08,
+      // MAX_AREA = 0.02,
+      REVERSE = getQsParam("r", "1") === "1";
+    // ANIMATION_SPEED = parseInt(getQsParam("s", "7")),
+    // animation: StaggerAnimation = new StaggerAnimation(ANIMATION_SPEED);
 
-      (REVERSE ? rectsToDraw.slice().reverse() : rectsToDraw).forEach(
-        (cellRect, i, arr) => {
-          const time = p.frameCount;
-          const canvasRect = grid.getCanvasRectangleFromVertexCells(cellRect);
-          const animationProgress =
-            time < 0 ? 1 : animation.getAnimationProgress(time, i);
-          // const animationProgress = 1;
-          const colorValue = p.map(1 - i / arr.length, 0, 1, 0.1, 0.75);
-          // const area = cellRect.getArea();
-          // const gridArea = GRID_SIZE.getArea();
+    return {
+      draw: () => {
+        const { size } = gridInfo.getValue();
+        const { canvasHeight, canvasWidth } = getCanvasSize();
+        const offset = 0.5;
+        const xScaleFactor = canvasWidth / (size.x + offset * 2);
+        const yScaleFactor = canvasHeight / (size.y + offset * 2);
+        const scale = getParam("THICKNESS");
+
+        p.background("black");
+        p.scale(xScaleFactor, yScaleFactor);
+        p.translate(offset, offset);
+        p.strokeWeight(1 / yScaleFactor);
+
+        tiles.getValue().forEach((tile, i, arr) => {
+          // console.log(tile.getArea());
+          // const canvasRect = grid.getCanvasRectangleFromVertexCells(tile);
+          // const animationProgress =
+          //   time < 0 ? 1 : animation.getAnimationProgress(time, i);
+          const colorValue = p.map(i / arr.length, 0, 1, 0.1, 0.75);
 
           const color = p.lerpColor(
             p.color("white"),
@@ -120,35 +127,50 @@ export const factory = createSketch<Controls>(({ p }) => {
           );
           p.fill(color);
 
-          const scale = easeInOutQuad(animationProgress);
-          const scaledRect = canvasRect.scale(scale);
-          const direction = [
-            p.createVector(1, 0),
-            p.createVector(0, 1),
-            p.createVector(-1, 0),
-            p.createVector(0, -1),
-          ][i % 4];
+          // const scale = easeInOutQuad(animationProgress);
+          // const scale = 1;
+          const scaledTile = tile.scale(1);
+          const scaledTile = tile;
+          // const direction = [
+          //   p.createVector(1, 0),
+          //   p.createVector(0, 1),
+          //   p.createVector(-1, 0),
+          //   p.createVector(0, -1),
+          // ][i % 4];
 
-          p.strokeWeight(1);
+          // p.rect(
+          //   scaledRect.topLeft.x + PADDING + direction.x * (1 - scale) * 200,
+          //   scaledRect.topLeft.y + PADDING + direction.y * (1 - scale) * 200,
+          //   Math.max(scaledRect.width - 2 - PADDING * 2, 0), // TODO: fix this (-2)
+          //   Math.max(scaledRect.height - 2 - PADDING * 2, 0),
+          //   10,
+          // );
+
           p.rect(
-            scaledRect.topLeft.x + PADDING + direction.x * (1 - scale) * 200,
-            scaledRect.topLeft.y + PADDING + direction.y * (1 - scale) * 200,
-            Math.max(scaledRect.width - 2 - PADDING * 2, 0), // TODO: fix this (-2)
-            Math.max(scaledRect.height - 2 - PADDING * 2, 0),
-            10,
+            scaledTile.topLeft.x,
+            scaledTile.topLeft.y,
+            scaledTile.width,
+            scaledTile.height,
+            0,
           );
-        },
-      );
-    },
-  };
-});
+        });
+
+        // drawCoordinatesGrid(p, size.x, size.y);
+      },
+    };
+  },
+);
 
 const presets: IPreset<Controls>[] = [
   {
     params: {
-      RESOLUTION: 1,
+      RESOLUTION: 6,
+      THICKNESS: 0.95,
+      INNER_THICKNESS: 0,
+      RANDOM_SEED: 2,
     },
     timeDelta: 1,
+    // randomSeed: 5777,
     name: "0",
   },
 ];
@@ -164,5 +186,5 @@ export const sketch: ISketch<Controls> = {
     sizeInPercents: 36,
   },
   startTime: -20,
-  randomSeed: 123,
+  // randomSeed: 123,
 };

@@ -17,7 +17,7 @@
 
 //     { originX: 4, originY: 2, directionX: 1, directionY: 0, expected: 1 },
 //     { originX: 4, originY: 2, directionX: 0, directionY: 1, expected: 3 },
-//     { originX: 4, originY: 2, directionX: -1, directionY: 0, expected: 3 },
+//     { originX: 4, originY: 2, directionX: -1, directionY: 0, expected: 3 },œ
 //     { originX: 4, originY: 2, directionX: 0, directionY: -1, expected: 1 },
 
 //     { originX: 5, originY: 5, directionX: -1, directionY: 0, expected: 4 },

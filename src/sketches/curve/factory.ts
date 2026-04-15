@@ -1,5 +1,5 @@
 import { createSketch } from "@/core/createSketch";
-import { range } from "@/utils/misc";
+import { range } from "@utils/misc";
 import { controls, type Controls } from "./controls";
 
 const JOINT_SIZE = 10;

@@ -1,6 +1,6 @@
 import { createSketch } from "@/core/createSketch";
 import { oscillateBetween } from "@/core/utils";
-import { range } from "@/utils/misc";
+import { range } from "@utils/misc";
 import p5 from "p5";
 import { controls, type Controls } from "./controls";
 

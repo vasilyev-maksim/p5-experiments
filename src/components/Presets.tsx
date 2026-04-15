@@ -1,6 +1,6 @@
 import type { IPreset } from "../models";
 import styles from "./Presets.module.css";
-import { areParamsEqual } from "@/utils/sketch";
+import { areParamsEqual } from "@utils/sketch";
 import { SectionLayout } from "./SectionLayout";
 import { animated, easings, useSprings } from "react-spring";
 import { useSequence } from "../sequencer";

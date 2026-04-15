@@ -1,7 +1,7 @@
 // import { oscillateBetween } from "@/core/utils";
 import type { IControls, IPreset, ISketch } from "../../models";
 import { createSketch } from "@core/createSketch";
-import { range } from "@/utils/misc";
+import { range } from "@utils/misc";
 import { flatSin } from "@/core/utils";
 
 export type Controls = typeof controls;

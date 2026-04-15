@@ -1,7 +1,7 @@
 import { Worm } from "../Worm";
 import type { PatternArgs } from ".";
 import { WormNavigator } from "../WormNavigator";
-import { OccupancyGrid } from "@/utils/OccupancyGrid";
+import { OccupancyGrid } from "@utils/OccupancyGrid";
 
 export function snailPattern({
   len,

@@ -1,5 +1,5 @@
 // import { MemoizedValue } from "../utils/MemoizedValue";
-import { range } from "../../utils/misc";
+import { range } from "@utils/misc";
 import { createSketch } from "@core/createSketch";
 import { type Controls, controls } from "./controls";
 

@@ -17,7 +17,7 @@ import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { Button } from "./Button";
-import { copyPresetCodeToClipboard } from "@/utils/sketch";
+import { copyPresetCodeToClipboard } from "@utils/sketch";
 import { usePopStateSync } from "@hooks/url";
 import { useActiveSketch } from "@hooks";
 import { DiceIcon } from "./Icons";

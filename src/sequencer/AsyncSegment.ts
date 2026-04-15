@@ -1,4 +1,4 @@
-import { Deferred } from "../utils/Deffered";
+import { Deferred } from "@utils/Deffered";
 import { SegmentBase } from "./SegmentBase";
 
 export class AsyncSegment<Payload = unknown> extends SegmentBase {
@@ -16,7 +16,7 @@ export class AsyncSegment<Payload = unknown> extends SegmentBase {
     id: string,
     delay: number = 0,
     public readonly timingPayload: Payload,
-    __enabledIf?: (ctx: unknown) => boolean
+    __enabledIf?: (ctx: unknown) => boolean,
   ) {
     super(id, delay, __enabledIf);
   }

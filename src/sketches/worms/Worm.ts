@@ -1,20 +1,20 @@
-import p5 from "p5";
 import { getDirFromAbsVec } from "./utils";
+import { Vector } from "@/utils/Vector";
 
 export type WormParams = {
-  head: p5.Vector;
-  tail?: p5.Vector[];
+  head: Vector;
+  tail?: Vector[];
   length?: number;
 };
 
 export class Worm {
-  public readonly tail: p5.Vector[] = [];
+  public readonly tail: Vector[] = [];
   public head;
   public length;
 
   public constructor({ head, tail = [], length = tail.length }: WormParams) {
-    this.head = new p5.Vector(head.x, head.y);
-    this.tail = tail.map(({ x, y }) => new p5.Vector(x, y));
+    this.head = new Vector(head.x, head.y);
+    this.tail = tail.map(({ x, y }) => new Vector(x, y));
     this.length = length;
   }
 
@@ -22,13 +22,10 @@ export class Worm {
     return [this.head, ...this.tail];
   }
 
-  public goTo(dest: p5.Vector) {
-    const newDir = p5.Vector.sub(dest, this.head).normalize();
+  public goTo(dest: Vector) {
+    const newDir = dest.sub(this.head).normalize();
 
-    if (
-      this.headDirVec === null ||
-      p5.Vector.equals(this.headDirVec, newDir) === false
-    ) {
+    if (this.headDirVec === null || this.headDirVec.equals(newDir) === false) {
       // optimization: no need to store A,B,C,D if they lay on the same line,
       // can store only A & D
       this.tail.unshift(this.head);
@@ -48,7 +45,7 @@ export class Worm {
 
   public get headDirVec() {
     return this.tail.length > 0
-      ? p5.Vector.sub(this.head, this.tail[0]).normalize()
+      ? this.head.sub(this.tail[0]).normalize()
       : null;
   }
 

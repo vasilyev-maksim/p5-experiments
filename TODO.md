@@ -13,6 +13,8 @@
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
 
+- [easy] test `Rectangle`
+- [easy] test `Worm` and `WormNavigator`
 - [easy] back button
 - [easy] animate "shuffle presets" button (on modal open)
 - [easy] add animated underline for my name link

@@ -4,12 +4,29 @@ import type { ISketchFactory } from "@/models";
 import { controls, type Controls } from "./controls";
 import { Worm } from "./Worm";
 import p5, { type STROKE_JOIN } from "p5";
-import { getLocalProgress } from "../utils";
+import { getLocalProgress } from "../_utils/getLocalProgress";
 import { patterns, type PatternArgs } from "./patterns";
+import { Vector } from "@utils/Vector";
 
 const ANIMATION_SPEED = 25;
 const SHRINK_OFFSET = 0.25;
 const GROW_OFFSET = 0.1;
+// function drawGrid(p: p5, resX: number, resY: number) {
+//   p.push();
+//   {
+//     p.stroke("white");
+//     p.strokeWeight(0.01);
+//     for (let x = 0; x < resX; x++) {
+//       p.line(x, 0, x, resY - 1);
+//     }
+//     for (let y = 0; y < resY; y++) {
+//       p.line(0, y, resX - 1, y);
+//     }
+//     p.strokeWeight(0.1);
+//     p.circle((resX - 1) / 2, (resY - 1) / 2, 0.5);
+//   }
+//   p.pop();
+// }
 
 export const factory: ISketchFactory<Controls> = createSketch<Controls>(
   ({
@@ -38,7 +55,7 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
 
         if (len === 0) {
           return Array.from({ length: resY * resX }, (_, i) => {
-            const pos = p.createVector(i % resX, p.floor(i / resX));
+            const pos = new Vector(i % resX, p.floor(i / resX));
             return new Worm({
               head: pos,
             });
@@ -185,7 +202,9 @@ function drawWorm(p: p5, progress: number, worm: Pick<Worm, "body">): void {
       }
 
       const prev = i === 0 ? body[0] : body[i - 1];
-      const int = p5.Vector.lerp(prev, curr, localProgress);
+      const prevVec = p.createVector(prev.x, prev.y);
+      const currVec = p.createVector(curr.x, curr.y);
+      const int = p5.Vector.lerp(prevVec, currVec, localProgress);
 
       p.vertex(int.x, int.y);
     });

@@ -1,6 +1,6 @@
 import p5 from "p5";
 import type { IControls, IPreset, ISketch } from "../../models";
-import { range } from "../../utils/misc";
+import { range } from "@utils/misc";
 import { createSketch } from "@/core/createSketch";
 
 export type Controls = typeof controls;

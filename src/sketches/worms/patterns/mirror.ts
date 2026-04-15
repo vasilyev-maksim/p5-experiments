@@ -1,8 +1,8 @@
 import { Worm } from "../Worm";
 import type { PatternArgs } from ".";
-import { OccupancyGrid } from "@/utils/OccupancyGrid";
+import { OccupancyGrid } from "@utils/OccupancyGrid";
 import { WormNavigator } from "../WormNavigator";
-import p5 from "p5";
+import { Vector } from "@utils/Vector";
 
 export function mirrorPattern({
   resY,
@@ -52,7 +52,7 @@ export function occupyDiagTriangle(
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       if (x > k * y) {
-        occupancyGrid.occupy(new p5.Vector(x, y));
+        occupancyGrid.occupy(new Vector(x, y));
       }
     }
   }
@@ -68,21 +68,21 @@ export function mirrorQuadrant(
 
     const mirror = [
       new Worm({
-        head: new p5.Vector(width - head.x - 1, head.y),
+        head: new Vector(width - head.x - 1, head.y),
         length: worm.length,
-        tail: tail.map((tail) => new p5.Vector(width - tail.x - 1, tail.y)),
+        tail: tail.map((tail) => new Vector(width - tail.x - 1, tail.y)),
       }),
       new Worm({
-        head: new p5.Vector(width - head.x - 1, height - head.y - 1),
+        head: new Vector(width - head.x - 1, height - head.y - 1),
         length: worm.length,
         tail: tail.map(
-          (tail) => new p5.Vector(width - tail.x - 1, height - tail.y - 1),
+          (tail) => new Vector(width - tail.x - 1, height - tail.y - 1),
         ),
       }),
       new Worm({
-        head: new p5.Vector(head.x, height - head.y - 1),
+        head: new Vector(head.x, height - head.y - 1),
         length: worm.length,
-        tail: tail.map((tail) => new p5.Vector(tail.x, height - tail.y - 1)),
+        tail: tail.map((tail) => new Vector(tail.x, height - tail.y - 1)),
       }),
     ];
 
@@ -101,10 +101,10 @@ export function mirrorQuadrantHalf(
     return [
       worm,
       new Worm({
-        head: new p5.Vector(width - head.x - 1, height - head.y - 1),
+        head: new Vector(width - head.x - 1, height - head.y - 1),
         length: worm.length,
         tail: tail.map(
-          (tail) => new p5.Vector(width - tail.x - 1, height - tail.y - 1),
+          (tail) => new Vector(width - tail.x - 1, height - tail.y - 1),
         ),
       }),
     ];

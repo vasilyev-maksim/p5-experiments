@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { AnimatedValue } from "./AnimatedValue";
-import { range } from "@/utils/misc";
+import { range } from "@utils/misc";
 
 describe("AnimatedValue", () => {
   test("default scenario", () => {

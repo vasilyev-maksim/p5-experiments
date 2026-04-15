@@ -1,7 +1,7 @@
 import { createSketch } from "@/core/createSketch";
-import { range } from "@/utils/misc";
+import { range } from "@utils/misc";
 import type { Controls } from "./controls";
-import { drawGrid } from "../utils";
+import { gridLayout } from "../_utils/drawGrid";
 
 const ANIMATION_SPEED = 20;
 const cameraRotationDelta = 0.005;
@@ -68,7 +68,7 @@ export const factory = createSketch<Controls>(
         const middleIndex = Math.floor(totalLen / 2);
         const animatedGapValue = animatedGap.getValue();
 
-        drawGrid(p, {
+        gridLayout(p, {
           size: p.createVector(totalSize, totalSize, totalSize),
           cells: p.createVector(totalLen, totalLen, totalLen),
           drawCb: ({ x, y, z }) => {

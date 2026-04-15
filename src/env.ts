@@ -1,4 +1,4 @@
-import { tryParseNumber } from "./utils/misc";
+import { tryParseNumber } from "@utils/misc";
 
 export const ENV = {
   animationsDurationMultiplier: tryParseNumber(

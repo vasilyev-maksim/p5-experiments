@@ -28,8 +28,8 @@ const all: ISketch<any>[] = [
   lightsSketch,
   interpolationSketch,
   citySketch,
-  tilesSketch,
   funcsSketch,
+  tilesSketch,
   // bodiesSketch,
 ];
 

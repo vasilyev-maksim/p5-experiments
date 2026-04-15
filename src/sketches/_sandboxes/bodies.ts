@@ -1,7 +1,7 @@
 import p5 from "p5";
 import type { IControls, IPreset, ISketch } from "../../models";
 import { createSketch } from "@core/createSketch";
-import { drawVec } from "../utils";
+import { drawVector } from "../_utils/drawVector";
 
 export type Controls = typeof controls;
 
@@ -213,7 +213,7 @@ class Body extends Attractor {
     // const vec = this.position.copy().add(force.copy().mult(100));
     // console.log("force mag", force.mag());
 
-    drawVec(this.p, this.position, force.copy().mult(100), "red");
+    drawVector(this.p, this.position, force.copy().mult(100), "red");
   }
 
   public render() {

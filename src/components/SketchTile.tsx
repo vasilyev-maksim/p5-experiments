@@ -4,7 +4,7 @@ import styles from "./SketchTile.module.css";
 import classNames from "classnames";
 import { useViewport } from "@hooks";
 import { SketchCanvas } from "./SketchCanvas";
-import { getDefaultPreset } from "@/utils/sketch";
+import { getDefaultPreset } from "@utils/sketch";
 
 export const SketchTile = forwardRef<
   HTMLDivElement,

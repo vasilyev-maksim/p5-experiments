@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
         "@components": path.resolve(__dirname, "./src/components"),
         "@core": path.resolve(__dirname, "./src/core"),
         "@hooks": path.resolve(__dirname, "./src/hooks"),
+        "@utils": path.resolve(__dirname, "./src/utils"),
       },
     },
     test: {

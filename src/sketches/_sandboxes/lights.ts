@@ -1,6 +1,6 @@
 import type { IControls, IPreset, ISketch } from "../../models";
 import { createSketch } from "@core/createSketch";
-import { drawGrid } from "../utils";
+import { gridLayout } from "../_utils/drawGrid";
 
 export type Controls = typeof controls;
 
@@ -99,7 +99,7 @@ export const factory = createSketch<Controls>(
         p.scale(50);
         p.translate(0, -2.5, 0);
         // p.box(5, 5, 5);
-        drawGrid(p, {
+        gridLayout(p, {
           size: p.createVector(5, 5, 5),
           cells: p.createVector(3, 3, 3),
           drawCb: () => p.torus(0.3, 0.1),

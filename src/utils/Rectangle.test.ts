@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { Rectangle } from "./Rectangle";
-import p5 from "p5";
+import { Rectangle } from "@utils/Rectangle";
+import { Vector } from "@utils/Vector";
 
 describe("Rectangle", () => {
   test.each([
@@ -67,9 +67,24 @@ describe("Rectangle", () => {
       ],
     ],
   ])("getPointsRange (%i,%i,%i,%i)", (p1x, p1y, p2x, p2y, expected) => {
-    const sut = new Rectangle(new p5.Vector(p1x, p1y), new p5.Vector(p2x, p2y));
+    const sut = new Rectangle(new Vector(p1x, p1y), new Vector(p2x, p2y));
     expect(sut.getPointsRange()).toEqual(
-      expected.map(([x, y]) => new p5.Vector(x, y)),
+      expected.map(([x, y]) => new Vector(x, y)),
+    );
+  });
+
+  test("contains()", () => {
+    const sut = new Rectangle(new Vector(1, 1), new Vector(4, 4));
+    expect(sut.contains(new Vector(2, 2))).toBe(true);
+    expect(sut.contains(new Vector(0, 0))).toBe(false);
+    expect(sut.contains(new Vector(2, 0))).toBe(false);
+    expect(sut.contains(new Vector(0, 3))).toBe(false);
+  });
+
+  test("scale()", () => {
+    const sut = new Rectangle(new Vector(0, 0), new Vector(1, 1));
+    expect(sut.scale(0.5)).toEqual(
+      new Rectangle(new Vector(0, 0), new Vector(0.5, 0.5)),
     );
   });
 });

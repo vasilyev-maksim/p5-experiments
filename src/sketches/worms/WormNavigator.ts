@@ -6,9 +6,9 @@ import {
   type DirMap,
   rotate,
 } from "./utils";
-import type { OccupancyGrid } from "@/utils/OccupancyGrid";
-import p5 from "p5";
+import type { OccupancyGrid } from "@utils/OccupancyGrid";
 import { Worm } from "./Worm";
+import type { Vector } from "@/utils/Vector";
 
 export class WormNavigator {
   public constructor(
@@ -25,7 +25,7 @@ export class WormNavigator {
     }
   }
 
-  public spawnWormAtCell(cell: p5.Vector): Worm | null {
+  public spawnWormAtCell(cell: Vector): Worm | null {
     const worm = new Worm({
       head: cell,
     });
@@ -33,11 +33,11 @@ export class WormNavigator {
     return worm;
   }
 
-  public goToAttractor(worm: Worm, attractor: p5.Vector) {
+  public goToAttractor(worm: Worm, attractor: Vector) {
     const filteredCells = this.inspectFreeAdjacentCells(worm.head)
       .map((x) => {
-        const nextDistToAttractor = p5.Vector.sub(attractor, x.cell).mag();
-        const currDistToAttractor = p5.Vector.sub(attractor, worm!.head).mag();
+        const nextDistToAttractor = attractor.sub(x.cell).mag();
+        const currDistToAttractor = attractor.sub(worm!.head).mag();
 
         return {
           ...x,
@@ -79,9 +79,9 @@ export class WormNavigator {
     });
   }
 
-  private inspectFreeAdjacentCells(cell: p5.Vector) {
+  private inspectFreeAdjacentCells(cell: Vector) {
     return DIRS_CLOCKWISE.map((dir) => {
-      const adjacentCell = p5.Vector.add(cell, getAbsVecFromDir(dir));
+      const adjacentCell = cell.add(getAbsVecFromDir(dir));
 
       if (this.isCellFree(adjacentCell)) {
         return { cell: adjacentCell, dir };
@@ -89,12 +89,12 @@ export class WormNavigator {
         return null;
       }
     }).filter(Boolean) as {
-      cell: p5.Vector;
+      cell: Vector;
       dir: Dir;
     }[];
   }
 
-  private gotoCell(worm: Worm, cell: p5.Vector): boolean {
+  private gotoCell(worm: Worm, cell: Vector): boolean {
     if (this.isCellFree(cell)) {
       worm.goTo(cell);
       this.occupancyGrid.occupy(worm.head);
@@ -104,9 +104,7 @@ export class WormNavigator {
     }
   }
 
-  private isCellFree(cell: p5.Vector): boolean {
+  private isCellFree(cell: Vector): boolean {
     return this.occupancyGrid.isOccupied(cell) === false;
   }
 }
-
-
