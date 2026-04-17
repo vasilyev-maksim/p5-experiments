@@ -254,7 +254,7 @@ export const SketchModal = ({
                 sketch={activeSketch}
                 initParams={params}
                 paused={paused}
-                mode={"static"}
+                mode="static"
                 ref={sketchCanvasRef}
                 startTime={
                   activePreset.startTime ?? activeSketch.startTime ?? 0

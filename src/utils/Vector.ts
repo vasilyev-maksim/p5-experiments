@@ -20,7 +20,7 @@ export class Vector {
     const mag = this.mag();
     return new Vector(this.x / mag, this.y / mag);
   }
-
+  
   public equals(v: Vector): boolean {
     return this.x === v.x && this.y === v.y;
   }

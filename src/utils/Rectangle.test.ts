@@ -80,11 +80,4 @@ describe("Rectangle", () => {
     expect(sut.contains(new Vector(2, 0))).toBe(false);
     expect(sut.contains(new Vector(0, 3))).toBe(false);
   });
-
-  test("scale()", () => {
-    const sut = new Rectangle(new Vector(0, 0), new Vector(1, 1));
-    expect(sut.scale(0.5)).toEqual(
-      new Rectangle(new Vector(0, 0), new Vector(0.5, 0.5)),
-    );
-  });
 });

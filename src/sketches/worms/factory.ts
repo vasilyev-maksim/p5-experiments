@@ -11,22 +11,6 @@ import { Vector } from "@utils/Vector";
 const ANIMATION_SPEED = 25;
 const SHRINK_OFFSET = 0.25;
 const GROW_OFFSET = 0.1;
-// function drawGrid(p: p5, resX: number, resY: number) {
-//   p.push();
-//   {
-//     p.stroke("white");
-//     p.strokeWeight(0.01);
-//     for (let x = 0; x < resX; x++) {
-//       p.line(x, 0, x, resY - 1);
-//     }
-//     for (let y = 0; y < resY; y++) {
-//       p.line(0, y, resX - 1, y);
-//     }
-//     p.strokeWeight(0.1);
-//     p.circle((resX - 1) / 2, (resY - 1) / 2, 0.5);
-//   }
-//   p.pop();
-// }
 
 export const factory: ISketchFactory<Controls> = createSketch<Controls>(
   ({

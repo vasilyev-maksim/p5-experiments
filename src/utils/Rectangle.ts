@@ -1,33 +1,21 @@
 import { Vector } from "./Vector";
-import { type ISize, Size } from "../sketches/tiles/Size";
 
-export interface IRectangle extends ISize {
-  topLeft: Vector;
-  bottomRight: Vector;
-  center: Vector;
-  width: number;
-  height: number;
-  getPointsRange: () => Vector[];
-  scale: (factor: number) => IRectangle;
-}
-
-export class Rectangle extends Size implements IRectangle {
+export class Rectangle {
   public topLeft: Vector;
   public bottomRight: Vector;
   public center: Vector;
+  public width: number;
+  public height: number;
 
   constructor(p1: Vector, p2: Vector = p1) {
     const topLeft = new Vector(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
     const bottomRight = new Vector(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
 
-    const width = bottomRight.x - topLeft.x + 1;
-    const height = bottomRight.y - topLeft.y + 1;
-
-    super(width, height);
-
+    this.width = bottomRight.x - topLeft.x + 1;
+    this.height = bottomRight.y - topLeft.y + 1;
     this.bottomRight = bottomRight;
     this.topLeft = topLeft;
-    this.center = this.topLeft.add(new Vector(width / 2, height / 2));
+    this.center = this.topLeft.add(new Vector(this.width / 2, this.height / 2));
   }
 
   public getPointsRange() {
@@ -40,16 +28,6 @@ export class Rectangle extends Size implements IRectangle {
     return points;
   }
 
-  public scale(factor: number) {
-    const delta = new Vector(
-      ((1 - factor) * this.width) / 2,
-      ((1 - factor) * this.height) / 2,
-    );
-    const newTopLeft = this.center.add(delta.mult(-1));
-    const newBottomRight = this.center.add(delta);
-    return new Rectangle(newTopLeft, newBottomRight);
-  }
-
   public contains(point: Vector): boolean {
     return (
       point.x >= this.topLeft.x &&
@@ -57,5 +35,25 @@ export class Rectangle extends Size implements IRectangle {
       point.y >= this.topLeft.y &&
       point.y <= this.bottomRight.y
     );
+  }
+
+  public getSize(): Vector {
+    return new Vector(this.width, this.height);
+  }
+
+  public getAspectRatio(): number {
+    return Math.max(this.width / this.height, this.height / this.width);
+  }
+
+  public getArea(): number {
+    return this.width * this.height;
+  }
+
+  public getBiggestSize(): number {
+    return Math.max(this.width, this.height);
+  }
+
+  public getSmallestSize(): number {
+    return Math.min(this.width, this.height);
   }
 }
