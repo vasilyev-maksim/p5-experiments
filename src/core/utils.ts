@@ -55,6 +55,15 @@ export function piecewise(
   };
 }
 
+export function triangleWave(p: p5) {
+  return periodic(
+    piecewise(p, [
+      [(x) => x, -1, 0],
+      [(x) => -x, 0, 1],
+    ]),
+  );
+}
+
 export function flatSin(
   p: p5,
   outerOffset: number,

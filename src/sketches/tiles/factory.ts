@@ -1,15 +1,21 @@
 import { createSketch } from "@/core/createSketch";
-import { oscillateBetween, flatSin } from "@/core/utils";
 import { OccupancyGrid } from "@/utils/OccupancyGrid";
 import { Rectangle } from "@/utils/Rectangle";
 import { Vector } from "@/utils/Vector";
 import { Tiler } from "./Turtle";
-import type { Controls } from "./controls";
+import { AnimationType, controls, FillType, type Controls } from "./controls";
+import { drawCoordinatesGrid } from "../_utils/drawCoordinatesGrid";
 
-export const ANIMATION_SPEED = 25;
-export const SHRINK_OFFSET = 0.25;
-export const GROW_OFFSET = 0.1;
-export const BG = "black";
+const DRAW_COORDS_GRID = false;
+const BG = "black";
+const CONTROL_ANIMATION_SPEED = 25;
+const COLOR_INTENSITY_MAX = 1;
+const COLOR_INTENSITY_MIN = 0;
+const ANIMATION_DURATION = 100;
+const ANIMATION_DELAY = 250;
+const SCALE_MAX_DELTA = -0.2;
+const STRIPE_SIZE_MAX_DELTA = 0.1;
+const BORDER_RADIUS_MAX_DELTA = 2;
 
 export const factory = createSketch<Controls>(
   ({
@@ -18,6 +24,7 @@ export const factory = createSketch<Controls>(
     getTrackedParam,
     getCanvasSize,
     createAnimatedValue,
+    createAnimatedColors,
     getTime,
     getParam,
   }) => {
@@ -46,6 +53,7 @@ export const factory = createSketch<Controls>(
         getTrackedParam("RESOLUTION"),
       ],
     });
+
     const tiles = createMemo({
       fn: ({ gridRect }, maxAreaRelative, seed) => {
         p.randomSeed(seed);
@@ -70,66 +78,172 @@ export const factory = createSketch<Controls>(
         getTrackedParam("RANDOM_SEED"),
       ],
     });
+
+    const tilesSortResult = createMemo({
+      fn: (
+        unsortedTiles,
+        { gridRect },
+        animationType,
+        [centerX, centerY],
+        [directionX, directionY],
+      ) => {
+        const sortedTiles = [...unsortedTiles].sort((a, b) => {
+          switch (animationType) {
+            case AnimationType.Static:
+            case AnimationType.Linear: {
+              const originVec = new Vector(directionX - 0.5, directionY - 0.5);
+              const angle = p.HALF_PI - originVec.heading();
+              const distA = a.center.rotate(angle).y;
+              const distB = b.center.rotate(angle).y;
+              return distA - distB;
+            }
+
+            case AnimationType.Radial: {
+              const origin = new Vector(
+                centerX * gridRect.width,
+                centerY * gridRect.height,
+              );
+              const distA = a.center.sub(origin).mag();
+              const distB = b.center.sub(origin).mag();
+              return distA - distB;
+            }
+
+            // case AnimationType.Rectangular: {
+            //   const origin = new Vector(
+            //     centerX * gridRect.width,
+            //     centerY * gridRect.height,
+            //   );
+            //   let tmp = a.center.sub(origin);
+            //   const distA = p.max(p.abs(tmp.x), p.abs(tmp.y));
+
+            //   tmp = b.center.sub(origin);
+            //   const distB = p.max(p.abs(tmp.x), p.abs(tmp.y));
+
+            //   return distA - distB;
+            // }
+
+            // case AnimationType.Rhombus: {
+            //   const origin = new Vector(
+            //     centerX * gridRect.width,
+            //     centerY * gridRect.height,
+            //   );
+            //   let tmp = a.center.sub(origin);
+            //   const distA = p.abs(tmp.x) + p.abs(tmp.y);
+
+            //   tmp = b.center.sub(origin);
+            //   const distB = p.abs(tmp.x) + p.abs(tmp.y);
+
+            //   return distA - distB;
+            // }
+
+            default:
+              return 0;
+          }
+        });
+
+        return { unsortedTiles, sortedTiles };
+      },
+      deps: [
+        tiles.getTrackedValue(),
+        gridInfo.getTrackedValue(),
+        getTrackedParam("ANIMATION_TYPE"),
+        getTrackedParam("ANIMATION_CENTER"),
+        getTrackedParam("ANIMATION_DIRECTION"),
+      ],
+    });
+
     const animatedGap = createAnimatedValue({
-      animationDuration: ANIMATION_SPEED,
+      animationDuration: CONTROL_ANIMATION_SPEED,
       fn: (x, { unitSize }) => x / (unitSize.y * 2.5),
       deps: [getTrackedParam("GAP"), gridInfo.getTrackedValue()],
     });
-    const animatedHollowness = createAnimatedValue({
-      animationDuration: ANIMATION_SPEED,
-      fn: (x) => x,
-      deps: [getTrackedParam("HOLLOWNESS")],
-    });
+
     const animatedBorderRadius = createAnimatedValue({
-      animationDuration: ANIMATION_SPEED,
+      animationDuration: CONTROL_ANIMATION_SPEED,
       fn: (x) => x,
       deps: [getTrackedParam("BORDER_RADIUS")],
     });
+
+    const animatedStripeSize = createAnimatedValue({
+      animationDuration: CONTROL_ANIMATION_SPEED,
+      fn: (x) => p.map(x, 0, controls.STRIPE_SIZE.max, 0, 1),
+      deps: [getTrackedParam("STRIPE_SIZE")],
+    });
+
+    const animatedBorderSize = createAnimatedValue({
+      animationDuration: CONTROL_ANIMATION_SPEED,
+      fn: (x) => p.map(x, 0, controls.BORDER_SIZE.max, 0, 1),
+      deps: [getTrackedParam("BORDER_SIZE")],
+    });
+
+    const animatedColors = createAnimatedColors({
+      animationDuration: CONTROL_ANIMATION_SPEED,
+      deps: [getTrackedParam("COLOR"), getTrackedParam("INVERT_COLORS")],
+      colorProvider: (x, inverted) => [
+        controls.COLOR.colors[x][inverted ? 1 : 0],
+        controls.COLOR.colors[x][inverted ? 0 : 1],
+      ],
+      p,
+    });
+
     const bgColor = p.color(BG);
 
     return {
       draw: () => {
         const time = getTime();
         const { offset, unitSize } = gridInfo.getValue();
+        const { gridRect } = gridInfo.getValue();
         const gap = animatedGap.getValue();
-        const hollowness = animatedHollowness.getValue();
-        const borderRadius = animatedBorderRadius.getValue();
-        const animationEnabled = getParam("ANIMATED");
-        const animationProgress = animationEnabled
-          ? oscillateBetween({
-              p,
-              start: 0,
-              end: 1,
-              timeMultiplier: 0.02,
-              time: time,
-              timeFunc: flatSin(p, GROW_OFFSET, 0, SHRINK_OFFSET),
-            })
-          : 1;
+        const borderSize = animatedBorderSize.getValue();
+        const baseBorderRadius = animatedBorderRadius.getValue();
+        const animationType = getParam("ANIMATION_TYPE");
+        const animationEnabled = animationType !== 0;
+        const fillType = getParam("FILL_TYPE");
+        const stripeSize = animatedStripeSize.getValue();
+        const PERIOD = ANIMATION_DURATION + ANIMATION_DELAY;
+        const { sortedTiles } = tilesSortResult.getValue();
+        const [colorA, colorB] = animatedColors.getValue();
 
         p.background(bgColor);
         p.noStroke();
         p.scale(unitSize.x, unitSize.y);
         p.translate(offset, offset);
 
-        tiles.getValue().forEach((tile, i, arr) => {
-          const colorValue = p.map(i / arr.length, 0, 1, 0.1, 0.75);
-          const color = p.lerpColor(
-            p.color("white"),
-            i % 3 == 0
-              ? p.color("red")
-              : i % 3 == 1
-                ? p.color("teal")
-                : p.color("purple"),
-            colorValue,
+        sortedTiles.forEach((tile, i) => {
+          const colorValue = p.map(
+            i / (sortedTiles.length - 1),
+            0,
+            1,
+            COLOR_INTENSITY_MIN,
+            COLOR_INTENSITY_MAX,
           );
+          // const color = p.lerpColor(
+          //   p.color("white"),
+          //   i % 3 == 0
+          //     ? p.color("red")
+          //     : i % 3 == 1
+          //       ? p.color("teal")
+          //       : p.color("purple"),
+          //   colorValue,
+          // );
+          const color = p.lerpColor(colorA, colorB, colorValue);
           const smallestSize = tile.getSmallestSize();
           const fullWidth = tile.width / 2 - gap;
           const fullHeight = tile.height / 2 - gap;
-          const width = fullWidth * animationProgress;
-          const height = fullHeight * animationProgress;
-          const zebraRaw = getParam("ZEBRA");
-          const zebraCount = zebraRaw === 0 ? 0 : zebraRaw * 2 + 1;
-          const borderTotalLength = 1 - hollowness;
+
+          let delta = 0;
+
+          if (animationEnabled) {
+            const relativeTime = Math.max(0, time - i) % PERIOD;
+            delta =
+              relativeTime < ANIMATION_DURATION
+                ? p.sin((relativeTime / ANIMATION_DURATION) * p.PI)
+                : 0;
+          }
+          const borderRadius =
+            baseBorderRadius + delta * BORDER_RADIUS_MAX_DELTA;
+          const width = fullWidth + delta * SCALE_MAX_DELTA;
+          const height = fullHeight + delta * SCALE_MAX_DELTA;
 
           p.push();
           {
@@ -139,28 +253,30 @@ export const factory = createSketch<Controls>(
 
             p.rect(0, 0, width, height, borderRadius);
 
-            if (
-              hollowness > 0 &&
-              borderTotalLength < width &&
-              borderTotalLength < height
-            ) {
-              const innerWidth = width - borderTotalLength;
-              const innerHeight = height - borderTotalLength;
-              const innerRadius =
-                1 *
-                ((smallestSize - borderTotalLength) / smallestSize) *
-                borderRadius;
+            switch (fillType) {
+              case FillType.Solid:
+                break;
+              case FillType.Hollow:
+                if (borderSize < width && borderSize < height) {
+                  const innerWidth = width - borderSize;
+                  const innerHeight = height - borderSize;
+                  const innerRadius =
+                    ((smallestSize - borderSize) / smallestSize) * borderRadius;
 
-              p.fill(bgColor);
-              p.rect(0, 0, innerWidth, innerHeight, innerRadius);
+                  p.fill(bgColor);
+                  p.rect(0, 0, innerWidth, innerHeight, innerRadius);
+                }
+                break;
+              case FillType.Zebra: {
+                const size = stripeSize + delta * STRIPE_SIZE_MAX_DELTA;
 
-              if (zebraCount) {
+                const zebraCount = Math.floor((smallestSize / size) * 2);
                 for (let i = 0; i < zebraCount; i++) {
-                  const currColor = i % 2 === 0 ? bgColor : color;
-                  const currWidth = innerWidth - i * borderTotalLength;
-                  const currHeight = innerHeight - i * borderTotalLength;
+                  const currColor = i % 2 === 1 ? bgColor : color;
+                  const currWidth = width - i * size;
+                  const currHeight = height - i * size;
                   const currRadius =
-                    (innerRadius * (zebraCount - i)) / (zebraCount + 2);
+                    (borderRadius * (zebraCount - i)) / zebraCount;
 
                   if (currWidth < 0 || currHeight < 0) {
                     break;
@@ -169,13 +285,17 @@ export const factory = createSketch<Controls>(
                   p.fill(currColor);
                   p.rect(0, 0, currWidth, currHeight, currRadius);
                 }
+                break;
               }
             }
           }
           p.pop();
         });
 
-        // drawCoordinatesGrid(p, size.x, size.y);
+        if (DRAW_COORDS_GRID) {
+          const gridSize = gridRect.getSize();
+          drawCoordinatesGrid(p, gridSize.x, gridSize.y);
+        }
       },
     };
   },

@@ -126,6 +126,13 @@
     overflow-x: hidden;
     height: 100%;
     flex: 1;
+    padding-bottom: 20px;
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox, Safari 18.2+, Chromium 121+ */
+
+    &::-webkit-scrollbar {
+      display: none; /* Older Safari and Chromium */
+    }
   }
 }
 

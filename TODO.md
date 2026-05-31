@@ -1,7 +1,15 @@
 # 👨‍💻 IN PROGRESS
 
+- tiles
+  - add control for origin for animation (coords control)
+  * impl flat sin
+  - take into account -1..1 range (for animation)\
+- color palette
+- new type of animation (maybe even an animation type control!)\
+
 # 📋 TODO
 
+- [easy] Add arrows/wasd support to coords control
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg

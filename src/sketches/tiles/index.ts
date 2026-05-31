@@ -13,6 +13,7 @@ export const sketch: ISketch<Controls> = {
   preview: {
     sizeInPercents: 36,
   },
-  startTime: -20,
+  startTime: 0,
+  shufflePresets: -1,
   // randomSeed: 123,
 };

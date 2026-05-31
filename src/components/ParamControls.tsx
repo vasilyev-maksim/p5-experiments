@@ -23,7 +23,9 @@ export const ParamControls = memo(function ParamControls() {
       MODAL_OPEN_SEQUENCE,
     ).useSegment<ControlsAnimationParams>("SHOW_CONTROLS");
   const { itemDelay, itemDuration } = segment.timingPayload;
-  const entries = Object.entries(activeSketch.controls ?? {});
+  const entries = Object.entries(activeSketch.controls ?? {}).filter(
+    ([, control]) => control.active?.(params) ?? true,
+  );
   const entriesCount = entries.length;
   const [springs] = useSprings(
     entriesCount,
@@ -42,7 +44,7 @@ export const ParamControls = memo(function ParamControls() {
         }
       },
     }),
-    [segment.wasRun],
+    [segment.wasRun, entriesCount],
   );
   const showHeader = useSequence<MODAL_OPEN_SEGMENTS>(
     MODAL_OPEN_SEQUENCE,

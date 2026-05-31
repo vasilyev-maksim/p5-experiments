@@ -2,7 +2,7 @@
 import type { IControls, IPreset, ISketch } from "../../models";
 import { createSketch } from "@core/createSketch";
 import { range } from "@utils/misc";
-import { flatSin } from "@/core/utils";
+import { flatSin, triangleWave } from "@/core/utils";
 
 export type Controls = typeof controls;
 
@@ -62,6 +62,8 @@ const presets: IPreset<Controls>[] = [
   },
 ];
 
+const colors = ["red", "teal", "orange"];
+
 export const factory = createSketch<Controls>(({ p, getParam, getTime }) => {
   return {
     setup: () => {
@@ -90,35 +92,44 @@ export const factory = createSketch<Controls>(({ p, getParam, getTime }) => {
       // const fn = (x: number) => x ** 3;
       // const fn = (x: number) => p.sin(x * p.HALF_PI);
       // const fn = (x: number) => p.sin(p.PI * x);
-      const fn = flatSin(
-        p,
-        getParam("OUTER_OFFSET"),
-        getParam("MIDDLE_OFFSET"),
-        getParam("INNER_OFFSET"),
-      );
+      const fns = [
+        flatSin(
+          p,
+          getParam("OUTER_OFFSET"),
+          getParam("MIDDLE_OFFSET"),
+          getParam("INNER_OFFSET"),
+        ),
+        triangleWave(p),
+        (x: number) => p.sin(x),
+      ];
 
-      p.fill("red");
+      fns.forEach((fn, i) => {
+        const color = p.color(colors[i % colors.length]);
+        color.setAlpha(220);
 
-      p.beginShape();
+        let y = 0;
 
-      let y = 0;
+        p.fill(color);
 
-      range(res + 1).forEach((i) => {
-        const delta = 2 / res;
-        const timeShift = (time * speed) / 80;
-        const x = -1 + i * delta;
-        y = fn(x + timeShift);
-        y = p.constrain(y, -1, 1);
+        p.beginShape();
+        {
+          range(res + 1).forEach((i) => {
+            const delta = 2 / res;
+            const timeShift = (time * speed) / 80;
+            const x = -1 + i * delta;
+            y = fn(x + timeShift);
+            y = p.constrain(y, -1, 1);
 
-        p.vertex(x, y);
+            p.vertex(x, y);
+          });
+          p.vertex(1, y);
+          p.vertex(1, 1);
+          p.vertex(-1, 1);
+        }
+        p.endShape("close");
+
+        p.circle(1.2, y, abs(50));
       });
-      p.vertex(1, y);
-      p.vertex(1, 1);
-      p.vertex(-1, 1);
-
-      p.endShape("close");
-
-      p.circle(-1.2, y, abs(50));
     },
   };
 });
@@ -133,5 +144,5 @@ export const sketch: ISketch<Controls> = {
   randomSeed: 44,
   controls,
   presets,
-  type: "hidden",
+  type: "draft",
 };

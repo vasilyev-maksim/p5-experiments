@@ -9,6 +9,7 @@ export const OptionButton = (
     label: string;
     mini?: boolean;
     animationDuration: number;
+    disabled?: boolean;
   }>,
 ) => {
   return (

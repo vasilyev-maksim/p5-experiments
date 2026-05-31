@@ -11,6 +11,7 @@ export const BooleanParamControl = (props: {
   onChange: (val: boolean) => void;
   className?: string;
   options?: [string, string];
+  disabled?: boolean;
 }) => {
   const options = props.options || DEFAULT_OPTIONS;
   return (

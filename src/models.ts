@@ -16,6 +16,7 @@ export enum FeatureState {
 
 interface IControlBase {
   label: string;
+  active?: <T extends IParams>(params: T) => boolean;
 }
 
 export interface IRangeControl extends IControlBase {

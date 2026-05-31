@@ -72,7 +72,7 @@ type Api<C extends IControls> = {
 };
 
 export function createSketch<C extends IControls>(
-  // Why a factory? It allows us to use closures to create shared vars.
+  // Why a factory? It allows to use closures to create shared vars and funcs.
   argsFactory: (api: Api<C>, id?: string) => CreateSketchArgs<C>,
   { in3D }: { in3D: boolean } = { in3D: false },
 ): ISketchFactory<C> {

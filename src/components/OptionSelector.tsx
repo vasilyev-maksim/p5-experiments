@@ -15,6 +15,7 @@ export function OptionSelector(props: {
   className?: string;
   gap?: number;
   active: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div className={props.className}>

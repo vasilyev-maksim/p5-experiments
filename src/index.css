@@ -13,6 +13,7 @@ body {
   --secondaryColorFaded: hsl(var(--secondaryColorH) 38 29);
   --fontColorAccent: hsl(var(--secondaryColorH) 100 85);
   --fontColor: hsl(var(--primaryColorH) 100 88 / 80%);
+  --fontColorDimmed: hsl(var(--primaryColorH) 100 88 / 40%);
   --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
   --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
   --tileHoverScale: 1.03;

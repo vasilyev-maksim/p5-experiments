@@ -15,6 +15,7 @@ export const CoordinatesControl = (props: {
   animationDuration: number;
   onChange: (val: [number, number]) => void;
   className?: string;
+  disabled?: boolean;
 }) => {
   const { initProgress } = useSpring({
     from: { initProgress: 0 },

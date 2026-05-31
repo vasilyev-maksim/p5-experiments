@@ -16,6 +16,7 @@ export function ColorSelector(props: {
   animationDuration: number;
   shuffle: IColorControl["shuffle"];
   shuffleSwitchLabel?: string;
+  disabled?: boolean;
 }) {
   const { colors, ...rest } = props;
   const [autoCycleActive, setAutoCycleActive] = useState(props.shuffle === 1);

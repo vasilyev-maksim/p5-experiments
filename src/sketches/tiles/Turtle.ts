@@ -25,7 +25,6 @@ export class Tiler {
     const start = this.occupancyGrid.getRandomFreeCell();
     if (start) {
       const ends = this.getEndVariations(start);
-      // console.log(ends);
 
       const end = ends?.[0];
       if (end) {
@@ -102,9 +101,6 @@ export class Tiler {
 
         if (isOccupied) {
           const newMaxDY = dy - 1;
-          // if (newMaxDY < maxDY) {
-          //   ends.push(new Vector(x - directionX, start.y + maxDY * directionY));
-          // }
           maxDY = newMaxDY;
           break;
         } else {

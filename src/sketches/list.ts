@@ -13,7 +13,8 @@ import { sketch as tilesSketch } from "./tiles";
 import { sketch as wormsSketch } from "./worms";
 import { sketch as funcsSketch } from "./_sandboxes/funcs";
 import { ENV } from "@/env";
-// import { bodiesSketch } from "./_sandboxes/bodies";
+import { sketch as bodiesSketch } from "./_sandboxes/bodies";
+import { wormSketch } from "./_sandboxes/worm";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const all: ISketch<any>[] = [
@@ -30,7 +31,8 @@ const all: ISketch<any>[] = [
   citySketch,
   funcsSketch,
   tilesSketch,
-  // bodiesSketch,
+  bodiesSketch,
+  wormSketch,
 ];
 
 let sketchList = all

@@ -6,8 +6,8 @@ import { getActivePresetFromUrl, setPresetDataToUrl } from "@utils/url";
 import { getRandomParams } from "@utils/sketch";
 import type { IPreset, ISketch } from "@/models";
 
-const EXPORT_WIDTH = 336,
-  EXPORT_HEIGHT = 216;
+const EXPORT_WIDTH = 3840,
+  EXPORT_HEIGHT = 2160;
 
 export function ActiveSketchProvider({
   children,
