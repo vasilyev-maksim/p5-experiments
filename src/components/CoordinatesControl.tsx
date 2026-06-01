@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./CoordinatesControl.module.css";
 import { animated, easings, useSpring } from "react-spring";
 import { useGlobalDrag, useThrottleWithTrailing } from "@hooks";
+import { clamp } from "@/core/utils";
 
 const MAX_HANDLE_SIZE = 12;
 const PLANE_SIZE = 70;
 const PLANE_PADDING = MAX_HANDLE_SIZE / 2;
 const PLANE_ACTIVE_SIZE = PLANE_SIZE - PLANE_PADDING * 2;
+const ARROW_KEYS_CHANGE_DELTA = 0.01;
 
 export const CoordinatesControl = (props: {
   label: string;
@@ -25,12 +27,12 @@ export const CoordinatesControl = (props: {
       easing: easings.easeInOutCubic,
     },
   });
+  const planeRef = useRef<HTMLDivElement>(null);
   const handleSize = initProgress.to([0, 1], [0, MAX_HANDLE_SIZE]);
   const propsX = props.value[0];
   const propsY = props.value[1];
   const [x, setX] = useState<number>(propsX);
   const [y, setY] = useState<number>(propsX);
-  const planeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setX(propsX);
@@ -55,8 +57,8 @@ export const CoordinatesControl = (props: {
 
       const mouseX = clientX - (parentX + PLANE_PADDING);
       const mouseY = clientY - (parentY + PLANE_PADDING);
-      const clampedX = Math.max(Math.min(mouseX, PLANE_ACTIVE_SIZE), 0);
-      const clampedY = Math.max(Math.min(mouseY, PLANE_ACTIVE_SIZE), 0);
+      const clampedX = clamp(mouseX, 0, PLANE_ACTIVE_SIZE);
+      const clampedY = clamp(mouseY, 0, PLANE_ACTIVE_SIZE);
       const x = clampedX / PLANE_ACTIVE_SIZE;
       const y = clampedY / PLANE_ACTIVE_SIZE;
 
@@ -67,6 +69,41 @@ export const CoordinatesControl = (props: {
   };
 
   const { handleMouseDown } = useGlobalDrag(changeValue);
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    let newX = x;
+    let newY = y;
+
+    switch (e.key) {
+      case "ArrowRight":
+        newX = clamp(x + ARROW_KEYS_CHANGE_DELTA, 0, 1);
+        setX(newX);
+        e.preventDefault();
+        break;
+      case "ArrowLeft":
+        newX = clamp(x - ARROW_KEYS_CHANGE_DELTA, 0, 1);
+        setX(newX);
+        e.preventDefault();
+        break;
+      case "ArrowUp":
+        newY = clamp(y - ARROW_KEYS_CHANGE_DELTA, 0, 1);
+        setY(newY);
+        e.preventDefault();
+        break;
+      case "ArrowDown":
+        newY = clamp(y + ARROW_KEYS_CHANGE_DELTA, 0, 1);
+        setY(newY);
+        e.preventDefault();
+        break;
+      default:
+        break;
+    }
+
+    if (newX !== x || newY !== y) {
+      console.log(111111);
+
+      onChangeThrottled(newX, newY);
+    }
+  };
 
   return (
     <div className={props.className}>
@@ -77,6 +114,7 @@ export const CoordinatesControl = (props: {
       )}
       <div className={styles.Container}>
         <div
+          tabIndex={2}
           className={styles.Plane}
           style={{
             width: PLANE_SIZE,
@@ -84,6 +122,7 @@ export const CoordinatesControl = (props: {
           }}
           ref={planeRef}
           onMouseDown={handleMouseDown}
+          onKeyDown={handleKeyPress}
         >
           <animated.div
             className={styles.Handle}

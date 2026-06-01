@@ -10,6 +10,7 @@ import { useSpring, easings, useSpringValue } from "react-spring";
 import { getClosestDiscreteValue } from "@utils/misc";
 import { ViewportContext } from "@/contexts/ViewportContext";
 import { ActiveSketchContext } from "@/contexts/ActiveSketchContext";
+import { clamp } from "@/core/utils";
 
 // TODO: move consts from here / use react context for that
 export function useViewport() {
@@ -106,7 +107,7 @@ export function useSliderBehavior(
     config: { duration: 150 },
   });
   const handleLeft = animatedValue.to(
-    (v) => Math.min(1, Math.max(0, (v - min) / (max - min))) * 100,
+    (v) => clamp((v - min) / (max - min), 0, 1) * 100,
   );
 
   useEffect(() => {
