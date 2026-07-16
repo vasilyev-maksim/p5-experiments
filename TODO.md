@@ -2,9 +2,9 @@
 
 - tiles
   - presets
-  - make `STRIPE_SIZE` control disabled instead of invisible (coz pressing `Randomize` sometimes causes controls layout shift)
+  - add super-multi-color option to color selection (initial pallette)
   * add control for origin for animation (coords control)
-  - impl flat sin
+  * impl flat sin
   * take into account -1..1 range (for animation)\
   * color palette
   * new type of animation (maybe even an animation type control!)
@@ -30,11 +30,12 @@
 - [easy] add animated underline for my name link
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] top and bottom shadows for sidebar
+- [easy] put "Randomize" button into sticky footer
 - [easy] experiment with lights in `cubes`
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes
   - rename to `useSize` [?]
-- [easy] catch particular sketch errors (to show other more successful ones)
+- [easy] catch particular sketch errors (to show other more successful ones) + wrap all bus events with try/catch and rollback on error [?]
 
 # 💡 NICE TO HAVE
 
@@ -136,6 +137,7 @@
 
 # ❌ CANCELED
 
+- tiles: make `STRIPE_SIZE` control disabled instead of invisible (coz pressing `Randomize` sometimes causes controls layout shift)
 - [easy] remove param controls margin-top if no presets
 - [easy] redesign `Capture` button
 - [hard] don't mismatch preset on the first change (mark it with \*)
