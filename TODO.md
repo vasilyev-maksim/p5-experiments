@@ -1,26 +1,28 @@
 # 👨‍💻 IN PROGRESS
 
 - tiles
-  - add control for origin for animation (coords control)
-  * impl flat sin
-  - take into account -1..1 range (for animation)\
-- color palette
-- new type of animation (maybe even an animation type control!)\
+  - presets
+  - make `STRIPE_SIZE` control disabled instead of invisible (coz pressing `Randomize` sometimes causes controls layout shift)
+  * add control for origin for animation (coords control)
+  - impl flat sin
+  * take into account -1..1 range (for animation)\
+  * color palette
+  * new type of animation (maybe even an animation type control!)
 
 # 📋 TODO
 
-- [easy] Add arrows/wasd support to coords control
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg
+- [hard] get rid of react-wrapper
 
 - [medium] write meaningful README.md
-- [medium] adopt `tiles` and `worm` to new architecture
 - [medium] make play controls animation more user friendly
   - hide it by timer after mouse leave
   - keep it visible if pause is on pause
   - show it once on modal expand (even with no mouse hovering)
 
+- [easy] mobile version [?], at least info message inviting to desktop version
 - [easy] test `Rectangle`
 - [easy] test `Worm` and `WormNavigator`
 - [easy] back button
@@ -32,8 +34,6 @@
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes
   - rename to `useSize` [?]
-- [easy] make animations independent from canvas size [?]
-  - tiles
 - [easy] catch particular sketch errors (to show other more successful ones)
 
 # 💡 NICE TO HAVE
@@ -42,7 +42,6 @@
   - use order number (0-9) of associated control shortcut
   - use "qwerty..." for 11-20
 - [hard] city sketch
-- [hard] get rid of react-wrapper
 - [medium] add "collapse side panel" capabilities [?]
 - [hard] think how to use `p.createGraphics` buffer
   - for export
@@ -50,13 +49,16 @@
 - [hard] undo/redo mechanism (event sourcing for params and timeDelta)
 - [medium] try to use web workers for async calculation of memos in parallel thread
 - move left side bar to the right [?]
-- mobile version [?], at least info message inviting to desktop version
 - [medium] perf opt: use cache for init data (like precomputed WORMS array)
 - [easy] position of preview fragment (in px) [?]
 - [medium] worm like transition of site header when scrolling down [?]
 
 # ✅ DONE
 
+- [easy] make animations independent from canvas size [?]
+  - tiles
+- [medium] adopt `tiles` and `worm` to new architecture
+- [easy] Add arrows/wasd support to coords control
 - [easy] hide "export preset" button in prod
 - [easy] redesign `Randomize` button
 - [easy] draw fullscreen icon by myself (renders differently on windows)

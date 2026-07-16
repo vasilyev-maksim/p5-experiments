@@ -5,6 +5,7 @@ import { Vector } from "@/utils/Vector";
 import { Tiler } from "./Turtle";
 import { AnimationType, controls, FillType, type Controls } from "./controls";
 import { drawCoordinatesGrid } from "../_utils/drawCoordinatesGrid";
+// import { triangleWave } from "@/core/utils";
 
 const DRAW_COORDS_GRID = false;
 const BG = "black";
@@ -235,9 +236,11 @@ export const factory = createSketch<Controls>(
 
           if (animationEnabled) {
             const relativeTime = Math.max(0, time - i) % PERIOD;
+            const x = relativeTime / ANIMATION_DURATION;
             delta =
               relativeTime < ANIMATION_DURATION
-                ? p.sin((relativeTime / ANIMATION_DURATION) * p.PI)
+                ? //triangleWave(p)(x * 2 - 1) / 2 + 0.5
+                  p.sin(x * p.TWO_PI - p.HALF_PI) / 2 + 0.5
                 : 0;
           }
           const borderRadius =
