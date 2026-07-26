@@ -7,7 +7,7 @@ export const sketch: ISketch<Controls> = {
   factory,
   controls,
   presets,
-  type: "draft",
+  type: "released",
   id: "tiles",
   name: "tiles",
   preview: {
