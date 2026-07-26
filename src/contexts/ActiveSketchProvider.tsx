@@ -80,13 +80,17 @@ export function ActiveSketchProvider({
   }, [activeSketch.controls, timeDelta]);
 
   const exportToFile = useCallback(() => {
+    const activePreset = getActivePreset();
+
     sendEvent({
       type: "export",
       exportFileWidth: EXPORT_WIDTH,
       exportFileHeight: EXPORT_HEIGHT,
-      exportFileName: `${activeSketch.id}_wallpaper.jpg`,
+      exportFileName: [activeSketch.id, activePreset.name, "wallpaper.jpg"]
+        .filter(Boolean)
+        .join("_"),
     });
-  }, [activeSketch.id]);
+  }, [activeSketch.id, getActivePreset]);
 
   const spinUp = useCallback(() => {
     sendEvent({ type: "modeChange", mode: "animated" });
