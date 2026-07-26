@@ -31,7 +31,7 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
           <FullScreenIcon />
         </button>
         <button className={styles.TextButton} onClick={exportToFile}>
-          Capture
+          Download
         </button>
       </div>
       <div className={styles.Section}>
