@@ -2,7 +2,7 @@
 
 - tiles
   - presets
-  - add super-multi-color option to color selection (initial pallette)
+  * add super-multi-color option to color selection (initial pallette)
   * add control for origin for animation (coords control)
   * impl flat sin
   * take into account -1..1 range (for animation)
@@ -11,12 +11,12 @@
 
 # 📋 TODO
 
-- [medium] Add analytics
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg
 - [hard] get rid of react-wrapper
 
+- [medium] Add analytics
 - [medium] write meaningful README.md
 - [medium] make play controls animation more user friendly
   - hide it by timer after mouse leave
@@ -28,7 +28,7 @@
 - [easy] test `Worm` and `WormNavigator`
 - [easy] back button
 - [easy] animate "shuffle presets" button (on modal open)
-- [easy] add animated underline for my name link
+- [easy] add animated underline for my name link [?]
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] top and bottom shadows for sidebar
 - [easy] put "Randomize" button into sticky footer
