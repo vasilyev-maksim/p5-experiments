@@ -630,4 +630,23 @@ export const presets: IPreset<Controls>[] = [
     name: "yo3",
     timeDelta: 1,
   },
+  {
+    params: {
+      RANDOM_SEED: 604,
+      RESOLUTION: 26,
+      GAP: 4,
+      BORDER_RADIUS: 0.1,
+      MAX_TILE_AREA: 4.5,
+      FILL_TYPE: 1,
+      STRIPE_SIZE: 39,
+      BORDER_SIZE: 48,
+      ANIMATION_TYPE: 1,
+      ANIMATION_CENTER: [0.550318433397494, 0.7265700457534147],
+      ANIMATION_DIRECTION: [0.6258070753231312, 0.09992744768237938],
+      COLOR: 3,
+      INVERT_COLORS: true,
+    },
+    name: "chip",
+    timeDelta: 1,
+  },
 ];

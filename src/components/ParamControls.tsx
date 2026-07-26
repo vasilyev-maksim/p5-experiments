@@ -23,8 +23,12 @@ export const ParamControls = memo(function ParamControls() {
       MODAL_OPEN_SEQUENCE,
     ).useSegment<ControlsAnimationParams>("SHOW_CONTROLS");
   const { itemDelay, itemDuration } = segment.timingPayload;
-  const entries = Object.entries(activeSketch.controls ?? {}).filter(
-    ([, control]) => control.active?.(params) ?? true,
+  const entries = Object.entries(activeSketch.controls ?? {}).map(
+    ([key, control]) => ({
+      active: control.active?.(params) ?? true,
+      key,
+      control,
+    }),
   );
   const entriesCount = entries.length;
   const [springs] = useSprings(
@@ -36,7 +40,7 @@ export const ParamControls = memo(function ParamControls() {
         duration: itemDuration,
         easing: easings.easeInOutCubic,
       },
-      delay: i * itemDelay,
+      delay: entries[i].active ? i * itemDelay : 0,
       onRest: async () => {
         if (i === entriesCount - 1) {
           // await delay(150);
@@ -64,74 +68,75 @@ export const ParamControls = memo(function ParamControls() {
       >
         <ControlItemsGroup>
           {springs.map(({ x }, i) => {
-            const [key, c] = entries[i];
+            const { key, control, active } = entries[i];
             let body = null;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const value = params[key] as any;
 
-            if (c.type === "range") {
-              const valueStr = c.valueFormatter?.(value, c) ?? value;
-              const label = c.label ?? key;
+            if (control.type === "range") {
+              const valueStr =
+                control.valueFormatter?.(value, control) ?? value;
+              const label = control.label ?? key;
               body = (
                 <Slider
                   label={label + ": " + valueStr}
                   value={value}
                   onChange={(val) => changeParam(key, val)}
-                  max={c.max}
-                  min={c.min}
-                  step={c.step}
+                  max={control.max}
+                  min={control.min}
+                  step={control.step}
                   active={initControls.wasRun}
                   activationAnimationDuration={initControls.duration}
                 />
               );
-            } else if (c.type === "color") {
+            } else if (control.type === "color") {
               body = (
                 <ColorSelector
-                  title={c.label + ": " + value}
-                  colors={c.colors}
+                  title={control.label + ": " + value}
+                  colors={control.colors}
                   value={value}
                   onChange={(val) => changeParam(key, val)}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
-                  shuffle={c.shuffle}
-                  shuffleSwitchLabel={c.shuffleSwitchLabel}
+                  shuffle={control.shuffle}
+                  shuffleSwitchLabel={control.shuffleSwitchLabel}
                 />
               );
-            } else if (c.type === "boolean") {
+            } else if (control.type === "boolean") {
               body = (
                 <BooleanParamControl
-                  label={c.label}
+                  label={control.label}
                   value={value}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
                   onChange={(val) => changeParam(key, val)}
-                  options={c.options}
+                  options={control.options}
                 />
               );
-            } else if (c.type === "choice") {
+            } else if (control.type === "choice") {
               body = (
                 <OptionSelector
-                  valuesCount={c.options.length}
+                  valuesCount={control.options.length}
                   renderOption={(value, active, onClick) => (
                     <OptionButton
                       active={active}
                       onClick={onClick}
-                      label={c.options[value]}
+                      label={control.options[value]}
                       mini
                       animationDuration={initControls.duration}
                     />
                   )}
-                  title={c.label}
+                  title={control.label}
                   value={value}
                   onChange={(val) => changeParam(key, val)}
                   active={initControls.wasRun}
                   gap={5}
                 />
               );
-            } else if (c.type === "coordinates") {
+            } else if (control.type === "coordinates") {
               body = (
                 <CoordinatesControl
-                  label={c.label}
+                  label={control.label}
                   value={value}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
@@ -140,7 +145,7 @@ export const ParamControls = memo(function ParamControls() {
               );
             }
 
-            return (
+            return active ? (
               <animated.div
                 key={i}
                 className={styles.Item}
@@ -151,7 +156,7 @@ export const ParamControls = memo(function ParamControls() {
               >
                 {body}
               </animated.div>
-            );
+            ) : null;
           })}
         </ControlItemsGroup>
       </SectionLayout>
