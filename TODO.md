@@ -11,6 +11,7 @@
 
 # 📋 TODO
 
+- [medium] Add analytics
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg

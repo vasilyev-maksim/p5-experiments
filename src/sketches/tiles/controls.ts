@@ -95,10 +95,8 @@ export const controls = {
     label: "Color",
     colors: [
       ["#fff", "#ff0000"],
-      // ["#ff0000", "#ff0000"],
       ["#909090", "#ff0000"],
       ["#434343", "#ff0000"],
-      // ["#fff", "#17FFEF"],
       ["#9F5CFE", "#17FFEF"],
       ["white", "red", "teal", "purple"],
     ],

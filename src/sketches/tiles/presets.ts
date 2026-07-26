@@ -605,7 +605,7 @@ export const presets: IPreset<Controls>[] = [
       ANIMATION_TYPE: 1,
       ANIMATION_CENTER: [0.3589956053943305, 0.1034610902324905],
       ANIMATION_DIRECTION: [0.22621994637971443, 0.16840569887263668],
-      COLOR: 2,
+      COLOR: 3,
       INVERT_COLORS: true,
     },
     name: "devices 2",
@@ -615,7 +615,7 @@ export const presets: IPreset<Controls>[] = [
     params: {
       RANDOM_SEED: 338,
       RESOLUTION: 34,
-      GAP: 10,
+      GAP: 13,
       BORDER_RADIUS: 1.1,
       MAX_TILE_AREA: 21.5,
       FILL_TYPE: 2,
