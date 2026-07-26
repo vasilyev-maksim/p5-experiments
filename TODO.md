@@ -5,7 +5,7 @@
   - add super-multi-color option to color selection (initial pallette)
   * add control for origin for animation (coords control)
   * impl flat sin
-  * take into account -1..1 range (for animation)\
+  * take into account -1..1 range (for animation)
   * color palette
   * new type of animation (maybe even an animation type control!)
 
@@ -63,7 +63,7 @@
 - [easy] hide "export preset" button in prod
 - [easy] redesign `Randomize` button
 - [easy] draw fullscreen icon by myself (renders differently on windows)
-- [easy] Create custom favicon (use spiral)
+- [easy] Create custom favicon (use `spiral`)
 - [hard] optimize `SketchModal` (too many rerenders of controls)
 - [easy] use "preset in url" only for custom param configs (not presets)
 - [medium] each preset may have a timestamp to play animation from (for better showiness)
@@ -75,9 +75,9 @@
 - [easy][bug] preset gets deselected because of long tail after decimal point (for inner thickness fo ex.) (worms - "hollowness" control)
 - [easy][bug] nav back doesn't close sketch modal
 - [easy] timeDelta value missing when exporting preset (as well as random seed etc.)
-- [medium][bug] sketch previews (tiles) are super buggy when changing screen size / going fullscreen
+- [medium][bug] sketch previews (`tiles`) are super buggy when changing screen size / going fullscreen
 - [medium] make preview sizes in percentages
-- [herd] worms
+- [hard] worms
   - presets
   - try mirror pattern
   - worm tail optimization
@@ -137,7 +137,7 @@
 
 # ❌ CANCELED
 
-- tiles: make `STRIPE_SIZE` control disabled instead of invisible (coz pressing `Randomize` sometimes causes controls layout shift)
+- `tiles`: make `STRIPE_SIZE` control disabled instead of invisible (coz pressing `Randomize` sometimes causes controls layout shift)
 - [easy] remove param controls margin-top if no presets
 - [easy] redesign `Capture` button
 - [hard] don't mismatch preset on the first change (mark it with \*)

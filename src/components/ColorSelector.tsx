@@ -39,18 +39,14 @@ export function ColorSelector(props: {
     <ControlItemsGroup>
       <OptionSelector
         valuesCount={colors.length}
-        renderOption={(value, active, onClick) => {
-          const [colorA, colorB] = colors[value];
-          return (
-            <ColorOptionButton
-              active={active}
-              onClick={onClick}
-              colorA={colorA}
-              colorB={colorB}
-              animationDuration={props.animationDuration}
-            />
-          );
-        }}
+        renderOption={(value, active, onClick) => (
+          <ColorOptionButton
+            active={active}
+            onClick={onClick}
+            colors={colors[value]}
+            animationDuration={props.animationDuration}
+          />
+        )}
         {...rest}
         onChange={handleManualColorChange}
       />

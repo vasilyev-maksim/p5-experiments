@@ -54,7 +54,7 @@ export class AnimatedArray {
         // if exit animation was canceled mid way, value will be rescued (removed from `garbage`)
         this.garbage.delete(animatedValue);
       } else if (animatedValue === undefined) {
-        // add new animation value for new item, start from  `initialValueForItem` then grow up to `newValue`
+        // add new animation value for new item, start from `initialValueForItem` then grow it up to `newValue`
         const newAnimatedValue = new AnimatedValue({
           animationDuration: this.animationDuration,
           initialValue: this.initialValueForItem ?? newValue,
@@ -76,7 +76,7 @@ export class AnimatedArray {
             currentTime,
             animationDuration,
           });
-          // then mark it to be garbage collected from array
+          // then mark it to be garbage collected (removed from the array)
           this.garbage.add(animatedValue);
         }
       }
@@ -92,7 +92,7 @@ export class AnimatedArray {
     return this.array.map((x) => x.getEndValue()!);
   }
 
-  // remove all items contained in `garbage`
+  // remove all items contained in `this.garbage`
   private garbageCollect(currentTime: number) {
     this.array = this.array.filter((x) => {
       const shouldBeCollected =

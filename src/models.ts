@@ -3,9 +3,9 @@ import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type { EventBus } from "./core/EventBus";
 import type { SketchEvent } from "./core/events";
 
-/** -1 = not visible in UI;
- * 0 = visible in UI, initially turned OFF;
- * 1 = visible in UI, initially turned ON */
+/** -1 = not visible on UI;
+ * 0 = visible on UI, initially turned OFF;
+ * 1 = visible on UI, initially turned ON */
 export enum FeatureState {
   Disabled = -1,
   Off = 0,
@@ -64,6 +64,7 @@ export type ControlValueType<T extends IControl> = T extends ICoordinateControl
 export type IControls = Record<string, IControl>;
 
 /** Sketch factory */
+
 export type ParamName<Controls extends IControls> = keyof IParams<Controls>;
 export type IParams<Controls extends IControls = IControls> = {
   [K in keyof Controls]: ControlValueType<Controls[K]>;

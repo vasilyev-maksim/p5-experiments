@@ -5,8 +5,7 @@ import styles from "./ColorOptionButton.module.css";
 export const ColorOptionButton = (props: {
   active: boolean;
   onClick: () => void;
-  colorA: string;
-  colorB: string;
+  colors: string[];
   animationDuration: number;
 }) => {
   const { x } = useSpring({
@@ -24,6 +23,23 @@ export const ColorOptionButton = (props: {
     }
   };
 
+  const bgStyle =
+    props.colors.length === 1
+      ? {
+          background: props.colors[0],
+        }
+      : props.colors.length === 2
+        ? {
+            backgroundImage: `linear-gradient(to right, ${props.colors.join(",")})`,
+          }
+        : props.colors.length > 2
+          ? {
+              backgroundImage: `linear-gradient(
+                to right,
+                ${props.colors.map((x, i, { length }) => `${x} 0, ${x} ${(100 * (i + 1)) / length}%`).join(",")})
+              `,
+            }
+          : undefined;
   return (
     <div
       className={classNames(styles.Wrapper, { [styles.Active]: props.active })}
@@ -39,14 +55,7 @@ export const ColorOptionButton = (props: {
           opacity: x.to([0, 1], [0, 1]),
         }}
       />
-      <div
-        className={styles.Bg}
-        style={{
-          backgroundImage: `linear-gradient(to right, ${props.colorA}, ${
-            props.colorB ?? props.colorA
-          })`,
-        }}
-      />
+      <div className={styles.Bg} style={bgStyle} />
     </div>
   );
 };

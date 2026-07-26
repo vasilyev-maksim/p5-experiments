@@ -5,18 +5,21 @@ import { Vector } from "@/utils/Vector";
 import { Tiler } from "./Turtle";
 import { AnimationType, controls, FillType, type Controls } from "./controls";
 import { drawCoordinatesGrid } from "../_utils/drawCoordinatesGrid";
-// import { triangleWave } from "@/core/utils";
+import type { Color } from "p5";
 
 const DRAW_COORDS_GRID = false;
 const BG = "black";
 const CONTROL_ANIMATION_SPEED = 25;
-const COLOR_INTENSITY_MAX = 1;
-const COLOR_INTENSITY_MIN = 0;
-const ANIMATION_DURATION = 100;
+const COLOR_INTENSITY_MIN = 0.1;
+const COLOR_INTENSITY_MAX = 0.9;
+const ALTERNATIVE_COLOR_INTENSITY_MIN = 0.2;
+const ALTERNATIVE_COLOR_INTENSITY_MAX = 0.75;
+const ANIMATION_DURATION = 120;
 const ANIMATION_DELAY = 250;
 const SCALE_MAX_DELTA = -0.2;
 const STRIPE_SIZE_MAX_DELTA = 0.1;
 const BORDER_RADIUS_MAX_DELTA = 2;
+const CANVAS_OFFSET = 0.5;
 
 export const factory = createSketch<Controls>(
   ({
@@ -32,19 +35,18 @@ export const factory = createSketch<Controls>(
     const { trackedCanvasHeight, trackedCanvasWidth } = getCanvasSize();
     const gridInfo = createMemo({
       fn: (canvasWidth, canvasHeight, resY) => {
-        const OFFSET = 0.5;
         const resX = p.round((canvasWidth * resY) / canvasHeight);
         const gridRect = new Rectangle(
           new Vector(0, 0),
           new Vector(resX - 1, resY - 1),
         );
         const unitSize = p.createVector(
-          canvasWidth / (gridRect.width + OFFSET * 2),
-          canvasHeight / (gridRect.height + OFFSET * 2),
+          canvasWidth / (gridRect.width + CANVAS_OFFSET * 2),
+          canvasHeight / (gridRect.height + CANVAS_OFFSET * 2),
         );
         return {
           gridRect,
-          offset: OFFSET,
+          offset: CANVAS_OFFSET,
           unitSize,
         };
       },
@@ -80,7 +82,7 @@ export const factory = createSketch<Controls>(
       ],
     });
 
-    const tilesSortResult = createMemo({
+    const tilesWithSorting = createMemo({
       fn: (
         unsortedTiles,
         { gridRect },
@@ -109,40 +111,16 @@ export const factory = createSketch<Controls>(
               return distA - distB;
             }
 
-            // case AnimationType.Rectangular: {
-            //   const origin = new Vector(
-            //     centerX * gridRect.width,
-            //     centerY * gridRect.height,
-            //   );
-            //   let tmp = a.center.sub(origin);
-            //   const distA = p.max(p.abs(tmp.x), p.abs(tmp.y));
-
-            //   tmp = b.center.sub(origin);
-            //   const distB = p.max(p.abs(tmp.x), p.abs(tmp.y));
-
-            //   return distA - distB;
-            // }
-
-            // case AnimationType.Rhombus: {
-            //   const origin = new Vector(
-            //     centerX * gridRect.width,
-            //     centerY * gridRect.height,
-            //   );
-            //   let tmp = a.center.sub(origin);
-            //   const distA = p.abs(tmp.x) + p.abs(tmp.y);
-
-            //   tmp = b.center.sub(origin);
-            //   const distB = p.abs(tmp.x) + p.abs(tmp.y);
-
-            //   return distA - distB;
-            // }
-
             default:
               return 0;
           }
         });
 
-        return { unsortedTiles, sortedTiles };
+        return unsortedTiles.map((tile, i) => ({
+          tile,
+          distanceIndex: sortedTiles.indexOf(tile),
+          originalIndex: i,
+        }));
       },
       deps: [
         tiles.getTrackedValue(),
@@ -177,13 +155,20 @@ export const factory = createSketch<Controls>(
       deps: [getTrackedParam("BORDER_SIZE")],
     });
 
+    const isAlternativeColoringMemo = createMemo({
+      deps: [getTrackedParam("COLOR")],
+      fn: (x) => x === controls.COLOR.colors.length - 1,
+    });
+
     const animatedColors = createAnimatedColors({
       animationDuration: CONTROL_ANIMATION_SPEED,
       deps: [getTrackedParam("COLOR"), getTrackedParam("INVERT_COLORS")],
-      colorProvider: (x, inverted) => [
-        controls.COLOR.colors[x][inverted ? 1 : 0],
-        controls.COLOR.colors[x][inverted ? 0 : 1],
-      ],
+      colorProvider: (x, inverted) => {
+        const colorTuple = controls.COLOR.colors[x];
+        return colorTuple.length === 2 && inverted
+          ? [...colorTuple].reverse()
+          : colorTuple;
+      },
       p,
     });
 
@@ -202,98 +187,120 @@ export const factory = createSketch<Controls>(
         const fillType = getParam("FILL_TYPE");
         const stripeSize = animatedStripeSize.getValue();
         const PERIOD = ANIMATION_DURATION + ANIMATION_DELAY;
-        const { sortedTiles } = tilesSortResult.getValue();
-        const [colorA, colorB] = animatedColors.getValue();
+        const isAlternativeColoring = isAlternativeColoringMemo.getValue();
 
         p.background(bgColor);
         p.noStroke();
         p.scale(unitSize.x, unitSize.y);
         p.translate(offset, offset);
 
-        sortedTiles.forEach((tile, i) => {
-          const colorValue = p.map(
-            i / (sortedTiles.length - 1),
-            0,
-            1,
-            COLOR_INTENSITY_MIN,
-            COLOR_INTENSITY_MAX,
-          );
-          // const color = p.lerpColor(
-          //   p.color("white"),
-          //   i % 3 == 0
-          //     ? p.color("red")
-          //     : i % 3 == 1
-          //       ? p.color("teal")
-          //       : p.color("purple"),
-          //   colorValue,
-          // );
-          const color = p.lerpColor(colorA, colorB, colorValue);
-          const smallestSize = tile.getSmallestSize();
-          const fullWidth = tile.width / 2 - gap;
-          const fullHeight = tile.height / 2 - gap;
+        tilesWithSorting
+          .getValue()
+          .forEach(({ tile, originalIndex, distanceIndex }, _, { length }) => {
+            const colorIndex = isAlternativeColoring
+              ? originalIndex
+              : distanceIndex;
+            const baseColorValue = colorIndex / (length - 1);
+            let color: Color;
 
-          let delta = 0;
+            if (isAlternativeColoring) {
+              const colors = animatedColors.getValue();
 
-          if (animationEnabled) {
-            const relativeTime = Math.max(0, time - i) % PERIOD;
-            const x = relativeTime / ANIMATION_DURATION;
-            delta =
-              relativeTime < ANIMATION_DURATION
-                ? //triangleWave(p)(x * 2 - 1) / 2 + 0.5
-                  p.sin(x * p.TWO_PI - p.HALF_PI) / 2 + 0.5
-                : 0;
-          }
-          const borderRadius =
-            baseBorderRadius + delta * BORDER_RADIUS_MAX_DELTA;
-          const width = fullWidth + delta * SCALE_MAX_DELTA;
-          const height = fullHeight + delta * SCALE_MAX_DELTA;
+              const colorValue = p.map(
+                baseColorValue,
+                0,
+                1,
+                ALTERNATIVE_COLOR_INTENSITY_MIN,
+                ALTERNATIVE_COLOR_INTENSITY_MAX,
+              );
 
-          p.push();
-          {
-            p.fill(color);
-            p.rectMode("radius");
-            p.translate(tile.center.x, tile.center.y);
+              color = p.lerpColor(
+                p.color(colors[0]), // TODO:  fix hardcode, make loop
+                colorIndex % 3 == 0
+                  ? p.color(colors[1])
+                  : colorIndex % 3 == 1
+                    ? p.color(colors[2])
+                    : p.color(colors[3]),
+                colorValue,
+              );
+            } else {
+              const [colorA, colorB] = animatedColors.getValue();
+              const colorValue = p.map(
+                baseColorValue,
+                0,
+                1,
+                COLOR_INTENSITY_MIN,
+                COLOR_INTENSITY_MAX,
+              );
+              color = p.lerpColor(colorA, colorB, colorValue);
+            }
 
-            p.rect(0, 0, width, height, borderRadius);
+            const smallestSize = tile.getSmallestSize();
+            const fullWidth = tile.width / 2 - gap;
+            const fullHeight = tile.height / 2 - gap;
 
-            switch (fillType) {
-              case FillType.Solid:
-                break;
-              case FillType.Hollow:
-                if (borderSize < width && borderSize < height) {
-                  const innerWidth = width - borderSize;
-                  const innerHeight = height - borderSize;
-                  const innerRadius =
-                    ((smallestSize - borderSize) / smallestSize) * borderRadius;
+            let delta = 0;
 
-                  p.fill(bgColor);
-                  p.rect(0, 0, innerWidth, innerHeight, innerRadius);
-                }
-                break;
-              case FillType.Zebra: {
-                const size = stripeSize + delta * STRIPE_SIZE_MAX_DELTA;
+            if (animationEnabled) {
+              const relativeTime = Math.max(0, time - distanceIndex) % PERIOD;
+              const x = relativeTime / ANIMATION_DURATION;
+              delta =
+                relativeTime < ANIMATION_DURATION
+                  ? p.sin(x * p.TWO_PI - p.HALF_PI) / 2 + 0.5
+                  : 0;
+            }
+            const borderRadius =
+              baseBorderRadius + delta * BORDER_RADIUS_MAX_DELTA;
+            const width = fullWidth + delta * SCALE_MAX_DELTA;
+            const height = fullHeight + delta * SCALE_MAX_DELTA;
 
-                const zebraCount = Math.floor((smallestSize / size) * 2);
-                for (let i = 0; i < zebraCount; i++) {
-                  const currColor = i % 2 === 1 ? bgColor : color;
-                  const currWidth = width - i * size;
-                  const currHeight = height - i * size;
-                  const currRadius =
-                    (borderRadius * (zebraCount - i)) / zebraCount;
+            p.push();
+            {
+              p.fill(color);
+              p.rectMode("radius");
+              p.translate(tile.center.x, tile.center.y);
 
-                  if (currWidth < 0 || currHeight < 0) {
-                    break;
+              p.rect(0, 0, width, height, borderRadius);
+
+              switch (fillType) {
+                case FillType.Solid:
+                  break;
+                case FillType.Hollow:
+                  if (borderSize < width && borderSize < height) {
+                    const innerWidth = width - borderSize;
+                    const innerHeight = height - borderSize;
+                    const innerRadius =
+                      ((smallestSize - borderSize) / smallestSize) *
+                      borderRadius;
+
+                    p.fill(bgColor);
+                    p.rect(0, 0, innerWidth, innerHeight, innerRadius);
                   }
+                  break;
+                case FillType.Zebra: {
+                  const size = stripeSize + delta * STRIPE_SIZE_MAX_DELTA;
 
-                  p.fill(currColor);
-                  p.rect(0, 0, currWidth, currHeight, currRadius);
+                  const zebraCount = Math.floor((smallestSize / size) * 2);
+                  for (let i = 0; i < zebraCount; i++) {
+                    const currColor = i % 2 === 1 ? bgColor : color;
+                    const currWidth = width - i * size;
+                    const currHeight = height - i * size;
+                    const currRadius =
+                      (borderRadius * (zebraCount - i)) / zebraCount;
+
+                    if (currWidth < 0 || currHeight < 0) {
+                      break;
+                    }
+
+                    p.fill(currColor);
+                    p.rect(0, 0, currWidth, currHeight, currRadius);
+                  }
+                  break;
                 }
-                break;
               }
             }
-          }
-          p.pop();
-        });
+            p.pop();
+          });
 
         if (DRAW_COORDS_GRID) {
           const gridSize = gridRect.getSize();

@@ -65,7 +65,7 @@ export const controls = {
     max: 100,
     step: 1,
     label: "Stripes size",
-    active: (params: IParams) => (params.FILL_TYPE as number) === 2,
+    active: (params: IParams) => (params.FILL_TYPE as number) === 2, // TODO: fix the lack of typing
   },
   BORDER_SIZE: {
     type: "range",
@@ -100,10 +100,12 @@ export const controls = {
       ["#434343", "#ff0000"],
       // ["#fff", "#17FFEF"],
       ["#9F5CFE", "#17FFEF"],
+      ["white", "red", "teal", "purple"],
     ],
   },
   INVERT_COLORS: {
     type: "boolean",
     label: "Invert colors",
+    active: (params: IParams) => (params.COLOR as number) !== 4, // TODO: can't ref itself (controls.COLOR.colors...)
   },
 } as const satisfies IControls;
