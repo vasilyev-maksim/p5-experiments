@@ -513,7 +513,7 @@ export const presets: IPreset<Controls>[] = [
       ANIMATION_CENTER: [0.22, 0.22],
       ANIMATION_DIRECTION: [0.22, 0.22],
     },
-    name: "reaction",
+    name: "wes",
     timeDelta: 1,
   },
   {
@@ -532,7 +532,7 @@ export const presets: IPreset<Controls>[] = [
       ANIMATION_CENTER: [0.5013793103448275, 0.4964978448275862],
       ANIMATION_DIRECTION: [0.22, 0.22],
     },
-    name: "bends",
+    name: "anderson",
     timeDelta: 1,
   },
   {
