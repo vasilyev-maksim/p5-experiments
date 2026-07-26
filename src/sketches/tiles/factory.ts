@@ -133,8 +133,8 @@ export const factory = createSketch<Controls>(
 
     const animatedGap = createAnimatedValue({
       animationDuration: CONTROL_ANIMATION_SPEED,
-      fn: (x, { unitSize }) => x / (unitSize.y * 2.5),
-      deps: [getTrackedParam("GAP"), gridInfo.getTrackedValue()],
+      fn: (x) => p.map(x, controls.GAP.min, controls.GAP.max, 0.005, 0.25),
+      deps: [getTrackedParam("GAP")],
     });
 
     const animatedBorderRadius = createAnimatedValue({
