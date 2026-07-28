@@ -1,14 +1,5 @@
 # 👨‍💻 IN PROGRESS
 
-- tiles
-  - presets
-  * add super-multi-color option to color selection (initial pallette)
-  * add control for origin for animation (coords control)
-  * impl flat sin
-  * take into account -1..1 range (for animation)
-  * color palette
-  * new type of animation (maybe even an animation type control!)
-
 # 📋 TODO
 
 - [hard] focus trap for modal (home page links are accessible)
@@ -57,6 +48,14 @@
 
 # ✅ DONE
 
+- tiles
+  - presets
+  - add super-multi-color option to color selection (initial pallette)
+  - add control for origin for animation (coords control)
+  - impl flat sin
+  - take into account -1..1 range (for animation)
+  - color palette
+  - new type of animation (maybe even an animation type control!)
 - [easy] make animations independent from canvas size [?]
   - tiles
 - [medium] adopt `tiles` and `worm` to new architecture
