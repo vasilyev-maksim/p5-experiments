@@ -148,7 +148,6 @@ class Attractor {
     const mag = (G * body.mass * this.mass) / (dist * dist);
     if (mag > max) {
       max = mag;
-      console.log(mag);
     }
 
     // repulse if too close (to avoid infinite acceleration)

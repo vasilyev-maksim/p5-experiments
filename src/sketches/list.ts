@@ -19,18 +19,18 @@ import { wormSketch } from "./_sandboxes/worm";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const all: ISketch<any>[] = [
   spiralSketch,
-  cubesSketch,
+  arcsSketch,
+  tilesSketch,
   wormsSketch,
   pillarsSketch,
-  arcsSketch,
-  curveSketch,
   circlesSketch,
+  cubesSketch,
+  curveSketch,
   zigzagsSketch,
   lightsSketch,
   interpolationSketch,
   citySketch,
   funcsSketch,
-  tilesSketch,
   bodiesSketch,
   wormSketch,
 ];

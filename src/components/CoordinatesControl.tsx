@@ -99,8 +99,6 @@ export const CoordinatesControl = (props: {
     }
 
     if (newX !== x || newY !== y) {
-      console.log(111111);
-
       onChangeThrottled(newX, newY);
     }
   };
