@@ -18,7 +18,6 @@
 - [easy] test `Rectangle`
 - [easy] test `Worm` and `WormNavigator`
 - [easy] back button
-- [easy] animate "shuffle presets" button (on modal open)
 - [easy] add animated underline for my name link [?]
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] top and bottom shadows for sidebar
@@ -48,6 +47,7 @@
 
 # ✅ DONE
 
+- [easy] animate "shuffle presets" button (on modal open)
 - tiles
   - presets
   - add super-multi-color option to color selection (initial pallette)

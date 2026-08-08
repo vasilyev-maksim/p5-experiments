@@ -15,16 +15,31 @@ import { BooleanParamControl } from "./BooleanParamControl";
 import { useActiveSketch } from "@hooks";
 
 export const Presets = memo(function Presets() {
-  const { activeSketch, params, applyPreset } = useActiveSketch();
   const segment =
     useSequence<MODAL_OPEN_SEGMENTS>(
       MODAL_OPEN_SEQUENCE,
     ).useSegment<PresetsAnimationParams>("SHOW_PRESETS");
   const { itemDelay, itemDuration } = segment.timingPayload;
+  const showHeader =
+    useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
+      "SHOW_PRESET_HEADER",
+    );
+  const controlsActivated = useSequence<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+  ).useSegment("INIT_CONTROLS_AND_PRESETS");
+
+  const { activeSketch, params, applyPreset } = useActiveSketch();
   const presets = activeSketch.presets;
+  const presetIndex = useRef(0);
+  const [shufflePresets, setShufflePresets] = useState(
+    activeSketch.shufflePresets === 1,
+  );
+  const shouldRenderShuffleControl = (activeSketch.shufflePresets ?? -1) > -1;
   const paramsCount = presets.length ?? 0;
+  const springsCount = paramsCount + (shouldRenderShuffleControl ? 1 : 0);
+
   const [springs] = useSprings(
-    paramsCount,
+    springsCount,
     (i) => ({
       from: { x: 0 },
       to: { x: segment.wasRun ? 1 : 0 },
@@ -34,34 +49,13 @@ export const Presets = memo(function Presets() {
       },
       delay: i * itemDelay,
       onRest: async () => {
-        if (i === paramsCount - 1) {
+        if (i === springsCount - 1) {
           segment.complete();
         }
       },
     }),
     [segment.wasRun],
   );
-
-  const showHeader =
-    useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
-      "SHOW_PRESET_HEADER",
-    );
-  const controlsActivated = useSequence<MODAL_OPEN_SEGMENTS>(
-    MODAL_OPEN_SEQUENCE,
-  ).useSegment("INIT_CONTROLS_AND_PRESETS");
-
-  const presetIndex = useRef(0);
-  const [shufflePresets, setShufflePresets] = useState(
-    activeSketch.shufflePresets === 1,
-  );
-
-  const handleClick = (preset: IPreset) => {
-    applyPreset(preset, { updateUrl: true });
-
-    if (shufflePresets) {
-      setShufflePresets(false);
-    }
-  };
 
   useEffect(() => {
     if (shufflePresets) {
@@ -80,6 +74,14 @@ export const Presets = memo(function Presets() {
     presets,
   ]);
 
+  const handleClick = (preset: IPreset) => {
+    applyPreset(preset, { updateUrl: true });
+
+    if (shufflePresets) {
+      setShufflePresets(false);
+    }
+  };
+
   return (
     paramsCount > 0 &&
     segment.wasRun && (
@@ -90,10 +92,36 @@ export const Presets = memo(function Presets() {
       >
         <div className={styles.Presets}>
           {springs.map(({ x }, i) => {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            const p = presets?.[i]!;
-            const isActive =
-              controlsActivated.wasRun && areParamsEqual(params, p.params);
+            let body;
+
+            if (shouldRenderShuffleControl && i === springsCount - 1) {
+              // shuffle presets control
+              body = (
+                <BooleanParamControl
+                  label={"Shuffle presets"}
+                  value={shufflePresets}
+                  active={controlsActivated.wasRun}
+                  animationDuration={controlsActivated.duration}
+                  onChange={(x) => setShufflePresets(x)}
+                  className={styles.ShufflePresetsControl}
+                />
+              );
+            } else {
+              // preset button
+              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+              const p = presets?.[i]!;
+              const isActive =
+                controlsActivated.wasRun && areParamsEqual(params, p.params);
+              body = (
+                <OptionButton
+                  label={p.name ?? i.toString()}
+                  active={isActive}
+                  onClick={() => handleClick(p)}
+                  animationDuration={controlsActivated.duration}
+                />
+              );
+            }
+
             return (
               <animated.div
                 tabIndex={1}
@@ -104,26 +132,11 @@ export const Presets = memo(function Presets() {
                   scale: x.to([0, 1], [0.9, 1]),
                 }}
               >
-                <OptionButton
-                  label={p.name ?? i.toString()}
-                  active={isActive}
-                  onClick={() => handleClick(p)}
-                  animationDuration={controlsActivated.duration}
-                />
+                {body}
               </animated.div>
             );
           })}
         </div>
-        {(activeSketch.shufflePresets ?? -1) > -1 && (
-          <BooleanParamControl
-            label={"Shuffle presets"}
-            value={shufflePresets}
-            active={controlsActivated.wasRun}
-            animationDuration={controlsActivated.duration}
-            onChange={(x) => setShufflePresets(x)}
-            className={styles.ShufflePresetsControl}
-          />
-        )}
       </SectionLayout>
     )
   );
