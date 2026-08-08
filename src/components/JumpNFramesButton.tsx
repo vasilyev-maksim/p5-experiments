@@ -1,4 +1,4 @@
-import { useLongPress } from "@hooks";
+import { useLongPress } from "@/hooks/useLongPress";
 import { JumpNFramesIcon } from "./Icons";
 
 const HOLD_TIMEOUT = 500;

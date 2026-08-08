@@ -1,0 +1,44 @@
+.SketchModalSidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ModalTitle {
+  font-size: 2.5rem;
+  line-height: 100%;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.Body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+}
+
+.BottomActionsBlock {
+  padding-top: 15px;
+  padding-bottom: 5px;
+  display: flex;
+  gap: 5px;
+  animation: appear ease-in-out forwards;
+}
+
+.RandomizeButton {
+  padding-left: 4px !important;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    height: 0;
+    translate: 0 15px;
+  }
+
+  to {
+    opacity: 1;
+    height: 47px;
+    translate: 0 0px;
+  }
+}

@@ -26,7 +26,7 @@ import {
   removeSketchDataFromUrl,
   setSketchToUrl,
 } from "@utils/url";
-import { useRerender } from "@hooks";
+import { useRerender } from "@/hooks/useRerender";
 import { ActiveSketchProvider } from "@/contexts/ActiveSketchProvider";
 
 function App() {

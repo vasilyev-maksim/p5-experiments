@@ -57,16 +57,6 @@
   text-align: center;
   text-transform: uppercase;
   font-size: 1.2rem;
-}
-
-.ModalTitle {
-  font-size: 2.5rem;
-  line-height: 100%;
-  text-align: center;
-}
-
-.Title,
-.ModalTitle {
   letter-spacing: 2px;
 }
 
@@ -117,23 +107,7 @@
 
 .Left {
   color: var(--fontColor);
-  display: flex;
-  flex-direction: column;
   position: relative;
-
-  .Body {
-    overflow-y: auto;
-    overflow-x: hidden;
-    height: 100%;
-    flex: 1;
-    padding-bottom: 20px;
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox, Safari 18.2+, Chromium 121+ */
-
-    &::-webkit-scrollbar {
-      display: none; /* Older Safari and Chromium */
-    }
-  }
 }
 
 .PlaybackControlsBlock {
@@ -146,27 +120,4 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-}
-
-.BottomActionsBlock {
-  margin-top: 10px;
-  display: flex;
-  gap: 5px;
-  animation: appear ease-in-out forwards;
-}
-
-.RandomizeButton {
-  padding-left: 4px !important;
-}
-
-@keyframes appear {
-  from {
-    opacity: 0;
-    translate: 0 15px;
-  }
-
-  to {
-    opacity: 1;
-    translate: 0 0px;
-  }
 }

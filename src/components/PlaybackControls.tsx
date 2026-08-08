@@ -4,7 +4,7 @@ import { PlayPauseButton } from "./PlayPauseButton";
 import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
 import { JumpNFramesButton } from "./JumpNFramesButton";
-import { useActiveSketch } from "@hooks";
+import { useActiveSketch } from "@/hooks/useActiveSketch";
 import { FullScreenIcon } from "./Icons";
 
 export const PlaybackControls = memo(function PlaybackControls(props: {

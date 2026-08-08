@@ -14,7 +14,7 @@ import { OptionButton } from "./OptionButton";
 import { BooleanParamControl } from "./BooleanParamControl";
 import { memo, type PropsWithChildren } from "react";
 import { CoordinatesControl } from "./CoordinatesControl";
-import { useActiveSketch } from "@hooks";
+import { useActiveSketch } from "@/hooks/useActiveSketch";
 
 export const ParamControls = memo(function ParamControls() {
   const { params, activeSketch, changeParam } = useActiveSketch();

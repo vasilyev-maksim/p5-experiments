@@ -1,7 +1,5 @@
 # 👨‍💻 IN PROGRESS
 
-- [easy] put "Randomize" button into sticky footer
-
 # 📋 TODO
 
 - [hard] focus trap for modal (home page links are accessible)
@@ -21,7 +19,6 @@
 - [easy] test `Worm` and `WormNavigator`
 - [easy] add animated underline for my name link [?]
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
-- [easy] top and bottom shadows for sidebar
 - [easy] experiment with lights in `cubes`
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes
@@ -47,6 +44,8 @@
 
 # ✅ DONE
 
+- [easy] put "Randomize" button into sticky footer
+- [easy] top and bottom shadows for sidebar
 - [easy] animate "shuffle presets" button (on modal open)
 - tiles
   - presets

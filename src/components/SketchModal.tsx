@@ -1,7 +1,9 @@
 import type { SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
-import { useKeyboardShortcuts, useModalBehavior, useViewport } from "@hooks";
+import { useViewport } from "@/hooks/useViewport";
+import { useModalBehavior } from "@/hooks/useModalBehavior";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import classNames from "classnames";
 import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
@@ -15,7 +17,7 @@ import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { usePopStateSync } from "@hooks/url";
-import { useActiveSketch } from "@hooks";
+import { useActiveSketch } from "@/hooks/useActiveSketch";
 import { SketchModalSidebar } from "./SketchModalSidebar";
 
 export const SketchModal = ({

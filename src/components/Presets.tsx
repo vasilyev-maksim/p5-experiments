@@ -12,7 +12,7 @@ import {
 import { OptionButton } from "./OptionButton";
 import { memo, useEffect, useRef, useState } from "react";
 import { BooleanParamControl } from "./BooleanParamControl";
-import { useActiveSketch } from "@hooks";
+import { useActiveSketch } from "@/hooks/useActiveSketch";
 
 export const Presets = memo(function Presets() {
   const segment =
