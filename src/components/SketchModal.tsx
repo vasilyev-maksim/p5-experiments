@@ -5,8 +5,6 @@ import { useKeyboardShortcuts, useModalBehavior, useViewport } from "@hooks";
 import classNames from "classnames";
 import { useCallback, useRef, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
-import { ParamControls } from "./ParamControls";
-import { Presets } from "./Presets";
 import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
@@ -16,12 +14,9 @@ import {
 import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
-import { Button } from "./Button";
-import { copyPresetCodeToClipboard } from "@utils/sketch";
 import { usePopStateSync } from "@hooks/url";
 import { useActiveSketch } from "@hooks";
-import { DiceIcon } from "./Icons";
-import { ENV } from "@/env";
+import { SketchModalSidebar } from "./SketchModalSidebar";
 
 export const SketchModal = ({
   left = 0,
@@ -39,7 +34,6 @@ export const SketchModal = ({
     modalMargin,
     modalPadding,
     modalSidebarWidth,
-    modalSidebarPadding,
     borderWidth,
   } = useViewport();
   const [size, setSize] = useState<SketchCanvasSize>("tile");
@@ -51,7 +45,6 @@ export const SketchModal = ({
     MODAL_OPEN_SEQUENCE,
   );
   const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
-  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS");
   const playbackControlsEnabled = useSegment("START_PLAYING").completed;
 
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
@@ -64,7 +57,6 @@ export const SketchModal = ({
     eventBus,
     spinUp,
     applyPreset,
-    randomizeParams,
     playPause,
   } = useActiveSketch();
   const activePreset = getActivePreset();
@@ -176,70 +168,7 @@ export const SketchModal = ({
             }}
           >
             {showSidebar && (
-              <>
-                <animated.h2
-                  className={styles.ModalTitle}
-                  style={{
-                    marginBottom: modalPadding,
-                    marginTop: (modalPadding * 3) / 2,
-                    marginLeft: modalSidebarPadding,
-                    translateY: headerX.to([0, 1], [15, 0]),
-                    opacity: headerX,
-                    paddingRight: modalX.to(
-                      [0, 1],
-                      [0, modalSidebarPadding - 6],
-                    ),
-                  }}
-                >
-                  {activeSketch.name.toUpperCase()}
-                </animated.h2>
-                <animated.div
-                  className={styles.Body}
-                  style={{
-                    paddingTop: modalPadding,
-                    paddingRight: modalX.to(
-                      [0, 1],
-                      [0, modalSidebarPadding - 6],
-                    ),
-                  }}
-                >
-                  <Presets />
-                  <ParamControls />
-
-                  {showBottomActions.wasRun && (
-                    <div
-                      style={{
-                        paddingLeft: modalSidebarPadding,
-                        animationDuration: showBottomActions.duration + "ms",
-                      }}
-                      className={styles.BottomActionsBlock}
-                    >
-                      <Button
-                        onClick={randomizeParams}
-                        className={styles.RandomizeButton}
-                        label={
-                          <>
-                            <DiceIcon />
-                            &nbsp; Randomize
-                          </>
-                        }
-                      />
-                      {ENV.isProd ? null : (
-                        <Button
-                          onClick={() =>
-                            copyPresetCodeToClipboard(
-                              params,
-                              timeDelta,
-                              activeSketch.presets.length,
-                            )
-                          }
-                          label="Export preset"
-                        />
-                      )}
-                    </div>
-                  )}
-                </animated.div>
-              </>
+              <SketchModalSidebar modalX={modalX} headerX={headerX} />
             )}
           </animated.div>
           <div
