@@ -88,3 +88,31 @@ export function DiceIcon() {
     </svg>
   );
 }
+
+export function ShareIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 128 128"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ color: "var(--fontColor)" }}
+    >
+      <path
+        d="M32.6882 8C19.0533 8 8 19.0533 8 32.6882V90C8 106.569 21.4315 120 38 120H93.5054C108.138 120 120 108.138 120 93.5054"
+        stroke="currentColor"
+        strokeWidth="13"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M67 8L120 8V61M120 8L67 61"
+        stroke="currentColor"
+        strokeWidth="13"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

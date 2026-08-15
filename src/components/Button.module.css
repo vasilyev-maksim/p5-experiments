@@ -1,10 +1,12 @@
 .Button {
-  display: inline-flex;
+  display: flex;
   padding: 3px 6px;
   background-color: var(--bgPrimaryColor);
   border-radius: 5px;
   transition: 200ms all;
   font-size: 0.9rem;
+  flex-direction: row;
+  align-items: center;
 
   &:hover {
     background-color: var(--primaryColorFaded);
@@ -13,5 +15,11 @@
   &.Mini {
     padding: 0px 5px;
     font-size: 0.85rem;
+  }
+
+  &.WithIcon {
+    padding-left: 8px;
+    padding-right: 8px;
+    gap: 8px;
   }
 }

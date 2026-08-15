@@ -10,11 +10,15 @@ import {
   type MODAL_OPEN_SEGMENTS,
 } from "../animations";
 import { Button } from "./Button";
-import { copyPresetCodeToClipboard } from "@utils/sketch";
+import {
+  copyCurrentUrlToClipboard,
+  copyPresetCodeToClipboard,
+} from "@/utils/clipboard";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
-import { DiceIcon } from "./Icons";
+import { DiceIcon, ShareIcon } from "./Icons";
 import { ENV } from "@/env";
 import { ScrollShadow } from "./ScrollShadow";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export const SketchModalSidebar = (props: {
   modalX: SpringValue<number>;
@@ -27,8 +31,14 @@ export const SketchModalSidebar = (props: {
   const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS");
   const { activeSketch, params, timeDelta, randomizeParams } =
     useActiveSketch();
+  const { pushNotification } = useNotifications();
 
   const paddingRight = modalSidebarPadding - 6;
+
+  const handleShareClick = () => {
+    copyCurrentUrlToClipboard();
+    pushNotification("Link copied to clipboard", "share-url-copied");
+  };
 
   return (
     <div className={styles.SketchModalSidebar}>
@@ -71,14 +81,14 @@ export const SketchModalSidebar = (props: {
           className={styles.BottomActionsBlock}
         >
           <Button
+            icon={<DiceIcon />}
             onClick={randomizeParams}
-            className={styles.RandomizeButton}
-            label={
-              <>
-                <DiceIcon />
-                &nbsp; Randomize
-              </>
-            }
+            label="Randomize"
+          />
+          <Button
+            icon={<ShareIcon />}
+            onClick={handleShareClick}
+            label="Share"
           />
           {ENV.isProd ? null : (
             <Button
@@ -89,7 +99,7 @@ export const SketchModalSidebar = (props: {
                   activeSketch.presets.length,
                 )
               }
-              label="Export preset"
+              label="preset"
             />
           )}
         </div>

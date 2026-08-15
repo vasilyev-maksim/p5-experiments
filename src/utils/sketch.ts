@@ -3,10 +3,8 @@ import type {
   IControl,
   IControls,
   IParams,
-  IPreset,
   ISketch,
 } from "@/models";
-import { copyToClipboard } from "./misc";
 
 function serializeParams(params: IParams): string {
   return Object.entries(params)
@@ -44,21 +42,6 @@ export function getRandomParams<Controls extends IControls>(
   return Object.entries<IControl>(controls).reduce((acc, [key, val]) => {
     return { ...acc, [key]: getRandomParamValue(val) };
   }, {}) as IParams<Controls>;
-}
-
-export function copyPresetCodeToClipboard(
-  params: IParams,
-  timeDelta: number,
-  presetIndex: number,
-) {
-  const name = prompt("Preset name (optional):")?.trim();
-  const preset: IPreset = {
-    params,
-    name: name ?? presetIndex.toString(),
-    timeDelta,
-  };
-  const code = JSON.stringify(preset, null, 4) + ",";
-  return copyToClipboard(code);
 }
 
 export function getDefaultPreset(sketch: ISketch) {

@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import styles from "./Slider.module.css";
-import { animated, easings, to, useSpring } from "react-spring";
+import { animated, easings, to, useSpring } from "@react-spring/web";
 import { useSliderBehavior } from "@/hooks/useSliderBehavior";
 
 const TRACK_HEIGHT = [2, 2];

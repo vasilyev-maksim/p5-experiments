@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSpring, easings, useSpringValue } from "react-spring";
+import { useSpring, easings, useSpringValue } from "@react-spring/web";
 import { getClosestDiscreteValue } from "@utils/misc";
 import { clamp } from "@/core/utils";
 

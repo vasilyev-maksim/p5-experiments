@@ -48,15 +48,6 @@ export function range(len: number, reversed = false): number[] {
   );
 }
 
-export async function copyToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    console.log("Copied!", text);
-  } catch (err) {
-    console.error("Failed to copy:", err);
-  }
-}
-
 export function tryParseNumber(str: string, fallback: number) {
   const num = Number(str);
   return isNaN(num) ? fallback : num;
@@ -95,4 +86,17 @@ export function createRandomGenerator(seed: number): () => number {
     t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
+}
+
+export function generateUUID(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  // Fallback: RFC4122 version 4 UUID
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }

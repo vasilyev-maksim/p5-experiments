@@ -1,5 +1,6 @@
 import classNames from "classnames";
-import { useSpring, easings, animated } from "react-spring";
+import { animated, easings, useSpring } from "@react-spring/web";
+
 import styles from "./ColorOptionButton.module.css";
 
 export const ColorOptionButton = (props: {

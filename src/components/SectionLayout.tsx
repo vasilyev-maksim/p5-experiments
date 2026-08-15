@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 import { useViewport } from "@/hooks/useViewport";
 import styles from "./SectionLayout.module.css";
 import classNames from "classnames";
-import { animated, easings, useSpring } from "react-spring";
+import { animated, easings, useSpring } from "@react-spring/web";
 
 export function SectionLayout(
   props: PropsWithChildren<{

@@ -2,7 +2,7 @@ import type { IPreset } from "../models";
 import styles from "./Presets.module.css";
 import { areParamsEqual } from "@utils/sketch";
 import { SectionLayout } from "./SectionLayout";
-import { animated, easings, useSprings } from "react-spring";
+import { animated, easings, useSprings } from "@react-spring/web";
 import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,

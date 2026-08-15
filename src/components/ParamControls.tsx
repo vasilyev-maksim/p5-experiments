@@ -1,7 +1,7 @@
 import { SectionLayout } from "./SectionLayout";
 import styles from "./ParamControls.module.css";
 import { Slider } from "./Slider";
-import { animated, easings, useSprings } from "react-spring";
+import { animated, easings, useSprings } from "@react-spring/web";
 import { useSequence } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,

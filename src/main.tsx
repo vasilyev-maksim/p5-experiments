@@ -8,13 +8,16 @@ import { sequences } from "./animations.ts";
 import { ViewportProvider } from "./contexts/ViewportProvider.tsx";
 import { ENV } from "./env.ts";
 import { Test } from "./components/Test.tsx";
+import { NotificationsProvider } from "./contexts/NotificationsProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <ViewportProvider>
-    <SequenceProvider sequences={sequences}>
-      {ENV.sandboxMode ? <Test /> : <App />}
-    </SequenceProvider>
+    <NotificationsProvider>
+      <SequenceProvider sequences={sequences}>
+        {ENV.sandboxMode ? <Test /> : <App />}
+      </SequenceProvider>
+    </NotificationsProvider>
   </ViewportProvider>,
   // </StrictMode>
 );

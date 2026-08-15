@@ -8,6 +8,7 @@ export const Button = (
     label: ReactNode;
     mini?: boolean;
     className?: string;
+    icon?: ReactNode;
   }>,
 ) => {
   return (
@@ -17,11 +18,13 @@ export const Button = (
         styles.Button,
         {
           [styles.Mini]: props.mini,
+          [styles.WithIcon]: props.icon != null,
         },
         props.className,
       )}
       onClick={props.onClick}
     >
+      {props.icon}
       {props.label}
     </button>
   );

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./CoordinatesControl.module.css";
-import { animated, easings, useSpring } from "react-spring";
+import { animated, easings, useSpring } from "@react-spring/web";
 import { useThrottleWithTrailing } from "@/hooks/useThrottleWithTrailing";
 import { useGlobalDrag } from "@/hooks/useGlobalDrag";
 import { clamp } from "@/core/utils";

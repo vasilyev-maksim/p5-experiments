@@ -1,5 +1,7 @@
 # 👨‍💻 IN PROGRESS
 
+- [easy] add "Share" button to footer
+
 # 📋 TODO
 
 - [hard] focus trap for modal (home page links are accessible)

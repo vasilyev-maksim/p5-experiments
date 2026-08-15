@@ -25,10 +25,6 @@
   animation: appear ease-in-out forwards;
 }
 
-.RandomizeButton {
-  padding-left: 4px !important;
-}
-
 @keyframes appear {
   from {
     opacity: 0;

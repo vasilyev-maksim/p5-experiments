@@ -1,4 +1,4 @@
-import { animated, easings, useSpring } from "react-spring";
+import { animated, easings, useSpring } from "@react-spring/web";
 import styles from "./PlayPauseButton.module.css";
 
 const LEFT_OFFSET = 15;

@@ -9,7 +9,7 @@ import type {
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useViewport } from "@/hooks/useViewport";
-import { animated, easings, to, useSpring } from "react-spring";
+import { animated, easings, to, useSpring } from "@react-spring/web";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
 import type { EventBus } from "@/core/EventBus";
