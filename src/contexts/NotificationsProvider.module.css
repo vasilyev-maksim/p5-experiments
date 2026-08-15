@@ -14,7 +14,7 @@
 }
 
 .Notification {
-  background: #000000c5;
+  background: hsla(0, 0%, 0%, 0.77);
   padding: 30px 60px;
   border-radius: 10px;
   color: var(--fontColor);

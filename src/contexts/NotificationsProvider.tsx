@@ -7,7 +7,7 @@ import styles from "./NotificationsProvider.module.css";
 import { generateUUID } from "@/utils/misc";
 import { animated, useTransition } from "@react-spring/web";
 
-const CLEAR_TIMEOUT = 1250;
+const CLEAR_TIMEOUT = 1500;
 
 // Not perfect but good enough 👍
 // It sucks when pushing notification multiple times in a short period of time
@@ -38,6 +38,9 @@ export function NotificationsProvider({
     from: { opacity: 0, translateY: 30 },
     enter: { opacity: 1, translateY: 0 },
     leave: { opacity: 0, translateY: -30 },
+    config: {
+      duration: 250,
+    },
   });
 
   const contextValue = useMemo(
