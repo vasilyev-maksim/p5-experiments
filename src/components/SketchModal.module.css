@@ -18,7 +18,7 @@
 .SketchModal {
   --borderWidth: 4px;
 
-  border-radius: 20px;
+  border-radius: var(--borderRadiusXL);
   position: relative;
   background: linear-gradient(
     0deg,
@@ -60,16 +60,6 @@
   letter-spacing: 2px;
 }
 
-.ImgWrapper {
-  max-height: 100%;
-  max-width: 100%;
-  width: 100%;
-  aspect-ratio: 1/1;
-  background-size: cover;
-  background-repeat: no-repeat;
-  border-radius: 10px;
-}
-
 .Horizontal {
   display: flex;
   flex-direction: row;
@@ -97,7 +87,7 @@
   height: 100%;
 
   & canvas {
-    border-radius: 10px;
+    border-radius: var(--borderRadius);
   }
 }
 
@@ -120,4 +110,30 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.CloseButtonBlock {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+  margin: 20px;
+  border-radius: var(--borderRadius);
+  /* color: var(--closeIconColorFaded);
+  background-color: var(--backdrop); */
+  cursor: pointer;
+  /* transition: opacity 200ms; */
+  /* opacity: 0.8; */
+  color: var(--closeIconColor);
+  background-color: var(--backdrop);
+  /* color: var(--closeIconColorFaded); */
+
+  &:hover {
+    background-color: var(--xx);
+    /* opacity: 1; */
+  }
 }

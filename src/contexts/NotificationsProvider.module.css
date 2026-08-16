@@ -1,4 +1,4 @@
-.Backdrop {
+.Overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -14,9 +14,9 @@
 }
 
 .Notification {
-  background: hsla(0, 0%, 0%, 0.77);
+  background: var(--backdrop);
   padding: 30px 60px;
-  border-radius: 10px;
+  border-radius: var(--borderRadius);
   color: var(--fontColor);
   font-size: 1.2rem;
 }

@@ -1,7 +1,7 @@
 .Wrapper {
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: var(--borderRadius);
 
   canvas {
     max-width: unset;

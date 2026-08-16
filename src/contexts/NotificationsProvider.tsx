@@ -54,7 +54,7 @@ export function NotificationsProvider({
   return (
     <NotificationsContext.Provider value={contextValue}>
       {children}
-      <div className={styles.Backdrop}>
+      <div className={styles.Overlay}>
         {transitions(({ opacity, translateY }, { text }) => (
           <animated.div
             style={{

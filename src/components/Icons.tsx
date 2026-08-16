@@ -116,3 +116,30 @@ export function ShareIcon() {
     </svg>
   );
 }
+
+export function CrossIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 25 25"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M2.5 22.5L22.5 2.5"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M22.5 22.5L2.5 2.5"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

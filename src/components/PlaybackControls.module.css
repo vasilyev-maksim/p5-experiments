@@ -6,9 +6,9 @@
   align-items: center;
   padding: 10px 20px;
   gap: 20px;
-  background: rgba(0, 0, 0, 0.77);
+  background: var(--backdrop);
   margin: 20px;
-  border-radius: 10px;
+  border-radius: var(--borderRadius);
 }
 
 .Section {

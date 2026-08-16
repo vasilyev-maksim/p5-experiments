@@ -19,6 +19,7 @@ import { PlaybackControls } from "./PlaybackControls";
 import { usePopStateSync } from "@hooks/url";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
 import { SketchModalSidebar } from "./SketchModalSidebar";
+import { CrossIcon } from "./Icons";
 
 export const SketchModal = ({
   left = 0,
@@ -195,6 +196,19 @@ export const SketchModal = ({
                 randomSeed={activePreset.randomSeed ?? activeSketch.randomSeed}
               />
             </div>
+
+            <animated.div
+              className={styles.RightBottom}
+              style={{
+                maxHeight: modalX.to([0, 1], [50, 0]),
+                opacity: modalX.to([0, 1], [1, 0]),
+              }}
+            >
+              <h2 className={styles.Title} style={{ paddingLeft: tilePadding }}>
+                {activeSketch.name}
+              </h2>
+            </animated.div>
+
             <animated.div
               style={{
                 translateY: playbackControlsX
@@ -206,21 +220,18 @@ export const SketchModal = ({
             >
               <PlaybackControls onFullscreenToggle={openInFullscreen} />
             </animated.div>
+
             <animated.div
-              className={styles.RightBottom}
               style={{
-                maxHeight: modalX.to([0, 1], [50, 0]),
-                opacity: modalX.to([0, 1], [1, 0]),
+                translateX: playbackControlsX
+                  .to([0, 1], [100, 0])
+                  .to((x) => x + `%`),
+                opacity: playbackControlsX,
               }}
+              className={styles.CloseButtonBlock}
+              onClick={onBackClick}
             >
-              <h2
-                className={styles.Title}
-                style={{
-                  paddingLeft: tilePadding,
-                }}
-              >
-                {activeSketch.name}
-              </h2>
+              <CrossIcon />
             </animated.div>
           </div>
         </div>

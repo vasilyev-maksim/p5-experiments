@@ -1,4 +1,4 @@
-body {
+:root {
   --gridCrossHalfSize: 25px;
   --gridCellSize: 60px;
   --bgColor: rgba(20, 20, 20, 1);
@@ -13,14 +13,23 @@ body {
   --secondaryColorFaded: hsl(var(--secondaryColorH) 38 29);
   --fontColorAccent: hsl(var(--secondaryColorH) 100 85);
   --fontColor: hsl(var(--primaryColorH) 100 88 / 80%);
-  --fontColorDimmed: hsl(var(--primaryColorH) 100 88 / 40%);
+  --fontColorFaded: hsl(var(--primaryColorH) 100 88 / 40%);
   --bgSecondaryColor: hsl(var(--secondaryColorH) 100 68 / 12.5%);
   --bgPrimaryColor: hsl(var(--primaryColorH) 100 55 / 12.5%);
   --tileHoverScale: 1.03;
   --controlButtonBgColor: hsl(var(--primaryColorH) 100 55 / 0%);
   --controlButtonHoverBgColor: hsl(var(--primaryColorH) 100 55 / 15%);
   --controlButtonActiveBgColor: hsl(var(--primaryColorH) 100 55 / 35%);
+  --backdrop: rgba(0, 0, 0, 0.7);
+  --backdropFaded: rgba(0, 0, 0, 0.45);
+  --borderRadius: 10px;
+  --borderRadiusXL: 20px;
+  --closeIconColor: hsl(var(--primaryColorH) 49 76);
+  --closeIconColorFaded: hsl(var(--primaryColorH) 23.67 59.41);
+  --xx: #1c2f2f;
+}
 
+body {
   background-color: var(--bgColor);
   background-image:
     linear-gradient(
