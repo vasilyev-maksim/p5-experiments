@@ -85,7 +85,7 @@
 @keyframes appear {
   from {
     opacity: 0;
-    translate: 0 30px;
+    translate: 0 40px;
   }
 
   to {

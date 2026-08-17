@@ -40,16 +40,6 @@ export const SketchModal = ({
     borderWidth,
   } = useViewport();
   const [size, setSize] = useState<SketchCanvasSize>("tile");
-
-  const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
-    from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
-  }));
-  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
-    MODAL_OPEN_SEQUENCE,
-  );
-  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
-  const playbackControlsEnabled = useSegment("START_PLAYING").completed;
-
   const sketchCanvasRef = useRef<HTMLDivElement>(null);
   const {
     getActivePreset,
@@ -63,24 +53,6 @@ export const SketchModal = ({
     playPause,
   } = useActiveSketch();
   const activePreset = getActivePreset();
-
-  const showPlaybackControls = () => {
-    if (playbackControlsEnabled) {
-      api.start({
-        playbackControlsX: 1,
-        config: { duration: 300, easing: easings.easeInOutCubic },
-      });
-    }
-  };
-
-  const hidePlaybackControls = () => {
-    if (playbackControlsEnabled) {
-      api.start({
-        playbackControlsX: 0,
-        config: { duration: 300, easing: easings.easeInOutCubic },
-      });
-    }
-  };
 
   const openInFullscreen = useCallback(() => {
     if (sketchCanvasRef.current) {
@@ -96,6 +68,50 @@ export const SketchModal = ({
       document.addEventListener("fullscreenchange", exitHandler, false);
     }
   }, []);
+
+  const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
+    from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
+  }));
+  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+    MODAL_OPEN_SEQUENCE,
+  );
+
+  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
+  // overlay consists of [playback controls panel at the bottom + close button at the top right]
+  const overlayIsActive = useSegment("START_PLAYING").completed;
+
+  // tracks if initially (before animation starts playing and `overlayIsActive` === false) the mouse was over the canvas
+  const [mouseInside, setMouseInside] = useState(false);
+
+  const showOverlay = () => {
+    api.start({
+      playbackControlsX: 1,
+      config: { duration: 300, easing: easings.easeInOutCubic },
+    });
+  };
+
+  const hideOverlay = () => {
+    api.start({
+      playbackControlsX: 0,
+      config: { duration: 300, easing: easings.easeInOutCubic },
+    });
+  };
+
+  const handleMouseEnter = () => {
+    if (overlayIsActive) {
+      showOverlay();
+    } else if (mouseInside === false) {
+      setMouseInside(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (overlayIsActive) {
+      hideOverlay();
+    } else if (mouseInside === true) {
+      setMouseInside(false);
+    }
+  };
 
   const onAnimationProgress = useCallback(
     (seg: SegmentBase) => {
@@ -120,9 +136,14 @@ export const SketchModal = ({
         });
       } else if (seg.id === "START_PLAYING" && seg.isRunning) {
         spinUp();
+
+        // show overlay if at the moment the modal was expanding the mouse happened to be over the canvas
+        if (mouseInside) {
+          showOverlay();
+        }
       }
     },
-    [spinUp, api],
+    [spinUp, api, mouseInside],
   );
 
   useListener(onAnimationProgress);
@@ -176,8 +197,8 @@ export const SketchModal = ({
           </animated.div>
           <div
             className={classNames(styles.Vertical, styles.Right)}
-            onMouseEnter={showPlaybackControls}
-            onMouseLeave={hidePlaybackControls}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             <div className={styles.RightTop}>
               <SketchCanvas

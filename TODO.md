@@ -1,7 +1,5 @@
 # 👨‍💻 IN PROGRESS
 
-- [easy] add "Share" button to footer
-
 # 📋 TODO
 
 - [hard] focus trap for modal (home page links are accessible)
@@ -11,10 +9,6 @@
 
 - [medium] Add analytics
 - [medium] write meaningful README.md
-- [medium] make play controls animation more user friendly
-  - hide it by timer after mouse leave
-  - keep it visible if pause is on pause
-  - show it once on modal expand (even with no mouse hovering)
 
 - [easy] mobile version [?], at least info message inviting to desktop version
 - [easy] test `Rectangle`
@@ -46,6 +40,8 @@
 
 # ✅ DONE
 
+- [medium] show modal overlay if at the moment of modal expansion mouse happened to be over the canvas area
+- [easy] add "Share" button to footer
 - [easy] put "Randomize" button into sticky footer
 - [easy] top and bottom shadows for sidebar
 - [easy] animate "shuffle presets" button (on modal open)
@@ -138,6 +134,10 @@
 
 # ❌ CANCELED
 
+- [medium] make play controls animation more user friendly
+  - hide it by timer after mouse leave
+  - keep it visible if pause is on pause
+  - show it once on modal expand (even with no mouse hovering)
 - `tiles`: make `STRIPE_SIZE` control disabled instead of invisible (coz pressing `Randomize` sometimes causes controls layout shift)
 - [easy] remove param controls margin-top if no presets
 - [easy] redesign `Capture` button

@@ -82,14 +82,14 @@ export const sequences = [
     Sequence.syncSegment({
       id: "HEADER",
       delay: 500 * MULT,
-      duration: 200 * MULT,
+      duration: 400 * MULT,
     }),
     Sequence.asyncSegment<GridAnimationParams>({
       id: "TILES",
       delay: 200 * MULT,
       timingPayload: {
-        itemDelay: 125 * MULT,
-        itemDuration: 300 * MULT,
+        itemDelay: 200 * MULT,
+        itemDuration: 400 * MULT,
       },
     }),
   ]),
