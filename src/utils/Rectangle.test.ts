@@ -80,4 +80,60 @@ describe("Rectangle", () => {
     expect(sut.contains(new Vector(2, 0))).toBe(false);
     expect(sut.contains(new Vector(0, 3))).toBe(false);
   });
+
+  test("getAspectRatio()", () => {
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(4, 4)).getAspectRatio(),
+    ).toBe(1);
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(2, 4)).getAspectRatio(),
+    ).toBe(2);
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(4, 2)).getAspectRatio(),
+    ).toBe(2);
+    expect(
+      new Rectangle(new Vector(4, 8), new Vector(34, 123)).getAspectRatio(),
+    ).toMatchInlineSnapshot(`3.7419354838709675`);
+  });
+
+  test("getArea()", () => {
+    expect(new Rectangle(new Vector(1, 1), new Vector(4, 4)).getArea()).toBe(
+      16,
+    );
+    expect(new Rectangle(new Vector(1, 1), new Vector(2, 4)).getArea()).toBe(8);
+    expect(new Rectangle(new Vector(1, 1), new Vector(4, 2)).getArea()).toBe(8);
+    expect(new Rectangle(new Vector(4, 8), new Vector(34, 123)).getArea()).toBe(
+      3596,
+    );
+  });
+
+  test("getBiggestSize()", () => {
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(4, 4)).getBiggestSize(),
+    ).toBe(4);
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(2, 4)).getBiggestSize(),
+    ).toBe(4);
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(4, 2)).getBiggestSize(),
+    ).toBe(4);
+    expect(
+      new Rectangle(new Vector(4, 8), new Vector(34, 123)).getBiggestSize(),
+    ).toBe(116);
+  });
+
+  test("getSmallestSize()", () => {
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(4, 4)).getSmallestSize(),
+    ).toBe(4);
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(2, 4)).getSmallestSize(),
+    ).toBe(2);
+    expect(
+      new Rectangle(new Vector(1, 1), new Vector(4, 2)).getSmallestSize(),
+    ).toBe(2);
+    expect(
+      new Rectangle(new Vector(4, 8), new Vector(34, 123)).getSmallestSize(),
+    ).toBe(31);
+  });
 });

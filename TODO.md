@@ -11,7 +11,6 @@
 - [medium] write meaningful README.md
 
 - [easy] mobile version [?], at least info message inviting to desktop version
-- [easy] test `Rectangle`
 - [easy] test `Worm` and `WormNavigator`
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] experiment with lights in `cubes`
@@ -39,6 +38,7 @@
 
 # ✅ DONE
 
+- [easy] test `Rectangle`
 - [medium] show modal overlay if at the moment of modal expansion mouse happened to be over the canvas area
 - [easy] add "Share" button to footer
 - [easy] put "Randomize" button into sticky footer
