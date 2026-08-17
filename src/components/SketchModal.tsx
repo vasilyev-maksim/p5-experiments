@@ -5,7 +5,7 @@ import { useViewport } from "@/hooks/useViewport";
 import { useModalBehavior } from "@/hooks/useModalBehavior";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import classNames from "classnames";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
 import { useSequence } from "../sequencer";
 import {
@@ -31,17 +31,6 @@ export const SketchModal = ({
   onBackClick: () => void;
 }) => {
   const {
-    tileWidth,
-    tileHeight,
-    tilePadding,
-    modalMargin,
-    modalPadding,
-    modalSidebarWidth,
-    borderWidth,
-  } = useViewport();
-  const [size, setSize] = useState<SketchCanvasSize>("tile");
-  const sketchCanvasRef = useRef<HTMLDivElement>(null);
-  const {
     getActivePreset,
     activeSketch,
     params,
@@ -53,21 +42,7 @@ export const SketchModal = ({
     playPause,
   } = useActiveSketch();
   const activePreset = getActivePreset();
-
-  const openInFullscreen = useCallback(() => {
-    if (sketchCanvasRef.current) {
-      function exitHandler() {
-        if (!document.fullscreenElement) {
-          setSize("modal");
-          document.removeEventListener("fullscreenchange", exitHandler);
-        }
-      }
-
-      setSize("fullscreen");
-      sketchCanvasRef.current.requestFullscreen?.();
-      document.addEventListener("fullscreenchange", exitHandler, false);
-    }
-  }, []);
+  const [size, setSize] = useState<SketchCanvasSize>("tile");
 
   const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
@@ -148,10 +123,25 @@ export const SketchModal = ({
 
   useListener(onAnimationProgress);
   useModalBehavior(true, onBackClick);
-  useKeyboardShortcuts(playPause, openInFullscreen);
   usePopStateSync(() => {
     applyPreset(getActivePreset(), { updateUrl: false });
   });
+
+  const openInFullscreen = useCallback(() => {
+    setSize("fullscreen");
+  }, []);
+
+  useKeyboardShortcuts(playPause, openInFullscreen);
+
+  const {
+    tileWidth,
+    tileHeight,
+    tilePadding,
+    modalMargin,
+    modalPadding,
+    modalSidebarWidth,
+    borderWidth,
+  } = useViewport();
 
   return (
     <animated.div
@@ -208,13 +198,13 @@ export const SketchModal = ({
                 initParams={params}
                 paused={paused}
                 mode="static"
-                ref={sketchCanvasRef}
                 startTime={
                   activePreset.startTime ?? activeSketch.startTime ?? 0
                 }
                 timeDelta={timeDelta}
                 eventBus={eventBus}
                 randomSeed={activePreset.randomSeed ?? activeSketch.randomSeed}
+                onFullScreenExit={() => setSize("modal")}
               />
             </div>
 

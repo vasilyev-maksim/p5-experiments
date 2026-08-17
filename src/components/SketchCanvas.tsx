@@ -1,4 +1,4 @@
-import { useMemo, forwardRef, useEffect, useRef } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import type {
   ISketch,
   IParams,
@@ -15,21 +15,20 @@ import { useSequence } from "../sequencer";
 import type { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 
-export const SketchCanvas = forwardRef<
-  HTMLDivElement,
-  {
-    sketch: ISketch;
-    size: SketchCanvasSize;
-    paused: boolean;
-    mode: SketchMode;
-    initParams: IParams;
-    timeDelta?: ISketchInitData["timeDelta"];
-    startTime?: ISketchInitData["startTime"];
-    randomSeed?: ISketchInitData["randomSeed"];
-    eventBus?: EventBus<SketchEvent>;
-    id: string;
-  }
->((props, ref) => {
+export const SketchCanvas = (props: {
+  sketch: ISketch;
+  size: SketchCanvasSize;
+  paused: boolean;
+  mode: SketchMode;
+  initParams: IParams;
+  timeDelta?: ISketchInitData["timeDelta"];
+  startTime?: ISketchInitData["startTime"];
+  randomSeed?: ISketchInitData["randomSeed"];
+  eventBus?: EventBus<SketchEvent>;
+  id: string;
+  onFullScreenExit?: () => void;
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
   const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
   const previewSizeInPercents = props.sketch.preview.sizeInPercents / 100;
   const previewSize = canvasModalWidth * previewSizeInPercents;
@@ -58,14 +57,6 @@ export const SketchCanvas = forwardRef<
     });
   }, []);
 
-  useEffect(() => {
-    props.eventBus?.emit({
-      type: "canvasSizeChange",
-      canvasHeight,
-      canvasWidth,
-    });
-  }, [canvasWidth, canvasHeight]);
-
   const { duration } =
     useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
       "TILE_GOES_MODAL",
@@ -74,6 +65,14 @@ export const SketchCanvas = forwardRef<
     from: { x: 0 },
     config: { duration, easing: easings.easeInOutCubic },
   }));
+
+  useEffect(() => {
+    props.eventBus?.emit({
+      type: "canvasSizeChange",
+      canvasHeight,
+      canvasWidth,
+    });
+  }, [canvasWidth, canvasHeight]);
 
   useEffect(() => {
     const prev = prevSize.current;
@@ -88,8 +87,18 @@ export const SketchCanvas = forwardRef<
       }
     } else if (curr === "tile") {
       api.set({ x: 0 });
+    } else if (curr === "fullscreen" && ref.current) {
+      function exitHandler() {
+        if (!document.fullscreenElement) {
+          props.onFullScreenExit?.();
+          document.removeEventListener("fullscreenchange", exitHandler);
+        }
+      }
+
+      ref.current.requestFullscreen?.();
+      document.addEventListener("fullscreenchange", exitHandler, false);
     }
-  }, [props.size, api]);
+  }, [props.size]);
 
   const scale = x.to([0, 1], [canvasTileSize / previewSize, 1]);
   const translateX = x.to(
@@ -128,4 +137,4 @@ export const SketchCanvas = forwardRef<
       </animated.div>
     </animated.div>
   );
-});
+};

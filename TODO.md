@@ -11,8 +11,6 @@
 - [medium] write meaningful README.md
 
 - [easy] mobile version [?], at least info message inviting to desktop version
-- [easy] test `Worm` and `WormNavigator`
-- [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] experiment with lights in `cubes`
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes
@@ -21,6 +19,7 @@
 
 # 💡 NICE TO HAVE
 
+- [easy] test `Worm` and `WormNavigator`
 - [hard] explicit keyboard usage hints in UI
   - use order number (0-9) of associated control shortcut
   - use "qwerty..." for 11-20
@@ -38,6 +37,7 @@
 
 # ✅ DONE
 
+- [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] test `Rectangle`
 - [medium] show modal overlay if at the moment of modal expansion mouse happened to be over the canvas area
 - [easy] add "Share" button to footer
