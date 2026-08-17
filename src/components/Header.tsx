@@ -24,6 +24,7 @@ export function Header() {
         <a
           href="https://www.linkedin.com/in/maksim-vasilyev-09099a77/"
           target="_blank"
+          className={styles.Link}
         >
           Maksim Vasilyev
         </a>

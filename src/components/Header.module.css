@@ -32,3 +32,8 @@
     translate: 0 0px;
   }
 }
+
+.Link {
+  text-underline-offset: 2px;
+  text-decoration-thickness: 0.5px;
+}

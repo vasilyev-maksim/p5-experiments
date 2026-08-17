@@ -13,7 +13,6 @@
 - [easy] mobile version [?], at least info message inviting to desktop version
 - [easy] test `Rectangle`
 - [easy] test `Worm` and `WormNavigator`
-- [easy] add animated underline for my name link [?]
 - [easy] move fullscreen logic from `SketchModal` to `SketchCanvas`
 - [easy] experiment with lights in `cubes`
 - [easy] refactor `useViewport`
@@ -134,6 +133,7 @@
 
 # ❌ CANCELED
 
+- [easy] add animated underline for my name link [?]
 - [medium] make play controls animation more user friendly
   - hide it by timer after mouse leave
   - keep it visible if pause is on pause
