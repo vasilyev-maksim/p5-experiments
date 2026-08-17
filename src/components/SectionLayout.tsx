@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { useViewport } from "@/hooks/useViewport";
+import { useSizes } from "@/hooks/useSizes";
 import styles from "./SectionLayout.module.css";
 import classNames from "classnames";
 import { animated, easings, useSpring } from "@react-spring/web";
@@ -14,7 +14,7 @@ export function SectionLayout(
     animationDuration: number;
   }>,
 ) {
-  const { modalSidebarPadding } = useViewport();
+  const { modalSidebarPadding } = useSizes();
   const { x } = useSpring({
     from: { x: 0 },
     to: { x: props.showHeader ? 1 : 0 },

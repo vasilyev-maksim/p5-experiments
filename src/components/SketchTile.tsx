@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import type { ISketch } from "../models";
 import styles from "./SketchTile.module.css";
 import classNames from "classnames";
-import { useViewport } from "@/hooks/useViewport";
+import { useSizes } from "@/hooks/useSizes";
 import { SketchCanvas } from "./SketchCanvas";
 import { getDefaultPreset } from "@utils/sketch";
 
@@ -38,7 +38,7 @@ export const SketchTile = forwardRef<
       borderWidth,
       canvasModalHeight,
       canvasModalWidth,
-    } = useViewport();
+    } = useSizes();
     const defaultPreset = getDefaultPreset(sketch);
 
     return (

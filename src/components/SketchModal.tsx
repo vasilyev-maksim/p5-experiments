@@ -1,7 +1,7 @@
 import type { SketchCanvasSize } from "../models";
 import styles from "./SketchModal.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
-import { useViewport } from "@/hooks/useViewport";
+import { useSizes } from "@/hooks/useSizes";
 import { useModalBehavior } from "@/hooks/useModalBehavior";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import classNames from "classnames";
@@ -141,7 +141,7 @@ export const SketchModal = ({
     modalPadding,
     modalSidebarWidth,
     borderWidth,
-  } = useViewport();
+  } = useSizes();
 
   return (
     <animated.div

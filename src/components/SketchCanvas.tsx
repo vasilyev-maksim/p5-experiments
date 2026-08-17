@@ -8,7 +8,7 @@ import type {
 } from "../models";
 import styles from "./SketchCanvas.module.css";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { useViewport } from "@/hooks/useViewport";
+import { useSizes } from "@/hooks/useSizes";
 import { animated, easings, to, useSpring } from "@react-spring/web";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
@@ -29,7 +29,7 @@ export const SketchCanvas = (props: {
   onFullScreenExit?: () => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useViewport();
+  const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useSizes();
   const previewSizeInPercents = props.sketch.preview.sizeInPercents / 100;
   const previewSize = canvasModalWidth * previewSizeInPercents;
 

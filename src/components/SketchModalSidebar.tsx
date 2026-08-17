@@ -1,6 +1,6 @@
 import styles from "./SketchModalSidebar.module.css";
 import { animated, SpringValue } from "@react-spring/web";
-import { useViewport } from "@/hooks/useViewport";
+import { useSizes } from "@/hooks/useSizes";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
 import { useSequence } from "../sequencer";
@@ -24,7 +24,7 @@ export const SketchModalSidebar = (props: {
   modalX: SpringValue<number>;
   headerX: SpringValue<number>;
 }) => {
-  const { modalPadding, modalSidebarPadding } = useViewport();
+  const { modalPadding, modalSidebarPadding } = useSizes();
   const { useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE,
   );
