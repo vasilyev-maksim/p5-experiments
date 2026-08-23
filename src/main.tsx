@@ -9,15 +9,18 @@ import { ViewportProvider } from "./contexts/ViewportProvider.tsx";
 import { ENV } from "./env.ts";
 import { Test } from "./components/Test.tsx";
 import { NotificationsProvider } from "./contexts/NotificationsProvider.tsx";
+import { AnalyticsProvider } from "./contexts/AnalyticsProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
-  <ViewportProvider>
-    <NotificationsProvider>
-      <SequenceProvider sequences={sequences}>
-        {ENV.sandboxMode ? <Test /> : <App />}
-      </SequenceProvider>
-    </NotificationsProvider>
-  </ViewportProvider>,
+  <AnalyticsProvider>
+    <ViewportProvider>
+      <NotificationsProvider>
+        <SequenceProvider sequences={sequences}>
+          {ENV.sandboxMode ? <Test /> : <App />}
+        </SequenceProvider>
+      </NotificationsProvider>
+    </ViewportProvider>
+  </AnalyticsProvider>,
   // </StrictMode>
 );

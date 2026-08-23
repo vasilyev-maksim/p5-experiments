@@ -28,6 +28,7 @@ import {
 } from "@utils/url";
 import { useRerender } from "@/hooks/useRerender";
 import { ActiveSketchProvider } from "@/contexts/ActiveSketchProvider";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 function App() {
   const rerender = useRerender();
@@ -39,6 +40,7 @@ function App() {
     MODAL_OPEN_SEQUENCE,
   );
   useSequence(HOME_PAGE_SEQUENCE).useStart();
+  const { sendEvent } = useAnalytics();
 
   const seg = useSegment("GRID_GOES_IN_BG");
 
@@ -53,6 +55,7 @@ function App() {
   useEffect(() => {
     if (activeSketch) {
       start(ctx);
+      sendEvent("sketch opened", { activeSketchId: activeSketch.id });
     }
     return reset;
   }, [activeSketch, ctx]);
