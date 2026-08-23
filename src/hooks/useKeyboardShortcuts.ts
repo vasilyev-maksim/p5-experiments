@@ -6,8 +6,8 @@ export function useKeyboardShortcuts(
 ) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "p" || e.key === "P") onPlayPause();
-      if (e.key === "f" || e.key === "F") onFullscreenToggle();
+      if (e.code === "KeyP") onPlayPause();
+      if (e.code === "KeyF") onFullscreenToggle();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
