@@ -19,6 +19,7 @@ import { DiceIcon, ShareIcon } from "./Icons";
 import { ENV } from "@/env";
 import { ScrollShadow } from "./ScrollShadow";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export const SketchModalSidebar = (props: {
   modalX: SpringValue<number>;
@@ -32,12 +33,19 @@ export const SketchModalSidebar = (props: {
   const { activeSketch, params, timeDelta, randomizeParams } =
     useActiveSketch();
   const { pushNotification } = useNotifications();
+  const { sendAnalyticsEvent } = useAnalytics();
 
   const paddingRight = modalSidebarPadding - 6;
 
-  const handleShareClick = () => {
-    copyCurrentUrlToClipboard();
+  const handleShareClick = async () => {
+    const shareUrl = await copyCurrentUrlToClipboard();
     pushNotification("Link copied to clipboard", "share-url-copied");
+    sendAnalyticsEvent("share button clicked", { params, shareUrl });
+  };
+
+  const handleRandomizeClick = () => {
+    const newRandomParams = randomizeParams();
+    sendAnalyticsEvent("randomize button clicked", { newRandomParams });
   };
 
   return (
@@ -82,7 +90,7 @@ export const SketchModalSidebar = (props: {
         >
           <Button
             icon={<DiceIcon />}
-            onClick={randomizeParams}
+            onClick={handleRandomizeClick}
             label="Randomize"
           />
           <Button

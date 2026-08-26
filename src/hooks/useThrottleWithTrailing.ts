@@ -1,7 +1,6 @@
 import { useRef, useEffect, useMemo } from "react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
 export function useThrottleWithTrailing<T extends (...args: any[]) => any>(
   callback: T,
   delay: number,

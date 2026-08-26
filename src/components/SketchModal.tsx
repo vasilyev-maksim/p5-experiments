@@ -20,6 +20,7 @@ import { usePopStateSync } from "@hooks/url";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
 import { SketchModalSidebar } from "./SketchModalSidebar";
 import { CrossIcon } from "./Icons";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export const SketchModal = ({
   left = 0,
@@ -44,8 +45,8 @@ export const SketchModal = ({
   const activePreset = getActivePreset();
   const [size, setSize] = useState<SketchCanvasSize>("tile");
 
-  const [{ modalX, headerX, playbackControlsX }, api] = useSpring(() => ({
-    from: { modalX: 0, headerX: 0, playbackControlsX: 0 },
+  const [{ modalX, headerX, overlayX }, api] = useSpring(() => ({
+    from: { modalX: 0, headerX: 0, overlayX: 0 },
   }));
   const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE,
@@ -60,14 +61,14 @@ export const SketchModal = ({
 
   const showOverlay = () => {
     api.start({
-      playbackControlsX: 1,
+      overlayX: 1,
       config: { duration: 300, easing: easings.easeInOutCubic },
     });
   };
 
   const hideOverlay = () => {
     api.start({
-      playbackControlsX: 0,
+      overlayX: 0,
       config: { duration: 300, easing: easings.easeInOutCubic },
     });
   };
@@ -127,7 +128,9 @@ export const SketchModal = ({
     applyPreset(getActivePreset(), { updateUrl: false });
   });
 
+  const { sendAnalyticsEvent } = useAnalytics();
   const openInFullscreen = useCallback(() => {
+    sendAnalyticsEvent("fullscreen");
     setSize("fullscreen");
   }, []);
 
@@ -222,10 +225,8 @@ export const SketchModal = ({
 
             <animated.div
               style={{
-                translateY: playbackControlsX
-                  .to([0, 1], [100, 0])
-                  .to((x) => x + `%`),
-                opacity: playbackControlsX,
+                translateY: overlayX.to([0, 1], [100, 0]).to((x) => x + `%`),
+                opacity: overlayX,
               }}
               className={styles.PlaybackControlsBlock}
             >
@@ -234,10 +235,8 @@ export const SketchModal = ({
 
             <animated.div
               style={{
-                translateX: playbackControlsX
-                  .to([0, 1], [100, 0])
-                  .to((x) => x + `%`),
-                opacity: playbackControlsX,
+                translateX: overlayX.to([0, 1], [100, 0]).to((x) => x + `%`),
+                opacity: overlayX,
               }}
               className={styles.CloseButtonBlock}
               onClick={onBackClick}

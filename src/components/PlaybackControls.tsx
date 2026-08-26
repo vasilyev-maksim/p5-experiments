@@ -6,6 +6,7 @@ import { Slider } from "./Slider";
 import { JumpNFramesButton } from "./JumpNFramesButton";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
 import { FullScreenIcon } from "./Icons";
+import { useAnalytics, useAnalyticsThrottled } from "@/hooks/useAnalytics";
 
 export const PlaybackControls = memo(function PlaybackControls(props: {
   onFullscreenToggle: () => void;
@@ -21,6 +22,9 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
     changeTimeDelta,
   } = useActiveSketch();
 
+  const { sendAnalyticsEvent } = useAnalytics();
+  const { sendThrottledAnalyticsEvent } = useAnalyticsThrottled();
+
   return (
     <div className={styles.PlaybackControls}>
       <div className={styles.Section}>
@@ -30,48 +34,95 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
         >
           <FullScreenIcon />
         </button>
-        <button className={styles.TextButton} onClick={exportToFile}>
+        <button
+          className={styles.TextButton}
+          onClick={() => {
+            exportToFile();
+            sendAnalyticsEvent("export");
+          }}
+        >
           Download
         </button>
       </div>
+
       <div className={styles.Section}>
         <JumpNFramesButton
           className={styles.IconButton}
           n={-10}
-          onClick={jumpNFrames(-10)}
-          onLongPress={playWithCustomDelta(-2)}
+          onClick={() => {
+            jumpNFrames(-10);
+            sendAnalyticsEvent("<< press");
+          }}
+          onLongPress={() => {
+            playWithCustomDelta(-2);
+            sendAnalyticsEvent("<< long press");
+          }}
           onLongPressRelease={stopPlayingWithCustomDelta}
         />
+
         <JumpNFramesButton
           className={styles.IconButton}
           n={-1}
-          onClick={jumpNFrames(-1)}
-          onLongPress={playWithCustomDelta(-0.5)}
+          onClick={() => {
+            jumpNFrames(-1);
+            sendAnalyticsEvent("< press");
+          }}
+          onLongPress={() => {
+            playWithCustomDelta(-0.5);
+            sendAnalyticsEvent("< long press");
+          }}
           onLongPressRelease={stopPlayingWithCustomDelta}
         />
-        <PlayPauseButton paused={paused} onClick={playPause} />
+
+        <PlayPauseButton
+          paused={paused}
+          onClick={() => {
+            playPause();
+            sendAnalyticsEvent((paused ? "play" : "pause") + " press");
+          }}
+        />
+
         <JumpNFramesButton
           className={styles.IconButton}
           n={1}
-          onClick={jumpNFrames(1)}
-          onLongPress={playWithCustomDelta(0.5)}
+          onClick={() => {
+            jumpNFrames(1);
+            sendAnalyticsEvent("> press");
+          }}
+          onLongPress={() => {
+            playWithCustomDelta(0.5);
+            sendAnalyticsEvent("> long press");
+          }}
           onLongPressRelease={stopPlayingWithCustomDelta}
         />
+
         <JumpNFramesButton
           className={styles.IconButton}
           n={10}
-          onClick={jumpNFrames(10)}
-          onLongPress={playWithCustomDelta(2)}
+          onClick={() => {
+            jumpNFrames(10);
+            sendAnalyticsEvent(">> press");
+          }}
+          onLongPress={() => {
+            playWithCustomDelta(-2);
+            sendAnalyticsEvent(">> long press");
+          }}
           onLongPressRelease={stopPlayingWithCustomDelta}
         />
       </div>
+
       <div className={styles.Section}>
         <Slider
           value={timeDelta}
           min={0}
           max={3}
           step={0.1}
-          onChange={changeTimeDelta}
+          onChange={(delta) => {
+            changeTimeDelta(delta);
+            sendThrottledAnalyticsEvent("playback speed manually changed", {
+              delta,
+            });
+          }}
           label={
             <div className={styles.PlaybackSpeedLabel}>
               Playback speed: x

@@ -7,7 +7,6 @@
 - [hard] make opening by link more smooth + disable list animation in bg
 - [hard] get rid of react-wrapper
 
-- [medium] Add analytics
 - [medium] write meaningful README.md
 
 - [easy] mobile version [?], at least info message inviting to desktop version
@@ -34,6 +33,7 @@
 
 # ✅ DONE
 
+- [medium] Add analytics
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes [cancelled]
   - rename to `useSize` [?]

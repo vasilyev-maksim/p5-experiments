@@ -15,6 +15,7 @@ import { BooleanParamControl } from "./BooleanParamControl";
 import { memo, type PropsWithChildren } from "react";
 import { CoordinatesControl } from "./CoordinatesControl";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
+import { useAnalyticsThrottled } from "@/hooks/useAnalytics";
 
 export const ParamControls = memo(function ParamControls() {
   const { params, activeSketch, changeParam } = useActiveSketch();
@@ -57,6 +58,8 @@ export const ParamControls = memo(function ParamControls() {
     MODAL_OPEN_SEQUENCE,
   ).useSegment("INIT_CONTROLS_AND_PRESETS");
 
+  const { sendThrottledAnalyticsEvent } = useAnalyticsThrottled();
+
   return (
     segment.wasRun && (
       <SectionLayout
@@ -72,6 +75,15 @@ export const ParamControls = memo(function ParamControls() {
             let body = null;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const value = params[key] as any;
+            const handleChange = (
+              newValue: number | boolean | [number, number],
+            ) => {
+              changeParam(key, newValue);
+              sendThrottledAnalyticsEvent("param changed", {
+                key,
+                value: newValue,
+              });
+            };
 
             if (control.type === "range") {
               const valueStr =
@@ -81,7 +93,7 @@ export const ParamControls = memo(function ParamControls() {
                 <Slider
                   label={label + ": " + valueStr}
                   value={value}
-                  onChange={(val) => changeParam(key, val)}
+                  onChange={handleChange}
                   max={control.max}
                   min={control.min}
                   step={control.step}
@@ -95,7 +107,7 @@ export const ParamControls = memo(function ParamControls() {
                   title={control.label + ": " + value}
                   colors={control.colors}
                   value={value}
-                  onChange={(val) => changeParam(key, val)}
+                  onChange={handleChange}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
                   shuffle={control.shuffle}
@@ -109,7 +121,7 @@ export const ParamControls = memo(function ParamControls() {
                   value={value}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
-                  onChange={(val) => changeParam(key, val)}
+                  onChange={handleChange}
                   options={control.options}
                 />
               );
@@ -128,7 +140,7 @@ export const ParamControls = memo(function ParamControls() {
                   )}
                   title={control.label}
                   value={value}
-                  onChange={(val) => changeParam(key, val)}
+                  onChange={handleChange}
                   active={initControls.wasRun}
                   gap={5}
                 />
@@ -140,7 +152,7 @@ export const ParamControls = memo(function ParamControls() {
                   value={value}
                   active={initControls.wasRun}
                   animationDuration={initControls.duration}
-                  onChange={(val) => changeParam(key, val)}
+                  onChange={handleChange}
                 />
               );
             }

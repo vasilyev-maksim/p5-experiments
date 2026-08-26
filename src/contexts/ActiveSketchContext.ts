@@ -1,6 +1,6 @@
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
-import type { IParams, IPreset, ISketch } from "@/models";
+import type { IControls, IParams, IPreset, ISketch } from "@/models";
 import { noop } from "@utils/misc";
 import { createContext } from "react";
 
@@ -20,10 +20,10 @@ type ActiveSketchContextValue = {
     paramValue: number | boolean | [number, number],
   ) => void;
   playPause: () => void;
-  jumpNFrames: (N: number) => () => void;
-  playWithCustomDelta: (timeDelta: number) => () => void;
+  jumpNFrames: (N: number) => void;
+  playWithCustomDelta: (timeDelta: number) => void;
   stopPlayingWithCustomDelta: () => void;
-  randomizeParams: () => void;
+  randomizeParams: () => IParams<IControls>;
   exportToFile: () => void;
   spinUp: () => void;
   applyPreset: (preset: IPreset, opts: { updateUrl: boolean }) => void;
@@ -47,7 +47,8 @@ export const ActiveSketchContext = createContext<ActiveSketchContextValue>({
   jumpNFrames: () => noop,
   playWithCustomDelta: () => noop,
   stopPlayingWithCustomDelta: noop,
-  randomizeParams: noop,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  randomizeParams: noop as any,
   exportToFile: noop,
   spinUp: noop,
   applyPreset: noop,

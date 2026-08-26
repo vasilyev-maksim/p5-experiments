@@ -51,21 +51,15 @@ export function ActiveSketchProvider({
     setPaused(!paused);
   }, [paused]);
 
-  const jumpNFrames = useCallback(
-    (N: number) => () => {
-      setPaused(true);
-      sendEvent({ type: "timeTravel", timeShift: N });
-    },
-    [],
-  );
+  const jumpNFrames = useCallback((N: number) => {
+    setPaused(true);
+    sendEvent({ type: "timeTravel", timeShift: N });
+  }, []);
 
-  const playWithCustomDelta = useCallback(
-    (newTimeDelta: number) => () => {
-      sendEvent({ type: "timeDeltaChange", timeDelta: newTimeDelta });
-      sendEvent({ type: "playPause", paused: false });
-    },
-    [],
-  );
+  const playWithCustomDelta = useCallback((newTimeDelta: number) => {
+    sendEvent({ type: "timeDeltaChange", timeDelta: newTimeDelta });
+    sendEvent({ type: "playPause", paused: false });
+  }, []);
 
   const stopPlayingWithCustomDelta = useCallback(() => {
     sendEvent({ type: "timeDeltaChange", timeDelta });
@@ -77,6 +71,7 @@ export function ActiveSketchProvider({
     sendEvent({ type: "paramsChange", params: randomParams });
     setParams(randomParams);
     setPresetDataToUrl({ type: "serialized", params: randomParams, timeDelta });
+    return randomParams;
   }, [activeSketch.controls, timeDelta]);
 
   const exportToFile = useCallback(() => {

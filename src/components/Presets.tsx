@@ -13,6 +13,7 @@ import { OptionButton } from "./OptionButton";
 import { memo, useEffect, useRef, useState } from "react";
 import { BooleanParamControl } from "./BooleanParamControl";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export const Presets = memo(function Presets() {
   const segment =
@@ -74,8 +75,10 @@ export const Presets = memo(function Presets() {
     presets,
   ]);
 
+  const { sendAnalyticsEvent } = useAnalytics();
   const handleClick = (preset: IPreset) => {
     applyPreset(preset, { updateUrl: true });
+    sendAnalyticsEvent("preset applied", { preset });
 
     if (shufflePresets) {
       setShufflePresets(false);
@@ -109,14 +112,15 @@ export const Presets = memo(function Presets() {
             } else {
               // preset button
               // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-              const p = presets?.[i]!;
+              const preset = presets?.[i]!;
               const isActive =
-                controlsActivated.wasRun && areParamsEqual(params, p.params);
+                controlsActivated.wasRun &&
+                areParamsEqual(params, preset.params);
               body = (
                 <OptionButton
-                  label={p.name ?? i.toString()}
+                  label={preset.name ?? i.toString()}
                   active={isActive}
-                  onClick={() => handleClick(p)}
+                  onClick={() => handleClick(preset)}
                   animationDuration={controlsActivated.duration}
                 />
               );
