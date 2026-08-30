@@ -19,7 +19,7 @@ import {
   type MODAL_OPEN_SEGMENTS,
 } from "../animations";
 import { SketchTilesGrid } from "./SketchTilesGrid";
-import { usePopStateSync } from "@hooks/url";
+import { usePopStateSync } from "@/hooks/usePopStateSync";
 import { sketchList } from "../sketches/list";
 import {
   getActiveSketchFromUrl,

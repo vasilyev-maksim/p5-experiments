@@ -16,7 +16,7 @@ import {
 import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
-import { usePopStateSync } from "@hooks/url";
+import { usePopStateSync } from "@/hooks/usePopStateSync";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
 import { SketchModalSidebar } from "./SketchModalSidebar";
 import { CrossIcon } from "./Icons";

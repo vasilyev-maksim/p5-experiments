@@ -1,16 +1,17 @@
 # 👨‍💻 IN PROGRESS
 
+- [hard] get rid of react-wrapper
+
 # 📋 TODO
 
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
 - [hard] make opening by link more smooth + disable list animation in bg
-- [hard] get rid of react-wrapper
 
 - [medium] write meaningful README.md
 
 - [easy] mobile version [?], at least info message inviting to desktop version
-- [easy] catch particular sketch errors (to show other more successful ones) + wrap all bus events with try/catch and rollback on error [?]
+- [easy] catch sketch errors (to show other more successful ones) + wrap all bus events with try/catch and rollback on error [?]
 
 # 💡 NICE TO HAVE
 
