@@ -5,7 +5,7 @@ import { Vector } from "@/utils/Vector";
 import { Tiler } from "./Turtle";
 import { AnimationType, controls, FillType, type Controls } from "./controls";
 import { drawCoordinatesGrid } from "../_utils/drawCoordinatesGrid";
-import type { Color } from "p5";
+import p5 from "p5";
 
 const DRAW_COORDS_GRID = false;
 const BG = "black";
@@ -201,7 +201,7 @@ export const factory = createSketch<Controls>(
               ? originalIndex
               : distanceIndex;
             const baseColorValue = colorIndex / (length - 1);
-            let color: Color;
+            let color: p5.Color;
 
             if (isAlternativeColoring) {
               const colors = animatedColors.getValue();

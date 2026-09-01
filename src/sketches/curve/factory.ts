@@ -97,7 +97,7 @@ export const factory = createSketch<Controls>(
                 break;
               }
             }
-            p.curveVertex(x, y);
+            p.splineVertex(x, y);
           });
           p.endShape();
         }

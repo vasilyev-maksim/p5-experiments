@@ -16,7 +16,6 @@ export const SketchTile = forwardRef<
     interactive?: boolean;
     className?: string;
     invisible?: boolean;
-    rerenderCanvasOnScreenSizeChange?: boolean;
   }
 >(
   (
@@ -28,17 +27,10 @@ export const SketchTile = forwardRef<
       className,
       invisible = false,
       animationDuration = 0,
-      rerenderCanvasOnScreenSizeChange = false,
     },
     ref,
   ) => {
-    const {
-      tileWidth,
-      tileHeight,
-      borderWidth,
-      canvasModalHeight,
-      canvasModalWidth,
-    } = useSizes();
+    const { tileWidth, tileHeight, borderWidth } = useSizes();
     const defaultPreset = getDefaultPreset(sketch);
 
     return (
@@ -66,11 +58,6 @@ export const SketchTile = forwardRef<
         }
       >
         <SketchCanvas
-          key={
-            rerenderCanvasOnScreenSizeChange
-              ? canvasModalHeight + " " + canvasModalWidth
-              : ""
-          }
           id="tile"
           sketch={sketch}
           mode="static"

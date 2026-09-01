@@ -133,7 +133,7 @@ export const SketchModal = ({
     sendAnalyticsEvent("fullscreen");
     setSize("fullscreen");
   }, []);
-
+  const handleFullScreenExit = () => setSize("modal");
   useKeyboardShortcuts(playPause, openInFullscreen);
 
   const {
@@ -144,6 +144,8 @@ export const SketchModal = ({
     modalPadding,
     modalSidebarWidth,
     borderWidth,
+    viewportHeight,
+    viewportWidth,
   } = useSizes();
 
   return (
@@ -159,11 +161,11 @@ export const SketchModal = ({
           {
             width: modalX.to(
               [0, 1],
-              [tileWidth, window.innerWidth - modalMargin * 2],
+              [tileWidth, viewportWidth - modalMargin * 2],
             ),
             height: modalX.to(
               [0, 1],
-              [tileHeight, window.innerHeight - modalMargin * 2],
+              [tileHeight, viewportHeight - modalMargin * 2],
             ),
             left: modalX.to([0, 1], [left, modalMargin]),
             top: modalX.to([0, 1], [top, modalMargin]),
@@ -207,7 +209,7 @@ export const SketchModal = ({
                 timeDelta={timeDelta}
                 eventBus={eventBus}
                 randomSeed={activePreset.randomSeed ?? activeSketch.randomSeed}
-                onFullScreenExit={() => setSize("modal")}
+                onFullScreenExit={handleFullScreenExit}
               />
             </div>
 

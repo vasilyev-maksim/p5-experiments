@@ -4,17 +4,17 @@ import { pillarsSketch } from "./pillars";
 import { curveSketch } from "./curve";
 import { arcsSketch } from "./arcs";
 import { circlesSketch } from "./circles";
-import { sketch as citySketch } from "./city";
 import { sketch as cubesSketch } from "./cubes";
-import { zigzagsSketch } from "./zigzags";
-import { sketch as lightsSketch } from "./_sandboxes/lights";
-import { interpolationSketch } from "./_sandboxes/interpolation";
 import { sketch as tilesSketch } from "./tiles";
 import { sketch as wormsSketch } from "./worms";
-import { sketch as funcsSketch } from "./_sandboxes/funcs";
 import { ENV } from "@/env";
-import { sketch as bodiesSketch } from "./_sandboxes/bodies";
 import { wormSketch } from "./_sandboxes/worm";
+// import { sketch as citySketch } from "./city";
+// import { zigzagsSketch } from "./zigzags";
+// import { sketch as lightsSketch } from "./_sandboxes/lights";
+// import { interpolationSketch } from "./_sandboxes/interpolation";
+// import { sketch as funcsSketch } from "./_sandboxes/funcs";
+// import { sketch as bodiesSketch } from "./_sandboxes/bodies";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const all: ISketch<any>[] = [
@@ -26,13 +26,13 @@ const all: ISketch<any>[] = [
   circlesSketch,
   cubesSketch,
   curveSketch,
-  zigzagsSketch,
-  lightsSketch,
-  interpolationSketch,
-  citySketch,
-  funcsSketch,
-  bodiesSketch,
   wormSketch,
+  // zigzagsSketch,
+  // lightsSketch,
+  // interpolationSketch,
+  // citySketch,
+  // funcsSketch,
+  // bodiesSketch,
 ];
 
 let sketchList = all

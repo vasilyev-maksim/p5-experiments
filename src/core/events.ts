@@ -5,6 +5,7 @@ import type {
   ParamName,
   SketchMode,
 } from "@/models";
+import type { Event } from "@/utils/Event";
 
 type EventBase = {
   id?: number;
@@ -48,11 +49,11 @@ export type TimeTravelEvent = {
   timeShift: number;
 };
 
-export type CanvasSizeChangeEvent = {
-  type: "canvasSizeChange";
+export type CanvasSizeChangeEvent = Event<{
+  type: "canvasSizeChange"; // just for consistency with other events
   canvasWidth: number;
   canvasHeight: number;
-};
+}>;
 
 export type PlayPauseEvent = {
   type: "playPause";
@@ -68,6 +69,5 @@ export type SketchEvent<Controls extends IControls = IControls> = EventBase &
     | ModeChangeEvent
     | TimeDeltaChangeEvent
     | TimeTravelEvent
-    | CanvasSizeChangeEvent
     | PlayPauseEvent
   );

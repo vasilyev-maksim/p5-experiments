@@ -69,11 +69,11 @@ export const factory = createSketch<Controls>(({ p }) => {
       p.push();
       p.strokeWeight(R);
       p.beginShape();
-      p.curveVertex(arr[0].x, arr[0].y);
+      p.splineVertex(arr[0].x, arr[0].y);
       arr.forEach((x) => {
-        p.curveVertex(x.x, x.y);
+        p.splineVertex(x.x, x.y);
       });
-      p.curveVertex(arr[arr.length - 1].x, arr[arr.length - 1].y);
+      p.splineVertex(arr[arr.length - 1].x, arr[arr.length - 1].y);
       p.endShape();
       p.pop();
     },

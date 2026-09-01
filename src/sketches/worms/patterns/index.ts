@@ -1,13 +1,13 @@
-import type { P5CanvasInstance } from "@p5-wrapper/react";
 import { randomDirectionalPattern } from "./randomDir";
 import { snailPattern } from "./snail";
 import { mirrorPattern } from "./mirror";
 import type { RandomProvider } from "@/core/models";
 import { directionalPattern } from "./dir";
 import { ringPattern } from "./ring";
+import p5 from "p5";
 
 export type PatternArgs = {
-  p: P5CanvasInstance;
+  p: p5;
   resX: number;
   resY: number;
   len: number;

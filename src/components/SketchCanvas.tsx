@@ -7,13 +7,15 @@ import type {
   SketchMode,
 } from "../models";
 import styles from "./SketchCanvas.module.css";
-import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useSizes } from "@/hooks/useSizes";
 import { animated, easings, to, useSpring } from "@react-spring/web";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
 import type { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
+import p5 from "p5";
+import { Event } from "@/utils/Event";
+import type { CanvasSizeChangeEvent } from "@/core/events";
 
 export const SketchCanvas = (props: {
   sketch: ISketch;
@@ -28,19 +30,27 @@ export const SketchCanvas = (props: {
   id: string;
   onFullScreenExit?: () => void;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { canvasModalWidth, canvasModalHeight, canvasTileSize } = useSizes();
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const p5InstanceRef = useRef<p5>(null);
+  const prevSizeRef = useRef<SketchCanvasSize>(null);
+  const canvasSizeChangeEventRef = useRef<CanvasSizeChangeEvent>(new Event());
+
+  const {
+    canvasModalWidth,
+    canvasModalHeight,
+    canvasTileSize,
+    viewportWidth,
+    viewportHeight,
+  } = useSizes();
   const previewSizeInPercents = props.sketch.preview.sizeInPercents / 100;
   const previewSize = canvasModalWidth * previewSizeInPercents;
 
-  const prevSize = useRef<SketchCanvasSize>(null);
   const canvasWidth =
-    props.size === "fullscreen" ? window.innerWidth : canvasModalWidth;
+    props.size === "fullscreen" ? viewportWidth : canvasModalWidth;
   const canvasHeight =
-    props.size === "fullscreen" ? window.innerHeight : canvasModalHeight;
+    props.size === "fullscreen" ? viewportHeight : canvasModalHeight;
 
   const p5Sketch = useMemo(() => {
-    // this time `sketchProps` are initial props
     return props.sketch.factory({
       initData: {
         params: props.initParams,
@@ -48,12 +58,13 @@ export const SketchCanvas = (props: {
         mode: props.mode,
         startTime: props.startTime ?? 0,
         timeDelta: props.timeDelta ?? 0,
-        canvasWidth: canvasWidth,
-        canvasHeight: canvasHeight,
+        canvasWidth,
+        canvasHeight,
         randomSeed: props.randomSeed,
       },
       id: `${props.sketch.id}_${props.id}`,
       eventBus: props.eventBus,
+      canvasSizeChangeEvent: canvasSizeChangeEventRef.current,
     });
   }, []);
 
@@ -67,17 +78,24 @@ export const SketchCanvas = (props: {
   }));
 
   useEffect(() => {
-    props.eventBus?.emit({
+    if (canvasContainerRef.current && !p5InstanceRef.current) {
+      p5InstanceRef.current = new p5(p5Sketch, canvasContainerRef.current);
+    }
+    return () => p5InstanceRef.current?.remove();
+  }, []);
+
+  useEffect(() => {
+    canvasSizeChangeEventRef.current.dispatch({
       type: "canvasSizeChange",
-      canvasHeight,
       canvasWidth,
+      canvasHeight,
     });
   }, [canvasWidth, canvasHeight]);
 
   useEffect(() => {
-    const prev = prevSize.current;
+    const prev = prevSizeRef.current;
     const curr = props.size;
-    prevSize.current = curr;
+    prevSizeRef.current = curr;
 
     if (curr === "modal") {
       if (prev === "fullscreen") {
@@ -87,7 +105,7 @@ export const SketchCanvas = (props: {
       }
     } else if (curr === "tile") {
       api.set({ x: 0 });
-    } else if (curr === "fullscreen" && ref.current) {
+    } else if (curr === "fullscreen" && canvasContainerRef.current) {
       function exitHandler() {
         if (!document.fullscreenElement) {
           props.onFullScreenExit?.();
@@ -95,7 +113,7 @@ export const SketchCanvas = (props: {
         }
       }
 
-      ref.current.requestFullscreen?.();
+      canvasContainerRef.current.requestFullscreen?.();
       document.addEventListener("fullscreenchange", exitHandler, false);
     }
   }, [props.size]);
@@ -115,7 +133,6 @@ export const SketchCanvas = (props: {
   return (
     <animated.div
       className={styles.Wrapper}
-      ref={ref}
       style={{
         width,
         height,
@@ -133,7 +150,7 @@ export const SketchCanvas = (props: {
           height: canvasModalHeight,
         }}
       >
-        <ReactP5Wrapper sketch={p5Sketch} />
+        <div ref={canvasContainerRef} />
       </animated.div>
     </animated.div>
   );

@@ -3,7 +3,7 @@ import { oscillateBetween, flatSin } from "@/core/utils";
 import type { ISketchFactory } from "@/models";
 import { controls, type Controls } from "./controls";
 import { Worm } from "./Worm";
-import p5, { type STROKE_JOIN } from "p5";
+import p5 from "p5";
 import { getLocalProgress } from "../_utils/getLocalProgress";
 import { patterns, type PatternArgs } from "./patterns";
 import { Vector } from "@utils/Vector";
@@ -103,7 +103,8 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         p.translate(1, 1);
 
         p.strokeJoin(
-          ["miter", "round", "bevel"][getParam("CORNERS_TYPE")] as STROKE_JOIN,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ["miter", "round", "bevel"][getParam("CORNERS_TYPE")] as any,
         );
 
         const animationType = getParam("ANIMATION_TYPE");

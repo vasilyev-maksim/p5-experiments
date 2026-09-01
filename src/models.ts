@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type { EventBus } from "./core/EventBus";
-import type { SketchEvent } from "./core/events";
+import type { CanvasSizeChangeEvent, SketchEvent } from "./core/events";
+import type p5 from "p5";
 
 /** -1 = not visible on UI;
  * 0 = visible on UI, initially turned OFF;
@@ -86,8 +86,9 @@ export interface ISketchInitData<Controls extends IControls = IControls> {
 export type ISketchFactory<Controls extends IControls> = (args: {
   initData: ISketchInitData<Controls>;
   id?: string;
+  canvasSizeChangeEvent: CanvasSizeChangeEvent;
   eventBus?: EventBus<SketchEvent<Controls>>;
-}) => (p: P5CanvasInstance) => void;
+}) => (p: p5) => void;
 
 export type IPreset<Controls extends IControls = any> = {
   name: string;

@@ -37,7 +37,6 @@ export const SketchTilesGrid = memo(
             animationDelay={itemDelay * i}
             animationDuration={itemDuration}
             interactive
-            rerenderCanvasOnScreenSizeChange={!props.activeSketch}
           />
         ))}
       </div>

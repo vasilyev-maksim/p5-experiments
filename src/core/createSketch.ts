@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { P5CanvasInstance } from "@p5-wrapper/react";
 import type {
   ISketchFactory,
   IPreset,
@@ -45,7 +44,7 @@ export type CreateSketchArgs<Controls extends IControls> = {
 };
 
 type Api<C extends IControls> = {
-  p: P5CanvasInstance;
+  p: p5;
   getParam: <K extends ParamName<C>>(propName: K) => IParams<C>[K];
   getTrackedParam: <K extends ParamName<C>>(
     propName: K,
@@ -76,7 +75,7 @@ export function createSketch<C extends IControls>(
   argsFactory: (api: Api<C>, id?: string) => CreateSketchArgs<C>,
   { in3D }: { in3D: boolean } = { in3D: false },
 ): ISketchFactory<C> {
-  return ({ initData, id, eventBus }) =>
+  return ({ initData, id, eventBus, canvasSizeChangeEvent }) =>
     (p) => {
       let time = 0,
         paused = initData.paused,
@@ -198,7 +197,20 @@ export function createSketch<C extends IControls>(
             }
           : args.draw;
 
-        // events handling
+        // canvas resize event handling
+        canvasSizeChangeEvent.addListener(
+          ({ canvasHeight: h, canvasWidth: w }) => {
+            setParams(() => {
+              canvasHeight.setValue(h);
+              canvasWidth.setValue(w);
+            });
+
+            p.resizeCanvas(w, h, args.canvasSizeHandlerOverride !== undefined);
+            args.canvasSizeHandlerOverride?.([w, h]);
+          },
+        );
+
+        // other events handling (for active sketch)
         if (eventBus) {
           initEventBus(eventBus, args);
         }
@@ -260,16 +272,6 @@ export function createSketch<C extends IControls>(
 
             updateTrackedParams(preset.params);
             args.onPresetChange?.(preset);
-          });
-
-          bus.on("canvasSizeChange", ({ canvasHeight: h, canvasWidth: w }) => {
-            setParams(() => {
-              canvasHeight.setValue(h);
-              canvasWidth.setValue(w);
-            });
-
-            p.resizeCanvas(w, h, args.canvasSizeHandlerOverride !== undefined);
-            args.canvasSizeHandlerOverride?.([w, h]);
           });
 
           bus.on("export", (e) => {
@@ -377,7 +379,6 @@ export function createSketch<C extends IControls>(
         p.saveCanvas(exportFileName);
 
         // revert to old values and draw what user saw initially
-
         p.resizeCanvas(prevW, prevH, true);
         setParams(() => {
           canvasWidth.setValue(prevW);
