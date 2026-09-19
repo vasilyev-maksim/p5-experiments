@@ -356,7 +356,7 @@ export function createSketch<C extends IControls>(
         p.pop();
       }
 
-      function exportCanvas({
+      async function exportCanvas({
         exportFileName,
         exportFileWidth,
         exportFileHeight,
@@ -373,10 +373,13 @@ export function createSketch<C extends IControls>(
           canvasWidth.setValue(exportFileWidth);
           canvasHeight.setValue(exportFileHeight);
         });
-        isExporting = true;
-        p.redraw();
 
-        p.saveCanvas(exportFileName);
+        isExporting = true;
+        {
+          await p.redraw();
+          p.saveCanvas(exportFileName);
+        }
+        isExporting = false;
 
         // revert to old values and draw what user saw initially
         p.resizeCanvas(prevW, prevH, true);
@@ -384,8 +387,7 @@ export function createSketch<C extends IControls>(
           canvasWidth.setValue(prevW);
           canvasHeight.setValue(prevH);
         });
-        p.redraw();
-        isExporting = false;
+        await p.redraw();
 
         if (wasLooping) {
           p.loop();
