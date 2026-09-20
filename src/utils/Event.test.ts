@@ -10,8 +10,7 @@ describe("Event", () => {
 
     sut.dispatch(1);
 
-    expect(cb).toBeCalledTimes(1);
-    expect(cb).toBeCalledWith(1);
+    expect(cb).toHaveBeenCalledExactlyOnceWith(1);
   });
 
   test("calls multiple listeners in the right order", () => {
@@ -51,22 +50,8 @@ describe("Event", () => {
     expect(arr).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
   });
 
-  test("listeners override using `id` arg", () => {
-    const cb = vi.fn();
-    const cb2 = vi.fn();
-    const sut = new Event<number>();
-
-    sut.addListener(cb, "id");
-    sut.addListener(cb2, "id"); // overrides line above
-
-    sut.dispatch(1);
-
-    expect(cb).not.toBeCalled();
-    expect(cb2).toHaveBeenCalledExactlyOnceWith(1);
-  });
-
   describe("listener removal", () => {
-    test("by callback ref", () => {
+    test("single one by callback ref", () => {
       const cb = vi.fn();
       const cb2 = vi.fn();
       const sut = new Event<number>();
@@ -78,24 +63,24 @@ describe("Event", () => {
       sut.removeListener(cb);
       sut.dispatch(1);
 
-      expect(cb).not.toBeCalled();
+      expect(cb).not.toHaveBeenCalled();
       expect(cb2).toHaveBeenCalledExactlyOnceWith(1);
     });
 
-    test("by id", () => {
+    test("all", () => {
       const cb = vi.fn();
       const cb2 = vi.fn();
       const sut = new Event<number>();
 
-      sut.addListener(cb, "first");
-      sut.addListener(cb2, "first");
-      sut.addListener(cb2, "second");
+      sut.addListener(cb);
+      sut.addListener(cb);
+      sut.addListener(cb2);
 
-      sut.removeListener("first");
+      sut.removeAllListeners();
       sut.dispatch(1);
 
-      expect(cb).not.toBeCalled();
-      expect(cb2).toHaveBeenCalledExactlyOnceWith(1);
+      expect(cb).not.toHaveBeenCalled();
+      expect(cb2).not.toHaveBeenCalled();
     });
   });
 });

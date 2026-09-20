@@ -1,10 +1,7 @@
 # 👨‍💻 IN PROGRESS
 
-- [hard] get rid of react-wrapper
-
 # 📋 TODO
 
-- fix export
 - make "Download" an icon button
 - remove event bus callbacks on active sketch unmount (cleanup)
 
@@ -38,6 +35,8 @@
 
 # ✅ DONE
 
+- fix export
+- [hard] get rid of react-wrapper
 - [medium] Add analytics
 - [easy] refactor `useViewport`
   - maybe use context to store constant sizes [cancelled]
