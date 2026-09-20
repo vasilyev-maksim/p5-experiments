@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 import { ActiveSketchContext } from "./ActiveSketchContext";
@@ -16,14 +16,16 @@ export function ActiveSketchProvider({
   children: React.ReactNode;
   activeSketch: ISketch;
 }) {
-  const eventBus = useRef<EventBus<SketchEvent>>(new EventBus());
+  const [eventBus] = useState<EventBus<SketchEvent>>(() => new EventBus());
   const initialActivePreset = getActivePresetFromUrl(activeSketch);
   const [paused, setPaused] = useState(true);
   const [params, setParams] = useState(initialActivePreset.params);
   const [timeDelta, setTimeDelta] = useState(initialActivePreset.timeDelta);
 
-  const sendEvent = (...args: Parameters<EventBus<SketchEvent>["emit"]>) => {
-    eventBus.current.emit(...args);
+  const sendEvent = (
+    ...args: Parameters<EventBus<SketchEvent>["dispatch"]>
+  ) => {
+    eventBus.dispatch(...args);
   };
 
   const getActivePreset = useCallback(
@@ -41,7 +43,11 @@ export function ActiveSketchProvider({
       sendEvent({ type: "paramChange", paramName, paramValue });
       const newParams = { ...params, [paramName]: paramValue };
       setParams(newParams);
-      setPresetDataToUrl({ type: "serialized", params: newParams, timeDelta });
+      setPresetDataToUrl({
+        type: "serialized",
+        params: newParams,
+        timeDelta,
+      });
     },
     [timeDelta, params],
   );
@@ -70,7 +76,11 @@ export function ActiveSketchProvider({
     const randomParams = getRandomParams(activeSketch.controls);
     sendEvent({ type: "paramsChange", params: randomParams });
     setParams(randomParams);
-    setPresetDataToUrl({ type: "serialized", params: randomParams, timeDelta });
+    setPresetDataToUrl({
+      type: "serialized",
+      params: randomParams,
+      timeDelta,
+    });
     return randomParams;
   }, [activeSketch.controls, timeDelta]);
 
@@ -108,7 +118,7 @@ export function ActiveSketchProvider({
   const ctxValue = useMemo(
     () => ({
       activeSketch,
-      eventBus: eventBus.current,
+      eventBus,
       paused,
       setPaused,
       params,

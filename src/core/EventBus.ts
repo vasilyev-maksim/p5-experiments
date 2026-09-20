@@ -1,30 +1,41 @@
+import { Event } from "@/utils/Event";
+
 type EventByType<
   Event extends { type: string },
   Type extends Event["type"],
 > = Extract<Event, { type: Type }>;
 
-export class EventBus<Event extends { type: string }> {
-  private eventTarget = new EventTarget();
+export class EventBus<TEvent extends { type: string }> {
+  private events = new Map<TEvent["type"], Event<TEvent>>();
 
-  on<Type extends Event["type"]>(
+  public addListener = <Type extends TEvent["type"]>(
     type: Type,
-    callback: (event: EventByType<Event, Type>) => void,
-  ): EventListener {
-    const cb = ((e: CustomEvent<EventByType<Event, Type>>) => {
-      callback(e.detail);
-    }) as EventListener;
+    callback: (event: EventByType<TEvent, Type>) => void,
+  ): (() => void) => {
+    let event = this.events.get(type);
 
-    this.eventTarget.addEventListener(type, cb);
-    return cb;
-  }
+    if (!event) {
+      event = new Event<TEvent>();
+      this.events.set(type, event);
+    }
 
-  off(type: Event["type"], listener: EventListener): void {
-    this.eventTarget.removeEventListener(type, listener);
-  }
+    return event.addListener(callback as (event: TEvent) => void);
+  };
 
-  emit(event: Event): void {
-    this.eventTarget.dispatchEvent(
-      new CustomEvent(event.type, { detail: event }),
-    );
-  }
+  public removeListener = <Type extends TEvent["type"]>(
+    type: Type,
+    callback: (event: EventByType<TEvent, Type>) => void,
+  ): void => {
+    this.events.get(type)?.removeListener(callback as (event: TEvent) => void);
+  };
+
+  public removeAllListeners = (): void => {
+    for (const event of this.events.values()) {
+      event.removeAllListeners();
+    }
+  };
+
+  public dispatch = (event: TEvent): void => {
+    this.events.get(event.type)?.dispatch(event);
+  };
 }

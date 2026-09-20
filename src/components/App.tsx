@@ -39,10 +39,10 @@ function App() {
   const { start, reset, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE,
   );
-  useSequence(HOME_PAGE_SEQUENCE).useStart();
+  const seg = useSegment("GRID_GOES_IN_BG");
   const { sendAnalyticsEvent } = useAnalytics();
 
-  const seg = useSegment("GRID_GOES_IN_BG");
+  useSequence(HOME_PAGE_SEQUENCE).useStart();
 
   const ctx = useMemo(
     () => ({
@@ -79,6 +79,7 @@ function App() {
     removeSketchDataFromUrl();
     rerender();
   };
+  console.log("app rerender");
 
   return (
     <>

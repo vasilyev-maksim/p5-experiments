@@ -30,16 +30,14 @@ type ActiveSketchContextValue = {
 };
 
 export const ActiveSketchContext = createContext<ActiveSketchContextValue>({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   activeSketch: null as any,
-  eventBus: new EventBus(),
+  eventBus: null as any,
   paused: true,
   setPaused: noop,
   params: {},
   setParams: noop,
   timeDelta: 1,
   setTimeDelta: noop,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getActivePreset: noop as any,
   changeTimeDelta: noop,
   changeParam: noop,
@@ -47,7 +45,6 @@ export const ActiveSketchContext = createContext<ActiveSketchContextValue>({
   jumpNFrames: () => noop,
   playWithCustomDelta: () => noop,
   stopPlayingWithCustomDelta: noop,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   randomizeParams: noop as any,
   exportToFile: noop,
   spinUp: noop,

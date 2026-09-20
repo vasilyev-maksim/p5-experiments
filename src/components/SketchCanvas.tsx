@@ -81,7 +81,10 @@ export const SketchCanvas = (props: {
     if (canvasContainerRef.current && !p5InstanceRef.current) {
       p5InstanceRef.current = new p5(p5Sketch, canvasContainerRef.current);
     }
-    return () => p5InstanceRef.current?.remove();
+    return () => {
+      props.eventBus?.removeAllListeners();
+      p5InstanceRef.current?.remove();
+    };
   }, []);
 
   useEffect(() => {

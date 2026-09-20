@@ -144,8 +144,10 @@ export function getActivePresetFromUrl(sketch: ISketch): IPreset {
 export function setSketchToUrl(sketch: ISketch) {
   const qs = new URLSearchParams(location.search);
   qs.set(SKETCH_ID_KEY, sketch.id);
+
   const preset = getDefaultPreset(sketch);
   setPresetDataToQs({ type: "pid", pid: preset.name }, qs);
+
   history.pushState({}, "", `${ENV.baseUrl}?${qs.toString()}`);
 }
 

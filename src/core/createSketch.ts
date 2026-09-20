@@ -228,7 +228,7 @@ export function createSketch<C extends IControls>(
         args: CreateSketchArgs<C>,
       ) {
         if (bus) {
-          bus.on("modeChange", (e) => {
+          bus.addListener("modeChange", (e) => {
             if (e.mode === "animated") {
               p.loop();
             } else {
@@ -236,27 +236,27 @@ export function createSketch<C extends IControls>(
             }
           });
 
-          bus.on("playPause", (e) => {
+          bus.addListener("playPause", (e) => {
             paused = e.paused;
           });
 
-          bus.on("timeDeltaChange", (e) => {
+          bus.addListener("timeDeltaChange", (e) => {
             timeDelta = e.timeDelta;
           });
 
-          bus.on("timeTravel", (e) => {
+          bus.addListener("timeTravel", (e) => {
             time += e.timeShift;
           });
 
-          bus.on("paramChange", (e) => {
+          bus.addListener("paramChange", (e) => {
             updateTrackedParam(e.paramName, e.paramValue);
           });
 
-          bus.on("paramsChange", (e) => {
+          bus.addListener("paramsChange", (e) => {
             updateTrackedParams(e.params);
           });
 
-          bus.on("applyPreset", ({ preset }) => {
+          bus.addListener("applyPreset", ({ preset }) => {
             if (preset.startTime !== undefined) {
               time = preset.startTime;
             }
@@ -274,7 +274,7 @@ export function createSketch<C extends IControls>(
             args.onPresetChange?.(preset);
           });
 
-          bus.on("export", (e) => {
+          bus.addListener("export", (e) => {
             exportCanvas(e);
           });
         }
