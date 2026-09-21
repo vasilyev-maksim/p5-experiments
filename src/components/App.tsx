@@ -79,7 +79,6 @@ function App() {
     removeSketchDataFromUrl();
     rerender();
   };
-  console.log("app rerender");
 
   return (
     <>

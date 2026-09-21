@@ -1,10 +1,8 @@
 # 👨‍💻 IN PROGRESS
 
-- fix worms (single cell worms not rendered, black screen in the end of animation loop, because of p5 update)
+- make "Download" an icon button
 
 # 📋 TODO
-
-- make "Download" an icon button
 
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
@@ -36,6 +34,7 @@
 
 # ✅ DONE
 
+- fix worms (single cell worms not rendered, black screen in the end of animation loop, because of p5 update)
 - remove event bus callbacks on active sketch unmount (cleanup)
 - fix export
 - [hard] get rid of react-wrapper

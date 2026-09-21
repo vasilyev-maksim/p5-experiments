@@ -169,30 +169,33 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
   },
 );
 
-function drawWorm(p: p5, progress: number, worm: Pick<Worm, "body">): void {
-  p.beginShape();
-  {
-    const body = progress >= 0 ? worm.body : [...worm.body].reverse();
-    const head = body[0];
-    const absProgress = 1 - p.abs(progress);
+function drawWorm(p: p5, progress: number, worm: Worm): void {
+  const body = progress >= 0 ? worm.body : [...worm.body].reverse();
+  const absProgress = 1 - p.abs(progress);
 
-    p.vertex(head.x, head.y);
+  const points = [body[0]];
 
-    body.forEach((curr, i) => {
-      const localProgress =
-        i === 0 ? 1 : getLocalProgress(absProgress, body.length - 1, i - 1);
+  for (let i = 1; i < body.length; i++) {
+    const localProgress = getLocalProgress(absProgress, body.length - 1, i - 1);
+    if (localProgress === 0) continue;
 
-      if (localProgress === 0) {
-        return;
-      }
+    const prev = body[i - 1];
+    const curr = body[i];
 
-      const prev = i === 0 ? body[0] : body[i - 1];
-      const prevVec = p.createVector(prev.x, prev.y);
-      const currVec = p.createVector(curr.x, curr.y);
-      const int = p5.Vector.lerp(prevVec, currVec, localProgress);
-
-      p.vertex(int.x, int.y);
-    });
+    points.push(
+      new Vector(
+        p.lerp(prev.x, curr.x, localProgress),
+        p.lerp(prev.y, curr.y, localProgress),
+      ),
+    );
   }
+
+  if (points.length === 1) {
+    p.point(points[0].x, points[0].y);
+    return;
+  }
+
+  p.beginShape();
+  points.forEach(({ x, y }) => p.vertex(x, y));
   p.endShape();
 }
