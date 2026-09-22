@@ -30,7 +30,6 @@
 - move left side bar to the right [?]
 - [medium] perf opt: use cache for init data (like precomputed WORMS array)
 - [easy] position of preview fragment (in px) [?]
-- [medium] worm like transition of site header when scrolling down [?]
 
 # ✅ DONE
 
@@ -138,6 +137,7 @@
 
 # ❌ CANCELED
 
+- [medium] worm like transition of site header when scrolling down [?]
 - [easy] add animated underline for my name link [?]
 - [medium] make play controls animation more user friendly
   - hide it by timer after mouse leave
