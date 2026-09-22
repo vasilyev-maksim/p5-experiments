@@ -1,33 +1,69 @@
 export function FullScreenIcon() {
   return (
     <svg
-      width="19"
-      height="19"
-      viewBox="0 0 200 200"
+      width="20"
+      height="20"
+      viewBox="0 0 128 128"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ color: "var(--fontColor)" }}
     >
       <path
-        d="M 12 72 L 12 12 L 72 12 M 12 12 L 72 72"
+        d="M37 7H7V37M7 7L45 45"
         stroke="currentColor"
-        strokeWidth="22"
-      ></path>
+        stroke-width="14"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
       <path
-        d="M 188 72 L 188 12 L 128 12 M 188 12 L 128 72"
+        d="M7 91V121H37M7 121L45 83"
         stroke="currentColor"
-        strokeWidth="22"
-      ></path>
+        stroke-width="14"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
       <path
-        d="M 12 128 L 12 188 L 72 188 M 12 188 L 72 128"
+        d="M91 121H121V91M121 121L83 83"
         stroke="currentColor"
-        strokeWidth="22"
-      ></path>
+        stroke-width="14"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
       <path
-        d="M 188 128 L 188 188 L 128 188 M 188 188 L 128 128"
+        d="M121 37V7H91M121 7L83 45"
         stroke="currentColor"
-        strokeWidth="22"
-      ></path>
+        stroke-width="14"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function DownloadIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 128 128"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ color: "var(--fontColor)" }}
+    >
+      <path
+        d="M8 93.5054C8 108.138 19.862 120 34.4946 120H93.5054C108.138 120 120 108.138 120 93.5054"
+        stroke="currentColor"
+        stroke-width="16"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M88.43 66L64.4767 89.9533L40.5234 66M64.4767 89.9533L64.4767 15"
+        stroke="currentColor"
+        stroke-width="16"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
     </svg>
   );
 }

@@ -5,7 +5,7 @@ import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
 import { JumpNFramesButton } from "./JumpNFramesButton";
 import { useActiveSketch } from "@/hooks/useActiveSketch";
-import { FullScreenIcon } from "./Icons";
+import { DownloadIcon, FullScreenIcon } from "./Icons";
 import { useAnalytics, useAnalyticsThrottled } from "@/hooks/useAnalytics";
 
 export const PlaybackControls = memo(function PlaybackControls(props: {
@@ -29,19 +29,19 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
     <div className={styles.PlaybackControls}>
       <div className={styles.Section}>
         <button
-          className={classNames(styles.IconButton)}
+          className={styles.IconButton}
           onClick={props.onFullscreenToggle}
         >
           <FullScreenIcon />
         </button>
         <button
-          className={styles.TextButton}
+          className={styles.IconButton}
           onClick={() => {
             exportToFile();
             sendAnalyticsEvent("export");
           }}
         >
-          Download
+          <DownloadIcon />
         </button>
       </div>
 
@@ -111,7 +111,7 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
         />
       </div>
 
-      <div className={styles.Section}>
+      <div className={classNames(styles.Section, styles.SpeedSection)}>
         <Slider
           value={timeDelta}
           min={0}
@@ -125,7 +125,7 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
           }}
           label={
             <div className={styles.PlaybackSpeedLabel}>
-              Playback speed: x
+              &nbsp; Speed: x
               <span className={styles.PlaybackSpeedFactor}>
                 {timeDelta.toFixed(1)}
               </span>

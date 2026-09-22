@@ -5,7 +5,7 @@
   justify-content: center;
   align-items: center;
   padding: 10px 20px;
-  gap: 20px;
+  gap: 30px;
   background: var(--backdrop);
   margin: 20px;
   border-radius: var(--borderRadius);
@@ -19,9 +19,13 @@
   flex-shrink: 0;
 }
 
+.SpeedSection {
+  width: 85px;
+}
+
 .TextButton,
 .IconButton {
-  --size: 30px;
+  --size: 40px;
   background-color: var(--controlButtonBgColor);
   border-radius: 5px;
   transition: 200ms all;
@@ -39,12 +43,6 @@
 .IconButton {
   width: var(--size);
   height: var(--size);
-  padding: 5px;
-}
-
-.TextButton {
-  padding: 10px;
-  text-align: center;
 }
 
 .PlaybackSpeedLabel {
