@@ -35,17 +35,14 @@ function App() {
   const rerender = useRerender();
   const activeSketch = getActiveSketchFromUrl(sketchList);
   const selectedTileRef = useRef<HTMLDivElement>(null);
-  const { tileScreenCenteredLeft, tileScreenCenteredTop } = useSizes();
+  const { tileScreenCenteredLeft, tileScreenCenteredTop, isDesktop } =
+    useSizes();
   const [cloneTop, setCloneTop] = useState<number>(tileScreenCenteredTop);
   const [cloneLeft, setCloneLeft] = useState<number>(tileScreenCenteredLeft);
   const { start, reset, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE,
   );
   const seg = useSegment("GRID_GOES_IN_BG");
-  const { sendAnalyticsEvent } = useAnalytics();
-
-  useSequence(HOME_PAGE_SEQUENCE).useStart();
-
   const ctx = useMemo(
     () => ({
       controlsPresent: Object.entries(activeSketch?.controls ?? {}).length > 0,
@@ -53,6 +50,10 @@ function App() {
     }),
     [activeSketch?.controls, activeSketch?.presets],
   );
+  const { sendAnalyticsEvent } = useAnalytics();
+
+  useSequence(HOME_PAGE_SEQUENCE).useStart();
+  usePopStateSync();
 
   useEffect(() => {
     if (activeSketch) {
@@ -70,7 +71,16 @@ function App() {
     }
   }, [activeSketch]);
 
-  usePopStateSync();
+  useEffect(() => {
+    if (!isDesktop) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isDesktop]);
 
   const handleSketchClick = useCallback((x: ISketch) => {
     setSketchToUrl(x);
@@ -101,6 +111,7 @@ function App() {
           ref={selectedTileRef}
         />
       </div>
+
       {activeSketch && (
         <ActiveSketchProvider activeSketch={activeSketch}>
           <SketchModal
@@ -109,6 +120,14 @@ function App() {
             onBackClick={closeSketch}
           />
         </ActiveSketchProvider>
+      )}
+
+      {!isDesktop && (
+        <div className={styles.DesktopOnlyWarningOverlay}>
+          <span className={styles.DesktopIcon}>🖥️</span>
+          For&nbsp;the&nbsp;best&nbsp;experience,
+          please&nbsp;visit&nbsp;on&nbsp;desktop
+        </div>
       )}
     </>
   );

@@ -100,3 +100,7 @@ export function generateUUID(): string {
     return v.toString(16);
   });
 }
+
+export function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
+}

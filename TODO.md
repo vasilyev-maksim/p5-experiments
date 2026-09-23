@@ -1,15 +1,14 @@
 # 👨‍💻 IN PROGRESS
 
+# 📋 TODO
+
 - [easy] catch sketch errors (to show other more successful ones) + wrap all bus events with try/catch and rollback on error [?]
 
-# 📋 TODO
+- [medium] add footer (with github link + linkedin + 2026 (C) Maksim ... etc.)
+- [medium] write meaningful README.md
 
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] tabIndex everywhere
-
-- [medium] write meaningful README.md
-
-- [easy] mobile version [?], at least info message inviting to desktop version
 
 # 💡 NICE TO HAVE
 
@@ -31,6 +30,7 @@
 
 # ✅ DONE
 
+- [easy] mobile version [?], at least info message inviting to desktop version
 - [hard] make opening by link more smooth ~~+ disable list animation in bg~~
 - make "Download" an icon button
 - fix worms (single cell worms not rendered, black screen in the end of animation loop, because of p5 update)

@@ -3,9 +3,39 @@
   margin: 0 auto;
   padding: 0 20px;
   transition-timing-function: ease-in-out;
+  transition-property: scale, opacity;
+
+  @media (max-width: 1300px) {
+    max-width: 976px;
+  }
+
+  @media (max-width: 976px) {
+    max-width: 654px;
+  }
 }
 
 .InBackground {
   scale: 0.95;
   opacity: 0.3;
+}
+
+.DesktopOnlyWarningOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  background-color: var(--bgColor);
+  text-align: center;
+  padding: 20px;
+  user-select: none;
+}
+
+.DesktopIcon {
+  font-size: 3rem;
 }
