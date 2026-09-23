@@ -7,7 +7,7 @@ const tilePadding = 15;
 const modalMargin = 10;
 const modalPadding = 15;
 const modalSidebarWidth = 300;
-const modalSidebarPadding = 27;
+const modalSidebarPadding = 20;
 const borderWidth = 4;
 
 export function useSizes() {
@@ -20,6 +20,8 @@ export function useSizes() {
   const canvasModalHeight =
     ctx.viewportHeight - 2 * (modalPadding + modalMargin);
   const canvasTileSize = tileWidth - tilePadding * 2;
+  const tileScreenCenteredLeft = ctx.viewportWidth / 2 - tileWidth / 2;
+  const tileScreenCenteredTop = ctx.viewportHeight / 2 - tileHeight / 2;
 
   return {
     ...ctx,
@@ -34,5 +36,7 @@ export function useSizes() {
     canvasModalHeight,
     canvasTileSize,
     borderWidth,
+    tileScreenCenteredLeft,
+    tileScreenCenteredTop,
   };
 }

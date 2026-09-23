@@ -96,8 +96,10 @@ export const Presets = memo(function Presets() {
         <div className={styles.Presets}>
           {springs.map(({ x }, i) => {
             let body;
+            const shuffleControlIteration =
+              shouldRenderShuffleControl && i === springsCount - 1;
 
-            if (shouldRenderShuffleControl && i === springsCount - 1) {
+            if (shuffleControlIteration) {
               // shuffle presets control
               body = (
                 <BooleanParamControl
@@ -134,6 +136,7 @@ export const Presets = memo(function Presets() {
                 style={{
                   opacity: x,
                   scale: x.to([0, 1], [0.9, 1]),
+                  flexBasis: shuffleControlIteration ? "100%" : undefined,
                 }}
               >
                 {body}

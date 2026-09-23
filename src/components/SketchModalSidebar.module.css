@@ -18,9 +18,11 @@
 }
 
 .BottomActionsBlock {
-  padding-top: 15px;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
   display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-start;
   gap: 5px;
   animation: appear ease-in-out forwards;
 }
@@ -34,7 +36,7 @@
 
   to {
     opacity: 1;
-    height: 47px;
+    height: 50px;
     translate: 0 0px;
   }
 }

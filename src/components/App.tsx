@@ -29,13 +29,15 @@ import {
 import { useRerender } from "@/hooks/useRerender";
 import { ActiveSketchProvider } from "@/contexts/ActiveSketchProvider";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { useSizes } from "@/hooks/useSizes";
 
 function App() {
   const rerender = useRerender();
   const activeSketch = getActiveSketchFromUrl(sketchList);
   const selectedTileRef = useRef<HTMLDivElement>(null);
-  const [cloneTop, setCloneTop] = useState<number>();
-  const [cloneLeft, setCloneLeft] = useState<number>();
+  const { tileScreenCenteredLeft, tileScreenCenteredTop } = useSizes();
+  const [cloneTop, setCloneTop] = useState<number>(tileScreenCenteredTop);
+  const [cloneLeft, setCloneLeft] = useState<number>(tileScreenCenteredLeft);
   const { start, reset, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
     MODAL_OPEN_SEQUENCE,
   );

@@ -30,7 +30,7 @@ export function SectionLayout(
       <animated.div
         className={styles.Header}
         style={{
-          lineHeight: modalSidebarPadding + "px",
+          width: modalSidebarPadding + "px",
           opacity: x,
           translateX: x.to([0, 1], [15, 0]),
         }}
