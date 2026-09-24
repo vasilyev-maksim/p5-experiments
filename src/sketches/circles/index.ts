@@ -3,7 +3,7 @@ import { controls, type Controls } from "./controls";
 import { factory } from "./factory";
 import { presets } from "./presets";
 
-export const circlesSketch: ISketch<Controls> = {
+export const sketch: ISketch<Controls> = {
   factory,
   id: "circles",
   name: "circles",

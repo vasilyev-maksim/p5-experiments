@@ -3,7 +3,7 @@ import { factory } from "./factory";
 import { controls, type Controls } from "./controls";
 import { presets } from "./presets";
 
-export const arcsSketch: ISketch<Controls> = {
+export const sketch: ISketch<Controls> = {
   factory,
   id: "arcs",
   name: "arcs",

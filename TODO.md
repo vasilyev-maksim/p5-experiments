@@ -2,8 +2,6 @@
 
 # 📋 TODO
 
-- [easy] catch sketch errors (to show other more successful ones) + wrap all bus events with try/catch and rollback on error [?]
-
 - [medium] add footer (with github link + linkedin + 2026 (C) Maksim ... etc.)
 - [medium] write meaningful README.md
 
@@ -137,6 +135,7 @@
 
 # ❌ CANCELED
 
+- [easy] handle sketch exceptions (do not show tile of a broken sketch)
 - [medium] worm like transition of site header when scrolling down [?]
 - [easy] add animated underline for my name link [?]
 - [medium] make play controls animation more user friendly

@@ -1,14 +1,14 @@
 import type { ISketch } from "../models";
-import { spiralSketch } from "./spiral";
-import { pillarsSketch } from "./pillars";
-import { curveSketch } from "./curve";
-import { arcsSketch } from "./arcs";
-import { circlesSketch } from "./circles";
+import { sketch as spiralSketch } from "./spiral";
+import { sketch as pillarsSketch } from "./pillars";
+import { sketch as curveSketch } from "./curve";
+import { sketch as arcsSketch } from "./arcs";
+import { sketch as circlesSketch } from "./circles";
 import { sketch as cubesSketch } from "./cubes";
 import { sketch as tilesSketch } from "./tiles";
 import { sketch as wormsSketch } from "./worms";
 import { ENV } from "@/env";
-import { wormSketch } from "./_sandboxes/worm";
+// import { wormSketch } from "./_sandboxes/worm";
 // import { sketch as citySketch } from "./city";
 // import { zigzagsSketch } from "./zigzags";
 // import { sketch as lightsSketch } from "./_sandboxes/lights";
@@ -26,7 +26,7 @@ const all: ISketch<any>[] = [
   circlesSketch,
   cubesSketch,
   curveSketch,
-  wormSketch,
+  // wormSketch,
   // zigzagsSketch,
   // lightsSketch,
   // interpolationSketch,
