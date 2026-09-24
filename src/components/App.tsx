@@ -30,6 +30,7 @@ import { useRerender } from "@/hooks/useRerender";
 import { ActiveSketchProvider } from "@/contexts/ActiveSketchProvider";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useSizes } from "@/hooks/useSizes";
+import { LaptopIcon } from "./Icons";
 
 function App() {
   const rerender = useRerender();
@@ -92,7 +93,7 @@ function App() {
     rerender();
   };
 
-  return (
+  return isDesktop ? (
     <>
       <div
         className={classNames(styles.Container, {
@@ -121,15 +122,14 @@ function App() {
           />
         </ActiveSketchProvider>
       )}
-
-      {!isDesktop && (
-        <div className={styles.DesktopOnlyWarningOverlay}>
-          <span className={styles.DesktopIcon}>🖥️</span>
-          For&nbsp;the&nbsp;best&nbsp;experience,
-          please&nbsp;visit&nbsp;on&nbsp;desktop
-        </div>
-      )}
     </>
+  ) : (
+    <div className={styles.DesktopOnlyWarningOverlay}>
+      <LaptopIcon />
+      <br />
+      For&nbsp;the&nbsp;best&nbsp;experience,
+      please&nbsp;visit&nbsp;on&nbsp;computer
+    </div>
   );
 }
 
