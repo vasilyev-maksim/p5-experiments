@@ -30,7 +30,7 @@ import { useRerender } from "@/hooks/useRerender";
 import { ActiveSketchProvider } from "@/contexts/ActiveSketchProvider";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useSizes } from "@/hooks/useSizes";
-import { LaptopIcon } from "./Icons";
+import { MobileDevicesRestrictionMessage } from "./MobileDevicesRestrictionMessage";
 
 function App() {
   const rerender = useRerender();
@@ -71,17 +71,6 @@ function App() {
       setCloneTop(top);
     }
   }, [activeSketch]);
-
-  useEffect(() => {
-    if (!isDesktop) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [isDesktop]);
 
   const handleSketchClick = useCallback((x: ISketch) => {
     setSketchToUrl(x);
@@ -124,12 +113,7 @@ function App() {
       )}
     </>
   ) : (
-    <div className={styles.DesktopOnlyWarningOverlay}>
-      <LaptopIcon />
-      <br />
-      For&nbsp;the&nbsp;best&nbsp;experience,
-      please&nbsp;visit&nbsp;on&nbsp;computer
-    </div>
+    <MobileDevicesRestrictionMessage />
   );
 }
 
