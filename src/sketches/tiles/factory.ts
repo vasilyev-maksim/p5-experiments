@@ -2,7 +2,7 @@ import { createSketch } from "@/core/createSketch";
 import { OccupancyGrid } from "@/utils/OccupancyGrid";
 import { Rectangle } from "@/utils/Rectangle";
 import { Vector } from "@/utils/Vector";
-import { Tiler } from "./Turtle";
+import { Tiler } from "./Tiler";
 import { AnimationType, controls, FillType, type Controls } from "./controls";
 import { drawCoordinatesGrid } from "../_utils/drawCoordinatesGrid";
 import p5 from "p5";

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Tiler } from "./Turtle";
+import { Tiler } from "./Tiler";
 import { OccupancyGrid } from "@utils/OccupancyGrid";
 import { Rectangle } from "@utils/Rectangle";
 import { createRandomGenerator } from "@utils/misc";
@@ -13,7 +13,7 @@ import {
   matrixFromPrint,
 } from "@utils/matrix";
 
-describe("Turtle", () => {
+describe("Tiler", () => {
   describe("getEmptyPathLengthByDirection()", () => {
     test.each([
       {
