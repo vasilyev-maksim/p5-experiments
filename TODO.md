@@ -1,8 +1,11 @@
 # 👨‍💻 IN PROGRESS
 
+- [medium] add footer (with github link + linkedin + 2026 (C) Maksim ... etc.)
+- make bg pattern static (non scrollable)
+
 # 📋 TODO
 
-- [medium] add footer (with github link + linkedin + 2026 (C) Maksim ... etc.)
+
 - [medium] write meaningful README.md
 
 - [hard] focus trap for modal (home page links are accessible)
@@ -28,6 +31,8 @@
 
 # ✅ DONE
 
+- fix home page layout shift (use visibility hidden)
+- [easy] fix tile open animation in safari
 - [easy] mobile version [?], at least info message inviting to desktop version
 - [hard] make opening by link more smooth ~~+ disable list animation in bg~~
 - make "Download" an icon button

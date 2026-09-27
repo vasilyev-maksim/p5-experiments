@@ -58,15 +58,13 @@ body {
   background-size:
     var(--gridCellSize) var(--gridCellSize),
     var(--gridCellSize) var(--gridCellSize);
-  background-position: calc(var(--gridCellSize) / 2 * -1)
+  background-position: calc(var(--gridCellSize) / 2)
     calc(var(--gridCellSize) / 2 * -1);
   font-family: "Outfit", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
   font-size: 20px;
-  padding-bottom: 100px;
-  padding-top: 80px;
   color: var(--fontColor);
 }
 

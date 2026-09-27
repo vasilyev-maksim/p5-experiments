@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect } from "react";
 import type { ISketch } from "../models";
 import styles from "./SketchTile.module.css";
 import classNames from "classnames";
@@ -12,26 +12,38 @@ export const SketchTile = forwardRef<
     sketch: ISketch;
     animationDelay?: number;
     animationDuration?: number;
+    onAnimationComplete?: () => void;
     onSelect?: () => void;
-    interactive?: boolean;
     className?: string;
-    invisible?: boolean;
+    hidden?: boolean;
+    animated: boolean;
   }
 >(
   (
     {
       sketch,
       animationDelay = 0,
-      onSelect,
-      interactive = false,
-      className,
-      invisible = false,
       animationDuration = 0,
+      onAnimationComplete,
+      onSelect,
+      className,
+      hidden = false,
+      animated,
     },
     ref,
   ) => {
     const { tileWidth, tileHeight, borderWidth } = useSizes();
     const defaultPreset = getDefaultPreset(sketch);
+
+    useEffect(() => {
+      if (onAnimationComplete && animated) {
+        const id = setTimeout(
+          onAnimationComplete,
+          animationDelay + animationDuration,
+        );
+        return () => clearTimeout(id);
+      }
+    }, [onAnimationComplete, animated]);
 
     return (
       <div
@@ -39,9 +51,8 @@ export const SketchTile = forwardRef<
         className={classNames(
           styles.SketchTile,
           {
-            [styles.Interactive]: interactive,
-            [styles.Copy]: !interactive,
-            [styles.Hidden]: invisible,
+            [styles.Hidden]: hidden,
+            [styles.Enter]: animated,
           },
           className,
         )}

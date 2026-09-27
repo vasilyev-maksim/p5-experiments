@@ -31,6 +31,7 @@ import { ActiveSketchProvider } from "@/contexts/ActiveSketchProvider";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useSizes } from "@/hooks/useSizes";
 import { MobileDevicesRestrictionMessage } from "./MobileDevicesRestrictionMessage";
+import { Footer } from "./Footer";
 
 function App() {
   const rerender = useRerender();
@@ -100,6 +101,7 @@ function App() {
           sketches={sketchList}
           ref={selectedTileRef}
         />
+        <Footer />
       </div>
 
       {activeSketch && (

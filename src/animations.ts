@@ -92,5 +92,10 @@ export const sequences = [
         itemDuration: 400 * MULT,
       },
     }),
+    Sequence.syncSegment({
+      id: "FOOTER",
+      delay: 200 * MULT,
+      duration: 400 * MULT,
+    }),
   ]),
 ]; // TODO: fix typings

@@ -1,14 +1,18 @@
 import styles from "./Header.module.css";
 import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
+import classNames from "classnames";
 
 export function Header() {
   const { wasRun, duration } =
     useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE).useSegment("HEADER");
 
-  return wasRun ? (
+  return (
     <div
-      className={styles.HeaderWrapper}
+      className={classNames(styles.HeaderWrapper, {
+        [styles.Visible]: wasRun,
+        [styles.Hidden]: !wasRun,
+      })}
       style={{
         animationDuration: duration + "ms",
       }}
@@ -30,5 +34,5 @@ export function Header() {
         </a>
       </h2>
     </div>
-  ) : null;
+  );
 }

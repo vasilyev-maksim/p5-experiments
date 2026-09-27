@@ -1,8 +1,7 @@
 .HeaderWrapper {
-  opacity: 0;
   text-align: left;
   margin-bottom: 50px;
-  animation: appear ease-in-out forwards;
+  margin-top: 80px;
 }
 
 .Header {
@@ -13,6 +12,15 @@
   -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: hsl(from var(--primaryColor) h s l);
   margin-bottom: 10px;
+}
+
+.Visible {
+  opacity: 0;
+  animation: appear ease-in-out forwards;
+}
+
+.Hidden {
+  visibility: hidden;
 }
 
 .SubHeader {

@@ -23,23 +23,25 @@ export const SketchTilesGrid = memo(
     const {
       wasRun,
       timingPayload: { itemDelay, itemDuration },
+      complete,
     } = useSegment<GridAnimationParams>("TILES");
 
-    return wasRun ? (
+    return (
       <div className={styles.Grid}>
-        {props.sketches.map((x, i) => (
+        {props.sketches.map((x, i, { length }) => (
           <SketchTile
             key={x.id}
             sketch={x}
-            invisible={props.activeSketch === x}
+            hidden={props.activeSketch === x}
             ref={props.activeSketch === x ? selectedTileRef : null}
             onSelect={() => props.onClick(x)}
+            animated={wasRun}
             animationDelay={itemDelay * i}
             animationDuration={itemDuration}
-            interactive
+            onAnimationComplete={i === length - 1 ? complete : undefined}
           />
         ))}
       </div>
-    ) : null;
+    );
   }),
 );
