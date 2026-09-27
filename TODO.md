@@ -15,14 +15,12 @@
   - use order number (0-9) of associated control shortcut
   - use "qwerty..." for 11-20
 - [hard] city sketch
-- [medium] add "collapse side panel" capabilities [?]
 - [hard] think how to use `p.createGraphics` buffer
   - for export
   - to fix rendering issues of `curves` sketch
 - [hard] undo/redo mechanism (event sourcing for params and timeDelta)
 - [medium] try to use web workers for async calculation of memos in parallel thread
-- move left side bar to the right [?]
-- [medium] perf opt: use cache for init data (like precomputed WORMS array)
+- [medium] perf opt: use cache for init data (like precomputed array in `worms`)
 - [easy] position of preview fragment (in px) [?]
 
 # ✅ DONE
@@ -138,6 +136,8 @@
 
 # ❌ CANCELED
 
+- move left side bar to the right [?]
+- [medium] add "collapse side panel" capabilities [?]
 - [easy] handle sketch exceptions (do not show tile of a broken sketch)
 - [medium] worm like transition of site header when scrolling down [?]
 - [easy] add animated underline for my name link [?]
