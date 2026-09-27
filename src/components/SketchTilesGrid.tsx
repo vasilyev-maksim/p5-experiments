@@ -8,6 +8,7 @@ import {
   type HOME_PAGE_SEGMENTS,
   HOME_PAGE_SEQUENCE,
 } from "../animations";
+import classNames from "classnames";
 
 export const SketchTilesGrid = memo(
   forwardRef<
@@ -16,6 +17,7 @@ export const SketchTilesGrid = memo(
       sketches: ISketch[];
       onClick: (sketch: ISketch) => void;
       activeSketch?: ISketch;
+      className?: string;
     }
   >(function SketchTilesGrid(props, selectedTileRef) {
     const { useSegment } = useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE);
@@ -27,7 +29,7 @@ export const SketchTilesGrid = memo(
     } = useSegment<GridAnimationParams>("TILES");
 
     return (
-      <div className={styles.Grid}>
+      <div className={classNames(styles.Grid, props.className)}>
         {props.sketches.map((x, i, { length }) => (
           <SketchTile
             key={x.id}

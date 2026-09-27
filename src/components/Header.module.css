@@ -1,10 +1,8 @@
-.HeaderWrapper {
+.Header {
   text-align: left;
-  margin-bottom: 50px;
-  margin-top: 80px;
 }
 
-.Header {
+.FirstLine {
   line-height: 1em;
   font-size: 3.5rem;
   color: var(--bgColor);
@@ -23,7 +21,7 @@
   visibility: hidden;
 }
 
-.SubHeader {
+.SecondLine {
   font-size: 1rem;
   color: var(--textColor);
   font-weight: 400;

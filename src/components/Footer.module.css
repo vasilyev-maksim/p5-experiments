@@ -1,8 +1,10 @@
 .Footer {
-  margin-top: 50px;
-  margin-bottom: 30px;
   font-size: 0.85rem;
   color: var(--fontColorFaded);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 20px;
 }
 
 .Visible {
@@ -12,6 +14,10 @@
 
 .Hidden {
   visibility: hidden;
+}
+
+.NoWrap {
+  white-space: nowrap;
 }
 
 @keyframes appear {

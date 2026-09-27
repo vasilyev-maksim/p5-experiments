@@ -2,23 +2,52 @@ import { useSequence } from "@/sequencer";
 import styles from "./Footer.module.css";
 import { HOME_PAGE_SEQUENCE } from "@/animations";
 import classNames from "classnames";
+import { AUTHOR_NAME, LINKEDIN_URL, SOURCE_CODE_URL } from "@/consts";
 
-export function Footer() {
+export function Footer(props: { className?: string }) {
   const { wasRun, duration } =
     useSequence(HOME_PAGE_SEQUENCE).useSegment("FOOTER");
 
   return (
     <div
-      className={classNames(styles.Footer, {
-        [styles.Visible]: wasRun,
-        [styles.Hidden]: !wasRun,
-      })}
+      className={classNames(
+        styles.Footer,
+        {
+          [styles.Visible]: wasRun,
+          [styles.Hidden]: !wasRun,
+        },
+        props.className,
+      )}
       style={{
         animationDuration: duration + "ms",
       }}
     >
-      © 2025-2026 Maksim Vasilyev | LinkedIn | Source code | Made with love
-      using React, react-spring and p5.js
+      <span className={styles.NoWrap}>© 2025-2026 {AUTHOR_NAME}</span>
+      <a className={styles.NoWrap} href={LINKEDIN_URL} target="_blank">
+        LinkedIn
+      </a>
+      <a className={styles.NoWrap} href={SOURCE_CODE_URL} target="_blank">
+        Source code
+      </a>
+      <div
+        style={{
+          flex: 1,
+        }}
+      ></div>
+      <span style={{ textAlign: "right" }}>
+        Handcrafted&nbsp;with&nbsp;love&nbsp;using{" "}
+        <a href="https://react.dev/" target="_blank">
+          react
+        </a>
+        ,&nbsp;
+        <a href="https://www.react-spring.dev/" target="_blank">
+          react-spring
+        </a>
+        &nbsp; and&nbsp;
+        <a href="https://p5js.org/" target="_blank">
+          p5.js
+        </a>
+      </span>
     </div>
   );
 }

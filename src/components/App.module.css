@@ -18,3 +18,15 @@
   scale: 0.95;
   opacity: 0.3;
 }
+
+.HeaderBlock {
+  margin-top: 80px;
+}
+
+.GridBlock {
+  margin: 50px auto 70px auto;
+}
+
+.FooterBlock {
+  margin-bottom: 20px;
+}

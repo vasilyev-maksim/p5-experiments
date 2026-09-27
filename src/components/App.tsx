@@ -94,14 +94,15 @@ function App() {
           transitionDelay: seg.delay + "ms",
         }}
       >
-        <Header />
+        <Header className={styles.HeaderBlock} />
         <SketchTilesGrid
           onClick={handleSketchClick}
           activeSketch={activeSketch}
           sketches={sketchList}
           ref={selectedTileRef}
+          className={styles.GridBlock}
         />
-        <Footer />
+        <Footer className={styles.FooterBlock} />
       </div>
 
       {activeSketch && (

@@ -2,24 +2,29 @@ import styles from "./Header.module.css";
 import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
 import classNames from "classnames";
+import { AUTHOR_NAME } from "@/consts";
 
-export function Header() {
+export function Header(props: { className?: string }) {
   const { wasRun, duration } =
     useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE).useSegment("HEADER");
 
   return (
     <div
-      className={classNames(styles.HeaderWrapper, {
-        [styles.Visible]: wasRun,
-        [styles.Hidden]: !wasRun,
-      })}
+      className={classNames(
+        styles.Header,
+        {
+          [styles.Visible]: wasRun,
+          [styles.Hidden]: !wasRun,
+        },
+        props.className,
+      )}
       style={{
         animationDuration: duration + "ms",
       }}
     >
-      <h1 className={styles.Header}>Generative Art</h1>
+      <h1 className={styles.FirstLine}>Generative Art</h1>
       <h2
-        className={styles.SubHeader}
+        className={styles.SecondLine}
         style={{
           animationDuration: duration + "ms",
         }}
@@ -30,7 +35,7 @@ export function Header() {
           target="_blank"
           className={styles.Link}
         >
-          Maksim Vasilyev
+          {AUTHOR_NAME}
         </a>
       </h2>
     </div>

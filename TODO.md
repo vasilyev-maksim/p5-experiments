@@ -1,10 +1,6 @@
 # 👨‍💻 IN PROGRESS
 
-- [medium] add footer (with github link + linkedin + 2026 (C) Maksim ... etc.)
-- make bg pattern static (non scrollable)
-
 # 📋 TODO
-
 
 - [medium] write meaningful README.md
 
@@ -31,6 +27,8 @@
 
 # ✅ DONE
 
+- make bg pattern static (non scrollable)
+- [medium] add footer (with github link + linkedin + 2026 (C) Maksim ... etc.)
 - fix home page layout shift (use visibility hidden)
 - [easy] fix tile open animation in safari
 - [easy] mobile version [?], at least info message inviting to desktop version
