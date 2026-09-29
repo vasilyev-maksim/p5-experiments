@@ -104,7 +104,7 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
             sendAnalyticsEvent(">> press");
           }}
           onLongPress={() => {
-            playWithCustomDelta(-2);
+            playWithCustomDelta(2);
             sendAnalyticsEvent(">> long press");
           }}
           onLongPressRelease={stopPlayingWithCustomDelta}

@@ -1,4 +1,7 @@
-import { useRef } from "react";
+import { useRef, type KeyboardEvent } from "react";
+
+const isActivationKey = (e: KeyboardEvent) =>
+  e.key === "Enter" || e.key === " ";
 
 export function useLongPress(
   timeout: number,
@@ -9,6 +12,7 @@ export function useLongPress(
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   const handlePress = () => {
+    clearTimeout(timeoutRef.current);
     pressedRef.current = true;
     timeoutRef.current = setTimeout(() => {
       if (pressedRef.current) {
@@ -16,6 +20,7 @@ export function useLongPress(
       }
     }, timeout);
   };
+
   const handleRelease = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -27,5 +32,22 @@ export function useLongPress(
     pressedRef.current = false;
   };
 
-  return { handlePress, handleRelease };
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!isActivationKey(e)) return;
+
+    if (e.repeat) {
+      e.preventDefault();
+      return;
+    }
+
+    handlePress();
+  };
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    if (!isActivationKey(e)) return;
+
+    handleRelease();
+  };
+
+  return { handlePress, handleRelease, handleKeyDown, handleKeyUp };
 }

@@ -10,11 +10,8 @@ export function JumpNFramesButton(props: {
   onLongPressRelease: () => void;
   className?: string;
 }) {
-  const { handlePress, handleRelease } = useLongPress(
-    HOLD_TIMEOUT,
-    props.onLongPress,
-    props.onLongPressRelease,
-  );
+  const { handlePress, handleRelease, handleKeyDown, handleKeyUp } =
+    useLongPress(HOLD_TIMEOUT, props.onLongPress, props.onLongPressRelease);
 
   return (
     <button
@@ -22,6 +19,9 @@ export function JumpNFramesButton(props: {
       onClick={props.onClick}
       onMouseDown={handlePress}
       onMouseUp={handleRelease}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      onBlur={handleRelease}
     >
       <JumpNFramesIcon n={props.n} />
     </button>

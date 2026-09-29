@@ -15,11 +15,7 @@ export function PlayPauseButton(props: {
   });
 
   return (
-    <button
-      className={styles.PlayPauseButton}
-      onKeyDown={(e) => e.preventDefault()}
-      onClick={props.onClick}
-    >
+    <button className={styles.PlayPauseButton} onClick={props.onClick}>
       <div className={styles.Inner}>
         <animated.div
           className={styles.Layer}
