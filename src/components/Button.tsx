@@ -13,7 +13,6 @@ export const Button = (
 ) => {
   return (
     <button
-      tabIndex={1}
       className={classNames(
         styles.Button,
         {

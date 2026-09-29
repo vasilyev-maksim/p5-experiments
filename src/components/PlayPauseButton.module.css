@@ -8,7 +8,7 @@
   width: var(--size);
   background-color: var(--controlButtonBgColor);
   overflow: hidden;
-  transition: 200ms;
+  transition: 200ms background-color;
 
   &:hover {
     background-color: var(--controlButtonHoverBgColor);

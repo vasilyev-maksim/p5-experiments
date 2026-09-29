@@ -54,7 +54,7 @@ export function Slider(props: {
     <div className={styles.Slider}>
       <div className={styles.Title}>{props.label}</div>
       <div
-        tabIndex={2}
+        tabIndex={0}
         className={styles.TrackWrapper}
         ref={trackRef}
         onClick={(e) => handleMove(e.clientX)}

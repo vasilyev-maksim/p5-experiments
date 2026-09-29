@@ -77,6 +77,10 @@ a {
   }
 }
 
+button:focus-visible {
+  outline: 2px solid var(--primaryColorFaded);
+}
+
 #root {
   max-height: 100dvh;
   height: 100dvh;

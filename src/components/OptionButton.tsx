@@ -14,7 +14,6 @@ export const OptionButton = (
 ) => {
   return (
     <button
-      tabIndex={1}
       className={classNames(styles.OptionButton, {
         [styles.Active]: props.active,
         [styles.Mini]: props.mini,

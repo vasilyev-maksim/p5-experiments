@@ -175,7 +175,6 @@ export const SketchModal = ({
             paddingBottom: modalX.to([0, 1], [15, modalPadding]),
             paddingLeft: modalX.to([0, 1], [0, borderWidth]),
             "--borderWidth": borderWidth + "px",
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any
         }
       >
@@ -231,6 +230,7 @@ export const SketchModal = ({
                 opacity: overlayX,
               }}
               className={styles.PlaybackControlsBlock}
+              inert={overlayX.to((x) => (x === 0 ? true : (undefined as any)))}
             >
               <PlaybackControls onFullscreenToggle={openInFullscreen} />
             </animated.div>

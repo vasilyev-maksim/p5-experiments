@@ -2,7 +2,9 @@
   padding: 2px 6px;
   background-color: var(--bgPrimaryColor);
   border-radius: 5px;
-  transition: 200ms all;
+  transition:
+    200ms background-color,
+    color;
 
   &:hover {
     background-color: var(--primaryColorFaded);
