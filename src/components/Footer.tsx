@@ -3,12 +3,14 @@ import styles from "./Footer.module.css";
 import { type HOME_PAGE_SEGMENTS, HOME_PAGE_SEQUENCE } from "@/animations";
 import classNames from "classnames";
 import { AUTHOR_NAME, LINKEDIN_URL, SOURCE_CODE_URL } from "@/consts";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export function Footer(props: { className?: string }) {
   const { wasRun, duration } = useSegment<HOME_PAGE_SEGMENTS>(
     HOME_PAGE_SEQUENCE,
     "FOOTER",
   );
+  const { sendAnalyticsEvent } = useAnalytics();
 
   return (
     <div
@@ -25,10 +27,20 @@ export function Footer(props: { className?: string }) {
       }}
     >
       <span className={styles.NoWrap}>© 2025-2026 {AUTHOR_NAME}</span>
-      <a className={styles.NoWrap} href={LINKEDIN_URL} target="_blank">
+      <a
+        className={styles.NoWrap}
+        href={LINKEDIN_URL}
+        target="_blank"
+        onClick={() => sendAnalyticsEvent("footer: LinkedIn link clicked")}
+      >
         LinkedIn
       </a>
-      <a className={styles.NoWrap} href={SOURCE_CODE_URL} target="_blank">
+      <a
+        className={styles.NoWrap}
+        href={SOURCE_CODE_URL}
+        target="_blank"
+        onClick={() => sendAnalyticsEvent("footer: Github link clicked")}
+      >
         Source code
       </a>
       <div

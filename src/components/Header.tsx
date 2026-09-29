@@ -2,13 +2,15 @@ import styles from "./Header.module.css";
 import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "../animations";
 import { useSegment } from "../sequencer";
 import classNames from "classnames";
-import { AUTHOR_NAME } from "@/consts";
+import { AUTHOR_NAME, LINKEDIN_URL } from "@/consts";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export function Header(props: { className?: string }) {
   const { wasRun, duration } = useSegment<HOME_PAGE_SEGMENTS>(
     HOME_PAGE_SEQUENCE,
     "HEADER",
   );
+  const { sendAnalyticsEvent } = useAnalytics();
 
   return (
     <div
@@ -33,9 +35,10 @@ export function Header(props: { className?: string }) {
       >
         by{" "}
         <a
-          href="https://www.linkedin.com/in/maksim-vasilyev-09099a77/"
+          href={LINKEDIN_URL}
           target="_blank"
           className={styles.Link}
+          onClick={() => sendAnalyticsEvent("header: LinkedIn link clicked")}
         >
           {AUTHOR_NAME}
         </a>

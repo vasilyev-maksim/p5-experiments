@@ -1,10 +1,7 @@
 # 👨‍💻 IN PROGRESS
 
-- [easy] fix initially open tile centering
-
 # 📋 TODO
 
-- [easy] Home page => Footer & Header => add analytics events
 - [medium] write meaningful README.md
 
 # 💡 NICE TO HAVE
@@ -25,6 +22,8 @@
 
 # ✅ DONE
 
+- [easy] Home page => Footer & Header => add analytics events
+- [easy] fix initially open tile centering
 - [hard] tabIndex everywhere
 - [hard] focus trap for modal (home page links are accessible)
 - [hard] fix DOM nodes & listeners memory leak
