@@ -235,7 +235,7 @@ export const SketchModal = ({
               <PlaybackControls onFullscreenToggle={openInFullscreen} />
             </animated.div>
 
-            <animated.div
+            <animated.button
               style={{
                 translateX: overlayX.to([0, 1], [100, 0]).to((x) => x + `%`),
                 opacity: overlayX,
@@ -244,7 +244,7 @@ export const SketchModal = ({
               onClick={onBackClick}
             >
               <CrossIcon />
-            </animated.div>
+            </animated.button>
           </div>
         </div>
       </animated.div>
