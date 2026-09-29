@@ -11,7 +11,7 @@ export const sketch: ISketch<Controls> = {
   id: "tiles",
   name: "tiles",
   preview: {
-    sizeInPercents: 29,
+    sizeInPercents: 31,
   },
   startTime: 0,
 };
