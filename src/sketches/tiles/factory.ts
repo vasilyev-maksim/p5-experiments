@@ -67,8 +67,15 @@ export const factory = createSketch<Controls>(
         const maxArea = (maxAreaRelative / 100) * gridRect.getArea();
         const tiles = new Tiler(og, (rect) => {
           const area = rect.getArea();
+          const aspectRatio = rect.getAspectRatio();
 
-          if (area > maxArea || rect.getAspectRatio() > 2) return 0;
+          if (
+            area > maxArea ||
+            aspectRatio > 2 ||
+            (area > 16 && aspectRatio > 1.5)
+          ) {
+            return 0;
+          }
 
           return area;
         }).randomTiling();
