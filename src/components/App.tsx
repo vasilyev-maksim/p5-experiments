@@ -86,6 +86,7 @@ function App() {
   return isDesktop ? (
     <>
       <div
+        inert={Boolean(activeSketch)}
         className={classNames(styles.Container, {
           [styles.InBackground]: !!activeSketch,
         })}

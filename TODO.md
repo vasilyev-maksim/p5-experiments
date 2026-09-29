@@ -1,11 +1,10 @@
 # 👨‍💻 IN PROGRESS
 
+- [easy] fix initially open tile centering
+
 # 📋 TODO
 
 - [medium] write meaningful README.md
-
-- [hard] focus trap for modal (home page links are accessible)
-- [hard] tabIndex everywhere
 
 # 💡 NICE TO HAVE
 
@@ -25,6 +24,9 @@
 
 # ✅ DONE
 
+- [hard] tabIndex everywhere
+- [hard] focus trap for modal (home page links are accessible)
+- [hard] fix DOM nodes & listeners memory leak
 - make bg pattern static (non scrollable)
 - [medium] add footer (with github link + linkedin + 2026 (C) Maksim ... etc.)
 - fix home page layout shift (use visibility hidden)

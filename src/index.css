@@ -26,7 +26,6 @@
   --borderRadiusXL: 20px;
   --closeIconColor: hsl(var(--primaryColorH) 49 76);
   --closeIconColorFaded: hsl(var(--primaryColorH) 23.67 59.41);
-  --xx: #1c2f2f;
 }
 
 body {
@@ -70,10 +69,16 @@ body {
 
 a {
   text-decoration: underline;
-  transition: 200ms all;
+  transition: 200ms color;
 
   &:hover {
     color: var(--fontColorAccent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primaryColorFaded);
+    border-radius: 2px;
+    outline-offset: 1px;
   }
 }
 

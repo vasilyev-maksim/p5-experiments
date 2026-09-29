@@ -18,6 +18,7 @@
   background-size: 100% 200%;
   color: var(--fontColor);
   overflow: hidden;
+  box-sizing: border-box;
 
   &::before {
     content: "";
@@ -42,22 +43,33 @@
     pointer-events: none;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     transform: scale(var(--tileHoverScale)) translateY(-15px);
     color: var(--fontColorAccent);
   }
 
+  &:focus-visible {
+    outline: none;
+  }
+
   &:hover,
-  &:hover::before {
+  &:hover::before,
+  &:focus-visible,
+  &:focus-visible::before {
     background-position: 0 100%;
   }
 
   &:not(.Hidden) {
-    transition: var(--transitionDuration) all ease-in-out;
+    transition:
+      var(--transitionDuration) all ease-in-out,
+      outline 0s;
   }
 
   &:not(.Hidden)::before {
-    transition: var(--transitionDuration) all linear;
+    transition:
+      var(--transitionDuration) all linear,
+      outline 0s;
   }
 
   &.Hidden {

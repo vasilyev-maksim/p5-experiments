@@ -123,17 +123,12 @@
   padding: 10px;
   margin: 20px;
   border-radius: var(--borderRadius);
-  /* color: var(--closeIconColorFaded);
-  background-color: var(--backdrop); */
   cursor: pointer;
-  /* transition: opacity 200ms; */
-  /* opacity: 0.8; */
   color: var(--closeIconColor);
   background-color: var(--backdrop);
-  /* color: var(--closeIconColorFaded); */
+  transition: 200ms background-color;
 
   &:hover {
-    background-color: var(--xx);
-    /* opacity: 1; */
+    background-color: #1c2f2f;
   }
 }

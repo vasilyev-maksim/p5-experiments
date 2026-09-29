@@ -117,7 +117,7 @@ export const CoordinatesControl = (props: {
       )}
       <div className={styles.Container}>
         <div
-          tabIndex={2}
+          tabIndex={0}
           className={styles.Plane}
           style={{
             width: PLANE_SIZE,
