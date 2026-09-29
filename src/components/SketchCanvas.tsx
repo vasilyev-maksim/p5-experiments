@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef } from "react";
+import { useMemo, useEffect, useRef, useState } from "react";
 import type {
   ISketch,
   IParams,
@@ -13,8 +13,9 @@ import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { useSequence } from "../sequencer";
 import type { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
-import p5 from "p5";
+import type p5 from "p5";
 import { Event } from "@/utils/Event";
+import { createP5 } from "@/utils/createP5";
 import type { CanvasSizeChangeEvent } from "@/core/events";
 
 export const SketchCanvas = (props: {
@@ -33,7 +34,7 @@ export const SketchCanvas = (props: {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5>(null);
   const prevSizeRef = useRef<SketchCanvasSize>(null);
-  const canvasSizeChangeEventRef = useRef<CanvasSizeChangeEvent>(new Event());
+  const [canvasSizeChangeEvent] = useState<CanvasSizeChangeEvent>(new Event()); // acts like useRef
 
   const {
     canvasModalWidth,
@@ -64,7 +65,7 @@ export const SketchCanvas = (props: {
       },
       id: `${props.sketch.id}_${props.id}`,
       eventBus: props.eventBus,
-      canvasSizeChangeEvent: canvasSizeChangeEventRef.current,
+      canvasSizeChangeEvent,
     });
   }, []);
 
@@ -78,17 +79,25 @@ export const SketchCanvas = (props: {
   }));
 
   useEffect(() => {
+    let p5Cleanup: (() => Promise<void>) | undefined;
+
     if (canvasContainerRef.current && !p5InstanceRef.current) {
-      p5InstanceRef.current = new p5(p5Sketch, canvasContainerRef.current);
+      const { instance, cleanup } = createP5(
+        p5Sketch,
+        canvasContainerRef.current,
+      );
+      p5InstanceRef.current = instance;
+      p5Cleanup = cleanup;
     }
+
     return () => {
       props.eventBus?.removeAllListeners();
-      p5InstanceRef.current?.remove();
+      p5Cleanup?.();
     };
   }, []);
 
   useEffect(() => {
-    canvasSizeChangeEventRef.current.dispatch({
+    canvasSizeChangeEvent.dispatch({
       type: "canvasSizeChange",
       canvasWidth,
       canvasHeight,
