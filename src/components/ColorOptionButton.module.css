@@ -1,22 +1,23 @@
 .Wrapper {
-  --outer-radius: 6px;
+  --outer-radius: 5px;
+  --frame-width: 2px;
 
   position: relative;
-  padding: 3px;
+  padding: var(--frame-width);
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: 200ms all;
+  transition: 200ms box-shadow;
   border-radius: var(--outer-radius);
 
   &:focus-visible {
     outline: none;
-    background-color: var(--primaryColorFaded);
+    box-shadow: inset 0 0 0 var(--frame-width) var(--primaryColorFaded);
   }
 
   &.Active {
-    background-color: unset;
+    box-shadow: none;
   }
 }
 
@@ -25,8 +26,7 @@
   left: 50%;
   top: 50%;
   translate: -50% -50%;
-  border-color: var(--primaryColor);
-  border-style: solid;
+  border: var(--frame-width) solid var(--primaryColor);
   border-radius: var(--outer-radius);
 }
 

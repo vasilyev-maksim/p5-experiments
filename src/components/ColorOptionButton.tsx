@@ -18,16 +18,10 @@ export const ColorOptionButton = (props: {
     },
   });
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter") {
-      props.onClick();
-    }
-  };
-
   const bgStyle =
     props.colors.length === 1
       ? {
-          background: props.colors[0],
+          backgroundColor: props.colors[0],
         }
       : props.colors.length === 2
         ? {
@@ -42,11 +36,9 @@ export const ColorOptionButton = (props: {
             }
           : undefined;
   return (
-    <div
+    <button
       className={classNames(styles.Wrapper, { [styles.Active]: props.active })}
-      tabIndex={3} // TODO: fix
       onClick={props.onClick}
-      onKeyDown={handleKeyDown}
     >
       <animated.div
         className={styles.Frame}
@@ -57,6 +49,6 @@ export const ColorOptionButton = (props: {
         }}
       />
       <div className={styles.Bg} style={bgStyle} />
-    </div>
+    </button>
   );
 };
