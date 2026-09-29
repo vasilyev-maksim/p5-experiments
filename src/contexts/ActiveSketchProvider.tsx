@@ -16,7 +16,7 @@ export function ActiveSketchProvider({
   children: React.ReactNode;
   activeSketch: ISketch;
 }) {
-  const [eventBus] = useState<EventBus<SketchEvent>>(() => new EventBus());
+  const [eventBus] = useState<EventBus<SketchEvent>>(() => new EventBus()); // acts like useRef
   const initialActivePreset = getActivePresetFromUrl(activeSketch);
   const [paused, setPaused] = useState(true);
   const [params, setParams] = useState(initialActivePreset.params);
@@ -58,6 +58,7 @@ export function ActiveSketchProvider({
   }, [paused]);
 
   const jumpNFrames = useCallback((N: number) => {
+    sendEvent({ type: "playPause", paused: true });
     setPaused(true);
     sendEvent({ type: "timeTravel", timeShift: N });
   }, []);
@@ -153,6 +154,7 @@ export function ActiveSketchProvider({
       exportToFile,
       spinUp,
       applyPreset,
+      eventBus,
     ],
   );
 

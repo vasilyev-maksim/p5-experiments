@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TrackedValue } from "./TrackedValue";
 
 export type TrackedValueComparator<T> = (

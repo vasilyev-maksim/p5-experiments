@@ -9,7 +9,9 @@ export function useKeyboardShortcuts(
       if (e.code === "KeyP") onPlayPause();
       if (e.code === "KeyF") onFullscreenToggle();
     };
+
     window.addEventListener("keydown", handleKeyDown);
+
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onPlayPause, onFullscreenToggle]);
 }

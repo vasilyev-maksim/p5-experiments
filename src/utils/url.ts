@@ -21,7 +21,6 @@ export type IPresetUrlData =
 
 export function setParamToQs(
   paramName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   paramValue: any,
   qs: URLSearchParams,
 ) {
@@ -91,7 +90,6 @@ export function getPresetDataFromQs(
           if (params[arrayParamName] && Array.isArray(params[arrayParamName])) {
             params[arrayParamName].push(val);
           } else {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             params[arrayParamName] = [val] as any;
           }
         } else {
@@ -153,7 +151,6 @@ export function setSketchToUrl(sketch: ISketch) {
 
 export function setParamToUrl(
   paramName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   paramValue: any,
 ) {
   const qs = new URLSearchParams(location.search);

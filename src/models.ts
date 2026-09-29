@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { EventBus } from "./core/EventBus";
 import type { CanvasSizeChangeEvent, SketchEvent } from "./core/events";
 import type p5 from "p5";

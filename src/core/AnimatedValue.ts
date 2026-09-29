@@ -50,10 +50,8 @@ export class AnimatedValue {
         return this.end;
       } else {
         if (currentTime > this.endTime) {
-          currentTime = this.endTime;
           return this.end;
         } else if (currentTime < this.startTime) {
-          currentTime = this.startTime;
           return this.start;
         } else {
           const ratio =

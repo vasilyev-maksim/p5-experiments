@@ -16,7 +16,6 @@ import { ENV } from "@/env";
 // import { sketch as funcsSketch } from "./_sandboxes/funcs";
 // import { sketch as bodiesSketch } from "./_sandboxes/bodies";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const all: ISketch<any>[] = [
   spiralSketch,
   arcsSketch,

@@ -103,7 +103,6 @@ export const factory: ISketchFactory<Controls> = createSketch<Controls>(
         p.translate(1, 1);
 
         p.strokeJoin(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ["miter", "round", "bevel"][getParam("CORNERS_TYPE")] as any,
         );
 

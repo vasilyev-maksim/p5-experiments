@@ -34,7 +34,9 @@ export const SketchCanvas = (props: {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5>(null);
   const prevSizeRef = useRef<SketchCanvasSize>(null);
-  const [canvasSizeChangeEvent] = useState<CanvasSizeChangeEvent>(new Event()); // acts like useRef
+  const [canvasSizeChangeEvent] = useState<CanvasSizeChangeEvent>(
+    () => new Event(),
+  ); // acts like useRef
 
   const {
     canvasModalWidth,

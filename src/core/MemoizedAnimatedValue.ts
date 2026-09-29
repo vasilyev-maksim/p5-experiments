@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimatedValue } from "./AnimatedValue";
 import { MemoizedValue } from "./MemoizedValue";
 import type { TimeProvider, TrackedTuple, TrackedValueComparator } from "./models";

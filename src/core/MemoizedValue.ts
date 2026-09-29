@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TrackedTuple, TrackedValueComparator } from "./models";
 import { TrackedValue } from "./TrackedValue";
 

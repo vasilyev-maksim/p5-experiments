@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type p5 from "p5";
 import { MemoizedAnimatedArray } from "./MemoizedAnimatedArray";
 import { AnimatedValue } from "./AnimatedValue";

@@ -27,7 +27,8 @@ export function useSizes() {
     const tileScreenCenteredTop = ctx.viewportHeight / 2 - tileHeight / 2;
 
     return {
-      ...ctx,
+      viewportWidth: ctx.viewportWidth,
+      viewportHeight: ctx.viewportHeight,
       tileWidth,
       tileHeight,
       tilePadding,

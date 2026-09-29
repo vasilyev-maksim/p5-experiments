@@ -64,7 +64,6 @@ export const SketchTile = forwardRef<
             width: tileWidth,
             height: tileHeight,
             "--borderWidth": borderWidth + "px",
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any
         }
       >
