@@ -4,6 +4,7 @@
 
 # 📋 TODO
 
+- [easy] Home page => Footer & Header => add analytics events
 - [medium] write meaningful README.md
 
 # 💡 NICE TO HAVE

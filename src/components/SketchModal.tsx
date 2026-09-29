@@ -13,7 +13,7 @@ import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
 import { usePopStateSync } from "@/hooks/usePopStateSync";
-import { useActiveSketch } from "@/hooks/useActiveSketch";
+import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
 import { SketchModalSidebar } from "./SketchModalSidebar";
 import { CrossIcon } from "./Icons";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -37,7 +37,7 @@ export const SketchModal = ({
     spinUp,
     applyPreset,
     playPause,
-  } = useActiveSketch();
+  } = useActiveSketchContext();
   const activePreset = getActivePreset();
   const [size, setSize] = useState<SketchCanvasSize>("tile");
 

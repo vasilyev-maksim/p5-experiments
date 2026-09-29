@@ -4,7 +4,7 @@ import { PlayPauseButton } from "./PlayPauseButton";
 import styles from "./PlaybackControls.module.css";
 import { Slider } from "./Slider";
 import { JumpNFramesButton } from "./JumpNFramesButton";
-import { useActiveSketch } from "@/hooks/useActiveSketch";
+import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
 import { DownloadIcon, FullScreenIcon } from "./Icons";
 import { useAnalytics, useAnalyticsThrottled } from "@/hooks/useAnalytics";
 
@@ -20,7 +20,7 @@ export const PlaybackControls = memo(function PlaybackControls(props: {
     stopPlayingWithCustomDelta,
     exportToFile,
     changeTimeDelta,
-  } = useActiveSketch();
+  } = useActiveSketchContext();
 
   const { sendAnalyticsEvent } = useAnalytics();
   const { sendThrottledAnalyticsEvent } = useAnalyticsThrottled();

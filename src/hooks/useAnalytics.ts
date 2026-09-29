@@ -1,11 +1,11 @@
 import { ENV } from "@/env";
 import { usePostHog } from "@posthog/react";
-import { useActiveSketch } from "./useActiveSketch";
+import { useActiveSketchContext } from "./useActiveSketchContext";
 import { useThrottleWithTrailing } from "./useThrottleWithTrailing";
 
 export function useAnalytics() {
   const posthog = usePostHog();
-  const { activeSketch } = useActiveSketch();
+  const { activeSketch } = useActiveSketchContext();
 
   return {
     sendAnalyticsEvent: (...args: Parameters<typeof posthog.capture>) => {

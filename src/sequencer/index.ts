@@ -41,7 +41,7 @@ export function useSequenceStart<Context = unknown>(
   }, [opts.condition, opts.ctx, seq]);
 }
 
-export function useSegment<Id extends string = string, P = void>(
+export function useSegment<Id extends string, Payload = void>(
   sequenceId: string,
   segmentId: Id,
 ) {
@@ -56,5 +56,5 @@ export function useSegment<Id extends string = string, P = void>(
     return segment.onPhaseChange.addListener(setPhase);
   }, [segment]);
 
-  return segment as P extends void ? SyncSegment : AsyncSegment<P>;
+  return segment as Payload extends void ? SyncSegment : AsyncSegment<Payload>;
 }

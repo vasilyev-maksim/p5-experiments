@@ -37,7 +37,7 @@ export const SketchTilesGrid = memo(
             sketch={x}
             hidden={props.activeSketch === x}
             ref={props.activeSketch === x ? selectedTileRef : null}
-            onSelect={() => props.onClick(x)}
+            onClick={() => props.onClick(x)}
             animated={wasRun}
             animationDelay={itemDelay * i}
             animationDuration={itemDuration}

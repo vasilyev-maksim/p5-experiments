@@ -14,11 +14,11 @@ import { OptionButton } from "./OptionButton";
 import { BooleanParamControl } from "./BooleanParamControl";
 import { memo } from "react";
 import { CoordinatesControl } from "./CoordinatesControl";
-import { useActiveSketch } from "@/hooks/useActiveSketch";
+import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
 import { useAnalyticsThrottled } from "@/hooks/useAnalytics";
 
 export const ParamControls = memo(function ParamControls() {
-  const { params, activeSketch, changeParam } = useActiveSketch();
+  const { params, activeSketch, changeParam } = useActiveSketchContext();
   const segment = useSegment<MODAL_OPEN_SEGMENTS, ControlsAnimationParams>(
     MODAL_OPEN_SEQUENCE,
     "SHOW_CONTROLS",

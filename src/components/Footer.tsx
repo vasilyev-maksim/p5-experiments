@@ -1,11 +1,14 @@
 import { useSegment } from "@/sequencer";
 import styles from "./Footer.module.css";
-import { HOME_PAGE_SEQUENCE } from "@/animations";
+import { type HOME_PAGE_SEGMENTS, HOME_PAGE_SEQUENCE } from "@/animations";
 import classNames from "classnames";
 import { AUTHOR_NAME, LINKEDIN_URL, SOURCE_CODE_URL } from "@/consts";
 
 export function Footer(props: { className?: string }) {
-  const { wasRun, duration } = useSegment(HOME_PAGE_SEQUENCE, "FOOTER");
+  const { wasRun, duration } = useSegment<HOME_PAGE_SEGMENTS>(
+    HOME_PAGE_SEQUENCE,
+    "FOOTER",
+  );
 
   return (
     <div

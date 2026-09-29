@@ -13,7 +13,7 @@ export const SketchTile = forwardRef<
     animationDelay?: number;
     animationDuration?: number;
     onAnimationComplete?: () => void;
-    onSelect?: () => void;
+    onClick?: () => void;
     className?: string;
     hidden?: boolean;
     animated: boolean;
@@ -25,7 +25,7 @@ export const SketchTile = forwardRef<
       animationDelay = 0,
       animationDuration = 0,
       onAnimationComplete,
-      onSelect,
+      onClick,
       className,
       hidden = false,
       animated,
@@ -58,11 +58,11 @@ export const SketchTile = forwardRef<
         )}
         role="button"
         tabIndex={0}
-        onClick={onSelect}
+        onClick={onClick}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            onSelect?.();
+            onClick?.();
           }
         }}
         style={

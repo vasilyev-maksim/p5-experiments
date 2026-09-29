@@ -12,7 +12,7 @@ import {
 import { OptionButton } from "./OptionButton";
 import { memo, useEffect, useRef, useState } from "react";
 import { BooleanParamControl } from "./BooleanParamControl";
-import { useActiveSketch } from "@/hooks/useActiveSketch";
+import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
 export const Presets = memo(function Presets() {
@@ -30,7 +30,7 @@ export const Presets = memo(function Presets() {
     "INIT_CONTROLS_AND_PRESETS",
   );
 
-  const { activeSketch, params, applyPreset } = useActiveSketch();
+  const { activeSketch, params, applyPreset } = useActiveSketchContext();
   const presets = activeSketch.presets;
   const presetIndex = useRef(0);
   const [shufflePresets, setShufflePresets] = useState(

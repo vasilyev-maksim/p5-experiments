@@ -10,7 +10,7 @@ import {
   copyCurrentUrlToClipboard,
   copyPresetCodeToClipboard,
 } from "@/utils/clipboard";
-import { useActiveSketch } from "@/hooks/useActiveSketch";
+import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
 import { DiceIcon, ShareIcon } from "./Icons";
 import { ENV } from "@/env";
 import { ScrollShadow } from "./ScrollShadow";
@@ -27,7 +27,7 @@ export const SketchModalSidebar = (props: {
     "SHOW_BOTTOM_ACTIONS",
   );
   const { activeSketch, params, timeDelta, randomizeParams } =
-    useActiveSketch();
+    useActiveSketchContext();
   const { pushNotification } = useNotifications();
   const { sendAnalyticsEvent } = useAnalytics();
 

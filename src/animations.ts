@@ -15,7 +15,7 @@ export type MODAL_OPEN_SEGMENTS =
   | "INIT_CONTROLS_AND_PRESETS"
   | "SHOW_BOTTOM_ACTIONS";
 export const HOME_PAGE_SEQUENCE = "HOME_PAGE";
-export type HOME_PAGE_SEGMENTS = "HEADER" | "TILES";
+export type HOME_PAGE_SEGMENTS = "HEADER" | "TILES" | "FOOTER";
 export type PresetsAnimationParams = {
   itemDelay: number;
   itemDuration: number;
