@@ -3,7 +3,7 @@ import styles from "./Presets.module.css";
 import { areParamsEqual } from "@utils/sketch";
 import { SectionLayout } from "./SectionLayout";
 import { animated, easings, useSprings } from "@react-spring/web";
-import { useSequence } from "../sequencer";
+import { useSegment } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
   type MODAL_OPEN_SEGMENTS,
@@ -16,18 +16,19 @@ import { useActiveSketch } from "@/hooks/useActiveSketch";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
 export const Presets = memo(function Presets() {
-  const segment =
-    useSequence<MODAL_OPEN_SEGMENTS>(
-      MODAL_OPEN_SEQUENCE,
-    ).useSegment<PresetsAnimationParams>("SHOW_PRESETS");
-  const { itemDelay, itemDuration } = segment.timingPayload;
-  const showHeader =
-    useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
-      "SHOW_PRESET_HEADER",
-    );
-  const controlsActivated = useSequence<MODAL_OPEN_SEGMENTS>(
+  const segment = useSegment<MODAL_OPEN_SEGMENTS, PresetsAnimationParams>(
     MODAL_OPEN_SEQUENCE,
-  ).useSegment("INIT_CONTROLS_AND_PRESETS");
+    "SHOW_PRESETS",
+  );
+  const { itemDelay, itemDuration } = segment.timingPayload;
+  const showHeader = useSegment<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+    "SHOW_PRESET_HEADER",
+  );
+  const controlsActivated = useSegment<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+    "INIT_CONTROLS_AND_PRESETS",
+  );
 
   const { activeSketch, params, applyPreset } = useActiveSketch();
   const presets = activeSketch.presets;

@@ -11,11 +11,10 @@ import {
 import classNames from "classnames";
 import { SketchModal } from "./SketchModal";
 import type { ISketch } from "../models";
-import { useSequence } from "../sequencer";
+import { useSegment, useSequence, useSequenceStart } from "../sequencer";
 import {
   HOME_PAGE_SEQUENCE,
   MODAL_OPEN_SEQUENCE,
-  type Ctx,
   type MODAL_OPEN_SEGMENTS,
 } from "../animations";
 import { SketchTilesGrid } from "./SketchTilesGrid";
@@ -41,10 +40,11 @@ function App() {
     useSizes();
   const [cloneTop, setCloneTop] = useState<number>(tileScreenCenteredTop);
   const [cloneLeft, setCloneLeft] = useState<number>(tileScreenCenteredLeft);
-  const { start, reset, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+  const { start, reset } = useSequence(MODAL_OPEN_SEQUENCE);
+  const seg = useSegment<MODAL_OPEN_SEGMENTS>(
     MODAL_OPEN_SEQUENCE,
+    "GRID_GOES_IN_BG",
   );
-  const seg = useSegment("GRID_GOES_IN_BG");
   const ctx = useMemo(
     () => ({
       controlsPresent: Object.entries(activeSketch?.controls ?? {}).length > 0,
@@ -54,7 +54,7 @@ function App() {
   );
   const { sendAnalyticsEvent } = useAnalytics();
 
-  useSequence(HOME_PAGE_SEQUENCE).useStart();
+  useSequenceStart(HOME_PAGE_SEQUENCE);
   usePopStateSync();
 
   useEffect(() => {

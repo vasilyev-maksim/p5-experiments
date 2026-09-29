@@ -10,7 +10,7 @@ import styles from "./SketchCanvas.module.css";
 import { useSizes } from "@/hooks/useSizes";
 import { animated, easings, to, useSpring } from "@react-spring/web";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
-import { useSequence } from "../sequencer";
+import { useSegment } from "../sequencer";
 import type { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 import type p5 from "p5";
@@ -71,10 +71,10 @@ export const SketchCanvas = (props: {
     });
   }, []);
 
-  const { duration } =
-    useSequence<MODAL_OPEN_SEGMENTS>(MODAL_OPEN_SEQUENCE).useSegment(
-      "TILE_GOES_MODAL",
-    );
+  const { duration } = useSegment<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+    "TILE_GOES_MODAL",
+  );
   const [{ x }, api] = useSpring(() => ({
     from: { x: 0 },
     config: { duration, easing: easings.easeInOutCubic },

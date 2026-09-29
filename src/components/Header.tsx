@@ -1,12 +1,14 @@
 import styles from "./Header.module.css";
 import { HOME_PAGE_SEQUENCE, type HOME_PAGE_SEGMENTS } from "../animations";
-import { useSequence } from "../sequencer";
+import { useSegment } from "../sequencer";
 import classNames from "classnames";
 import { AUTHOR_NAME } from "@/consts";
 
 export function Header(props: { className?: string }) {
-  const { wasRun, duration } =
-    useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE).useSegment("HEADER");
+  const { wasRun, duration } = useSegment<HOME_PAGE_SEGMENTS>(
+    HOME_PAGE_SEQUENCE,
+    "HEADER",
+  );
 
   return (
     <div

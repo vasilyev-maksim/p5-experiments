@@ -6,53 +6,55 @@ import type { SegmentPhase } from "./models";
 import { SequenceContext } from "./SequenceContext";
 import type { SegmentBase } from "./SegmentBase";
 
-export function useSequence<Id extends string = string, Context = unknown>(
-  id: string,
-) {
+export function useSequence(id: string) {
   const sequences = useContext(SequenceContext).sequences as Sequence[];
-  const seq = useMemo(
+  return useMemo(
     () => sequences.find((x) => x.id === id)!,
     [sequences, id],
   ) as Sequence;
+}
 
-  const useListener = (cb: (segment: SegmentBase) => void) => {
-    useEffect(() => {
-      return seq.onProgress.addListener(cb);
-    }, [cb, seq]);
-  };
+export function useSequenceListener(
+  sequenceId: string,
+  cb: (segment: SegmentBase) => void,
+) {
+  const seq = useSequence(sequenceId);
 
-  const useStart = (
-    opts: { condition?: boolean; ctx?: Context } = {
-      condition: true,
-      ctx: undefined,
-    },
-  ) => {
-    useEffect(() => {
-      if (opts.ctx ?? opts.condition ?? true) {
-        seq.start(opts.ctx);
-      }
-    }, [opts.condition, opts.ctx, seq]);
-  };
+  useEffect(() => {
+    return seq.onProgress.addListener(cb);
+  }, [cb, seq]);
+}
 
-  const useSegment = <P = void>(segmentId: Id) => {
-    const [, setPhase] = useState<SegmentPhase>();
-    const segment = useMemo(
-      () => seq.getSegmentById(segmentId)!,
-      [segmentId, seq],
-    );
+export function useSequenceStart<Context = unknown>(
+  sequenceId: string,
+  opts: { condition?: boolean; ctx?: Context } = {
+    condition: true,
+    ctx: undefined,
+  },
+) {
+  const seq = useSequence(sequenceId);
 
-    useEffect(() => {
-      return segment.onPhaseChange.addListener(setPhase);
-    }, [segment]);
+  useEffect(() => {
+    if (opts.ctx ?? opts.condition ?? true) {
+      seq.start(opts.ctx);
+    }
+  }, [opts.condition, opts.ctx, seq]);
+}
 
-    return segment as P extends void ? SyncSegment : AsyncSegment<P>;
-  };
+export function useSegment<Id extends string = string, P = void>(
+  sequenceId: string,
+  segmentId: Id,
+) {
+  const seq = useSequence(sequenceId);
+  const [, setPhase] = useState<SegmentPhase>();
+  const segment = useMemo(
+    () => seq.getSegmentById(segmentId)!,
+    [segmentId, seq],
+  );
 
-  return {
-    useListener,
-    useStart,
-    useSegment,
-    start: seq.start,
-    reset: seq.reset,
-  };
+  useEffect(() => {
+    return segment.onPhaseChange.addListener(setPhase);
+  }, [segment]);
+
+  return segment as P extends void ? SyncSegment : AsyncSegment<P>;
 }

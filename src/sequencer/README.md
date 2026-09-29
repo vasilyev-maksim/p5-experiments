@@ -8,9 +8,9 @@ Then, B should start after OVERALL_DELAY + A + DELAY_BETWEEN(A,B).
 Then, C should start after….
 
 So, we have to add new values to previous ones in order to compute when some element should be animated.
-If we add another animation in between, the all others after this one should be recalculated.
+If we add another animation in between, all consequent ones should be recalculated.
 
-There is no tools available rn solving this problem.
+There is no tools available rn to solve this problem.
 
 Segment phases:
 
@@ -64,57 +64,3 @@ Segment phases:
 - “value” анимации
 - conditional segments (to skip presets and controls if none)
 - переименовать StepController в Step, Step в StepData
-
-## Мой вариант из RTK:
-
-export interface IStepData<T extends string | number> {
-action?: (stepNumber: number) => void;
-delay?: number;
-skip?: boolean;
-stepNumber?: T;
-}
-
-export function useSequencer<T extends string | number>(
-stepsData: IStepData<T>[],
-enabled: boolean = true
-) {
-const [currentStep, setCurrentStep] = useState<null | T>(null);
-const steps = stepsData.filter((x) => !x.skip);
-const [currIndex, setCurrIndex] = useState(-1);
-
-useEffect(() => {
-if (!enabled) return;
-const stepNumber = steps[currIndex]?.stepNumber;
-if (stepNumber != null) {
-setCurrentStep(stepNumber);
-}
-}, [currIndex, enabled]);
-
-useEffect(() => {
-if (!enabled) return;
-let cleanup;
-
-    function schedule(step: number) {
-      if (step <= steps.length - 1) {
-        const id = setTimeout(() => {
-          steps[step].action?.(step);
-          setCurrIndex((x) => x + 1);
-          schedule(step + 1);
-        }, steps[step].delay || 0);
-
-        cleanup = () => {
-          clearTimeout(id);
-        };
-      }
-    }
-
-    schedule(currIndex + 1); // call with next to initial currentStep value
-    return cleanup;
-
-}, [enabled]);
-
-return {
-currentStep,
-completed: currIndex === steps.length - 1,
-};
-}

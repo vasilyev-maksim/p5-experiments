@@ -2,7 +2,7 @@ import { forwardRef, memo } from "react";
 import type { ISketch } from "../models";
 import { SketchTile } from "./SketchTile";
 import styles from "./SketchTilesGrid.module.css";
-import { useSequence } from "../sequencer";
+import { useSegment } from "../sequencer";
 import {
   type GridAnimationParams,
   type HOME_PAGE_SEGMENTS,
@@ -20,13 +20,14 @@ export const SketchTilesGrid = memo(
       className?: string;
     }
   >(function SketchTilesGrid(props, selectedTileRef) {
-    const { useSegment } = useSequence<HOME_PAGE_SEGMENTS>(HOME_PAGE_SEQUENCE);
-
     const {
       wasRun,
       timingPayload: { itemDelay, itemDuration },
       complete,
-    } = useSegment<GridAnimationParams>("TILES");
+    } = useSegment<HOME_PAGE_SEGMENTS, GridAnimationParams>(
+      HOME_PAGE_SEQUENCE,
+      "TILES",
+    );
 
     return (
       <div className={classNames(styles.Grid, props.className)}>

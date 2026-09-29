@@ -7,12 +7,8 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import classNames from "classnames";
 import { useCallback, useState } from "react";
 import { SketchCanvas } from "./SketchCanvas";
-import { useSequence } from "../sequencer";
-import {
-  MODAL_OPEN_SEQUENCE,
-  type Ctx,
-  type MODAL_OPEN_SEGMENTS,
-} from "../animations";
+import { useSegment, useSequenceListener } from "../sequencer";
+import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { SyncSegment } from "../sequencer/SyncSegment";
 import type { SegmentBase } from "../sequencer/SegmentBase";
 import { PlaybackControls } from "./PlaybackControls";
@@ -48,13 +44,15 @@ export const SketchModal = ({
   const [{ modalX, headerX, overlayX }, api] = useSpring(() => ({
     from: { modalX: 0, headerX: 0, overlayX: 0 },
   }));
-  const { useListener, useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+  const showSidebar = useSegment<MODAL_OPEN_SEGMENTS>(
     MODAL_OPEN_SEQUENCE,
-  );
-
-  const showSidebar = useSegment("SHOW_SIDEBAR").wasRun;
+    "SHOW_SIDEBAR",
+  ).wasRun;
   // overlay consists of [playback controls panel at the bottom + close button at the top right]
-  const overlayIsActive = useSegment("START_PLAYING").completed;
+  const overlayIsActive = useSegment<MODAL_OPEN_SEGMENTS>(
+    MODAL_OPEN_SEQUENCE,
+    "START_PLAYING",
+  ).completed;
 
   // tracks if initially (before animation starts playing and `overlayIsActive` === false) the mouse was over the canvas
   const [mouseInside, setMouseInside] = useState(false);
@@ -122,7 +120,7 @@ export const SketchModal = ({
     [spinUp, api, mouseInside],
   );
 
-  useListener(onAnimationProgress);
+  useSequenceListener(MODAL_OPEN_SEQUENCE, onAnimationProgress);
   useModalBehavior(true, onBackClick);
   usePopStateSync(() => {
     applyPreset(getActivePreset(), { updateUrl: false });

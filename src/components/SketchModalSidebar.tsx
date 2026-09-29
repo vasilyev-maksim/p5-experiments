@@ -3,12 +3,8 @@ import { animated, SpringValue } from "@react-spring/web";
 import { useSizes } from "@/hooks/useSizes";
 import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
-import { useSequence } from "../sequencer";
-import {
-  MODAL_OPEN_SEQUENCE,
-  type Ctx,
-  type MODAL_OPEN_SEGMENTS,
-} from "../animations";
+import { useSegment } from "../sequencer";
+import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
 import { Button } from "./Button";
 import {
   copyCurrentUrlToClipboard,
@@ -26,10 +22,10 @@ export const SketchModalSidebar = (props: {
   headerX: SpringValue<number>;
 }) => {
   const { modalPadding, modalSidebarPadding } = useSizes();
-  const { useSegment } = useSequence<MODAL_OPEN_SEGMENTS, Ctx>(
+  const showBottomActions = useSegment<MODAL_OPEN_SEGMENTS>(
     MODAL_OPEN_SEQUENCE,
+    "SHOW_BOTTOM_ACTIONS",
   );
-  const showBottomActions = useSegment("SHOW_BOTTOM_ACTIONS");
   const { activeSketch, params, timeDelta, randomizeParams } =
     useActiveSketch();
   const { pushNotification } = useNotifications();

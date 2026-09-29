@@ -2,7 +2,7 @@ import { SectionLayout } from "./SectionLayout";
 import styles from "./ParamControls.module.css";
 import { Slider } from "./Slider";
 import { animated, easings, useSprings } from "@react-spring/web";
-import { useSequence } from "../sequencer";
+import { useSegment } from "../sequencer";
 import {
   MODAL_OPEN_SEQUENCE,
   type MODAL_OPEN_SEGMENTS,
@@ -19,10 +19,10 @@ import { useAnalyticsThrottled } from "@/hooks/useAnalytics";
 
 export const ParamControls = memo(function ParamControls() {
   const { params, activeSketch, changeParam } = useActiveSketch();
-  const segment =
-    useSequence<MODAL_OPEN_SEGMENTS>(
-      MODAL_OPEN_SEQUENCE,
-    ).useSegment<ControlsAnimationParams>("SHOW_CONTROLS");
+  const segment = useSegment<MODAL_OPEN_SEGMENTS, ControlsAnimationParams>(
+    MODAL_OPEN_SEQUENCE,
+    "SHOW_CONTROLS",
+  );
   const { itemDelay, itemDuration } = segment.timingPayload;
   const entries = Object.entries(activeSketch.controls ?? {}).map(
     ([key, control]) => ({
@@ -50,12 +50,14 @@ export const ParamControls = memo(function ParamControls() {
     }),
     [segment.wasRun, entriesCount],
   );
-  const showHeader = useSequence<MODAL_OPEN_SEGMENTS>(
+  const showHeader = useSegment<MODAL_OPEN_SEGMENTS>(
     MODAL_OPEN_SEQUENCE,
-  ).useSegment("SHOW_CONTROLS_HEADER");
-  const initControls = useSequence<MODAL_OPEN_SEGMENTS>(
+    "SHOW_CONTROLS_HEADER",
+  );
+  const initControls = useSegment<MODAL_OPEN_SEGMENTS>(
     MODAL_OPEN_SEQUENCE,
-  ).useSegment("INIT_CONTROLS_AND_PRESETS");
+    "INIT_CONTROLS_AND_PRESETS",
+  );
 
   const { sendThrottledAnalyticsEvent } = useAnalyticsThrottled();
 
