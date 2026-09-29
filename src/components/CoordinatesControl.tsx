@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import styles from "./CoordinatesControl.module.css";
 import { animated, easings, useSpring } from "@react-spring/web";
 import { useThrottleWithTrailing } from "@/hooks/useThrottleWithTrailing";
@@ -33,15 +33,19 @@ export const CoordinatesControl = (props: {
   const propsX = props.value[0];
   const propsY = props.value[1];
   const [x, setX] = useState<number>(propsX);
-  const [y, setY] = useState<number>(propsX);
+  const [y, setY] = useState<number>(propsY);
+  const [prevPropsX, setPrevPropsX] = useState(propsX);
+  const [prevPropsY, setPrevPropsY] = useState(propsY);
 
-  useEffect(() => {
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  if (propsX !== prevPropsX) {
+    setPrevPropsX(propsX);
     setX(propsX);
-  }, [propsX]);
-
-  useEffect(() => {
+  }
+  if (propsY !== prevPropsY) {
+    setPrevPropsY(propsY);
     setY(propsY);
-  }, [propsY]);
+  }
 
   const onChangeThrottled = useThrottleWithTrailing((x: number, y: number) => {
     props.onChange([x, y]);
