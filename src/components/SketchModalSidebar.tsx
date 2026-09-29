@@ -35,8 +35,6 @@ export const SketchModalSidebar = (props: {
   const { pushNotification } = useNotifications();
   const { sendAnalyticsEvent } = useAnalytics();
 
-  const paddingRight = modalSidebarPadding - 6;
-
   const handleShareClick = async () => {
     const shareUrl = await copyCurrentUrlToClipboard();
     pushNotification("Link copied to clipboard", "share-url-copied");
@@ -58,7 +56,7 @@ export const SketchModalSidebar = (props: {
           paddingLeft: modalSidebarPadding,
           translateY: props.headerX.to([0, 1], [15, 0]),
           opacity: props.headerX,
-          paddingRight: props.modalX.to([0, 1], [0, paddingRight]),
+          paddingRight: props.modalX.to([0, 1], [0, modalSidebarPadding]),
         }}
       >
         {activeSketch.name.toUpperCase()}
@@ -70,7 +68,7 @@ export const SketchModalSidebar = (props: {
             style={{
               paddingTop: modalPadding,
               paddingBottom: 10,
-              paddingRight,
+              paddingRight: modalSidebarPadding,
             }}
           >
             <Presets />
@@ -84,7 +82,7 @@ export const SketchModalSidebar = (props: {
           style={{
             paddingLeft: modalSidebarPadding,
             animationDuration: showBottomActions.duration + "ms",
-            paddingRight,
+            paddingRight: modalSidebarPadding,
           }}
           className={styles.BottomActionsBlock}
         >

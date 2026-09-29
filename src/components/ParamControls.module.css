@@ -1,11 +1,6 @@
 .Controls {
   margin-top: 30px;
-}
-
-.ItemsWrapper {
-  position: relative;
-  top: -3px;
-  padding-right: 6px;
+  
 }
 
 .ChoiceButton {

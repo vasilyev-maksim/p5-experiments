@@ -91,59 +91,56 @@ export const Presets = memo(function Presets() {
       <SectionLayout
         header="Presets"
         showHeader={showHeader.wasRun}
+        bodyClassName={styles.Presets}
         animationDuration={showHeader.duration}
       >
-        <div className={styles.Presets}>
-          {springs.map(({ x }, i) => {
-            let body;
-            const shuffleControlIteration =
-              shouldRenderShuffleControl && i === springsCount - 1;
+        {springs.map(({ x }, i) => {
+          let body;
+          const shuffleControlIteration =
+            shouldRenderShuffleControl && i === springsCount - 1;
 
-            if (shuffleControlIteration) {
-              // shuffle presets control
-              body = (
-                <BooleanParamControl
-                  label={"Shuffle presets"}
-                  value={shufflePresets}
-                  active={controlsActivated.wasRun}
-                  animationDuration={controlsActivated.duration}
-                  onChange={(x) => setShufflePresets(x)}
-                  className={styles.ShufflePresetsControl}
-                />
-              );
-            } else {
-              // preset button
-              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-              const preset = presets?.[i]!;
-              const isActive =
-                controlsActivated.wasRun &&
-                areParamsEqual(params, preset.params);
-              body = (
-                <OptionButton
-                  label={preset.name ?? i.toString()}
-                  active={isActive}
-                  onClick={() => handleClick(preset)}
-                  animationDuration={controlsActivated.duration}
-                />
-              );
-            }
-
-            return (
-              <animated.div
-                tabIndex={1}
-                key={i}
-                className={styles.PresetButtonWrapper}
-                style={{
-                  opacity: x,
-                  scale: x.to([0, 1], [0.9, 1]),
-                  flexBasis: shuffleControlIteration ? "100%" : undefined,
-                }}
-              >
-                {body}
-              </animated.div>
+          if (shuffleControlIteration) {
+            // shuffle presets control
+            body = (
+              <BooleanParamControl
+                label={"Shuffle presets"}
+                value={shufflePresets}
+                active={controlsActivated.wasRun}
+                animationDuration={controlsActivated.duration}
+                onChange={(x) => setShufflePresets(x)}
+                className={styles.ShufflePresetsControl}
+              />
             );
-          })}
-        </div>
+          } else {
+            // preset button
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            const preset = presets?.[i]!;
+            const isActive =
+              controlsActivated.wasRun && areParamsEqual(params, preset.params);
+            body = (
+              <OptionButton
+                label={preset.name ?? i.toString()}
+                active={isActive}
+                onClick={() => handleClick(preset)}
+                animationDuration={controlsActivated.duration}
+              />
+            );
+          }
+
+          return (
+            <animated.div
+              key={i}
+              className={styles.PresetButtonWrapper}
+              style={{
+                opacity: x,
+                scale: x.to([0, 1], [0.9, 1]),
+                flexBasis: shuffleControlIteration ? "100%" : undefined,
+              }}
+            >
+              {body}
+            </animated.div>
+          );
+        })}
       </SectionLayout>
     )
   );
