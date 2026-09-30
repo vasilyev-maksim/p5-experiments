@@ -34,6 +34,7 @@ export type GridAnimationParams = {
 };
 
 const MULT = ENV.animationsDurationMultiplier;
+const HIDE_SECTION_HEADERS = true;
 
 export const sequences = [
   new Sequence(MODAL_OPEN_SEQUENCE, [
@@ -45,18 +46,24 @@ export const sequences = [
     }),
     Sequence.syncSegment({ id: "START_PLAYING", delay: 100 * MULT }),
     Sequence.syncSegment({ id: "SHOW_SIDEBAR" }),
-    Sequence.syncSegment({ id: "SHOW_HEADER", duration: 500 * MULT }),
+    Sequence.syncSegment({ id: "SHOW_HEADER", duration: 300 * MULT }),
     Sequence.asyncSegment<PresetsAnimationParams>({
       id: "SHOW_PRESETS",
+      delay: 100 * MULT,
       timingPayload: {
         itemDelay: 30 * MULT,
         itemDuration: 200 * MULT,
       },
       disabledIf: (ctx) => !(ctx as Ctx).presetsPresent,
     }),
-    Sequence.syncSegment({ id: "SHOW_PRESET_HEADER", duration: 300 * MULT }),
+    Sequence.syncSegment({
+      id: "SHOW_PRESET_HEADER",
+      duration: 300 * MULT,
+      disabledIf: () => HIDE_SECTION_HEADERS,
+    }),
     Sequence.asyncSegment<ControlsAnimationParams>({
       id: "SHOW_CONTROLS",
+      delay: 200 * MULT,
       timingPayload: {
         itemDelay: 50 * MULT,
         itemDuration: 300 * MULT,
@@ -66,15 +73,16 @@ export const sequences = [
     Sequence.syncSegment({
       id: "SHOW_CONTROLS_HEADER",
       duration: 300 * MULT,
+      disabledIf: () => HIDE_SECTION_HEADERS,
     }),
     Sequence.syncSegment({
       id: "INIT_CONTROLS_AND_PRESETS",
-      delay: 100 * MULT,
+      delay: 200 * MULT,
       duration: 200 * MULT,
     }),
     Sequence.syncSegment({
       id: "SHOW_BOTTOM_ACTIONS",
-      duration: 300 * MULT,
+      duration: 200 * MULT,
       delay: 300 * MULT,
     }),
   ]),
