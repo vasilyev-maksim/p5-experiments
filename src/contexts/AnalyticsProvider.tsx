@@ -10,6 +10,10 @@ const options: Partial<PostHogConfig> = {
 } as const;
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
+  if (ENV.disableAnalytics) {
+    return children;
+  }
+
   return (
     <PostHogProvider apiKey={ENV.posthogProjectToken} options={options}>
       {children}
