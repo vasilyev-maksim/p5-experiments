@@ -28,6 +28,8 @@
   translate: -50% -50%;
   border: var(--frame-width) solid var(--primaryColor);
   border-radius: var(--outer-radius);
+  width: 100%;
+  height: 100%;
 }
 
 .Bg {

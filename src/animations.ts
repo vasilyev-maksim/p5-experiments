@@ -63,7 +63,7 @@ export const sequences = [
     }),
     Sequence.asyncSegment<ControlsAnimationParams>({
       id: "SHOW_CONTROLS",
-      delay: 200 * MULT,
+      delay: 100 * MULT,
       timingPayload: {
         itemDelay: 50 * MULT,
         itemDuration: 300 * MULT,

@@ -14,7 +14,7 @@ export const ColorOptionButton = (props: {
     to: { x: props.active ? 1 : 0 },
     config: {
       duration: props.animationDuration,
-      easing: easings.easeInOutCubic,
+      easing: easings.linear,
     },
   });
 
@@ -43,8 +43,6 @@ export const ColorOptionButton = (props: {
       <animated.div
         className={styles.Frame}
         style={{
-          height: x.to([0, 1], [0, 100]).to((x) => x + "%"),
-          width: x.to([0, 1], [0, 100]).to((x) => x + "%"),
           opacity: x.to([0, 1], [0, 1]),
         }}
       />

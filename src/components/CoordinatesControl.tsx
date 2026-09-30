@@ -25,7 +25,7 @@ export const CoordinatesControl = (props: {
     to: { initProgress: props.active ? 1 : 0 },
     config: {
       duration: props.animationDuration,
-      easing: easings.easeInOutCubic,
+      easing: easings.linear,
     },
   });
   const planeRef = useRef<HTMLDivElement>(null);

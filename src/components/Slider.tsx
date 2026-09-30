@@ -23,7 +23,7 @@ export function Slider(props: {
     to: { initX: props.active ? 1 : 0 },
     config: {
       duration: props.activationAnimationDuration,
-      easing: easings.easeInOutCubic,
+      easing: easings.linear,
     },
   });
   const {
