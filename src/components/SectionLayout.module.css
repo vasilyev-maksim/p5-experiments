@@ -7,6 +7,7 @@
 
 .Body {
   flex: 1;
+  z-index: 1;
 }
 
 .Header {
@@ -14,4 +15,6 @@
   text-align: right;
   padding-top: 5px;
   font-size: 0.75rem;
+  z-index: 0;
+  user-select: none;
 }
