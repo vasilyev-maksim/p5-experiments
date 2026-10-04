@@ -7,10 +7,6 @@ import type {
 } from "@/models";
 import type { Event } from "@/utils/Event";
 
-type EventBase = {
-  id?: number;
-};
-
 export type ExportRequestEvent = {
   type: "export";
   exportFileName: string;
@@ -60,14 +56,12 @@ export type PlayPauseEvent = {
   paused: boolean;
 };
 
-export type SketchEvent<Controls extends IControls = IControls> = EventBase &
-  (
-    | ExportRequestEvent
-    | ApplyPresetEvent<Controls>
-    | ParamChangeEvent<Controls>
-    | ParamsChangeEvent<Controls>
-    | ModeChangeEvent
-    | TimeDeltaChangeEvent
-    | TimeTravelEvent
-    | PlayPauseEvent
-  );
+export type SketchEvent<Controls extends IControls = IControls> =
+  | ExportRequestEvent
+  | ApplyPresetEvent<Controls>
+  | ParamChangeEvent<Controls>
+  | ParamsChangeEvent<Controls>
+  | ModeChangeEvent
+  | TimeDeltaChangeEvent
+  | TimeTravelEvent
+  | PlayPauseEvent;

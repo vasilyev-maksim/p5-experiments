@@ -5,17 +5,9 @@ import { ParamControls } from "./ParamControls";
 import { Presets } from "./Presets";
 import { useSegment } from "../sequencer";
 import { MODAL_OPEN_SEQUENCE, type MODAL_OPEN_SEGMENTS } from "../animations";
-import { Button } from "./Button";
-import {
-  copyCurrentUrlToClipboard,
-  copyPresetCodeToClipboard,
-} from "@/utils/clipboard";
 import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
-import { DiceIcon, ShareIcon } from "./Icons";
-import { ENV } from "@/env";
 import { ScrollShadow } from "./ScrollShadow";
-import { useNotifications } from "@/hooks/useNotifications";
-import { useAnalytics } from "@/hooks/useAnalytics";
+import { SidebarActions } from "./SidebarActions";
 
 export const SketchModalSidebar = (props: {
   modalX: SpringValue<number>;
@@ -26,21 +18,7 @@ export const SketchModalSidebar = (props: {
     MODAL_OPEN_SEQUENCE,
     "SHOW_BOTTOM_ACTIONS",
   );
-  const { activeSketch, params, timeDelta, randomizeParams } =
-    useActiveSketchContext();
-  const { pushNotification } = useNotifications();
-  const { sendAnalyticsEvent } = useAnalytics();
-
-  const handleShareClick = async () => {
-    const shareUrl = await copyCurrentUrlToClipboard();
-    pushNotification("Link copied to clipboard", "share-url-copied");
-    sendAnalyticsEvent("share button clicked", { params, shareUrl });
-  };
-
-  const handleRandomizeClick = () => {
-    const newRandomParams = randomizeParams();
-    sendAnalyticsEvent("randomize button clicked", { newRandomParams });
-  };
+  const { activeSketch } = useActiveSketchContext();
 
   return (
     <div className={styles.SketchModalSidebar}>
@@ -82,28 +60,7 @@ export const SketchModalSidebar = (props: {
           }}
           className={styles.BottomActionsBlock}
         >
-          <Button
-            icon={<DiceIcon />}
-            onClick={handleRandomizeClick}
-            label="Randomize"
-          />
-          <Button
-            icon={<ShareIcon />}
-            onClick={handleShareClick}
-            label="Share"
-          />
-          {ENV.isProd ? null : (
-            <Button
-              onClick={() =>
-                copyPresetCodeToClipboard(
-                  params,
-                  timeDelta,
-                  activeSketch.presets.length,
-                )
-              }
-              label="preset"
-            />
-          )}
+          <SidebarActions />
         </div>
       )}
     </div>

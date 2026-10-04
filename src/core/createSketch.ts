@@ -184,17 +184,8 @@ export function createSketch<C extends IControls>(
 
         const args = argsFactory(api, id);
         recalcMemos();
-
         args.setup?.();
-
-        draw = ENV.devTools
-          ? () => {
-              p.push();
-              args.draw();
-              p.pop();
-              drawDevTools();
-            }
-          : args.draw;
+        draw = args.draw;
 
         // canvas resize event handling
         canvasSizeChangeEvent.addListener(
@@ -216,7 +207,15 @@ export function createSketch<C extends IControls>(
       };
 
       p.draw = () => {
-        draw();
+        if (ENV.devTools) {
+          p.push();
+          draw();
+          p.pop();
+          drawDevTools();
+        } else {
+          draw();
+        }
+
         if (paused === false) {
           time += timeDelta;
         }

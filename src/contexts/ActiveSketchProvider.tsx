@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 import { ActiveSketchContext } from "./ActiveSketchContext";
 import { getActivePresetFromUrl, setPresetDataToUrl } from "@utils/url";
 import { getRandomParams } from "@utils/sketch";
-import type { IPreset, ISketch } from "@/models";
+import type { IPreset, IScenario, ISketch } from "@/models";
+import { checkExhaustiveness, delay } from "@/utils/misc";
 
 const EXPORT_WIDTH = 3840,
   EXPORT_HEIGHT = 2160;
@@ -16,6 +17,7 @@ export function ActiveSketchProvider({
   children: React.ReactNode;
   activeSketch: ISketch;
 }) {
+  const scenarioRunIndex = useRef(0);
   const [eventBus] = useState<EventBus<SketchEvent>>(() => new EventBus()); // acts like useRef
   const initialActivePreset = getActivePresetFromUrl(activeSketch);
   const [paused, setPaused] = useState(true);
@@ -98,6 +100,35 @@ export function ActiveSketchProvider({
     });
   }, [activeSketch.id, getActivePreset]);
 
+  const scenarioRunner = async (
+    scenario: IScenario["fn"],
+    eventBus: EventBus<SketchEvent>,
+  ) => {
+    const generator = scenario();
+    const initialRunIndex = ++scenarioRunIndex.current;
+
+    for (const action of generator) {
+      if (scenarioRunIndex.current !== initialRunIndex) {
+        return;
+      }
+
+      switch (action.type) {
+        case "delay":
+          await delay(action.duration);
+          break;
+        case "sketchEvent":
+          eventBus.dispatch(action.event);
+          break;
+        default:
+          checkExhaustiveness(action);
+      }
+    }
+  };
+
+  const playScenario = useCallback((scenario: IScenario) => {
+    scenarioRunner(scenario.fn, eventBus);
+  }, []);
+
   const spinUp = useCallback(() => {
     sendEvent({ type: "modeChange", mode: "animated" });
     sendEvent({ type: "playPause", paused: false });
@@ -137,6 +168,7 @@ export function ActiveSketchProvider({
       exportToFile,
       spinUp,
       applyPreset,
+      playScenario,
     }),
     [
       activeSketch,
@@ -155,6 +187,7 @@ export function ActiveSketchProvider({
       spinUp,
       applyPreset,
       eventBus,
+      playScenario,
     ],
   );
 

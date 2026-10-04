@@ -158,6 +158,7 @@ export const presets: IPreset<Controls>[] = [
       BORDER_COLOR: 0,
     },
     timeDelta: -1,
+    startTime: 120,
     name: "spiderverse",
   },
   {

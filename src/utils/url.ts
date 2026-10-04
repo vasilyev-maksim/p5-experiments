@@ -149,10 +149,7 @@ export function setSketchToUrl(sketch: ISketch) {
   history.pushState({}, "", `${ENV.baseUrl}?${qs.toString()}`);
 }
 
-export function setParamToUrl(
-  paramName: string,
-  paramValue: any,
-) {
+export function setParamToUrl(paramName: string, paramValue: any) {
   const qs = new URLSearchParams(location.search);
   setParamToQs(paramName, paramValue, qs);
   history.pushState({}, "", `${ENV.baseUrl}?${qs.toString()}`);
@@ -163,11 +160,10 @@ export function removeSketchDataFromUrl() {
   history.pushState({}, "", location.origin + ENV.baseUrl);
 }
 
-export function getSketchIdFromUrl() {
-  return new URLSearchParams(location.search).get(SKETCH_ID_KEY);
-}
-
+// returns stable ref (as `sketchList` doesn't change in runtime)
 export function getActiveSketchFromUrl(sketchList: ISketch[]) {
-  const activeSketchId = getSketchIdFromUrl();
+  const activeSketchId = new URLSearchParams(location.search).get(
+    SKETCH_ID_KEY,
+  );
   return sketchList.find((x) => x.id === activeSketchId);
 }

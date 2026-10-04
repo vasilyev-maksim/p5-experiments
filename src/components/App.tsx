@@ -50,6 +50,7 @@ function App() {
   useLayoutEffect(() => {
     // `tilesSegment.wasRun === true` means that grid is currently visible
     // and positioning should be regular, otherwise - stay screen centered.
+    // `tilesSegment.wasRun` wasn't included in deps array deliberately.
     if (activeTileRef.current && tilesSegment.wasRun) {
       const { top, left } = activeTileRef.current.getBoundingClientRect();
       setCloneLeft(left);
@@ -98,7 +99,7 @@ function App() {
       </div>
 
       {activeSketch && (
-        <ActiveSketchProvider activeSketch={activeSketch}>
+        <ActiveSketchProvider key={activeSketch.id} activeSketch={activeSketch}>
           <SketchModal
             top={cloneTop}
             left={cloneLeft}

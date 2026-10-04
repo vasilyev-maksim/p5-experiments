@@ -1,6 +1,6 @@
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
-import type { IControls, IParams, IPreset, ISketch } from "@/models";
+import type { IControls, IParams, IPreset, IScenario, ISketch } from "@/models";
 import { noop } from "@utils/misc";
 import { createContext } from "react";
 
@@ -27,6 +27,7 @@ type ActiveSketchContextValue = {
   exportToFile: () => void;
   spinUp: () => void;
   applyPreset: (preset: IPreset, opts: { updateUrl: boolean }) => void;
+  playScenario: (scenario: IScenario) => void;
 };
 
 export const ActiveSketchContext = createContext<ActiveSketchContextValue>({
@@ -49,4 +50,5 @@ export const ActiveSketchContext = createContext<ActiveSketchContextValue>({
   exportToFile: noop,
   spinUp: noop,
   applyPreset: noop,
+  playScenario: noop,
 });

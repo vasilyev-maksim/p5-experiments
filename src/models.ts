@@ -97,6 +97,21 @@ export type IPreset<Controls extends IControls = any> = {
   timeDelta: number;
 };
 
+type ScenarioAction =
+  | {
+      type: "delay";
+      duration: number;
+    }
+  | {
+      type: "sketchEvent";
+      event: SketchEvent;
+    };
+
+export type IScenario = {
+  name: string;
+  fn: () => Generator<ScenarioAction, void, void>;
+};
+
 export interface ISketch<Controls extends IControls = IControls> {
   name: string;
   id: string;
@@ -111,6 +126,7 @@ export interface ISketch<Controls extends IControls = IControls> {
   shufflePresetsInterval?: number;
   startTime?: number;
   type: "released" | "draft" | "hidden" | "only";
+  scenarios?: IScenario[];
 }
 
 export type SketchCanvasSize = "tile" | "modal" | "fullscreen";

@@ -1,4 +1,4 @@
-import type { IPreset } from "../models";
+import type { IControls, IPreset, IScenario } from "../models";
 import styles from "./Presets.module.css";
 import { areParamsEqual } from "@utils/sketch";
 import { SectionLayout } from "./SectionLayout";
@@ -14,6 +14,21 @@ import { memo, useEffect, useRef, useState } from "react";
 import { BooleanParamControl } from "./BooleanParamControl";
 import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { ENV } from "@/env";
+import { checkExhaustiveness } from "@/utils/misc";
+
+type ItemToRender =
+  | {
+      type: "shuffle";
+    }
+  | {
+      type: "preset";
+      preset: IPreset<IControls>;
+    }
+  | {
+      type: "scenario";
+      scenario: IScenario;
+    };
 
 export const Presets = memo(function Presets() {
   const segment = useSegment<MODAL_OPEN_SEGMENTS, PresetsAnimationParams>(
@@ -30,18 +45,28 @@ export const Presets = memo(function Presets() {
     "INIT_CONTROLS_AND_PRESETS",
   );
 
-  const { activeSketch, params, applyPreset } = useActiveSketchContext();
-  const presets = activeSketch.presets;
+  const { activeSketch, params, applyPreset, playScenario } =
+    useActiveSketchContext();
   const presetIndex = useRef(0);
   const [shufflePresets, setShufflePresets] = useState(
     activeSketch.shufflePresets === 1,
   );
   const shouldRenderShuffleControl = (activeSketch.shufflePresets ?? -1) > -1;
-  const paramsCount = presets.length ?? 0;
-  const springsCount = paramsCount + (shouldRenderShuffleControl ? 1 : 0);
+  const paramsCount = activeSketch.presets.length ?? 0;
+  const itemsToRender = [
+    ...activeSketch.presets.map((preset) => ({
+      type: "preset",
+      preset,
+    })),
+    ...((ENV.isProd ? null : activeSketch.scenarios)?.map((scenario) => ({
+      type: "scenario",
+      scenario,
+    })) ?? []),
+    ...(shouldRenderShuffleControl ? [{ type: "shuffle" }] : []),
+  ] as ItemToRender[];
 
   const [springs] = useSprings(
-    springsCount,
+    itemsToRender.length,
     (i) => ({
       from: { x: 0 },
       to: { x: segment.wasRun ? 1 : 0 },
@@ -51,7 +76,7 @@ export const Presets = memo(function Presets() {
       },
       delay: i * itemDelay,
       onRest: async () => {
-        if (i === springsCount - 1) {
+        if (i === itemsToRender.length - 1) {
           segment.complete();
         }
       },
@@ -62,7 +87,10 @@ export const Presets = memo(function Presets() {
   useEffect(() => {
     if (shufflePresets) {
       const id = setInterval(() => {
-        const nextPreset = presets[++presetIndex.current % presets.length];
+        const nextPreset =
+          activeSketch.presets[
+            ++presetIndex.current % activeSketch.presets.length
+          ];
 
         applyPreset(nextPreset, { updateUrl: true });
       }, activeSketch.shufflePresetsInterval ?? 1200);
@@ -73,7 +101,7 @@ export const Presets = memo(function Presets() {
     shufflePresets,
     activeSketch.shufflePresetsInterval,
     applyPreset,
-    presets,
+    activeSketch.presets,
   ]);
 
   const { sendAnalyticsEvent } = useAnalytics();
@@ -96,36 +124,51 @@ export const Presets = memo(function Presets() {
         animationDuration={showHeader.duration}
       >
         {springs.map(({ x }, i) => {
+          const item = itemsToRender[i];
           let body;
-          const shuffleControlIteration =
-            shouldRenderShuffleControl && i === springsCount - 1;
 
-          if (shuffleControlIteration) {
-            // shuffle presets control
-            body = (
-              <BooleanParamControl
-                label={"Shuffle presets"}
-                value={shufflePresets}
-                active={controlsActivated.wasRun}
-                animationDuration={controlsActivated.duration}
-                onChange={(x) => setShufflePresets(x)}
-                className={styles.ShufflePresetsControl}
-              />
-            );
-          } else {
-            // preset button
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            const preset = presets?.[i]!;
-            const isActive =
-              controlsActivated.wasRun && areParamsEqual(params, preset.params);
-            body = (
-              <OptionButton
-                label={preset.name ?? i.toString()}
-                active={isActive}
-                onClick={() => handleClick(preset)}
-                animationDuration={controlsActivated.duration}
-              />
-            );
+          switch (item.type) {
+            case "preset": {
+              const isActive =
+                controlsActivated.wasRun &&
+                areParamsEqual(params, item.preset.params);
+
+              body = (
+                <OptionButton
+                  label={item.preset.name ?? i.toString()}
+                  active={isActive}
+                  onClick={() => handleClick(item.preset)}
+                  animationDuration={controlsActivated.duration}
+                />
+              );
+              break;
+            }
+            case "scenario": {
+              body = (
+                <OptionButton
+                  label={"* " + (item.scenario.name ?? i.toString())}
+                  active={false}
+                  onClick={() => playScenario(item.scenario)}
+                  animationDuration={controlsActivated.duration}
+                />
+              );
+              break;
+            }
+            case "shuffle": {
+              body = (
+                <BooleanParamControl
+                  label={"Shuffle presets"}
+                  value={shufflePresets}
+                  active={controlsActivated.wasRun}
+                  animationDuration={controlsActivated.duration}
+                  onChange={(x) => setShufflePresets(x)}
+                  className={styles.ShufflePresetsControl}
+                />
+              );
+              break;
+            }
+            default:
+              checkExhaustiveness(item);
           }
 
           return (
@@ -135,7 +178,7 @@ export const Presets = memo(function Presets() {
               style={{
                 opacity: x,
                 scale: x.to([0, 1], [0.9, 1]),
-                flexBasis: shuffleControlIteration ? "100%" : undefined,
+                flexBasis: item.type === "shuffle" ? "100%" : undefined,
               }}
             >
               {body}
