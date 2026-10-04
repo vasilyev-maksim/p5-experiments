@@ -89,7 +89,7 @@ export const sequences = [
   new Sequence(HOME_PAGE_SEQUENCE, [
     Sequence.syncSegment({
       id: "HEADER",
-      delay: 500 * MULT,
+      delay: 100 * MULT,
       duration: 400 * MULT,
     }),
     Sequence.asyncSegment<GridAnimationParams>({
