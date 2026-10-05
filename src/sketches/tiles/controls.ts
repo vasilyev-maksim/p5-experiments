@@ -105,4 +105,20 @@ export const controls = {
     label: "Invert colors",
     active: (params: IParams) => (params.COLOR as number) !== 4, // TODO: can't ref itself (controls.COLOR.colors...)
   },
+  ANIMATION_DURATION: {
+    type: "range",
+    max: 1000,
+    min: 10,
+    active: () => false,
+    label: "Animation duration",
+    step: 1,
+  },
+  ANIMATION_DELAY: {
+    type: "range",
+    max: 1000,
+    min: 0,
+    active: () => false,
+    label: "Animation delay",
+    step: 1,
+  },
 } as const satisfies IControls;

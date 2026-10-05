@@ -1,17 +1,12 @@
-import { ENV } from "@/env";
 import { useActiveSketchContext } from "@/hooks/useActiveSketchContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useNotifications } from "@/hooks/useNotifications";
-import {
-  copyCurrentUrlToClipboard,
-  copyPresetCodeToClipboard,
-} from "@/utils/clipboard";
+import { copyCurrentUrlToClipboard } from "@/utils/clipboard";
 import { Button } from "./Button";
 import { DiceIcon, ShareIcon } from "./Icons";
 
 export function SidebarActions() {
-  const { activeSketch, params, timeDelta, randomizeParams } =
-    useActiveSketchContext();
+  const { params, randomizeParams } = useActiveSketchContext();
 
   const { pushNotification } = useNotifications();
   const { sendAnalyticsEvent } = useAnalytics();
@@ -35,7 +30,7 @@ export function SidebarActions() {
         label="Randomize"
       />
       <Button icon={<ShareIcon />} onClick={handleShareClick} label="Share" />
-      {ENV.isProd ? null : (
+      {/* {ENV.isProd ? null : (
         <>
           <Button
             onClick={() =>
@@ -48,7 +43,7 @@ export function SidebarActions() {
             label="preset"
           />
         </>
-      )}
+      )} */}
     </>
   );
 }

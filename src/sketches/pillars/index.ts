@@ -2,6 +2,7 @@ import type { ISketch } from "../../models";
 import { controls, type Controls } from "./controls";
 import { factory } from "./factory";
 import { presets } from "./presets";
+import { scenarios } from "./scenarios";
 
 export const sketch: ISketch<Controls> = {
   factory,
@@ -14,4 +15,5 @@ export const sketch: ISketch<Controls> = {
   controls,
   presets,
   type: "released",
+  scenarios,
 };

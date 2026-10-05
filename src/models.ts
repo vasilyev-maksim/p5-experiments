@@ -97,7 +97,7 @@ export type IPreset<Controls extends IControls = any> = {
   timeDelta: number;
 };
 
-type ScenarioAction =
+export type ScenarioAction =
   | {
       type: "delay";
       duration: number;

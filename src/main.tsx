@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")!).render(
     <ViewportProvider>
       <NotificationsProvider>
         <SequenceProvider sequences={sequences}>
-          {ENV.sandboxMode ? <Test /> : <App />}
+          {ENV.sandboxModeEnabled ? <Test /> : <App />}
         </SequenceProvider>
       </NotificationsProvider>
     </ViewportProvider>

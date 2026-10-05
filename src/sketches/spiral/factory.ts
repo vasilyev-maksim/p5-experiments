@@ -4,8 +4,8 @@ import { createSketch } from "@core/createSketch";
 import { type Controls, controls } from "./controls";
 
 const ANIMATION_SPEED = 25;
-const POLYGONS_COUNT = 500,
-  BG_COLOR = "black";
+const POLYGONS_COUNT = 500;
+const BG_COLOR = "black";
 
 export const factory = createSketch<Controls>(
   ({

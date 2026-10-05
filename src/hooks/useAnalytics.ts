@@ -15,7 +15,7 @@ export function useAnalytics() {
         ...(args[2] ? [args[2]] : []),
       ] as const;
 
-      if (ENV.disableAnalytics) {
+      if (ENV.analyticsDisabled) {
         console.log("analytics event: ", ...newArgs);
       } else {
         posthog.capture(...newArgs);

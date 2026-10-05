@@ -3,7 +3,10 @@ import type {
   IControl,
   IControls,
   IParams,
+  IPreset,
   ISketch,
+  ParamName,
+  ScenarioAction,
 } from "@/models";
 
 function serializeParams(params: IParams): string {
@@ -46,4 +49,58 @@ export function getRandomParams<Controls extends IControls>(
 
 export function getDefaultPreset(sketch: ISketch) {
   return sketch.presets[0];
+}
+
+export function delay(duration: number): ScenarioAction {
+  return { type: "delay", duration };
+}
+
+type PresetPatch<Controls extends IControls> = Partial<
+  Omit<IPreset<Controls>, "params">
+> & {
+  params?: Partial<IParams<Controls>>;
+};
+
+export function changePresetFactory<Controls extends IControls = any>(
+  presets: IPreset<Controls>[],
+): (presetName: string, patch?: PresetPatch<Controls>) => ScenarioAction {
+  return (presetName: string, patch?: PresetPatch<Controls>) => {
+    const target = presets.find((x) => x.name === presetName)!;
+    const preset = patch
+      ? {
+          ...target,
+          ...patch,
+          params: {
+            ...target.params,
+            ...patch.params,
+          },
+        }
+      : target;
+
+    return {
+      type: "sketchEvent",
+      event: {
+        type: "applyPreset",
+        preset,
+      },
+    };
+  };
+}
+
+export function playPause(paused: boolean): ScenarioAction {
+  return { type: "sketchEvent", event: { type: "playPause", paused } };
+}
+
+export function paramChangeFactory<Controls extends IControls>() {
+  return <K extends ParamName<Controls>>(
+    paramName: K,
+    paramValue: IParams<Controls>[K],
+  ): ScenarioAction => ({
+    type: "sketchEvent",
+    event: {
+      type: "paramChange",
+      paramName: paramName as string,
+      paramValue,
+    },
+  });
 }

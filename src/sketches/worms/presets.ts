@@ -168,7 +168,7 @@ export const presets: IPreset<Controls>[] = [
     },
     name: "carpet",
     timeDelta: 0.4,
-    startTime: 180,
+    startTime: 0,
   },
   {
     params: {

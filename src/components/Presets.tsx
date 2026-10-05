@@ -58,10 +58,12 @@ export const Presets = memo(function Presets() {
       type: "preset",
       preset,
     })),
-    ...((ENV.isProd ? null : activeSketch.scenarios)?.map((scenario) => ({
-      type: "scenario",
-      scenario,
-    })) ?? []),
+    ...((ENV.scenariosEnabled ? activeSketch.scenarios : null)?.map(
+      (scenario) => ({
+        type: "scenario",
+        scenario,
+      }),
+    ) ?? []),
     ...(shouldRenderShuffleControl ? [{ type: "shuffle" }] : []),
   ] as ItemToRender[];
 

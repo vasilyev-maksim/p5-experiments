@@ -332,7 +332,7 @@ export function createSketch<C extends IControls>(
         p.push();
         {
           p.fill("white");
-          p.text(time, 10, 10, 20, 20);
+          p.text(time.toFixed(0), 10, 10, 20, 20);
           p.stroke("white");
           p.strokeWeight(1);
           p.noFill();
@@ -349,7 +349,7 @@ export function createSketch<C extends IControls>(
           p.textSize(20);
           p.strokeWeight(1);
 
-          p.text(size, ...tl);
+          p.text(size.toFixed(0), ...tl);
         }
         p.pop();
       }

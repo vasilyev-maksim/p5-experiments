@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EventBus } from "@/core/EventBus";
 import type { SketchEvent } from "@/core/events";
 import { ActiveSketchContext } from "./ActiveSketchContext";
@@ -129,6 +129,13 @@ export function ActiveSketchProvider({
     scenarioRunner(scenario.fn, eventBus);
   }, []);
 
+  const interruptScenario = () => {
+    scenarioRunIndex.current += 1;
+  };
+
+  // interrupt running scenario on modal close/unmount
+  useEffect(() => interruptScenario, []);
+
   const spinUp = useCallback(() => {
     sendEvent({ type: "modeChange", mode: "animated" });
     sendEvent({ type: "playPause", paused: false });
@@ -137,6 +144,7 @@ export function ActiveSketchProvider({
 
   const applyPreset = useCallback(
     (preset: IPreset, { updateUrl }: { updateUrl: boolean }) => {
+      interruptScenario();
       sendEvent({ type: "applyPreset", preset });
       setParams(preset.params);
       setTimeDelta(preset.timeDelta);

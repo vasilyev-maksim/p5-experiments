@@ -5,7 +5,7 @@ export type Controls = typeof controls;
 export const controls = {
   CURVE_RESOLUTION: {
     label: "Resolution",
-    max: 100,
+    max: 25,
     min: 5,
     step: 1,
     type: "range",

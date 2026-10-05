@@ -9,7 +9,7 @@ const options: Partial<PostHogConfig> = {
 } as const;
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
-  if (ENV.disableAnalytics) {
+  if (ENV.analyticsDisabled) {
     return children;
   }
 

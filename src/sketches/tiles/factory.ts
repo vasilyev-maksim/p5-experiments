@@ -14,8 +14,6 @@ const COLOR_INTENSITY_MIN = 0.1;
 const COLOR_INTENSITY_MAX = 0.9;
 const ALTERNATIVE_COLOR_INTENSITY_MIN = 0.2;
 const ALTERNATIVE_COLOR_INTENSITY_MAX = 0.75;
-const ANIMATION_DURATION = 120;
-const ANIMATION_DELAY = 250;
 const SCALE_MAX_DELTA = -0.2;
 const STRIPE_SIZE_MAX_DELTA = 0.1;
 const BORDER_RADIUS_MAX_DELTA = 2;
@@ -193,7 +191,9 @@ export const factory = createSketch<Controls>(
         const animationEnabled = animationType !== 0;
         const fillType = getParam("FILL_TYPE");
         const stripeSize = animatedStripeSize.getValue();
-        const PERIOD = ANIMATION_DURATION + ANIMATION_DELAY;
+        const animationDuration = getParam("ANIMATION_DURATION");
+        const animationDelay = getParam("ANIMATION_DELAY");
+        const PERIOD = animationDuration + animationDelay;
         const isAlternativeColoring = isAlternativeColoringMemo.getValue();
 
         p.background(bgColor);
@@ -250,9 +250,9 @@ export const factory = createSketch<Controls>(
 
             if (animationEnabled) {
               const relativeTime = Math.max(0, time - distanceIndex) % PERIOD;
-              const x = relativeTime / ANIMATION_DURATION;
+              const x = relativeTime / animationDuration;
               delta =
-                relativeTime < ANIMATION_DURATION
+                relativeTime < animationDuration
                   ? p.sin(x * p.TWO_PI - p.HALF_PI) / 2 + 0.5
                   : 0;
             }

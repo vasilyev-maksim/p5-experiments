@@ -2,6 +2,7 @@
 
 # 📋 TODO
 
+- [medium] make a project trailer using scenarios
 - [medium] write meaningful README.md
 
 # 💡 NICE TO HAVE
@@ -22,6 +23,7 @@
 
 # ✅ DONE
 
+- [medium] Scenarios (dev only)
 - [easy] Home page => Footer & Header => add analytics events
 - [easy] fix initially open tile centering
 - [hard] tabIndex everywhere

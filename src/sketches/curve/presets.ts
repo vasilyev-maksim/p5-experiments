@@ -4,8 +4,8 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
-      CURVES_COUNT: 37,
-      GAP: 22,
+      CURVES_COUNT: 1,
+      GAP: 14,
       CURVE_RESOLUTION: 23,
       COLOR: 0,
       TRACE_FACTOR: 80,

@@ -4,6 +4,8 @@ import type { Controls } from "./controls";
 export const presets: IPreset<Controls>[] = [
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       INVERT_COLORS: true,
       COLOR: 2,
       FILL_TYPE: 2,
@@ -23,6 +25,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       INVERT_COLORS: false,
       COLOR: 3,
       FILL_TYPE: 2,
@@ -39,9 +43,12 @@ export const presets: IPreset<Controls>[] = [
     },
     name: "wes",
     timeDelta: 1,
+    startTime: 300,
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       INVERT_COLORS: false,
       COLOR: 3,
       FILL_TYPE: 2,
@@ -61,6 +68,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       RANDOM_SEED: 469,
       RESOLUTION: 19,
       GAP: 5,
@@ -80,6 +89,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       RANDOM_SEED: 327,
       RESOLUTION: 23,
       GAP: 17,
@@ -99,6 +110,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       INVERT_COLORS: false,
       COLOR: 0,
       RANDOM_SEED: 582,
@@ -118,6 +131,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       INVERT_COLORS: false,
       COLOR: 0,
       FILL_TYPE: 2,
@@ -137,6 +152,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       INVERT_COLORS: false,
       COLOR: 0,
       FILL_TYPE: 2,
@@ -156,6 +173,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       RANDOM_SEED: 575,
       RESOLUTION: 27,
       GAP: 20,
@@ -175,6 +194,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       RANDOM_SEED: 374,
       RESOLUTION: 23,
       GAP: 14,
@@ -194,6 +215,8 @@ export const presets: IPreset<Controls>[] = [
   },
   {
     params: {
+      ANIMATION_DELAY: 250,
+      ANIMATION_DURATION: 120,
       RANDOM_SEED: 578,
       RESOLUTION: 38,
       GAP: 20,
