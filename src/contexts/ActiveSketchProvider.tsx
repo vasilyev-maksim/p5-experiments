@@ -7,6 +7,7 @@ import { getRandomParams } from "@utils/sketch";
 import type { IPreset, IScenario, ISketch } from "@/models";
 import { checkExhaustiveness, delay } from "@/utils/misc";
 
+// const EXPORT_WIDTH = 2556, EXPORT_HEIGHT = 1179; // IPhone 15 res
 const EXPORT_WIDTH = 3840,
   EXPORT_HEIGHT = 2160;
 
