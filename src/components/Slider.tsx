@@ -28,11 +28,10 @@ export function Slider(props: {
   });
   const {
     trackRef,
-    handleMouseDown,
-    handleMouseEnter,
-    handleMouseLeave,
+    handlePointerDown,
+    handlePointerEnter,
+    handlePointerLeave,
     handleKeyPress,
-    handleMove,
     activeX,
     handleLeft,
   } = useSliderBehavior(
@@ -57,13 +56,14 @@ export function Slider(props: {
         tabIndex={0}
         className={styles.TrackWrapper}
         ref={trackRef}
-        onClick={(e) => handleMove(e.clientX)}
-        onMouseDown={handleMouseDown}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onPointerDown={handlePointerDown}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
         onKeyDown={handleKeyPress}
         style={{
           height: TRACK_WRAPPER_HEIGHT,
+          // Horizontal drag goes to the slider, vertical swipe still scrolls the page
+          touchAction: "pan-y",
         }}
       >
         <animated.div
@@ -91,7 +91,6 @@ export function Slider(props: {
             width: handleWidth,
             height: handleHeight,
             top: handleTop,
-            // rotate: x.to([0, 1], [0, 45]).to((a) => `${a}deg`),
           }}
         />
       </div>

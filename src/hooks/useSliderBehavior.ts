@@ -44,26 +44,35 @@ export function useSliderBehavior(
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
     document.body.style.userSelect = "none";
 
     handleMove(e.clientX);
     setDragging(true);
 
-    const handleMouseMove = (e: MouseEvent) => handleMove(e.clientX);
-    const handleMouseUp = () => {
+    const pointerId = e.pointerId;
+    const handlePointerMove = (e: PointerEvent) => {
+      if (e.pointerId === pointerId) handleMove(e.clientX);
+    };
+    const handlePointerUp = (e: PointerEvent) => {
+      if (e.pointerId !== pointerId) return;
       setDragging(false);
       document.body.style.userSelect = "";
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
   };
 
-  const handleMouseEnter = () => setHovered(true);
-  const handleMouseLeave = () => setHovered(false);
+  const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse") setHovered(true);
+  };
+  const handlePointerLeave = () => setHovered(false);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     let newVal = value;
@@ -80,9 +89,9 @@ export function useSliderBehavior(
   return {
     trackRef,
     dragging,
-    handleMouseDown,
-    handleMouseEnter,
-    handleMouseLeave,
+    handlePointerDown,
+    handlePointerEnter,
+    handlePointerLeave,
     handleKeyPress,
     handleMove,
     handleLeft,

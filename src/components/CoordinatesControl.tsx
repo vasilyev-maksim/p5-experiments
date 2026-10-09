@@ -73,7 +73,7 @@ export const CoordinatesControl = (props: {
     }
   };
 
-  const { handleMouseDown } = useGlobalDrag(changeValue);
+  const { handlePointerDown } = useGlobalDrag(changeValue);
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     let newX = x;
     let newY = y;
@@ -122,9 +122,10 @@ export const CoordinatesControl = (props: {
           style={{
             width: PLANE_SIZE,
             height: PLANE_SIZE,
+            touchAction: "none",
           }}
           ref={planeRef}
-          onMouseDown={handleMouseDown}
+          onPointerDown={handlePointerDown}
           onKeyDown={handleKeyPress}
         >
           <animated.div

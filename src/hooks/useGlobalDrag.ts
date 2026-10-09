@@ -1,19 +1,30 @@
 export function useGlobalDrag(
-  onMouseDown: (e: Pick<MouseEvent, "clientX" | "clientY">) => void,
+  onMove: (e: Pick<PointerEvent, "clientX" | "clientY">) => void,
 ) {
-  const handleMouseDown = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    document.body.style.userSelect = "none";
-    onMouseDown(e);
+  const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
 
-    const removeHandlers = () => {
+    document.body.style.userSelect = "none";
+    onMove(e);
+
+    const pointerId = e.pointerId;
+    const handlePointerMove = (e: PointerEvent) => {
+      if (e.pointerId === pointerId) onMove(e);
+    };
+    const removeHandlers = (e: PointerEvent) => {
+      if (e.pointerId !== pointerId) return;
+
       document.body.style.userSelect = "";
-      window.removeEventListener("mousemove", onMouseDown);
-      window.removeEventListener("mouseup", removeHandlers);
+
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", removeHandlers);
+      window.removeEventListener("pointercancel", removeHandlers);
     };
 
-    window.addEventListener("mousemove", onMouseDown);
-    window.addEventListener("mouseup", removeHandlers);
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", removeHandlers);
+    window.addEventListener("pointercancel", removeHandlers);
   };
 
-  return { handleMouseDown };
+  return { handlePointerDown };
 }
