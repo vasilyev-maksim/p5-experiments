@@ -1,4 +1,4 @@
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useRef } from "react";
 import type { ISketch } from "../models";
 import { SketchTile } from "./SketchTile";
 import styles from "./SketchTilesGrid.module.css";
@@ -16,6 +16,7 @@ export const SketchTilesGrid = memo(
     {
       sketches: ISketch[];
       onClick: (sketch: ISketch) => void;
+      onRendered?: () => void;
       activeSketch?: ISketch;
       className?: string;
     }
@@ -28,6 +29,14 @@ export const SketchTilesGrid = memo(
       HOME_PAGE_SEQUENCE,
       "TILES",
     );
+
+    const renderedCountRef = useRef(0);
+    const handleFirstFrameDrawn = () => {
+      renderedCountRef.current++;
+      if (renderedCountRef.current === props.sketches.length) {
+        props.onRendered?.();
+      }
+    };
 
     return (
       <div className={classNames(styles.Grid, props.className)}>
@@ -42,6 +51,7 @@ export const SketchTilesGrid = memo(
             animationDelay={itemDelay * i}
             animationDuration={itemDuration}
             onAnimationComplete={i === length - 1 ? complete : undefined}
+            onFirstFrameDrawn={handleFirstFrameDrawn}
           />
         ))}
       </div>

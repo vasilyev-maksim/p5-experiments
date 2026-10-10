@@ -1,6 +1,13 @@
 import styles from "./App.module.css";
 import { Header } from "./Header";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import classNames from "classnames";
 import { SketchModal } from "./SketchModal";
 import { useSegment, useSequence, useSequenceStart } from "../sequencer";
@@ -47,9 +54,20 @@ function App() {
   useEffect(() => {
     // the 2nd RAF fires once the frame of the 1st one has been painted
     let rafId = requestAnimationFrame(() => {
-      rafId = requestAnimationFrame(() => setGridMounted(true));
+      rafId = requestAnimationFrame(() => {
+        gridMountStartRef.current = performance.now();
+        setGridMounted(true);
+      });
     });
     return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  // how long the tiles take to render (the page is blocked meanwhile)
+  const gridMountStartRef = useRef(0);
+  const handleGridRendered = useCallback(() => {
+    sendAnalyticsEvent("tiles rendered", {
+      duration: Math.round(performance.now() - gridMountStartRef.current),
+    });
   }, []);
 
   // needed to position clone tile above active (clicked) tile in the beginning of open animation
@@ -104,11 +122,10 @@ function App() {
             sketches={sketchList}
             ref={activeTileRef}
             className={styles.GridBlock}
+            onRendered={handleGridRendered}
           />
         ) : (
-          <div className={styles.Loading}>
-            Loading...
-          </div>
+          <div className={styles.Loading}>Loading...</div>
         )}
         <Footer className={styles.FooterBlock} />
       </div>

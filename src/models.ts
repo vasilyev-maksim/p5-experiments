@@ -87,6 +87,7 @@ export type ISketchFactory<Controls extends IControls> = (args: {
   id?: string;
   canvasSizeChangeEvent: CanvasSizeChangeEvent;
   eventBus?: EventBus<SketchEvent<Controls>>;
+  onFirstFrameDrawn?: () => void;
 }) => (p: p5) => void;
 
 export type IPreset<Controls extends IControls = any> = {

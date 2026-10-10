@@ -74,13 +74,20 @@ export function createSketch<C extends IControls>(
   argsFactory: (api: Api<C>, id?: string) => CreateSketchArgs<C>,
   { in3D }: { in3D: boolean } = { in3D: false },
 ): ISketchFactory<C> {
-  return ({ initData, id, eventBus, canvasSizeChangeEvent }) =>
+  return ({
+      initData,
+      id,
+      eventBus,
+      canvasSizeChangeEvent,
+      onFirstFrameDrawn,
+    }) =>
     (p) => {
       let time = 0,
         paused = initData.paused,
         timeDelta = initData.timeDelta ?? 1,
         draw: CreateSketchArgs<C>["draw"],
-        isExporting = false;
+        isExporting = false,
+        firstFrameDrawn = false;
 
       const params = createTrackedParams(initData.params),
         canvasWidth = new TrackedValue<number>(),
@@ -214,6 +221,11 @@ export function createSketch<C extends IControls>(
           drawDevTools();
         } else {
           draw();
+        }
+
+        if (!firstFrameDrawn) {
+          firstFrameDrawn = true;
+          onFirstFrameDrawn?.();
         }
 
         if (paused === false) {

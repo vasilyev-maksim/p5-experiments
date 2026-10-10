@@ -30,6 +30,7 @@ export const SketchCanvas = (props: {
   eventBus?: EventBus<SketchEvent>;
   id: string;
   onFullScreenExit?: () => void;
+  onFirstFrameDrawn?: () => void;
 }) => {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5>(null);
@@ -68,6 +69,7 @@ export const SketchCanvas = (props: {
       id: `${props.sketch.id}_${props.id}`,
       eventBus: props.eventBus,
       canvasSizeChangeEvent,
+      onFirstFrameDrawn: props.onFirstFrameDrawn,
     });
   }, []);
 

@@ -17,6 +17,7 @@ export const SketchTile = forwardRef<
     className?: string;
     hidden?: boolean;
     animated: boolean;
+    onFirstFrameDrawn?: () => void;
   }
 >(
   (
@@ -29,6 +30,7 @@ export const SketchTile = forwardRef<
       className,
       hidden = false,
       animated,
+      onFirstFrameDrawn,
     },
     ref,
   ) => {
@@ -82,6 +84,7 @@ export const SketchTile = forwardRef<
           paused={true}
           size="tile"
           initParams={defaultPreset.params}
+          onFirstFrameDrawn={onFirstFrameDrawn}
           startTime={defaultPreset.startTime ?? sketch.startTime}
           randomSeed={defaultPreset.randomSeed ?? sketch.randomSeed}
         />
