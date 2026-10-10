@@ -30,3 +30,25 @@
 .FooterBlock {
   margin-bottom: 20px;
 }
+
+.Loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--textColor);
+  font-size: 1.5rem;
+  /* JS is blocked while tiles are drawn, but opacity animations run on the
+     compositor, so the delayed appearance still works */
+  animation: loadingAppear 150ms 200ms ease-in both;
+}
+
+@keyframes loadingAppear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

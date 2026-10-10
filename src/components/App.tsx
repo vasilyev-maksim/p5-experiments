@@ -43,6 +43,15 @@ function App() {
   const [cloneTop, setCloneTop] = useState<number>(tileScreenCenteredTop);
   const [cloneLeft, setCloneLeft] = useState<number>(tileScreenCenteredLeft);
 
+  const [gridMounted, setGridMounted] = useState(false);
+  useEffect(() => {
+    // the 2nd RAF fires once the frame of the 1st one has been painted
+    let rafId = requestAnimationFrame(() => {
+      rafId = requestAnimationFrame(() => setGridMounted(true));
+    });
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
   // needed to position clone tile above active (clicked) tile in the beginning of open animation
   const activeTileRef = useRef<HTMLDivElement>(null);
 
@@ -88,13 +97,19 @@ function App() {
         }}
       >
         <Header className={styles.HeaderBlock} />
-        <SketchTilesGrid
-          onClick={openSketch}
-          activeSketch={activeSketch}
-          sketches={sketchList}
-          ref={activeTileRef}
-          className={styles.GridBlock}
-        />
+        {gridMounted ? (
+          <SketchTilesGrid
+            onClick={openSketch}
+            activeSketch={activeSketch}
+            sketches={sketchList}
+            ref={activeTileRef}
+            className={styles.GridBlock}
+          />
+        ) : (
+          <div className={styles.Loading}>
+            Loading...
+          </div>
+        )}
         <Footer className={styles.FooterBlock} />
       </div>
 

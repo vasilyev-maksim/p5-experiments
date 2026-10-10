@@ -1,9 +1,11 @@
 # 👨‍💻 IN PROGRESS
 
+- [hard] improve loading time (loading indicator / async sketch rendering)
+
 # 📋 TODO
 
-- [medium] make a project trailer using scenarios
 - [medium] write meaningful README.md
+- generate wallpapers and post it to appropriate subreddit
 
 # 💡 NICE TO HAVE
 
@@ -23,6 +25,7 @@
 
 # ✅ DONE
 
+- [medium] make a project trailer using scenarios
 - [medium] Scenarios (dev only)
 - [easy] Home page => Footer & Header => add analytics events
 - [easy] fix initially open tile centering
