@@ -4,6 +4,9 @@
   padding: 0 20px;
   transition-timing-function: ease-in-out;
   transition-property: scale, opacity;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: 1300px) {
     max-width: 976px;
@@ -24,11 +27,12 @@
 }
 
 .GridBlock {
-  margin: 50px auto 70px auto;
+  margin: 50px 0 70px 0;
 }
 
 .FooterBlock {
-  margin-bottom: 20px;
+  margin-top: auto;
+  margin-bottom: 30px;
 }
 
 .Loading {
