@@ -34,7 +34,7 @@ export type ModalOpenAnimationCtx = {
 };
 
 const MULT = ENV.animationsDurationMultiplier;
-const HIDE_SECTION_HEADERS = true;
+const HIDE_SECTION_HEADERS = false;
 
 // TODO: fix typings & MULT
 export const sequences = [
