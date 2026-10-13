@@ -4,13 +4,12 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import classNames from "classnames";
 import { SketchModal } from "./SketchModal";
-import { useSegment, useSequence, useSequenceStart } from "../sequencer";
+import { useSegment, useSequenceStart } from "../sequencer";
 import {
   HOME_PAGE_SEQUENCE,
   MODAL_OPEN_SEQUENCE,
@@ -34,7 +33,7 @@ function App() {
     useSizes();
 
   useSequenceStart(HOME_PAGE_SEQUENCE);
-  const { start, reset } = useSequence(MODAL_OPEN_SEQUENCE);
+
   const gridSegment = useSegment<MODAL_OPEN_SEGMENTS>(
     MODAL_OPEN_SEQUENCE,
     "GRID_GOES_IN_BG",
@@ -84,23 +83,6 @@ function App() {
       setCloneTop(top);
     }
   }, [activeSketch]);
-
-  const sketchOpenAnimationContext = useMemo(
-    () => ({
-      controlsPresent: Object.entries(activeSketch?.controls ?? {}).length > 0,
-      presetsPresent: (activeSketch?.presets?.length ?? 0) > 0,
-    }),
-    [activeSketch?.controls, activeSketch?.presets],
-  );
-
-  // sketch open animation start/interrupt
-  useEffect(() => {
-    if (activeSketch) {
-      start(sketchOpenAnimationContext);
-      sendAnalyticsEvent("sketch opened", { activeSketchId: activeSketch.id });
-    }
-    return reset;
-  }, [activeSketch, sketchOpenAnimationContext]);
 
   return isDesktop ? (
     <>

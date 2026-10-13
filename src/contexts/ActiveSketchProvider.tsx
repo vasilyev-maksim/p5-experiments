@@ -6,6 +6,9 @@ import { getActivePresetFromUrl, setPresetDataToUrl } from "@utils/url";
 import { getRandomParams } from "@utils/sketch";
 import type { IPreset, IScenario, ISketch } from "@/models";
 import { checkExhaustiveness, delay } from "@/utils/misc";
+import { MODAL_OPEN_SEQUENCE } from "@/animations";
+import { useAnalytics } from "@/hooks/useAnalytics";
+import { useSequence } from "@/sequencer";
 
 // const EXPORT_WIDTH = 2556, EXPORT_HEIGHT = 1179; // IPhone 15 res
 const EXPORT_WIDTH = 3840,
@@ -24,6 +27,25 @@ export function ActiveSketchProvider({
   const [paused, setPaused] = useState(true);
   const [params, setParams] = useState(initialActivePreset.params);
   const [timeDelta, setTimeDelta] = useState(initialActivePreset.timeDelta);
+  const { start, reset } = useSequence(MODAL_OPEN_SEQUENCE);
+  const { sendAnalyticsEvent } = useAnalytics();
+
+  const sketchOpenAnimationContext = useMemo(
+    () => ({
+      controlsPresent: Object.entries(activeSketch?.controls ?? {}).length > 0,
+      presetsPresent: (activeSketch?.presets?.length ?? 0) > 0,
+    }),
+    [activeSketch?.controls?.length, activeSketch?.presets?.length],
+  );
+
+  // sketch open animation start/interrupt
+  useEffect(() => {
+    if (activeSketch) {
+      start(sketchOpenAnimationContext);
+      sendAnalyticsEvent("sketch opened", { activeSketchId: activeSketch.id });
+    }
+    return reset;
+  }, [activeSketch, sketchOpenAnimationContext]);
 
   const sendEvent = (
     ...args: Parameters<EventBus<SketchEvent>["dispatch"]>

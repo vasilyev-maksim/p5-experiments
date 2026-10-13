@@ -24,7 +24,7 @@ export const controls = {
   RESOLUTION: {
     type: "range",
     min: 3,
-    max: 50,
+    max: 50, 
     step: 1,
     label: "Resolution",
   },
